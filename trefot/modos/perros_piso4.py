@@ -513,7 +513,7 @@ class PerrosPiso4(Modo):
             self.guardar_recompensa(p, self.victorias + 1)
             self.foto_recompensa = True
         self.clic_si(juego.ok, p, o)
-        if juego.carga_bestias.esta(p):
+        if self._volvio_a_pisos(p):
             if not self.foto_recompensa and self.ultima_pantalla_victoria is not None:
                 # No se vio el OK: la ultima pantalla antes de la carga es lo mas parecido.
                 self.guardar_recompensa(self.ultima_pantalla_victoria, self.victorias + 1)
@@ -534,7 +534,7 @@ class PerrosPiso4(Modo):
         self.clic_si(juego.info_mision, p, o)
         self.clic_si(juego.ok, p, o)
         self.clic_si(juego.cerrar, p, o)
-        if juego.carga_bestias.esta(p):
+        if self._volvio_a_pisos(p):
             if self.reinicio_pedido:
                 self.reinicios += 1
             else:
@@ -544,6 +544,12 @@ class PerrosPiso4(Modo):
             self._stats()
             return "elegir_piso"
         return None
+
+    @staticmethod
+    def _volvio_a_pisos(p) -> bool:
+        """La pelea termino del todo: pantalla de carga de las bestias o ya en la pantalla de pisos.
+        (Tras rendirse, el juego puede volver a los pisos sin que el bot llegue a ver la carga.)"""
+        return juego.carga_bestias.esta(p) or juego.piso3_superado.esta(p)
 
     def rendirse(self, p, o):
         self.reinicio_pedido = True
