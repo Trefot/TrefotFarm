@@ -4,7 +4,7 @@ Guion (si algo se sale de el, se rinde y reinicia, que es lo mas rapido con este
   Fase 1 T1: perro IZQ -> postura de Thonar | perro DER -> otra de Thonar | 2 normales de Freyja.
   Fase 1 T2: talento de Odin | perro IZQ | Freyja (si su ulti aun no esta) o Thonar (si ya esta) |
              single de Odin | single de Gawain | relleno sin gastar lo de la fase 2.
-  Fase 2 T1: perro DER | area de Gawain | ulti de Freyja | area de Odin | cualquier carta de G/F/O.
+  Fase 2 T1: lobo azul (IZQ) | area de Gawain | ulti de Freyja | area de Odin | cualquier carta de G/F/O.
   Fase 3 T1: no se ataca (el golpe secundario de la ulti de Freyja termina la pelea).
 
 Empieza desde cualquier pantalla de la taberna / menu de batalla / bestias demoniacas.
@@ -43,6 +43,7 @@ FREYJA_NORMALES = ("freyja_roja.normal_1", "freyja_roja.normal_2")
 THONAR_NORMALES = ("thonar_azul.postura", "thonar_azul.otra")
 PROTEGIDAS_FASE2 = ("gawain.area", "odin.area", "freyja_roja.ulti")
 TURNOS_MAXIMOS = {1: 2, 2: 1, 3: 1}
+PAUSA_ENTRE_CARTAS = 0.5  # tras colocarse una carta, antes de la siguiente (animacion)
 
 
 class Reiniciar(Exception):
@@ -102,7 +103,8 @@ class Estrategia:
 
     def _f2(self, mano, accion):
         if accion == 0:
-            return self._o_reiniciar(mano, ("gawain.area",), "F2: falta el area de Gawain"), "der", False
+            # En F2 el perro derecho esta en una burbuja roja; se apunta al lobo azul de la izquierda.
+            return self._o_reiniciar(mano, ("gawain.area",), "F2: falta el area de Gawain"), "izq", False
         if accion == 1:
             return self._o_reiniciar(mano, ("freyja_roja.ulti",), "F2: falta la ulti de Freyja"), None, False
         if accion == 2:
@@ -394,15 +396,28 @@ class PerrosPiso4(Modo):
                 self._apuntar(objetivo)
             carta = mano[idx]
             self.log(f"Accion {accion + 1}: juego {carta}")
-            entrada.clic(carta.rect, o, espera=0.1)
+            entrada.clic(carta.rect, o, espera=0)
+            if self._esperar_hueco(huecos):
+                self.log("Carta colocada.", "debug")
+            else:
+                self.log("La carta aun no ocupa su hueco; lo vuelvo a comprobar.", "debug")
             fusiones = self.estrategia.fusiones_al_jugar(mano, idx)
-            self.esperar_corto(0.35 + (0.6 if fusiones == 1 else 1.1 if fusiones > 1 else 0))
+            self.esperar_corto(PAUSA_ENTRE_CARTAS + (0.6 if fusiones == 1 else 1.1 if fusiones > 1 else 0))
             ultima_accion = accion
-            if accion + 1 >= self.huecos_turno:
-                self.turno_abierto = False  # ultima carta enviada
-                return None
+            # Tambien la ultima carta se comprueba: el turno solo acaba cuando no quedan huecos.
+            # (En la primera pelea real la ultima carta a veces no entraba y el bot no se enteraba.)
         self.log("El turno tardo demasiado; lo retomo en el siguiente paso.", "aviso")
         return None
+
+    def _esperar_hueco(self, huecos_antes: int, limite: float = 1.6) -> bool:
+        """Tras clicar una carta: espera a que ocupe su hueco (quedan menos huecos libres)."""
+        fin = time.time() + limite
+        while time.time() < fin:
+            self.esperar_corto(0.15)
+            p, _ = self.capturar()
+            if C.contar_huecos(p, 0.7) < huecos_antes:
+                return True
+        return False
 
     @staticmethod
     def esperar_corto(segundos: float):

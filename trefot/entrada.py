@@ -17,6 +17,7 @@ pyautogui.PAUSE = 0
 
 # Pequena variacion aleatoria para no clicar siempre en el mismo pixel exacto.
 JITTER_PX = 2
+DURACION_CLIC = 0.12  # segundos con el boton pulsado
 
 
 def _punto(objetivo, origen) -> tuple[int, int]:
@@ -36,8 +37,10 @@ def clic(objetivo, origen, espera: float = 0.05, jitter: int = JITTER_PX):
         x += random.randint(-jitter, jitter)
         y += random.randint(-jitter, jitter)
     pyautogui.moveTo(x, y)
+    time.sleep(0.05)  # que el juego "vea" el raton encima antes de pulsar
     win32api.mouse_event(win32con.MOUSEEVENTF_LEFTDOWN, 0, 0)
-    time.sleep(0.03 + random.random() * 0.04)
+    # En la primera pelea real, pulsaciones de 30-70 ms se perdian a menudo: ~120 ms entran siempre.
+    time.sleep(DURACION_CLIC + random.random() * 0.04)
     win32api.mouse_event(win32con.MOUSEEVENTF_LEFTUP, 0, 0)
     control.actividad()
     if espera:
