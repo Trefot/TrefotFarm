@@ -15,6 +15,8 @@ Doble clic en Instalar.bat  (necesita Python 3.12, el mismo que usa AutoFarming)
 ARRANCAR
 --------
 Doble clic en TrefotFarm.bat.  Si no abre, TrefotFarm_con_consola.bat muestra el error.
+Windows pedira permiso de administrador: acepta. El juego corre como administrador y, sin
+ese permiso, TrefotFarm no podria ajustar su ventana ni hacerle clic.
 
 
 PRIMERA VEZ: CAPTURAS DE TUS CARTAS  (pagina "Capturas")

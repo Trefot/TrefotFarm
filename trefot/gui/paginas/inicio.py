@@ -3,7 +3,7 @@
 import time
 
 from PyQt5.QtCore import QTimer
-from PyQt5.QtWidgets import QFrame, QGridLayout, QGroupBox, QHBoxLayout, QLabel, QPushButton, QVBoxLayout
+from PyQt5.QtWidgets import QFrame, QGridLayout, QGroupBox, QHBoxLayout, QLabel, QMessageBox, QPushButton, QVBoxLayout
 
 from trefot import config, historial, ventana
 from trefot.actualizador import version_local
@@ -38,7 +38,7 @@ class PaginaInicio(Pagina):
         fila = QHBoxLayout()
         m, self.juego_txt, self.juego_det, bj = _estado("Juego")
         b = QPushButton("Ajustar ventana")
-        b.clicked.connect(lambda: (ventana.ajustar_tamano(), self.refrescar()))
+        b.clicked.connect(self._ajustar)
         bj.addWidget(b)
         fila.addWidget(m)
         m, self.bot_txt, self.bot_det, bb = _estado("Bot")
@@ -114,12 +114,20 @@ class PaginaInicio(Pagina):
     def al_mostrar(self):
         self.refrescar()
 
+    def _ajustar(self):
+        if not ventana.ajustar_tamano():
+            QMessageBox.warning(self, "Ajustar ventana", ventana.ultimo_error)
+        self.refrescar()
+
     def refrescar(self):
         # juego
         tam = ventana.tamano_actual()
         if tam is None:
             self._pintar(self.juego_txt, "Cerrado", tema.ERROR)
             self.juego_det.setText(f"No encuentro la ventana '{config.obtener('titulo_ventana')}'.")
+        elif not ventana.es_admin():
+            self._pintar(self.juego_txt, "Sin permisos", tema.AVISO)
+            self.juego_det.setText("TrefotFarm no esta como administrador: reabrelo aceptando el aviso de Windows.")
         elif tam == (config.obtener("ancho_ventana"), config.obtener("alto_ventana")):
             self._pintar(self.juego_txt, "Listo", tema.OK)
             self.juego_det.setText(f"Ventana {tam[0]}x{tam[1]}.")

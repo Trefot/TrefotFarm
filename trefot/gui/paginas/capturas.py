@@ -172,7 +172,7 @@ class PaginaCapturas(Pagina):
 
     def ajustar(self):
         ok = ventana.ajustar_tamano()
-        self.mensaje("Ventana en 540x960." if ok else "No pude ajustar la ventana (¿esta abierto el juego?).")
+        self.mensaje("Ventana en 540x960." if ok else ventana.ultimo_error)
 
     def capturar_mano(self):
         pantalla = self._pantalla()

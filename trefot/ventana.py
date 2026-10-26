@@ -107,23 +107,51 @@ def _tamano_exterior(hwnd: int, ancho: int, alto: int) -> tuple[int, int]:
     return rect.right - rect.left, rect.bottom - rect.top
 
 
+def es_admin() -> bool:
+    try:
+        return bool(ctypes.windll.shell32.IsUserAnAdmin())
+    except Exception:
+        return False
+
+
+AVISO_ADMIN = (
+    "Windows no deja tocar la ventana del juego porque el juego corre como administrador. "
+    "Cierra TrefotFarm y vuelve a abrirlo aceptando el aviso de administrador."
+)
+
+ultimo_error = ""  # motivo del ultimo ajuste fallido, para mostrarlo en la interfaz
+
+
 def ajustar_tamano() -> bool:
-    """Deja el area del juego en el tamano para el que estan hechas las coordenadas (540x960)."""
+    """Deja el area del juego en el tamano para el que estan hechas las coordenadas (540x960).
+
+    Nunca lanza excepciones: si falla devuelve False y deja el motivo en ``ultimo_error``.
+    """
+    global ultimo_error
     ancho, alto = config.obtener("ancho_ventana"), config.obtener("alto_ventana")
     with _lock:
         hwnd = buscar_ventana()
         if not hwnd:
+            ultimo_error = f"No encuentro la ventana '{config.obtener('titulo_ventana')}'."
             return False
-        izq, arr, _, _ = win32gui.GetWindowRect(hwnd)
-        ext_ancho, ext_alto = _tamano_exterior(hwnd, ancho, alto)
-        # Que quede dentro de la pantalla
-        pantalla_alto = ctypes.windll.user32.GetSystemMetrics(1)
-        arr = max(0, min(arr, pantalla_alto - ext_alto))
-        izq = max(0, izq)
-        win32gui.SetWindowPos(hwnd, win32con.HWND_TOP, izq, arr, ext_ancho, ext_alto, win32con.SWP_SHOWWINDOW)
+        try:
+            izq, arr, _, _ = win32gui.GetWindowRect(hwnd)
+            ext_ancho, ext_alto = _tamano_exterior(hwnd, ancho, alto)
+            # Que quede dentro de la pantalla
+            pantalla_alto = ctypes.windll.user32.GetSystemMetrics(1)
+            arr = max(0, min(arr, pantalla_alto - ext_alto))
+            izq = max(0, izq)
+            win32gui.SetWindowPos(hwnd, win32con.HWND_TOP, izq, arr, ext_ancho, ext_alto, win32con.SWP_SHOWWINDOW)
+        except win32gui.error as error:
+            ultimo_error = AVISO_ADMIN if error.winerror == 5 and not es_admin() else f"No pude ajustar la ventana: {error.strerror}"
+            return False
         time.sleep(0.3)
         actual = tamano_actual()
-        return actual is not None and abs(actual[0] - ancho) <= 4 and abs(actual[1] - alto) <= 4
+        if actual is not None and abs(actual[0] - ancho) <= 4 and abs(actual[1] - alto) <= 4:
+            ultimo_error = ""
+            return True
+        ultimo_error = f"La ventana quedo en {actual[0]}x{actual[1]} en vez de {ancho}x{alto}." if actual else "La ventana se cerro."
+        return False
 
 
 def traer_al_frente() -> None:

@@ -196,7 +196,11 @@ class PaginaFarmear(Pagina):
             QMessageBox.warning(self, "Juego cerrado", f"No encuentro la ventana '{config.obtener('titulo_ventana')}'.")
             return
         if not ventana.ajustar_tamano():
-            self.escribir("No pude dejar la ventana en 540x960 exacto; puede fallar el reconocimiento.", "aviso")
+            if ventana.ultimo_error == ventana.AVISO_ADMIN:
+                # Sin permisos tampoco funcionarian los clics: no tiene sentido arrancar.
+                QMessageBox.warning(self, "Faltan permisos", ventana.AVISO_ADMIN)
+                return
+            self.escribir(f"{ventana.ultimo_error} Puede fallar el reconocimiento.", "aviso")
         ventana.traer_al_frente()
         valores = self._valores()
         opciones = dict(config.obtener("opciones_modos") or {})
