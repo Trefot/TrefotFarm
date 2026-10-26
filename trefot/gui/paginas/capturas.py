@@ -58,6 +58,13 @@ class TarjetaCarta(QFrame):
         for d in equipo.defs.values():
             if d.es_carta:
                 self.combo.addItem(d.descripcion, d.nombre)
+        otros = [pj for pid, pj in equipo.biblioteca.items() if pid not in equipo.orden]
+        if otros:  # cualquier otro personaje de la biblioteca
+            self.combo.insertSeparator(self.combo.count())
+            for pj in otros:
+                for c in pj.cartas.values():
+                    if not c.boton:
+                        self.combo.addItem(f"{pj.nombre} - {c.descripcion}", f"{pj.id}.{c.id}")
         derecha.addWidget(self.combo)
         boton = QPushButton("Guardar")
         boton.setStyleSheet("padding: 5px 4px;")
@@ -140,7 +147,7 @@ class PaginaCapturas(Pagina):
         b_guardar_talento = QPushButton("Guardar como talento de Odin")
         b_guardar_talento.clicked.connect(self.guardar_talento)
         capa_talento.addWidget(b_guardar_talento)
-        capa_talento.addWidget(QLabel("Cuando el boton del talento este disponible, pulsa 'Capturar talento'.", objectName="tenue", wordWrap=True), 1)
+        capa_talento.addWidget(QLabel("Cuando el boton del talento este disponible, pulsa 'Talento'.", objectName="tenue", wordWrap=True), 1)
         der.addWidget(grupo_talento)
         der.addStretch()
         fila.addLayout(der, 1)
@@ -225,9 +232,9 @@ class PaginaCapturas(Pagina):
         self.mensaje("Si en el recuadro se ve el boton del talento, pulsa 'Guardar como talento de Odin'.")
 
     def guardar_talento(self):
-        if self.recorte_talento is None or "odin_talento" not in self.equipo.defs:
+        if self.recorte_talento is None or "odin.talento" not in self.equipo.defs:
             return
-        guardar_imagen(self.equipo.ruta_propia("odin_talento"), self.recorte_talento)
+        guardar_imagen(self.equipo.ruta_propia("odin.talento"), self.recorte_talento)
         self.equipo.recargar()
         self.refrescar_lista()
         self.mensaje("Talento de Odin guardado.")
@@ -238,7 +245,7 @@ class PaginaCapturas(Pagina):
             return
         self.equipo.recargar()
         mano = self.equipo.etiquetar(cartas.leer_mano(pantalla))
-        talento = self.equipo.plantilla("odin_talento")
+        talento = self.equipo.plantilla("odin.talento")
         visible = talento is not None and talento.esta(pantalla, 0.75)
         self.mensaje(
             "Reconocidas: " + "  ".join(str(c) for c in mano)

@@ -88,6 +88,11 @@ COORD = {
     "perro_derecho": (346, 386),  # perro claro
 }
 
+# Cara de cada personaje en la pantalla del equipo (antes de Start), de izquierda a derecha.
+# Recorte que evita el nivel, los iconos y el asociado de la esquina. Medido con capturas reales.
+RETRATOS = [(x + 22, 290, x + 80, 390) for x in (72, 178, 285, 391)]
+HOLGURA_RETRATO = 14  # margen alrededor del recorte al buscar (por si la pantalla se mueve un poco)
+
 REGION = {
     "espacios_cartas": (150, 690, 410, 800),  # (x1, y1, x2, y2) donde se ven los huecos para cartas
     "mano_4": (61, 822, 517, 945),  # las 8 cartas de la mano con 4 unidades

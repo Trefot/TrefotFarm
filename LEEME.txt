@@ -32,7 +32,7 @@ Las cartas de Odin y Gawain no vienen en AutoFarming; hay que capturarlas una ve
    (Opcional, pero ayuda a detectar el inicio del primer turno y a confirmar que se activo.)
 6. "Probar reconocimiento" en varios turnos para comprobar que todo se reconoce bien.
 
-Las capturas quedan en assets\equipo\perros_trefot\ (un PNG por carta).
+Las capturas quedan en la biblioteca: personajes\<personaje>\<carta>.png (sirven para todos los modos).
 
 
 LA INTERFAZ (menu de la izquierda)
@@ -41,6 +41,11 @@ Inicio            estado del juego, del bot y de la version (con los botones Bus
                   avisos; arranque rapido; resumen de hoy.
 Farmear           modo, opciones, Iniciar / Pausar / Detener, registro y vista en vivo del juego.
 Capturas          sacar y comprobar las imagenes de tus cartas (la insignia roja = las que faltan).
+Personajes        tu biblioteca: ficha de cada personaje (color, raza, roles, lo tengo), sus cartas y su
+                  retrato. Una captura sirve para todos los modos. Los retratos se sacan aqui, en la
+                  pantalla del equipo, y sirven para que el bot compruebe tu equipo antes de empezar.
+Equipos           para cada contenido: que puestos pide, si tienes a los recomendados y con quien
+                  podrias sustituirlos (segun los roles que marcaste en Personajes).
 Historial         todas las sesiones con victorias, derrotas, % de exito y victorias por hora.
 Recompensas       foto de la pantalla de recompensas de cada victoria (por dia o por sesion).
                   Mas adelante reconocera los objetos y mostrara los totales.
@@ -61,7 +66,7 @@ El programa revisa tu repositorio privado de GitHub al abrir y cada 30 minutos.
 Si hay una version nueva, se bloquea hasta instalarla:
   - si estaba farmeando, termina la pelea actual y se detiene (o pulsa "Detener el bot ya");
   - "Actualizar ahora" la descarga, la instala y reinicia el programa.
-Tus capturas (assets\equipo), config.yaml, el historial, las recompensas y los logs nunca se tocan.
+Tus capturas (personajes\), config.yaml, el historial, las recompensas y los logs nunca se tocan.
 Si habias editado a mano algun archivo del programa, se guarda una copia en logs\respaldo_<fecha>\.
 Sin internet o sin GitHub configurado, el programa funciona igual y lo vuelve a intentar despues.
 
@@ -77,8 +82,8 @@ Ajustes. Te avisa (con foto) si el bot se queda atascado.
 CARPETAS
 --------
 assets\imagenes\   plantillas de pantalla (de AutoFarming)
-assets\modelos\    modelos de tipo de carta y de hueco vacio (de AutoFarming)
-assets\equipo\     tus capturas de cartas
+assets\modelos\    modelo de hueco vacio (de AutoFarming)
+personajes\        tu biblioteca: usuario.yaml (fichas) y una carpeta por personaje con sus capturas
 capturas\          fotos completas que guardes
 recompensas\       fotos de las pantallas de recompensas (indice.jsonl = lista)
 logs\              errores inesperados (errores.log)

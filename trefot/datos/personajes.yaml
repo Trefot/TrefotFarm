@@ -1,0 +1,49 @@
+# Catalogo base de personajes (viene con el programa y lo actualizan las actualizaciones).
+# Lo que edites o agregues desde la pagina Personajes se guarda aparte, en personajes/usuario.yaml,
+# y se mezcla encima de esto: las actualizaciones nunca lo pisan.
+#
+# color: rojo | verde | azul | claro | oscuro
+# roles: ver ROLES en trefot/personajes.py
+# cartas: id -> descripcion. "respaldo" = imagen de AutoFarming que se usa si aun no hay captura propia.
+#         "boton: true" = no es una carta de la mano sino un boton de la pantalla (p. ej. un talento).
+
+odin:
+  nombre: Odin
+  color: claro
+  raza: sin definir
+  roles: [dano_single, dano_area, talento]
+  cartas:
+    single: {descripcion: Un objetivo}
+    area: {descripcion: Area}
+    ulti: {descripcion: Ulti}
+    talento: {descripcion: Boton del talento, boton: true}
+
+gawain:
+  nombre: Gawain
+  color: claro
+  raza: sin definir
+  roles: [dano_single, dano_area]
+  cartas:
+    single: {descripcion: Un objetivo}
+    area: {descripcion: Area}
+    ulti: {descripcion: Ulti}
+
+freyja_roja:
+  nombre: Freyja roja
+  color: rojo
+  raza: sin definir
+  roles: [ulti_remate]
+  cartas:
+    normal_1: {descripcion: Carta normal 1, respaldo: snake/freyja_st.png}
+    normal_2: {descripcion: Carta normal 2, respaldo: snake/freyja_aoe.png}
+    ulti: {descripcion: Ulti, respaldo: snake/freyja_ult.png}
+
+thonar_azul:
+  nombre: Thonar azul
+  color: azul
+  raza: sin definir
+  roles: [quita_postura]
+  cartas:
+    postura: {descripcion: Quita la postura, respaldo: dogs/b_thonar_stance.png}
+    otra: {descripcion: La otra carta, respaldo: dogs/b_thonar_gauge.png}
+    ulti: {descripcion: Ulti}

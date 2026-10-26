@@ -18,39 +18,30 @@ from trefot import cartas as C
 from trefot import entrada, juego
 from trefot.cartas import Carta, Rango, TipoCarta
 from trefot.control import control
-from trefot.equipo import DefCarta, Equipo
+from trefot.equipo import Equipo, Puesto
 from trefot.motor import Modo, Opcion, TerminarModo
 
 # ---------------------------------------------------------------------- el equipo
 EQUIPO = Equipo(
     "perros_trefot",
     "Odin, Gawain, Freyja roja, Thonar azul",
+    # En el orden de la pantalla del equipo (izquierda a derecha)
     [
-        DefCarta("odin_single", "Odin - carta de un objetivo"),
-        DefCarta("odin_area", "Odin - carta de area"),
-        DefCarta("odin_ulti", "Odin - ulti", obligatoria=False),
-        DefCarta("gawain_single", "Gawain - carta de un objetivo"),
-        DefCarta("gawain_area", "Gawain - carta de area"),
-        DefCarta("gawain_ulti", "Gawain - ulti", obligatoria=False),
-        DefCarta("freyja_1", "Freyja roja - carta normal 1", respaldos=("snake/freyja_st.png",)),
-        DefCarta("freyja_2", "Freyja roja - carta normal 2", respaldos=("snake/freyja_aoe.png",)),
-        DefCarta("freyja_ulti", "Freyja roja - ulti", respaldos=("snake/freyja_ult.png",)),
-        DefCarta("thonar_postura", "Thonar azul - carta que quita la postura", respaldos=("dogs/b_thonar_stance.png",)),
-        DefCarta("thonar_otra", "Thonar azul - la otra carta", respaldos=("dogs/b_thonar_gauge.png",)),
-        DefCarta("thonar_ulti", "Thonar azul - ulti", obligatoria=False),
-        DefCarta("odin_talento", "Boton del talento de Odin (pantalla)", obligatoria=False, es_carta=False),
+        Puesto("Dano a un objetivo (F1) y en area (F2), con su talento", ("dano_single", "dano_area"), "odin"),
+        Puesto("Dano a un objetivo (F1) y en area (F2)", ("dano_single", "dano_area"), "gawain"),
+        Puesto("Ulti en F2 cuyo golpe extra remata la F3", ("ulti_remate",), "freyja_roja"),
+        Puesto("Quitar la postura del perro izquierdo (F1)", ("quita_postura",), "thonar_azul"),
     ],
-    grupos={
-        "odin": ("odin_single", "odin_area", "odin_ulti"),
-        "gawain": ("gawain_single", "gawain_area", "gawain_ulti"),
-        "freyja": ("freyja_1", "freyja_2", "freyja_ulti"),
-        "thonar": ("thonar_postura", "thonar_otra", "thonar_ulti"),
+    obligatorias={
+        "odin.single", "odin.area", "gawain.single", "gawain.area",
+        "freyja_roja.normal_1", "freyja_roja.normal_2", "freyja_roja.ulti",
+        "thonar_azul.postura", "thonar_azul.otra",
     },
 )
 
-FREYJA_NORMALES = ("freyja_1", "freyja_2")
-THONAR_NORMALES = ("thonar_postura", "thonar_otra")
-PROTEGIDAS_FASE2 = ("gawain_area", "odin_area", "freyja_ulti")
+FREYJA_NORMALES = ("freyja_roja.normal_1", "freyja_roja.normal_2")
+THONAR_NORMALES = ("thonar_azul.postura", "thonar_azul.otra")
+PROTEGIDAS_FASE2 = ("gawain.area", "odin.area", "freyja_roja.ulti")
 TURNOS_MAXIMOS = {1: 2, 2: 1, 3: 1}
 
 
@@ -79,14 +70,14 @@ class Estrategia:
 
     def _f1t1(self, mano, accion):
         if accion == 0:
-            return self._o_reiniciar(mano, ("thonar_postura",), "F1T1: falta la postura de Thonar"), "izq", False
+            return self._o_reiniciar(mano, ("thonar_azul.postura",), "F1T1: falta la postura de Thonar"), "izq", False
         if accion == 1:
-            return self._o_reiniciar(mano, ("thonar_otra",), "F1T1: falta la otra carta de Thonar"), "der", False
+            return self._o_reiniciar(mano, ("thonar_azul.otra",), "F1T1: falta la otra carta de Thonar"), "der", False
         return self._o_reiniciar(mano, FREYJA_NORMALES, "F1T1: faltan cartas normales de Freyja"), None, False
 
     def _f1t2(self, mano, accion):
         if accion == 0:
-            if self.mejor(mano, ("freyja_ulti",)) is not None:
+            if self.mejor(mano, ("freyja_roja.ulti",)) is not None:
                 preferidas, alternativa = THONAR_NORMALES, FREYJA_NORMALES  # la ulti se guarda para la fase 2
             else:
                 preferidas, alternativa = FREYJA_NORMALES, THONAR_NORMALES  # cargar la ulti
@@ -97,10 +88,10 @@ class Estrategia:
                 raise Reiniciar("F1T2: no hay cartas de Freyja ni de Thonar")
             return idx, "izq", True
         if accion == 1:
-            return self._o_reiniciar(mano, ("odin_single",), "F1T2: falta la single de Odin"), None, False
+            return self._o_reiniciar(mano, ("odin.single",), "F1T2: falta la single de Odin"), None, False
         if accion == 2:
-            return self._o_reiniciar(mano, ("gawain_single",), "F1T2: falta la single de Gawain"), None, False
-        for grupo in (THONAR_NORMALES, FREYJA_NORMALES, ("odin_single",), ("gawain_single",)):
+            return self._o_reiniciar(mano, ("gawain.single",), "F1T2: falta la single de Gawain"), None, False
+        for grupo in (THONAR_NORMALES, FREYJA_NORMALES, ("odin.single",), ("gawain.single",)):
             idx = self.mejor(mano, grupo)
             if idx is not None:
                 return idx, None, False
@@ -111,13 +102,13 @@ class Estrategia:
 
     def _f2(self, mano, accion):
         if accion == 0:
-            return self._o_reiniciar(mano, ("gawain_area",), "F2: falta el area de Gawain"), "der", False
+            return self._o_reiniciar(mano, ("gawain.area",), "F2: falta el area de Gawain"), "der", False
         if accion == 1:
-            return self._o_reiniciar(mano, ("freyja_ulti",), "F2: falta la ulti de Freyja"), None, False
+            return self._o_reiniciar(mano, ("freyja_roja.ulti",), "F2: falta la ulti de Freyja"), None, False
         if accion == 2:
-            return self._o_reiniciar(mano, ("odin_area",), "F2: falta el area de Odin"), None, False
+            return self._o_reiniciar(mano, ("odin.area",), "F2: falta el area de Odin"), None, False
         g = EQUIPO.grupos
-        idx = self.mejor(mano, g["gawain"] + g["freyja"] + g["odin"])
+        idx = self.mejor(mano, g["gawain"] + g["freyja_roja"] + g["odin"])
         return (idx if idx is not None else self.derecha_jugable(mano)), None, False
 
     def _f3(self, mano):
@@ -189,6 +180,7 @@ class PerrosPiso4(Modo):
         self.estrategia = Estrategia()
         self.victorias = self.derrotas = self.reinicios = self.pociones = self.extras = 0
         self.derrotas_por_fase = defaultdict(int)
+        self.equipo_verificado = False
         self._nueva_pelea()
 
     def estado_inicial(self):
@@ -279,12 +271,29 @@ class PerrosPiso4(Modo):
                 self.pociones += 1
                 self._stats()
                 return None
+        if not self.equipo_verificado and juego.empezar.esta(p):
+            self._verificar_equipo(p)  # puede terminar el modo si el equipo no es el del guion
         self.clic_si(juego.empezar, p, o)
         if juego.carga_bestias.esta(p) or juego.carga_taberna.esta(p):
             self._nueva_pelea()
             self.log("¡A pelear!", "ok")
             return "pelea"
         return None
+
+    def _verificar_equipo(self, p):
+        """Una vez por sesion, antes del primer Start: el equipo en pantalla debe ser el del guion."""
+        self.equipo_verificado = True
+        errores, sin_retrato = EQUIPO.verificar_en_pantalla(p)
+        if errores:
+            self.log("El equipo no es el del guion: " + "; ".join(errores) + ".", "error")
+            self.log("Pon a Odin, Gawain, Freyja roja y Thonar azul (izquierda a derecha) y vuelve a iniciar.", "error")
+            raise TerminarModo()
+        if sin_retrato:
+            self.log(
+                "No puedo comprobar el equipo: faltan los retratos de " + ", ".join(sin_retrato)
+                + " (pagina Personajes -> Retratos del equipo).", "aviso")
+        else:
+            self.log("Equipo comprobado: Odin, Gawain, Freyja roja y Thonar azul.", "ok")
 
     # ------------------------------------------------------------------ pelea
     def pelea(self, p, o):
@@ -430,7 +439,7 @@ class PerrosPiso4(Modo):
         self.objetivo_actual = lado
 
     def _talento_visible(self, p) -> bool:
-        plantilla = EQUIPO.plantilla("odin_talento")
+        plantilla = EQUIPO.plantilla("odin.talento")
         return plantilla is not None and plantilla.esta(p, 0.75)
 
     def _activar_talento_odin(self):
