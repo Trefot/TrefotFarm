@@ -27,6 +27,7 @@ from trefot.gui.paginas.capturas import PaginaCapturas
 from trefot.gui.paginas.farmear import PaginaFarmear
 from trefot.gui.paginas.historial import PaginaHistorial
 from trefot.gui.paginas.inicio import PaginaInicio
+from trefot.gui.paginas.recompensas import PaginaRecompensas
 from trefot.gui.puente import Puente
 from trefot.modos import MODOS
 from trefot.rutas import RAIZ
@@ -38,6 +39,7 @@ MENU = [
     ("farmear", "⚔   Farmear"),
     ("capturas", "▣   Capturas"),
     ("historial", "☰   Historial"),
+    ("recompensas", "✦   Recompensas"),
     ("ajustes", "⚙   Ajustes"),
 ]
 
@@ -105,6 +107,7 @@ class VentanaPrincipal(QMainWindow):
             "farmear": self.farmear,
             "capturas": PaginaCapturas(self),
             "historial": PaginaHistorial(self),
+            "recompensas": PaginaRecompensas(self),
             "ajustes": PaginaAjustes(self),
         }
         for pagina in self.paginas.values():

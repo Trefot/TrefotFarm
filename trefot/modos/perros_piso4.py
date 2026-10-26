@@ -218,6 +218,8 @@ class PerrosPiso4(Modo):
         self.objetivo_actual: str | None = None
         self.talento_usado = False
         self.inicio_pelea = time.time()
+        self.foto_recompensa = False
+        self.ultima_pantalla_victoria = None
 
     def _stats(self):
         total = self.victorias + self.derrotas + self.reinicios
@@ -452,8 +454,16 @@ class PerrosPiso4(Modo):
     # ----------------------------------------------------------------- finales
     def victoria(self, p, o):
         self.clic_si(juego.info_mision, p, o)
+        if not self.foto_recompensa and juego.ok.esta(p):
+            # La pantalla con el boton OK tras ganar es la que lista las recompensas: foto antes de cerrarla.
+            self.guardar_recompensa(p, self.victorias + 1)
+            self.foto_recompensa = True
         self.clic_si(juego.ok, p, o)
         if juego.carga_bestias.esta(p):
+            if not self.foto_recompensa and self.ultima_pantalla_victoria is not None:
+                # No se vio el OK: la ultima pantalla antes de la carga es lo mas parecido.
+                self.guardar_recompensa(self.ultima_pantalla_victoria, self.victorias + 1)
+                self.foto_recompensa = True
             self.victorias += 1
             minutos = (time.time() - self.inicio_pelea) / 60
             self.log(f"¡VICTORIA #{self.victorias}! ({minutos:.1f} min)", "ok")
@@ -463,6 +473,7 @@ class PerrosPiso4(Modo):
                 self.log(f"Llegue a {meta} victorias.", "ok")
                 raise TerminarModo()
             return "elegir_piso"
+        self.ultima_pantalla_victoria = p
         return None
 
     def derrota(self, p, o):

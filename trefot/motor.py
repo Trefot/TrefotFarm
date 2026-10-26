@@ -12,7 +12,7 @@ from dataclasses import dataclass, field
 from typing import Any
 
 import trefot
-from trefot import avisos, config, entrada, historial, juego, ventana
+from trefot import avisos, config, entrada, historial, juego, recompensas, ventana
 from trefot.control import Detenido, control
 from trefot.vision import Plantilla
 
@@ -89,6 +89,15 @@ class Modo:
 
     def al_terminar(self):
         """Resumen final; los modos lo amplian."""
+
+    def guardar_recompensa(self, pantalla, victoria: int) -> None:
+        """Foto de la pantalla de recompensas para la pagina Recompensas. Un fallo aqui nunca para el bot."""
+        try:
+            recompensas.guardar(pantalla, modo=self.id, nombre_modo=self.nombre, sesion=self.stats["inicio"], victoria=victoria)
+            self.publicar_stats(fotos_recompensas=self.stats.get("fotos_recompensas", 0) + 1)
+            self.log("Foto de recompensas guardada.", "debug")
+        except Exception as error:
+            self.log(f"No pude guardar la foto de recompensas: {error}", "aviso")
 
     def en_zona_segura(self) -> bool:
         """True si se puede parar sin dejar nada a medias (los modos con peleas lo redefinen)."""
