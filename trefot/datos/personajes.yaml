@@ -21,13 +21,14 @@ odin:
 
 gawain:
   nombre: Gawain
+  # Ficha: "[Gold-Colored Magic] Knight of the Sun Gawain" - Attribute Light, Race Unknown, Four Knights
   color: claro
-  raza: sin definir
+  raza: desconocida
   roles: [dano_single, dano_area]
   cartas:
-    single: {descripcion: Un objetivo}
-    area: {descripcion: Area}
-    ulti: {descripcion: Ulti}
+    single: {descripcion: "Un objetivo (Ruthless Violence)"}
+    area: {descripcion: "Area (Golden Cataclysm; con Brilliance quita posturas)"}
+    ulti: {descripcion: "Ulti (Sunshine Burst, area)"}
 
 freyja_roja:
   nombre: Freyja roja
@@ -42,10 +43,11 @@ freyja_roja:
 
 thonar_azul:
   nombre: Thonar azul
+  # Ficha: "[Battle-Hardened Mercenary] Wanderer Thonar" - Attribute Speed, Race Human, Ragnarok
   color: azul
-  raza: sin definir
-  roles: [quita_postura]
+  raza: humano
+  roles: [quita_postura, dano_single, dano_area]
   cartas:
-    postura: {descripcion: Quita la postura, respaldo: dogs/b_thonar_stance.png}
-    otra: {descripcion: La otra carta, respaldo: dogs/b_thonar_gauge.png}
-    ulti: {descripcion: Ulti}
+    postura: {descripcion: "Quita la postura (Light Barrage, un objetivo)", respaldo: dogs/b_thonar_stance.png}
+    otra: {descripcion: "Area (Heavenly Strike)", respaldo: dogs/b_thonar_gauge.png}
+    ulti: {descripcion: "Ulti (Realization of Justice, un objetivo)"}
