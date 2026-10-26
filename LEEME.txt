@@ -22,7 +22,7 @@ ese permiso, TrefotFarm no podria ajustar su ventana ni hacerle clic.
 PRIMERA VEZ: CAPTURAS DE TUS CARTAS  (pagina "Capturas")
 ---------------------------------------------------------
 Las cartas de Odin y Gawain no vienen en AutoFarming; hay que capturarlas una vez.
-1. Abre el juego y pulsa "Ajustar ventana" (deja el area de juego en 540x960).
+1. Abre el juego y pulsa "Ajustar ventana" (deja la ventana en 554x960, el tamano para el que estan hechas las imagenes).
 2. Entra a una pelea de Perros piso 4 con el equipo (izq. a der.): Odin, Gawain, Freyja roja, Thonar azul.
 3. Cuando salga tu mano, pulsa "Capturar mano". Debajo de cada carta ves que reconoce el bot.
    En las que falten, elige en la lista que carta es y pulsa "Guardar".

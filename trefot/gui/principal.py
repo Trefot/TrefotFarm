@@ -180,7 +180,7 @@ class VentanaPrincipal(QMainWindow):
         if tam is None:
             self.barra_juego.setText(f"<span style='color:{tema.ERROR}'>●</span> Juego cerrado")
         else:
-            ok = tam == (config.obtener("ancho_ventana"), config.obtener("alto_ventana"))
+            ok = ventana.tamano_correcto(tam)
             color = tema.OK if ok else tema.AVISO
             self.barra_juego.setText(f"<span style='color:{color}'>●</span> Juego {tam[0]}x{tam[1]}")
         if self.puente.corriendo:

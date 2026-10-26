@@ -1,6 +1,6 @@
 """Todo lo que el bot sabe del juego: plantillas de pantalla y coordenadas fijas.
 
-Las coordenadas son para el area de juego de 540x960 (boton "Ajustar ventana") y son relativas
+Las coordenadas son para la ventana de 554x960 (boton "Ajustar ventana") y son relativas
 a la esquina superior izquierda de la ventana. Las plantillas vienen del proyecto AutoFarming
 (licencia MIT) y viven en assets/imagenes.
 """

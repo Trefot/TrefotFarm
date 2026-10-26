@@ -128,12 +128,12 @@ class PaginaInicio(Pagina):
         elif not ventana.es_admin():
             self._pintar(self.juego_txt, "Sin permisos", tema.AVISO)
             self.juego_det.setText("TrefotFarm no esta como administrador: reabrelo aceptando el aviso de Windows.")
-        elif tam == (config.obtener("ancho_ventana"), config.obtener("alto_ventana")):
+        elif ventana.tamano_correcto(tam):
             self._pintar(self.juego_txt, "Listo", tema.OK)
             self.juego_det.setText(f"Ventana {tam[0]}x{tam[1]}.")
         else:
             self._pintar(self.juego_txt, "Ajustar", tema.AVISO)
-            self.juego_det.setText(f"La ventana mide {tam[0]}x{tam[1]}; debe ser 540x960.")
+            self.juego_det.setText(f"La ventana mide {tam[0]}x{tam[1]}; debe ser {ventana.TAMANO_OBJETIVO[0]}x{ventana.TAMANO_OBJETIVO[1]}. Pulsa Ajustar.")
 
         # bot
         from trefot.control import control

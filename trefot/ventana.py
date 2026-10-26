@@ -3,7 +3,6 @@
 import ctypes
 import threading
 import time
-from ctypes import wintypes
 
 import numpy as np
 import win32con
@@ -82,29 +81,24 @@ def capturar() -> tuple[np.ndarray, tuple[int, int]]:
         raise RuntimeError(f"No pude capturar la ventana: {ultimo_error}")
 
 
+# Tamano de la ventana COMPLETA (con barra de titulo y bordes) para el que estan hechas las
+# plantillas y coordenadas de AutoFarming: da capturas de 550x940. Comprobado con capturas reales.
+TAMANO_OBJETIVO = (554, 960)
+TOLERANCIA_PX = 3
+
+
 def tamano_actual() -> tuple[int, int] | None:
+    """Tamano exterior de la ventana del juego, o None si no esta abierta."""
     hwnd = buscar_ventana()
     if not hwnd:
         return None
-    izq, arr, der, aba = win32gui.GetClientRect(hwnd)
+    izq, arr, der, aba = win32gui.GetWindowRect(hwnd)
     return der - izq, aba - arr
 
 
-def _tamano_exterior(hwnd: int, ancho: int, alto: int) -> tuple[int, int]:
-    class RECT(ctypes.Structure):
-        _fields_ = [("left", ctypes.c_long), ("top", ctypes.c_long), ("right", ctypes.c_long), ("bottom", ctypes.c_long)]
-
-    rect = RECT(0, 0, ancho, alto)
-    estilo = win32gui.GetWindowLong(hwnd, win32con.GWL_STYLE)
-    estilo_ex = win32gui.GetWindowLong(hwnd, win32con.GWL_EXSTYLE)
-    user32 = ctypes.windll.user32
-    hecho = False
-    if hasattr(user32, "GetDpiForWindow") and hasattr(user32, "AdjustWindowRectExForDpi"):
-        dpi = user32.GetDpiForWindow(wintypes.HWND(hwnd))
-        hecho = bool(user32.AdjustWindowRectExForDpi(ctypes.byref(rect), estilo, False, estilo_ex, dpi))
-    if not hecho:
-        user32.AdjustWindowRectEx(ctypes.byref(rect), estilo, False, estilo_ex)
-    return rect.right - rect.left, rect.bottom - rect.top
+def tamano_correcto(tam: tuple[int, int] | None = None) -> bool:
+    tam = tamano_actual() if tam is None else tam
+    return tam is not None and all(abs(a - b) <= TOLERANCIA_PX for a, b in zip(tam, TAMANO_OBJETIVO))
 
 
 def es_admin() -> bool:
@@ -123,12 +117,12 @@ ultimo_error = ""  # motivo del ultimo ajuste fallido, para mostrarlo en la inte
 
 
 def ajustar_tamano() -> bool:
-    """Deja el area del juego en el tamano para el que estan hechas las coordenadas (540x960).
+    """Deja la ventana del juego en TAMANO_OBJETIVO.
 
     Nunca lanza excepciones: si falla devuelve False y deja el motivo en ``ultimo_error``.
     """
     global ultimo_error
-    ancho, alto = config.obtener("ancho_ventana"), config.obtener("alto_ventana")
+    ancho, alto = TAMANO_OBJETIVO
     with _lock:
         hwnd = buscar_ventana()
         if not hwnd:
@@ -136,18 +130,20 @@ def ajustar_tamano() -> bool:
             return False
         try:
             izq, arr, _, _ = win32gui.GetWindowRect(hwnd)
-            ext_ancho, ext_alto = _tamano_exterior(hwnd, ancho, alto)
-            # Que quede dentro de la pantalla
+            # Que quede entera dentro de la pantalla
+            pantalla_ancho = ctypes.windll.user32.GetSystemMetrics(0)
             pantalla_alto = ctypes.windll.user32.GetSystemMetrics(1)
-            arr = max(0, min(arr, pantalla_alto - ext_alto))
-            izq = max(0, izq)
-            win32gui.SetWindowPos(hwnd, win32con.HWND_TOP, izq, arr, ext_ancho, ext_alto, win32con.SWP_SHOWWINDOW)
+            izq = max(0, min(izq, pantalla_ancho - ancho))
+            arr = max(0, min(arr, pantalla_alto - alto))
+            if win32gui.IsIconic(hwnd):
+                win32gui.ShowWindow(hwnd, win32con.SW_RESTORE)
+            win32gui.SetWindowPos(hwnd, win32con.HWND_TOP, izq, arr, ancho, alto, win32con.SWP_SHOWWINDOW)
         except win32gui.error as error:
             ultimo_error = AVISO_ADMIN if error.winerror == 5 and not es_admin() else f"No pude ajustar la ventana: {error.strerror}"
             return False
         time.sleep(0.3)
         actual = tamano_actual()
-        if actual is not None and abs(actual[0] - ancho) <= 4 and abs(actual[1] - alto) <= 4:
+        if tamano_correcto(actual):
             ultimo_error = ""
             return True
         ultimo_error = f"La ventana quedo en {actual[0]}x{actual[1]} en vez de {ancho}x{alto}." if actual else "La ventana se cerro."

@@ -8,8 +8,6 @@ from trefot.rutas import CONFIG
 
 POR_DEFECTO = {
     "titulo_ventana": "7DS",  # titulo exacto de la ventana del juego (Japon: "グラクロ")
-    "ancho_ventana": 540,
-    "alto_ventana": 960,
     "ntfy_canal": "",  # canal de ntfy.sh para avisos al movil (vacio = desactivado)
     "minutos_atasco": 8,  # minutos sin cambios antes de avisar que el bot esta trabado
     "tecla_pausa": "f9",
