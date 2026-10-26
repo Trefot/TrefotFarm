@@ -49,9 +49,18 @@ class DialogoRetratos(QDialog):
     def __init__(self, padre, pantalla, biblioteca: dict[str, P.Personaje], sugeridos: list[str]):
         super().__init__(padre)
         self.setWindowTitle("Retratos del equipo")
-        self.pantalla = pantalla
+        self.pantalla, self.biblioteca = pantalla, biblioteca
         capa = QVBoxLayout(self)
         capa.addWidget(QLabel("Elige quien esta en cada puesto (izquierda a derecha) y pulsa Guardar.", objectName="tenue"))
+        es_equipo = juego.empezar.esta(pantalla)
+        if not es_equipo:
+            # Los recortes solo son buenos en la pantalla del equipo (la que tiene el boton Start).
+            aviso = QLabel(
+                "⚠ Esta no parece la pantalla del equipo (no veo el boton Start). Los recortes pueden salir "
+                "movidos: revisalos antes de guardar.", wordWrap=True)
+            aviso.setStyleSheet(f"color: {tema.ERROR}; font-weight: 600;")
+            capa.addWidget(aviso)
+            sugeridos = []
         fila = QHBoxLayout()
         self.combos = []
         for puesto in range(4):
@@ -81,10 +90,17 @@ class DialogoRetratos(QDialog):
         capa.addLayout(botones)
 
     def _guardar(self):
-        for puesto, combo in enumerate(self.combos):
-            pid = combo.currentData()
-            if pid:
-                guardar_imagen(P.CARPETA / pid / f"{P.RETRATO}.png", recorte_retrato(self.pantalla, puesto))
+        elegidos = [(puesto, combo.currentData()) for puesto, combo in enumerate(self.combos) if combo.currentData()]
+        reemplaza = [self.biblioteca[pid].nombre for _, pid in elegidos if self.biblioteca[pid].tiene_captura(P.RETRATO)]
+        if reemplaza:
+            r = QMessageBox.question(
+                self, "Reemplazar retratos",
+                "Ya tienen retrato: " + ", ".join(reemplaza) + ".\n¿Reemplazarlos? (El anterior se guarda y se "
+                "puede recuperar desde su ficha con 'Volver al anterior'.)")
+            if r != QMessageBox.Yes:
+                return
+        for puesto, pid in elegidos:
+            P.guardar_con_respaldo(P.CARPETA / pid / f"{P.RETRATO}.png", recorte_retrato(self.pantalla, puesto))
         self.accept()
 
 
@@ -160,7 +176,7 @@ class DialogoFicha(QDialog):
         pj = self.biblioteca[self.combo_pj.currentData()]
         for i, combo in enumerate(self.combos):
             if combo.currentData():
-                guardar_imagen(pj.ruta_ficha(combo.currentData()), recorte_desde_ficha(self.pantalla, i))
+                P.guardar_con_respaldo(pj.ruta_ficha(combo.currentData()), recorte_desde_ficha(self.pantalla, i))
         pj.color, pj.raza = self.color.currentText(), self.raza.currentText()
         P.guardar(pj)
         self.guardado = pj.id
@@ -195,6 +211,12 @@ class TarjetaCartaPj(QFrame):
             b = QPushButton("Borrar captura")
             b.setStyleSheet("padding: 4px;")
             b.clicked.connect(lambda: pagina.borrar_captura(pj, clave))
+            capa.addWidget(b)
+        archivo = pj.ruta_ficha(clave) if estado == "ficha" else pj.ruta(clave)
+        if P.ruta_anterior(archivo).is_file():
+            b = QPushButton("Volver al anterior")
+            b.setStyleSheet("padding: 4px;")
+            b.clicked.connect(lambda: pagina.volver_anterior(pj, archivo))
             capa.addWidget(b)
         capa.addStretch()
 
@@ -411,6 +433,10 @@ class PaginaPersonajes(Pagina):
         if r == QMessageBox.Yes:
             pj.ruta(clave).unlink(missing_ok=True)
             pj.ruta_ficha(clave).unlink(missing_ok=True)
+            self._cambio()
+
+    def volver_anterior(self, pj: P.Personaje, archivo):
+        if P.volver_a_anterior(archivo):
             self._cambio()
 
     def _cambio(self):

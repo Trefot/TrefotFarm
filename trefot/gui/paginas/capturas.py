@@ -23,6 +23,7 @@ from PyQt5.QtWidgets import (
 )
 
 from trefot import cartas, juego, ventana
+from trefot import personajes as P
 from trefot.equipo import recorte_para_plantilla
 from trefot.gui import tema
 from trefot.gui.comun import Pagina, a_pixmap
@@ -76,7 +77,7 @@ class TarjetaCarta(QFrame):
         nombre = self.combo.currentData()
         if not nombre:
             return
-        guardar_imagen(self.equipo.ruta_propia(nombre), recorte_para_plantilla(self.carta.imagen))
+        P.guardar_con_respaldo(self.equipo.ruta_propia(nombre), recorte_para_plantilla(self.carta.imagen))
         self.equipo.recargar()
         self.pagina.refrescar_lista()
         self.pagina.mensaje(f"Guardada '{nombre}'.")
@@ -234,7 +235,7 @@ class PaginaCapturas(Pagina):
     def guardar_talento(self):
         if self.recorte_talento is None or "odin.talento" not in self.equipo.defs:
             return
-        guardar_imagen(self.equipo.ruta_propia("odin.talento"), self.recorte_talento)
+        P.guardar_con_respaldo(self.equipo.ruta_propia("odin.talento"), self.recorte_talento)
         self.equipo.recargar()
         self.refrescar_lista()
         self.mensaje("Talento de Odin guardado.")

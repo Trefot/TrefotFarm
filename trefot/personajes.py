@@ -16,7 +16,7 @@ from pathlib import Path
 import yaml
 
 from trefot.rutas import EQUIPO, IMAGENES, RAIZ
-from trefot.vision import Plantilla
+from trefot.vision import Plantilla, guardar_imagen
 
 BASE = Path(__file__).resolve().parent / "datos" / "personajes.yaml"
 CARPETA = RAIZ / "personajes"
@@ -210,6 +210,31 @@ def nuevo_id(nombre: str, existentes) -> str:
     while pid in existentes:
         pid, n = f"{base}_{n}", n + 1
     return pid
+
+
+def ruta_anterior(ruta: Path) -> Path:
+    return ruta.with_name(f"{ruta.stem}_anterior{ruta.suffix}")
+
+
+def guardar_con_respaldo(ruta: Path, imagen) -> None:
+    """Guarda una captura; si ya habia una, la deja como <nombre>_anterior.png para poder deshacer."""
+    if ruta.is_file():
+        shutil.copy2(ruta, ruta_anterior(ruta))
+    guardar_imagen(ruta, imagen)
+
+
+def volver_a_anterior(ruta: Path) -> bool:
+    """Intercambia la captura actual con la anterior (deshacer / rehacer)."""
+    anterior = ruta_anterior(ruta)
+    if not anterior.is_file():
+        return False
+    temporal = ruta.with_name(f"{ruta.stem}_tmp{ruta.suffix}")
+    if ruta.is_file():
+        ruta.replace(temporal)
+    anterior.replace(ruta)
+    if temporal.is_file():
+        temporal.replace(anterior)
+    return True
 
 
 def separar(clave: str) -> tuple[str, str]:
