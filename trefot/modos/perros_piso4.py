@@ -1,10 +1,14 @@
 """Perros piso 4 con el equipo Trefot: Odin, Gawain, Freyja roja y Thonar azul.
 
 Guion (si algo se sale de el, se rinde y reinicia, que es lo mas rapido con este equipo):
-  Fase 1 T1: perro IZQ -> postura de Thonar | perro DER -> otra de Thonar | 2 normales de Freyja.
-  Fase 1 T2: talento de Odin | perro IZQ | Freyja (si su ulti aun no esta) o Thonar (si ya esta) |
-             single de Odin | single de Gawain | relleno sin gastar lo de la fase 2.
-  Fase 2 T1: lobo azul (IZQ) | area de Gawain | ulti de Freyja | area de Odin | cualquier carta de G/F/O.
+  Siempre se selecciona el perro que NO esta en la burbuja (la burbuja es su postura y no se puede
+  seleccionar): el DERECHO en la fase 1 y el lobo azul IZQUIERDO en la fase 2. Las cartas que quitan
+  postura se la quitan al de la burbuja igualmente.
+  Fase 1 T1: postura de Thonar | otra de Thonar | 2 normales de Freyja.
+  Fase 1 T2: talento de Odin | Freyja (si su ulti aun no esta) o Thonar (si ya esta; primero la otra,
+             la postura se guarda para la fase 2) | single de Odin | single de Gawain | relleno.
+  Fase 2 T1: quitar la postura (postura de Thonar, single de Odin o area de Gawain) | area de Gawain
+             o de Odin | ulti de Freyja | area de Odin o cualquier carta de G/F/O.
   Fase 3 T1: no se lanza ninguna carta: solo se mueven cartas (el golpe
              secundario de la ulti de Freyja termina la pelea).
 
@@ -41,8 +45,9 @@ EQUIPO = Equipo(
 )
 
 FREYJA_NORMALES = ("freyja_roja.normal_1", "freyja_roja.normal_2")
-THONAR_NORMALES = ("thonar_azul.postura", "thonar_azul.otra")
-PROTEGIDAS_FASE2 = ("gawain.area", "odin.area", "freyja_roja.ulti")
+THONAR_POSTURA = ("thonar_azul.postura",)
+THONAR_OTRA = ("thonar_azul.otra",)
+PROTEGIDAS_FASE2 = ("gawain.area", "odin.area", "freyja_roja.ulti", "thonar_azul.postura")
 TURNOS_MAXIMOS = {1: 2, 2: 1, 3: 1}
 PAUSA_ENTRE_CARTAS = 0.5  # tras colocarse una carta, antes de la siguiente (animacion)
 
@@ -72,7 +77,7 @@ class Estrategia:
 
     def _f1t1(self, mano, accion):
         if accion == 0:
-            return self._o_reiniciar(mano, ("thonar_azul.postura",), "F1T1: falta la postura de Thonar"), "izq", False
+            return self._o_reiniciar(mano, ("thonar_azul.postura",), "F1T1: falta la postura de Thonar"), "der", False
         if accion == 1:
             return self._o_reiniciar(mano, ("thonar_azul.otra",), "F1T1: falta la otra carta de Thonar"), "der", False
         return self._o_reiniciar(mano, FREYJA_NORMALES, "F1T1: faltan cartas normales de Freyja"), None, False
@@ -80,23 +85,20 @@ class Estrategia:
     def _f1t2(self, mano, accion):
         if accion == 0:
             if self.mejor(mano, ("freyja_roja.ulti",)) is not None:
-                preferidas, alternativa = THONAR_NORMALES, FREYJA_NORMALES  # la ulti se guarda para la fase 2
+                orden = (THONAR_OTRA, FREYJA_NORMALES, THONAR_POSTURA)  # la ulti se guarda para la fase 2
             else:
-                preferidas, alternativa = FREYJA_NORMALES, THONAR_NORMALES  # cargar la ulti
-            idx = self.mejor(mano, preferidas)
-            if idx is None:
-                idx = self.mejor(mano, alternativa)
+                orden = (FREYJA_NORMALES, THONAR_OTRA, THONAR_POSTURA)  # cargar la ulti
+            idx = self.primera(mano, orden)
             if idx is None:
                 raise Reiniciar("F1T2: no hay cartas de Freyja ni de Thonar")
-            return idx, "izq", True
+            return idx, "der", True
         if accion == 1:
             return self._o_reiniciar(mano, ("odin.single",), "F1T2: falta la single de Odin"), None, False
         if accion == 2:
             return self._o_reiniciar(mano, ("gawain.single",), "F1T2: falta la single de Gawain"), None, False
-        for grupo in (THONAR_NORMALES, FREYJA_NORMALES, ("odin.single",), ("gawain.single",)):
-            idx = self.mejor(mano, grupo)
-            if idx is not None:
-                return idx, None, False
+        idx = self.primera(mano, (THONAR_OTRA, FREYJA_NORMALES, ("gawain.single",), ("odin.single",), THONAR_POSTURA))
+        if idx is not None:
+            return idx, None, False
         for carta in reversed(mano):
             if carta.jugable and carta.nombre not in PROTEGIDAS_FASE2:
                 return carta.posicion, None, False
@@ -104,12 +106,21 @@ class Estrategia:
 
     def _f2(self, mano, accion):
         if accion == 0:
-            # En F2 el perro derecho esta en una burbuja roja; se apunta al lobo azul de la izquierda.
-            return self._o_reiniciar(mano, ("gawain.area",), "F2: falta el area de Gawain"), "izq", False
+            # Primero quitar la postura (la burbuja roja del perro derecho), apuntando al lobo azul.
+            idx = self.primera(mano, (THONAR_POSTURA, ("odin.single",), ("gawain.area",)))
+            if idx is None:
+                raise Reiniciar("F2: no hay carta para quitar la postura (Thonar, single de Odin o area de Gawain)")
+            return idx, "izq", False
         if accion == 1:
-            return self._o_reiniciar(mano, ("freyja_roja.ulti",), "F2: falta la ulti de Freyja"), None, False
+            idx = self.primera(mano, (("gawain.area",), ("odin.area",)))
+            if idx is None:
+                raise Reiniciar("F2: no queda area de Gawain ni de Odin")
+            return idx, None, False
         if accion == 2:
-            return self._o_reiniciar(mano, ("odin.area",), "F2: falta el area de Odin"), None, False
+            return self._o_reiniciar(mano, ("freyja_roja.ulti",), "F2: falta la ulti de Freyja"), None, False
+        idx = self.primera(mano, (("odin.area",), ("gawain.area",)))
+        if idx is not None:
+            return idx, None, False
         g = EQUIPO.grupos
         idx = self.mejor(mano, g["gawain"] + g["freyja_roja"] + g["odin"])
         return (idx if idx is not None else self.derecha_jugable(mano)), None, False
@@ -128,6 +139,14 @@ class Estrategia:
         raise Reiniciar("F3: no hay cartas que mover")
 
     # ------------------------------------------------------------------ ayudantes
+    def primera(self, mano: list[Carta], grupos) -> int | None:
+        """La mejor carta del primer grupo (en orden de preferencia) que tenga alguna en la mano."""
+        for grupo in grupos:
+            idx = self.mejor(mano, grupo)
+            if idx is not None:
+                return idx
+        return None
+
     @staticmethod
     def mejor(mano: list[Carta], nombres: Sequence[str]) -> int | None:
         """La carta de mayor rango con alguno de esos nombres (la mas a la derecha si empatan)."""
