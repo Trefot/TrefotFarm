@@ -18,6 +18,7 @@ from PyQt5.QtWidgets import (
     QWidget,
 )
 
+import trefot
 from trefot import actualizador, config, ventana
 from trefot.control import control
 from trefot.gui import tema
@@ -57,7 +58,8 @@ class _Senales(QObject):
 class VentanaPrincipal(QMainWindow):
     def __init__(self):
         super().__init__()
-        self.setWindowTitle(f"TrefotFarm v{actualizador.version_local()}")
+        self.version_cargada = trefot.__version__  # la que esta corriendo (la del disco puede ser mas nueva)
+        self.setWindowTitle(f"TrefotFarm v{self.version_cargada}")
         self.resize(1320, 800)
         self.setMinimumSize(1100, 680)
         self.puente = Puente()
@@ -195,9 +197,12 @@ class VentanaPrincipal(QMainWindow):
         else:
             self.barra_bot.setText("Bot detenido")
         est = self.estado_update
-        version = actualizador.version_local()
+        version = self.version_cargada
         self.lbl_version.setText(f"v{version}")
-        if est and est.hay_update:
+        if self.reinicio_pendiente:
+            self.barra_update.setText(
+                f"<span style='color:{tema.AVISO}'>v{actualizador.version_local()} instalada · reinicia para usarla</span>")
+        elif est and est.hay_update:
             self.barra_update.setText(f"<span style='color:{tema.AVISO}'>Actualizacion obligatoria v{est.version_remota}</span>")
         elif est and est.error:
             self.barra_update.setText(f"v{version} · {est.error}")
@@ -205,6 +210,24 @@ class VentanaPrincipal(QMainWindow):
             self.barra_update.setText(f"v{version} · al dia" if est else f"v{version}")
 
     # ------------------------------------------------------------ actualizaciones
+    @property
+    def reinicio_pendiente(self) -> bool:
+        """Los archivos del disco son de una version distinta a la que esta corriendo."""
+        try:
+            return actualizador.version_local() != self.version_cargada
+        except OSError:
+            return False
+
+    def accion_actualizar(self):
+        """Boton Actualizar de Inicio: reinicia si la version nueva ya esta en disco; si no, actualiza."""
+        if self.reinicio_pendiente:
+            if self.puente.corriendo:
+                QMessageBox.information(self, "Reiniciar", "Deten el bot antes de reiniciar.")
+                return
+            self._reiniciar()
+        else:
+            self.mostrar_bloqueo()
+
     def buscar_updates(self, manual: bool = False):
         if self.revisando or self.actualizando:
             return

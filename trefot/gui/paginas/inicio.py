@@ -51,7 +51,7 @@ class PaginaInicio(Pagina):
         self.b_buscar.setToolTip("Buscar actualizaciones ahora")
         self.b_buscar.clicked.connect(lambda: app.buscar_updates(manual=True))
         self.b_actualizar = QPushButton("⟳  Actualizar", objectName="primario")
-        self.b_actualizar.clicked.connect(app.mostrar_bloqueo)
+        self.b_actualizar.clicked.connect(app.accion_actualizar)
         bv.addWidget(self.b_buscar)
         bv.addWidget(self.b_actualizar)
         fila.addWidget(m)
@@ -150,7 +150,13 @@ class PaginaInicio(Pagina):
 
         # version
         est = self.app.estado_update
-        self.ver_txt.setText(f"v{version_local()}")
+        self.ver_txt.setText(f"v{self.app.version_cargada}")
+        self.b_actualizar.setText("⟳  Reiniciar" if self.app.reinicio_pendiente else "⟳  Actualizar")
+        if self.app.reinicio_pendiente:
+            self.ver_det.setText(f"v{version_local()} ya esta instalada: reinicia para usarla.")
+            self.b_buscar.setEnabled(False)
+            self.b_actualizar.setEnabled(not self.app.puente.corriendo)
+            return self._refrescar_resto()
         if self.app.revisando or est is None:
             self.ver_det.setText("Buscando actualizaciones...")
         elif est.hay_update:
@@ -161,7 +167,9 @@ class PaginaInicio(Pagina):
             self.ver_det.setText(f"Al dia · revisado a las {time.strftime('%H:%M', time.localtime(est.revisado))}")
         self.b_buscar.setEnabled(not self.app.revisando)
         self.b_actualizar.setEnabled(bool(est and est.hay_update))
+        self._refrescar_resto()
 
+    def _refrescar_resto(self):
         # capturas y modo
         modo = MODOS.get(config.obtener("ultimo_modo")) or next(iter(MODOS.values()))
         self.modo_txt.setText(modo.nombre)
