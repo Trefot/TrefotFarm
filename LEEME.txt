@@ -19,20 +19,20 @@ Windows pedira permiso de administrador: acepta. El juego corre como administrad
 ese permiso, TrefotFarm no podria ajustar su ventana ni hacerle clic.
 
 
-PRIMERA VEZ: CAPTURAS DE TUS CARTAS  (pagina "Capturas")
----------------------------------------------------------
-Las cartas de Odin y Gawain no vienen en AutoFarming; hay que capturarlas una vez.
-1. Abre el juego y pulsa "Ajustar ventana" (deja la ventana en 554x960, el tamano para el que estan hechas las imagenes).
-2. Entra a una pelea de Perros piso 4 con el equipo (izq. a der.): Odin, Gawain, Freyja roja, Thonar azul.
-3. Cuando salga tu mano, pulsa "Capturar mano". Debajo de cada carta ves que reconoce el bot.
-   En las que falten, elige en la lista que carta es y pulsa "Guardar".
-4. Repite en otros turnos hasta que no quede ninguna ✖ roja.
-   Las ◐ amarillas funcionan con la imagen de AutoFarming; si fallan, captura tambien esas.
-5. Talento de Odin: cuando el boton este disponible, "Capturar talento" y "Guardar como talento de Odin".
-   (Opcional, pero ayuda a detectar el inicio del primer turno y a confirmar que se activo.)
-6. "Probar reconocimiento" en varios turnos para comprobar que todo se reconoce bien.
+PRIMERA VEZ: CAPTURAS DE TUS PERSONAJES
+---------------------------------------
+Lo mas rapido es sacarlas de la ficha de cada heroe (no hace falta pelear):
+1. Abre el juego y pulsa "Ajustar" (deja la ventana en 554x960, el tamano de las imagenes).
+2. En el juego: Heroes -> el personaje (su ficha, con la fila "Skills" abajo).
+3. En TrefotFarm: Personajes -> "Desde la ficha". Elige el personaje, revisa que carta es cada
+   una (vienen en orden: normal 1, normal 2, ulti), copia color y raza de la ficha y Guardar.
+4. Repite con cada personaje. Para el equipo de Perros: Odin, Gawain, Freyja roja y Thonar azul.
+5. Retratos: en la pantalla del equipo (antes de Start), Personajes -> "Retratos".
+6. Talento de Odin (opcional): en una pelea, Capturas -> "Talento".
+Si una carta de la ficha no se reconoce bien en pelea, captura esa carta en una pelea
+(Capturas -> "Capturar mano"): la captura de pelea tiene prioridad sobre la de la ficha.
 
-Las capturas quedan en la biblioteca: personajes\<personaje>\<carta>.png (sirven para todos los modos).
+Las capturas quedan en la biblioteca: personajes\<personaje>\ (sirven para todos los modos).
 
 
 LA INTERFAZ (menu de la izquierda)

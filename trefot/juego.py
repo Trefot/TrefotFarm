@@ -91,7 +91,11 @@ COORD = {
 # Cara de cada personaje en la pantalla del equipo (antes de Start), de izquierda a derecha.
 # Recorte que evita el nivel, los iconos y el asociado de la esquina. Medido con capturas reales.
 RETRATOS = [(x + 22, 290, x + 80, 390) for x in (72, 178, 285, 391)]
-HOLGURA_RETRATO = 14  # margen alrededor del recorte al buscar (por si la pantalla se mueve un poco)
+HOLGURA_RETRATO = 14
+
+# Cartas de la fila "Skills" en la ficha del heroe (Heroes -> personaje): normal 1, normal 2, ulti.
+# (x1, y1, x2, y2). Medido en las fichas de Odin y Freyja: el diseno es el mismo para todos.
+FICHA_CARTAS = [(35, 600, 89, 698), (95, 600, 149, 698), (160, 600, 214, 698)]  # margen alrededor del recorte al buscar (por si la pantalla se mueve un poco)
 
 REGION = {
     "espacios_cartas": (150, 690, 410, 800),  # (x1, y1, x2, y2) donde se ven los huecos para cartas

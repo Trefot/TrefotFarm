@@ -37,6 +37,14 @@ ROLES = {
 }
 RETRATO = "retrato"  # captura de la cara en la pantalla del equipo (no es una carta)
 
+# Cartas sacadas de la ficha del heroe (Heroes -> personaje -> fila "Skills"). Medido con capturas
+# reales: la carta de la ficha es mas pequena que en la mano (x1.22 de ancho, x1.26 de alto) y,
+# reescalada, reconoce la carta en pelea con 0.60-0.81 frente a <=0.39 de las demas cartas.
+SUFIJO_FICHA = "_ficha"
+ESCALA_FICHA = (1.22, 1.26)
+UMBRAL_PROPIA = 0.7
+UMBRAL_FICHA = 0.55
+
 _lock = threading.RLock()
 
 
@@ -66,24 +74,39 @@ class Personaje:
     def ruta(self, carta: str) -> Path:
         return self.carpeta / f"{carta}.png"
 
+    def ruta_ficha(self, carta: str) -> Path:
+        """Carta sacada de la ficha del heroe (ya reescalada al tamano de la mano)."""
+        return self.carpeta / f"{carta}{SUFIJO_FICHA}.png"
+
     def tiene_captura(self, carta: str) -> bool:
         return self.ruta(carta).is_file()
 
-    def plantilla(self, carta: str) -> Plantilla | None:
-        """Captura propia; si no hay, la imagen de respaldo de AutoFarming; si tampoco, None."""
-        rutas = [self.ruta(carta)] if self.tiene_captura(carta) else []
+    def _respaldo(self, carta: str) -> Path | None:
         c = self.cartas.get(carta)
-        if c and c.respaldo and (IMAGENES / c.respaldo).is_file():
-            rutas.append(IMAGENES / c.respaldo)
-        return Plantilla(*rutas, nombre=f"{self.id}.{carta}") if rutas else None
+        ruta = IMAGENES / c.respaldo if c and c.respaldo else None
+        return ruta if ruta and ruta.is_file() else None
 
     def estado_carta(self, carta: str) -> str:
+        """'propia' (de una pelea) > 'ficha' (de la ficha del heroe) > 'respaldo' (AutoFarming) > 'falta'."""
         if self.tiene_captura(carta):
             return "propia"
-        c = self.cartas.get(carta)
-        if c and c.respaldo and (IMAGENES / c.respaldo).is_file():
+        if self.ruta_ficha(carta).is_file():
+            return "ficha"
+        if self._respaldo(carta):
             return "respaldo"
         return "falta"
+
+    def plantilla(self, carta: str) -> tuple[Plantilla | None, float]:
+        """La mejor imagen disponible para reconocer la carta y el umbral con que se compara."""
+        estado = self.estado_carta(carta)
+        nombre = f"{self.id}.{carta}"
+        if estado == "propia":
+            return Plantilla(self.ruta(carta), nombre=nombre), UMBRAL_PROPIA
+        if estado == "ficha":
+            return Plantilla(self.ruta_ficha(carta), nombre=nombre), UMBRAL_FICHA
+        if estado == "respaldo":
+            return Plantilla(self._respaldo(carta), nombre=nombre), UMBRAL_PROPIA
+        return None, UMBRAL_PROPIA
 
 
 # ------------------------------------------------------------------ carga / guardado

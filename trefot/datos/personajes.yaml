@@ -9,12 +9,13 @@
 
 odin:
   nombre: Odin
+  # Ficha: "[Almighty] Supreme God Odin" - Attribute Light, Race Unknown, Ragnarok / God
   color: claro
-  raza: sin definir
-  roles: [dano_single, dano_area, talento]
+  raza: desconocida
+  roles: [dano_single, dano_area, quita_postura, talento]
   cartas:
-    single: {descripcion: Un objetivo}
-    area: {descripcion: Area}
+    single: {descripcion: "Un objetivo (Spear of Wrath, quita posturas)"}
+    area: {descripcion: "Area (Heavenfall)"}
     ulti: {descripcion: Ulti}
     talento: {descripcion: Boton del talento, boton: true}
 
@@ -30,13 +31,14 @@ gawain:
 
 freyja_roja:
   nombre: Freyja roja
+  # Ficha: "[Spellbinding Queen] Goddess of Beauty Freyja" - Attribute Strength, Race Unknown, Ragnarok / God
   color: rojo
-  raza: sin definir
-  roles: [ulti_remate]
+  raza: desconocida
+  roles: [dano_single, dano_area, ulti_remate]
   cartas:
-    normal_1: {descripcion: Carta normal 1, respaldo: snake/freyja_st.png}
-    normal_2: {descripcion: Carta normal 2, respaldo: snake/freyja_aoe.png}
-    ulti: {descripcion: Ulti, respaldo: snake/freyja_ult.png}
+    normal_1: {descripcion: "Un objetivo (Elegant Leopard)", respaldo: snake/freyja_st.png}
+    normal_2: {descripcion: "Area (Fascination Chain)", respaldo: snake/freyja_aoe.png}
+    ulti: {descripcion: "Ulti (Aesthetic Overflow)", respaldo: snake/freyja_ult.png}
 
 thonar_azul:
   nombre: Thonar azul

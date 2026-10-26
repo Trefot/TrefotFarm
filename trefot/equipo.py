@@ -6,6 +6,8 @@ capturar a Odin una vez sirve para todos los modos que lo usen.
 
 from dataclasses import dataclass
 
+import cv2
+
 from trefot import juego
 from trefot import personajes as P
 from trefot.cartas import Carta
@@ -14,9 +16,6 @@ from trefot.vision import Plantilla
 # Recorte interior que se guarda al capturar: deja fuera el marco de rango.
 MARGEN_X = 0.15
 MARGEN_Y = 0.20
-UMBRAL_CARTA = 0.7
-
-
 UMBRAL_RETRATO = 0.6
 
 
@@ -47,6 +46,14 @@ def quien_esta(zona, biblioteca) -> str | None:
 def recorte_para_plantilla(imagen_carta):
     alto, ancho = imagen_carta.shape[:2]
     return imagen_carta[int(alto * MARGEN_Y) : int(alto * (1 - MARGEN_Y)), int(ancho * MARGEN_X) : int(ancho * (1 - MARGEN_X))].copy()
+
+
+def recorte_desde_ficha(pantalla, posicion: int):
+    """Carta 'posicion' (0, 1, 2...) de la fila Skills de la ficha del heroe, lista para usarse como
+    plantilla: interior sin marco y reescalada al tamano que tiene la carta en la mano."""
+    x1, y1, x2, y2 = juego.FICHA_CARTAS[posicion]
+    ex, ey = P.ESCALA_FICHA
+    return cv2.resize(recorte_para_plantilla(pantalla[y1:y2, x1:x2]), None, fx=ex, fy=ey, interpolation=cv2.INTER_AREA)
 
 
 @dataclass
@@ -80,6 +87,7 @@ class Equipo:
         self.biblioteca = P.cargar()
         self.defs: dict[str, DefCarta] = {}
         self._plantillas = {}
+        self._umbrales: dict[str, float] = {}
         for pid in self.orden:
             pj = self.biblioteca.get(pid)
             if pj is None:
@@ -87,7 +95,7 @@ class Equipo:
             for c in pj.cartas.values():
                 clave = f"{pid}.{c.id}"
                 self.defs[clave] = DefCarta(clave, f"{pj.nombre} - {c.descripcion}", clave in self.obligatorias, not c.boton)
-                self._plantillas[clave] = pj.plantilla(c.id)
+                self._plantillas[clave], self._umbrales[clave] = pj.plantilla(c.id)
         self.grupos = {pid: tuple(k for k, d in self.defs.items() if k.startswith(pid + ".") and d.es_carta) for pid in self.orden}
 
     @property
@@ -141,13 +149,13 @@ class Equipo:
         """Clave de la carta con mayor coincidencia (o None)."""
         if carta.imagen is None or not carta.jugable:
             return None
-        mejor, mejor_valor = None, UMBRAL_CARTA
+        mejor, mejor_valor = None, 0.0
         for clave in nombres or [k for k, d in self.defs.items() if d.es_carta]:
             p = self._plantillas.get(clave)
             if p is None:
                 continue
             valor, _ = p.confianza(carta.imagen)
-            if valor >= mejor_valor:
+            if valor >= self._umbrales[clave] and valor > mejor_valor:
                 mejor, mejor_valor = clave, valor
         return mejor
 

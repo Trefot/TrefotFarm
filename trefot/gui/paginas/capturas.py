@@ -167,7 +167,7 @@ class PaginaCapturas(Pagina):
     def refrescar_lista(self):
         self.lista.clear()
         for d, estado in self.equipo.estado():
-            if estado == "propia":
+            if estado in ("propia", "ficha"):
                 marca, color = "✔", tema.OK
             elif estado == "respaldo":
                 marca, color = "◐", tema.AVISO
