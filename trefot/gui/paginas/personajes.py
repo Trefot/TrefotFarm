@@ -189,7 +189,7 @@ class TarjetaCartaPj(QFrame):
     def __init__(self, pagina, pj: P.Personaje, carta: P.CartaPj | None, titulo: str, clave: str):
         super().__init__(objectName="tarjeta")
         self.setFixedWidth(150)
-        self.setMinimumHeight(220)  # con o sin boton "Borrar", que nada se monte
+        self.setMinimumHeight(250)  # con o sin botones extra, que nada se monte
         capa = QVBoxLayout(self)
         capa.setContentsMargins(8, 8, 8, 8)
         imagen = QLabel(alignment=Qt.AlignCenter)
@@ -218,6 +218,14 @@ class TarjetaCartaPj(QFrame):
             b.setStyleSheet("padding: 4px;")
             b.clicked.connect(lambda: pagina.volver_anterior(pj, archivo))
             capa.addWidget(b)
+        if carta is not None:  # el retrato no se renombra ni se quita
+            fila = QHBoxLayout()
+            for texto, accion in (("Renombrar", pagina.renombrar_carta), ("Quitar", pagina.quitar_carta)):
+                b = QPushButton(texto)
+                b.setStyleSheet("padding: 4px;")
+                b.clicked.connect(lambda _, a=accion: a(pj, clave))
+                fila.addWidget(b)
+            capa.addLayout(fila)
         capa.addStretch()
 
 
@@ -416,6 +424,27 @@ class PaginaPersonajes(Pagina):
         pj.cartas[cid] = P.CartaPj(cid, nombre.strip())
         P.guardar(pj)
         self._cambio()
+
+    def renombrar_carta(self, pj: P.Personaje, cid: str):
+        carta = pj.cartas[cid]
+        nombre, ok = QInputDialog.getText(self, "Renombrar carta", "Nuevo nombre de la carta:", text=carta.descripcion)
+        if ok and nombre.strip():
+            carta.descripcion = nombre.strip()
+            P.guardar(pj)
+            self._cambio()
+
+    def quitar_carta(self, pj: P.Personaje, cid: str):
+        """Quita una carta que el personaje no tiene (p. ej. no tiene carta de un objetivo)."""
+        usan = [m.nombre for m in MODOS.values()
+                if getattr(m, "equipo", None) and f"{pj.id}.{cid}" in m.equipo.obligatorias]
+        aviso = f"\n\nOJO: '{', '.join(usan)}' necesita esta carta; sin ella ese modo no podra jugar." if usan else ""
+        r = QMessageBox.question(
+            self, "Quitar carta",
+            f"¿Quitar '{pj.cartas[cid].descripcion}' de {pj.nombre}? Sus capturas se quedan en la carpeta." + aviso)
+        if r == QMessageBox.Yes:
+            del pj.cartas[cid]
+            P.guardar(pj)
+            self._cambio()
 
     def borrar(self):
         pj = self.actual

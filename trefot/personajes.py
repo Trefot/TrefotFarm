@@ -168,9 +168,12 @@ def cargar() -> dict[str, Personaje]:
         for pid in list(base) + [p for p in usuario if p not in base]:
             datos = dict(base.get(pid) or {})
             cambios = usuario.get(pid) or {}
-            cartas = dict(datos.get("cartas") or {})
-            cartas.update(cambios.get("cartas") or {})
-            datos.update({k: v for k, v in cambios.items() if k != "cartas"})
+            cartas = {cid: dict(c or {}) for cid, c in (datos.get("cartas") or {}).items()}
+            for cid, c in (cambios.get("cartas") or {}).items():  # cartas nuevas o renombradas
+                cartas[cid] = {**cartas.get(cid, {}), **(c or {})}
+            for cid in cambios.get("cartas_quitadas") or []:  # cartas que el usuario quito
+                cartas.pop(cid, None)
+            datos.update({k: v for k, v in cambios.items() if k not in ("cartas", "cartas_quitadas")})
             datos["cartas"] = cartas
             resultado[pid] = _crear(pid, datos, propio=pid not in base)
         return resultado
@@ -183,13 +186,17 @@ def guardar(p: Personaje) -> None:
         base = (_leer_yaml(BASE).get(p.id) or {})
         registro = {"nombre": p.nombre, "color": p.color, "raza": p.raza, "roles": list(p.roles), "tengo": p.tengo}
         cartas_base = base.get("cartas") or {}
+        # Solo lo que difiere del catalogo base: cartas nuevas, renombradas o quitadas.
         extra = {
             c.id: {"descripcion": c.descripcion, **({"boton": True} if c.boton else {})}
             for c in p.cartas.values()
-            if c.id not in cartas_base
+            if c.id not in cartas_base or (cartas_base[c.id] or {}).get("descripcion") != c.descripcion
         }
         if extra:
             registro["cartas"] = extra
+        quitadas = [cid for cid in cartas_base if cid not in p.cartas]
+        if quitadas:
+            registro["cartas_quitadas"] = quitadas
         usuario[p.id] = registro
         CARPETA.mkdir(parents=True, exist_ok=True)
         USUARIO.write_text(yaml.safe_dump(usuario, allow_unicode=True, sort_keys=False), encoding="utf-8")
