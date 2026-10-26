@@ -47,8 +47,8 @@ Personajes        tu biblioteca: ficha de cada personaje (color, raza, roles, lo
 Equipos           para cada contenido: que puestos pide, si tienes a los recomendados y con quien
                   podrias sustituirlos (segun los roles que marcaste en Personajes).
 Historial         todas las sesiones con victorias, derrotas, % de exito y victorias por hora.
-Recompensas       foto de la pantalla de recompensas de cada victoria (por dia o por sesion).
-                  Mas adelante reconocera los objetos y mostrara los totales.
+Recompensas       suma de todo lo conseguido (oro y cada objeto, por dia o por sesion) y la
+                  foto de cada victoria. Doble clic en un objeto nuevo para ponerle nombre.
 Ajustes           ventana del juego, teclas rapidas, avisos al movil y repositorio de GitHub.
 
 Para farmear: juego abierto y visible, equipo puesto, Inicio -> "Iniciar ahora".

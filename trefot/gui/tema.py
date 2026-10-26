@@ -62,6 +62,13 @@ QCheckBox::indicator {{ width: 15px; height: 15px; }}
 QProgressBar {{ background: #101218; border: 1px solid {BORDE}; border-radius: 6px; text-align: center; height: 18px; }}
 QProgressBar::chunk {{ background: {ACENTO}; border-radius: 6px; }}
 
+/* ---- pestanas */
+QTabWidget::pane {{ border: 1px solid {BORDE}; border-radius: 8px; top: -1px; background: {FONDO}; }}
+QTabBar::tab {{ background: {PANEL}; color: {TENUE}; padding: 8px 20px; border: 1px solid {BORDE}; border-bottom: none;
+               border-top-left-radius: 7px; border-top-right-radius: 7px; margin-right: 3px; }}
+QTabBar::tab:selected {{ color: {ACENTO}; background: {FONDO}; font-weight: 600; }}
+QTabBar::tab:hover {{ color: {TEXTO}; }}
+
 /* ---- barra inferior */
 QFrame#barra {{ background: {LATERAL}; border-top: 1px solid {BORDE}; }}
 QFrame#barra QLabel {{ color: {TENUE}; font-size: 9pt; }}
