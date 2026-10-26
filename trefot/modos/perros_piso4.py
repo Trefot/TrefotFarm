@@ -188,11 +188,15 @@ class Estrategia:
 # ----------------------------------------------------------------------- el modo
 class PerrosPiso4(Modo):
     id = "perros_piso4"
-    nombre = "Perros piso 4 - Trefot"
+    nombre = "Skollandhati & Hati · Floor 4"
     descripcion = (
-        "Odin, Gawain, Freyja roja y Thonar azul (izquierda a derecha). Arranca desde la taberna, "
-        "el menu de batalla o la pantalla de pisos de los Perros."
+        "Demonic Beast de los perros, Floor 4, con Odin, Gawain, Freyja (Strength) y Thonar (Speed). "
+        "Puede empezar desde la Tavern, el menu Battle o la pantalla de Floors."
     )
+    titulo_juego = "Skollandhati & Hati"
+    subtitulo_juego = "Demonic Beast · Floor 4"
+    imagen = "demonic_beasts/skollandhati.png"
+    duracion = "~2,5 min por pelea"
     equipo = EQUIPO
     opciones = [
         Opcion("victorias", "Victorias (0 = sin limite)", "entero", 0, maximo=9999),

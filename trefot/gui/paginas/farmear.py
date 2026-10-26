@@ -172,6 +172,22 @@ class PaginaFarmear(Pagina):
                 valores[clave] = campo.text()
         return valores
 
+    def preparar(self, id_modo: str, valores: dict):
+        """Elegir modo y opciones desde fuera (p. ej. el boton Empezar de Inicio)."""
+        indice = self.combo.findData(id_modo)
+        if indice >= 0:
+            self.combo.setCurrentIndex(indice)
+        for clave, valor in valores.items():
+            campo = self.campos.get(clave)
+            if isinstance(campo, QSpinBox):
+                campo.setValue(int(valor))
+            elif isinstance(campo, QCheckBox):
+                campo.setChecked(bool(valor))
+            elif isinstance(campo, QComboBox):
+                campo.setCurrentText(str(valor))
+            elif campo is not None:
+                campo.setText(str(valor))
+
     # ------------------------------------------------------------------ control
     def iniciar(self):
         if self.app.update_bloqueante:

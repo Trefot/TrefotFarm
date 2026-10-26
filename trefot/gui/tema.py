@@ -62,6 +62,27 @@ QCheckBox::indicator {{ width: 15px; height: 15px; }}
 QProgressBar {{ background: #101218; border: 1px solid {BORDE}; border-radius: 6px; text-align: center; height: 18px; }}
 QProgressBar::chunk {{ background: {ACENTO}; border-radius: 6px; }}
 
+/* ---- inicio guiado */
+QFrame#seccion {{ background: {PANEL}; border: 1px solid {BORDE}; border-radius: 12px; }}
+QLabel#titulo_seccion {{ font-size: 12.5pt; }}
+QLabel#titulo_tarjeta {{ font-size: 14pt; font-weight: 700; }}
+QFrame#paso {{ background: #161920; border: 1px solid {BORDE}; border-radius: 10px; }}
+QFrame#paso[estado="ok"] {{ border-color: #2c5f45; }}
+QFrame#paso[estado="falta"] {{ border-color: #6b5420; }}
+QFrame#tarjeta_modo {{ background: {PANEL}; border: 1px solid {BORDE}; border-radius: 14px; }}
+QFrame#tarjeta_modo:hover {{ border-color: {TENUE}; }}
+QFrame#tarjeta_modo[seleccionada="true"] {{ border: 2px solid {ACENTO}; background: #221f17; }}
+QFrame#tarjeta_pronto {{ background: transparent; border: 1px dashed {BORDE}; border-radius: 14px; }}
+QLabel#iniciales {{ background: {BORDE}; border-radius: 20px; color: {TEXTO}; font-weight: 700; }}
+QPushButton#chico {{ padding: 5px 10px; }}
+QPushButton#chip {{ padding: 6px 14px; border-radius: 15px; }}
+QPushButton#chip:checked {{ background: {ACENTO}; color: #1a1406; border-color: {ACENTO}; font-weight: 700; }}
+QPushButton#empezar {{ background: {ACENTO}; color: #1a1406; border: none; border-radius: 12px; font-size: 14pt; font-weight: 800; }}
+QPushButton#empezar:hover {{ background: #f0b63a; }}
+QPushButton#empezar[corriendo="true"] {{ background: #5f2c2c; color: {TEXTO}; border: 1px solid {ERROR}; }}
+QProgressBar {{ background: #101218; border: none; border-radius: 3px; }}
+QProgressBar::chunk {{ background: {OK}; border-radius: 3px; }}
+
 /* ---- pestanas */
 QTabWidget::pane {{ border: 1px solid {BORDE}; border-radius: 8px; top: -1px; background: {FONDO}; }}
 QTabBar::tab {{ background: {PANEL}; color: {TENUE}; padding: 8px 20px; border: 1px solid {BORDE}; border-bottom: none;

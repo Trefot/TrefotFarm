@@ -8,3 +8,4 @@ pyyaml
 requests
 dill
 scikit-learn==1.5.1
+qtawesome

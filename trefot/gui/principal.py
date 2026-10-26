@@ -3,7 +3,7 @@
 import sys
 import threading
 
-from PyQt5.QtCore import QObject, QProcess, Qt, QTimer, pyqtSignal
+from PyQt5.QtCore import QObject, QProcess, QSize, Qt, QTimer, pyqtSignal
 from PyQt5.QtWidgets import (
     QApplication,
     QButtonGroup,
@@ -21,7 +21,7 @@ from PyQt5.QtWidgets import (
 import trefot
 from trefot import actualizador, config, ventana
 from trefot.control import control
-from trefot.gui import tema
+from trefot.gui import iconos, tema
 from trefot.gui.paginas.actualizaciones import PantallaBloqueo
 from trefot.gui.paginas.ajustes import PaginaAjustes
 from trefot.gui.paginas.capturas import PaginaCapturas
@@ -38,14 +38,14 @@ from trefot.rutas import RAIZ
 MINUTOS_ENTRE_REVISIONES = 30
 
 MENU = [
-    ("inicio", "⌂   Inicio"),
-    ("farmear", "⚔   Farmear"),
-    ("capturas", "▣   Capturas"),
-    ("personajes", "☺   Personajes"),
-    ("equipos", "⚑   Equipos"),
-    ("historial", "☰   Historial"),
-    ("recompensas", "✦   Recompensas"),
-    ("ajustes", "⚙   Ajustes"),
+    ("inicio", "Inicio"),
+    ("farmear", "Farmear"),
+    ("capturas", "Capturas"),
+    ("personajes", "Personajes"),
+    ("equipos", "Equipos"),
+    ("historial", "Historial"),
+    ("recompensas", "Recompensas"),
+    ("ajustes", "Ajustes"),
 ]
 
 
@@ -89,7 +89,9 @@ class VentanaPrincipal(QMainWindow):
         self.insignias: dict[str, QLabel] = {}
         for clave, texto in MENU:
             fila_b = QHBoxLayout()
-            b = QPushButton(texto, objectName="menu", checkable=True)
+            b = QPushButton("  " + texto, objectName="menu", checkable=True)
+            b.setIcon(iconos.icono(clave, tema.TENUE, tema.ACENTO))
+            b.setIconSize(QSize(20, 20))
             b.setCursor(Qt.PointingHandCursor)
             b.clicked.connect(lambda _, c=clave: self.navegar(c))
             self.grupo.addButton(b)
@@ -207,7 +209,7 @@ class VentanaPrincipal(QMainWindow):
         elif est and est.error:
             self.barra_update.setText(f"v{version} · {est.error}")
         else:
-            self.barra_update.setText(f"v{version} · al dia" if est else f"v{version}")
+            self.barra_update.setText(f"v{version} · al día" if est else f"v{version}")
 
     # ------------------------------------------------------------ actualizaciones
     @property

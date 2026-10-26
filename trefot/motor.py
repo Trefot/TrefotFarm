@@ -39,6 +39,11 @@ class Modo:
     id = "base"
     nombre = "Modo"
     descripcion = ""
+    # Para la tarjeta del modo en Inicio (nombres tal como salen en el juego)
+    titulo_juego = ""  # p. ej. "Skollandhati & Hati"
+    subtitulo_juego = ""  # p. ej. "Demonic Beast · Floor 4"
+    imagen = ""  # emblema, relativo a assets/imagenes
+    duracion = ""  # duracion aproximada de una pelea, p. ej. "~2,5 min"
     opciones: list[Opcion] = []
     pausa_entre_pasos = 0.5
 
