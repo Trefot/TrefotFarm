@@ -121,9 +121,9 @@ class Estrategia:
         return (idx if idx is not None else self.derecha_jugable(mano)), None, False
 
     def _f3(self, mano):
-        """Gastar cartas sin atacar: primero las bloqueadas, luego las que no hacen dano."""
-        for tipos in ((TipoCarta.BLOQUEADA,), (TipoCarta.BUFF, TipoCarta.POSTURA, TipoCarta.CURACION, TipoCarta.DEBUFF)):
-            ids = [c.posicion for c in mano if c.tipo in tipos]
+        """Gastar cartas sin atacar: primero las bloqueadas, luego una normal (nunca una ulti)."""
+        for tipo in (TipoCarta.BLOQUEADA, TipoCarta.NORMAL):
+            ids = [c.posicion for c in mano if c.tipo == tipo]
             if ids:
                 return ids[-1]
         return self.derecha_jugable(mano)

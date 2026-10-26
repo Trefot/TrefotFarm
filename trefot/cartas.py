@@ -1,8 +1,11 @@
-"""Lectura de la mano de cartas: posicion, tipo (ataque, buff...), rango y huecos libres.
+"""Lectura de la mano de cartas: posicion, estado (normal, ulti, bloqueada, hueco), rango y huecos libres.
 
-El tipo se predice con los dos modelos entrenados del proyecto original (assets/modelos);
-el rango y los huecos con plantillas. Que carta ES (Odin single, Freyja ulti...) lo decide
-cada equipo con sus propias capturas (ver trefot/equipo.py).
+- Hueco vacio (unidad muerta): modelo entrenado de AutoFarming (assets/modelos), sigue funcionando.
+- Bloqueada: la carta se ve en gris (poca saturacion de color).
+- Rango: plantillas de bronce/plata/oro; sin rango = ulti.
+El modelo de "tipo de carta" de AutoFarming ya no sirve con el diseno actual de las cartas (dice
+"ulti" para todas), asi que no se usa. Que carta ES (Odin single, Freyja ulti...) lo decide cada
+equipo con sus propias capturas (ver trefot/equipo.py).
 """
 
 import threading
@@ -19,16 +22,16 @@ from trefot.vision import recortar
 
 
 class TipoCarta(Enum):
-    ATAQUE = 0
-    POSTURA = 1
-    CURACION = 2
-    ATAQUE_DEBUFF = 3
-    DEBUFF = 4
-    BUFF = 5
-    ULTI = -1
+    NORMAL = 0
+    ULTI = 1
     BLOQUEADA = 9
     SUELO = 10  # hueco vacio (unidad muerta)
     NINGUNA = -100
+
+
+# Saturacion media del interior por debajo de la cual la carta esta en gris (bloqueada).
+# Medido en cartas reales: las normales dan 109-203 y una carta en gris da ~0.
+SATURACION_BLOQUEADA = 60
 
 
 class Rango(Enum):
@@ -91,15 +94,6 @@ def _rasgos_suelo(imagen: np.ndarray) -> np.ndarray:
     return np.concatenate([hist, textura])[np.newaxis, :]
 
 
-def _rasgos_tipo(imagen: np.ndarray, rejilla=(4, 4)) -> np.ndarray:
-    bloques = [
-        bloque.mean(axis=(0, 1))
-        for fila in np.array_split(imagen, rejilla[0], axis=0)
-        for bloque in np.array_split(fila, rejilla[1], axis=1)
-    ]
-    return (np.asarray(bloques, dtype=np.float32).flatten() / 255.0)[np.newaxis, :]
-
-
 def interior(carta: np.ndarray) -> np.ndarray:
     """La carta sin su marco (mismo recorte que usaron los modelos al entrenarse)."""
     alto, ancho = carta.shape[:2]
@@ -107,24 +101,24 @@ def interior(carta: np.ndarray) -> np.ndarray:
 
 
 def tipo_de(carta: np.ndarray) -> TipoCarta:
-    if bool(_modelo("ground_cards_predictor.svc").predict(_rasgos_suelo(interior(carta))).item()):
+    dentro = interior(carta)
+    if bool(_modelo("ground_cards_predictor.svc").predict(_rasgos_suelo(dentro)).item()):
         return TipoCarta.SUELO
-    icono = carta[0:20, 40:]  # esquina superior derecha: el icono del tipo de carta
-    valor = _modelo("card_type_predictor.svm").predict(_rasgos_tipo(icono)).item()
-    tipo = {0: TipoCarta.ATAQUE, 1: TipoCarta.POSTURA, 2: TipoCarta.CURACION, 3: TipoCarta.ATAQUE_DEBUFF,
-            4: TipoCarta.DEBUFF, 5: TipoCarta.BUFF, -1: TipoCarta.ULTI, 9: TipoCarta.BLOQUEADA}.get(valor)
-    # El modelo de tipos no sabe de "suelo"; si lo dice, en realidad es una ulti.
-    return tipo or TipoCarta.ULTI
+    if cv2.cvtColor(dentro, cv2.COLOR_BGR2HSV)[..., 1].mean() < SATURACION_BLOQUEADA:
+        return TipoCarta.BLOQUEADA
+    return TipoCarta.NORMAL
 
 
 def rango_de(carta: np.ndarray, tipo: TipoCarta) -> Rango:
+    if tipo in (TipoCarta.SUELO, TipoCarta.NINGUNA):
+        return Rango.NINGUNO
     if juego.rango_bronce.esta(carta, 0.7):
         return Rango.BRONCE
     if juego.rango_plata.esta(carta, 0.7):
         return Rango.PLATA
     if juego.rango_oro.esta(carta, 0.7):
         return Rango.ORO
-    return Rango.ULTI if tipo == TipoCarta.ULTI else Rango.NINGUNO
+    return Rango.ULTI  # las ultis no tienen estrellas de rango
 
 
 # ---------------------------------------------------------------------- mano
@@ -138,9 +132,10 @@ def leer_mano(pantalla: np.ndarray) -> list[Carta]:
     for i in range(8):
         imagen = mano[:, i * col : (i + 1) * col].copy()
         tipo = tipo_de(imagen)
-        cartas.append(
-            Carta(posicion=i, rect=(x1 + i * col, y1, col, alto), imagen=imagen, tipo=tipo, rango=rango_de(imagen, tipo))
-        )
+        rango = rango_de(imagen, tipo)
+        if tipo == TipoCarta.NORMAL and rango == Rango.ULTI:
+            tipo = TipoCarta.ULTI
+        cartas.append(Carta(posicion=i, rect=(x1 + i * col, y1, col, alto), imagen=imagen, tipo=tipo, rango=rango))
     return cartas
 
 

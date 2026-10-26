@@ -2,12 +2,15 @@
 
 import os
 import time
+from pathlib import Path
 
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QColor
 from PyQt5.QtWidgets import (
     QComboBox,
+    QFileDialog,
     QFrame,
+    QGridLayout,
     QGroupBox,
     QHBoxLayout,
     QLabel,
@@ -25,7 +28,7 @@ from trefot.gui import tema
 from trefot.gui.comun import Pagina, a_pixmap
 from trefot.modos import MODOS
 from trefot.rutas import CAPTURAS
-from trefot.vision import guardar_imagen
+from trefot.vision import guardar_imagen, leer_imagen
 
 LADO_TALENTO = 26  # mitad del lado del recorte alrededor del boton de talento
 
@@ -36,22 +39,31 @@ class TarjetaCarta(QFrame):
     def __init__(self, pagina, carta: cartas.Carta, equipo):
         super().__init__(objectName="tarjeta")
         self.carta, self.equipo, self.pagina = carta, equipo, pagina
-        capa = QVBoxLayout(self)
-        imagen = QLabel(alignment=Qt.AlignCenter)
-        imagen.setPixmap(a_pixmap(carta.imagen, 80))
+        capa = QHBoxLayout(self)
+        capa.setContentsMargins(8, 8, 8, 8)
+        imagen = QLabel(alignment=Qt.AlignTop)
+        imagen.setPixmap(a_pixmap(carta.imagen, 62))
         capa.addWidget(imagen)
+        derecha = QVBoxLayout()
+        derecha.setSpacing(4)
         color = tema.OK if carta.nombre else tema.AVISO
-        capa.addWidget(QLabel(f"<b>{carta.posicion + 1}.</b> <span style='color:{color}'>{carta.nombre or '¿no reconocida?'}</span>", wordWrap=True))
-        capa.addWidget(QLabel(f"{carta.tipo.name.lower()} · {carta.rango.name.lower()}", objectName="tenue"))
+        nombre = equipo.defs[carta.nombre].descripcion if carta.nombre in equipo.defs else "¿no reconocida?"
+        etiqueta = QLabel(f"<b>{carta.posicion + 1}.</b> <span style='color:{color}'>{nombre}</span>", wordWrap=True)
+        derecha.addWidget(etiqueta)
+        derecha.addWidget(QLabel(f"{carta.tipo.name.lower()} · {carta.rango.name.lower()}", objectName="tenue"))
+        derecha.addStretch()
         self.combo = QComboBox()
-        self.combo.addItem("Guardar como...", None)
+        self.combo.view().setMinimumWidth(300)  # la lista desplegable, mas ancha que la tarjeta
+        self.combo.addItem("Es...", None)
         for d in equipo.defs.values():
             if d.es_carta:
                 self.combo.addItem(d.descripcion, d.nombre)
-        capa.addWidget(self.combo)
+        derecha.addWidget(self.combo)
         boton = QPushButton("Guardar")
+        boton.setStyleSheet("padding: 5px 4px;")
         boton.clicked.connect(self.guardar)
-        capa.addWidget(boton)
+        derecha.addWidget(boton)
+        capa.addLayout(derecha, 1)
 
     def guardar(self):
         nombre = self.combo.currentData()
@@ -66,8 +78,8 @@ class TarjetaCarta(QFrame):
 class PaginaCapturas(Pagina):
     titulo = "Capturas"
     subtitulo = (
-        "Entra a una pelea con tu equipo y, cuando salga la mano, pulsa 'Capturar mano'. Guarda las cartas que falten "
-        "eligiendo cual es. Repite en otros turnos hasta no tener ninguna ✖."
+        "En una pelea pulsa 'Capturar mano' (o 'Desde foto...' para usar una foto guardada). En cada carta que falte, "
+        "elige en 'Es...' cual es y pulsa Guardar. Repite hasta no tener ninguna ✖."
     )
 
     def __init__(self, app):
@@ -99,10 +111,11 @@ class PaginaCapturas(Pagina):
         botones = QHBoxLayout()
         for texto, funcion, primario in (
             ("Capturar mano", self.capturar_mano, True),
-            ("Probar reconocimiento", self.probar, False),
-            ("Capturar talento", self.capturar_talento, False),
-            ("Guardar foto completa", self.foto_completa, False),
-            ("Ajustar ventana", self.ajustar, False),
+            ("Desde foto...", self.mano_desde_foto, False),
+            ("Probar", self.probar, False),
+            ("Talento", self.capturar_talento, False),
+            ("Foto completa", self.foto_completa, False),
+            ("Ajustar", self.ajustar, False),
         ):
             b = QPushButton(texto, objectName="primario" if primario else "")
             b.clicked.connect(funcion)
@@ -112,8 +125,8 @@ class PaginaCapturas(Pagina):
         der.addWidget(self.lbl_mensaje)
 
         self.zona_mano = QWidget()
-        self.capa_mano = QHBoxLayout(self.zona_mano)
-        self.capa_mano.addWidget(QLabel("Aqui apareceran las 8 cartas de tu mano.", objectName="tenue", alignment=Qt.AlignCenter))
+        self.capa_mano = QGridLayout(self.zona_mano)  # 2 filas de 4 cartas
+        self.capa_mano.addWidget(QLabel("Aqui apareceran las 8 cartas de tu mano.", objectName="tenue", alignment=Qt.AlignCenter), 0, 0)
         desplazar = QScrollArea(widgetResizable=True)
         desplazar.setWidget(self.zona_mano)
         desplazar.setMinimumHeight(320)
@@ -174,19 +187,32 @@ class PaginaCapturas(Pagina):
         ok = ventana.ajustar_tamano()
         self.mensaje("Ventana en 554x960." if ok else ventana.ultimo_error)
 
-    def capturar_mano(self):
-        pantalla = self._pantalla()
+    def mano_desde_foto(self):
+        """Etiquetar cartas desde una foto guardada (sin tener que estar en una pelea)."""
+        ruta, _ = QFileDialog.getOpenFileName(self, "Elige una foto del juego en pelea", str(CAPTURAS), "Imagenes (*.png *.jpg)")
+        if not ruta:
+            return
+        pantalla = leer_imagen(Path(ruta))
+        if pantalla is None:
+            self.mensaje("No pude abrir esa imagen.")
+            return
+        self.capturar_mano(pantalla, origen=Path(ruta).name)
+
+    def capturar_mano(self, pantalla=None, origen: str = ""):
+        if pantalla is None or isinstance(pantalla, bool):  # el boton pasa un bool
+            pantalla = self._pantalla()
         if pantalla is None:
             return
         mano = self.equipo.etiquetar(cartas.leer_mano(pantalla))
         while self.capa_mano.count():
             widget = self.capa_mano.takeAt(0).widget()
             if widget:
+                widget.setParent(None)  # que desaparezca ya, no al siguiente ciclo
                 widget.deleteLater()
         for carta in mano:
-            self.capa_mano.addWidget(TarjetaCarta(self, carta, self.equipo))
+            self.capa_mano.addWidget(TarjetaCarta(self, carta, self.equipo), carta.posicion // 4, carta.posicion % 4)
         reconocidas = sum(1 for c in mano if c.nombre)
-        self.mensaje(f"Mano capturada: {reconocidas}/8 reconocidas. Huecos libres detectados: {cartas.contar_huecos(pantalla)}.")
+        self.mensaje(f"Mano {'de ' + origen if origen else 'capturada'}: {reconocidas}/8 reconocidas. Huecos libres detectados: {cartas.contar_huecos(pantalla)}.")
 
     def capturar_talento(self):
         pantalla = self._pantalla()
