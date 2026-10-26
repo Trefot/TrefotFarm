@@ -1,6 +1,7 @@
 """Conecta el bot (hilo de trabajo) con la interfaz mediante senales de Qt, y las teclas globales."""
 
 import threading
+import time
 import traceback
 
 from PyQt5.QtCore import QObject, pyqtSignal
@@ -19,11 +20,20 @@ class Puente(QObject):
 
     def __init__(self):
         super().__init__()
-        control.al_log = lambda m, n: self.log.emit(m, n)
+        control.al_log = self._registrar
         control.al_estado = lambda e: self.estado.emit(e)
         control.al_stats = lambda s: self.stats.emit(s)
         self.hilo: threading.Thread | None = None
         self._teclado = None
+        self._archivo = None  # logs/sesion_<fecha>.log de la sesion en curso (incluye el detalle)
+        self._lock_archivo = threading.Lock()
+
+    def _registrar(self, mensaje: str, nivel: str):
+        with self._lock_archivo:
+            if self._archivo:
+                self._archivo.write(f"{time.strftime('%H:%M:%S')} [{nivel}] {mensaje}\n")
+                self._archivo.flush()
+        self.log.emit(mensaje, nivel)
 
     @property
     def corriendo(self) -> bool:
@@ -31,6 +41,8 @@ class Puente(QObject):
 
     def iniciar(self, modo):
         control.reiniciar()
+        with self._lock_archivo:
+            self._archivo = (LOGS / f"sesion_{time.strftime('%Y%m%d_%H%M%S')}.log").open("a", encoding="utf-8")
 
         def correr():
             try:
@@ -41,6 +53,10 @@ class Puente(QObject):
                     f.write(traceback.format_exc() + "\n")
                 control.log("Detalle guardado en logs/errores.log", "error")
             finally:
+                with self._lock_archivo:
+                    if self._archivo:
+                        self._archivo.close()
+                        self._archivo = None
                 self.terminado.emit()
 
         self.hilo = threading.Thread(target=correr, daemon=True, name="bot")
