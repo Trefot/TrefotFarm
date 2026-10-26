@@ -5,7 +5,7 @@ Guion (si algo se sale de el, se rinde y reinicia, que es lo mas rapido con este
   Fase 1 T2: talento de Odin | perro IZQ | Freyja (si su ulti aun no esta) o Thonar (si ya esta) |
              single de Odin | single de Gawain | relleno sin gastar lo de la fase 2.
   Fase 2 T1: lobo azul (IZQ) | area de Gawain | ulti de Freyja | area de Odin | cualquier carta de G/F/O.
-  Fase 3 T1: no se lanza ninguna carta: se ponen bloqueadas o se mueven cartas (el golpe
+  Fase 3 T1: no se lanza ninguna carta: solo se mueven cartas (el golpe
              secundario de la ulti de Freyja termina la pelea).
 
 Empieza desde cualquier pantalla de la taberna / menu de batalla / bestias demoniacas.
@@ -115,19 +115,17 @@ class Estrategia:
         return (idx if idx is not None else self.derecha_jugable(mano)), None, False
 
     def _f3(self, mano):
-        """No se lanza ninguna carta de ataque: el golpe extra de la ulti de Freyja termina la pelea.
+        """No se pone ninguna carta (ni siquiera las que parecen bloqueadas): el golpe extra de la ulti
+        de Freyja termina la pelea. Los huecos se gastan MOVIENDO cartas: arrastrar una carta sobre
+        la de su izquierda gasta un hueco sin atacar. Devuelve (origen, destino).
 
-        Los huecos se gastan sin hacer dano: primero con cartas bloqueadas (no hacen nada) y, si no
-        hay, MOVIENDO cartas (arrastrar una carta sobre la de su izquierda tambien gasta un hueco).
-        Devuelve un indice (poner esa carta) o una tupla (origen, destino) para mover.
+        (En la segunda pelea real se puso una "bloqueada" que en realidad era la ulti de Thonar,
+        que tiene el dibujo gris, y ataco. Por eso aqui ya no se pone nada.)
         """
-        bloqueadas = [c.posicion for c in mano if c.tipo == TipoCarta.BLOQUEADA]
-        if bloqueadas:
-            return bloqueadas[-1]
         for izq, der in zip(mano, mano[1:]):
             if izq.tipo not in (TipoCarta.SUELO, TipoCarta.NINGUNA) and der.tipo not in (TipoCarta.SUELO, TipoCarta.NINGUNA):
                 return (der.posicion, izq.posicion)
-        raise Reiniciar("F3: no hay cartas que mover ni bloqueadas")
+        raise Reiniciar("F3: no hay cartas que mover")
 
     # ------------------------------------------------------------------ ayudantes
     @staticmethod

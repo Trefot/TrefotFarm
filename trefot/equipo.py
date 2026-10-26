@@ -10,7 +10,7 @@ import cv2
 
 from trefot import juego
 from trefot import personajes as P
-from trefot.cartas import Carta
+from trefot.cartas import Carta, Rango, TipoCarta
 from trefot.vision import Plantilla
 
 # Recorte interior que se guarda al capturar: deja fuera el marco de rango.
@@ -147,7 +147,9 @@ class Equipo:
     # ------------------------------------------------------------ reconocimiento
     def reconocer(self, carta: Carta, nombres=None) -> str | None:
         """Clave de la carta con mayor coincidencia (o None)."""
-        if carta.imagen is None or not carta.jugable:
+        # Las "bloqueadas" tambien se intentan: algunas cartas tienen el dibujo gris de por si
+        # (p. ej. la ulti de Thonar) y la deteccion por color las confunde con bloqueadas.
+        if carta.imagen is None or carta.tipo in (TipoCarta.SUELO, TipoCarta.NINGUNA):
             return None
         mejor, mejor_valor = None, 0.0
         for clave in nombres or [k for k, d in self.defs.items() if d.es_carta]:
@@ -162,4 +164,7 @@ class Equipo:
     def etiquetar(self, mano: list[Carta]) -> list[Carta]:
         for carta in mano:
             carta.nombre = self.reconocer(carta)
+            if carta.nombre and carta.tipo == TipoCarta.BLOQUEADA:
+                # Se reconoce como carta del equipo: no estaba bloqueada, solo es gris.
+                carta.tipo = TipoCarta.ULTI if carta.rango == Rango.ULTI else TipoCarta.NORMAL
         return mano
