@@ -21,7 +21,7 @@ from PyQt5.QtWidgets import (
 from trefot import actualizador, config, ventana
 from trefot.control import control
 from trefot.gui import tema
-from trefot.gui.paginas.actualizaciones import PaginaActualizaciones, PantallaBloqueo
+from trefot.gui.paginas.actualizaciones import PantallaBloqueo
 from trefot.gui.paginas.ajustes import PaginaAjustes
 from trefot.gui.paginas.capturas import PaginaCapturas
 from trefot.gui.paginas.farmear import PaginaFarmear
@@ -39,7 +39,6 @@ MENU = [
     ("capturas", "▣   Capturas"),
     ("historial", "☰   Historial"),
     ("ajustes", "⚙   Ajustes"),
-    ("actualizaciones", "⟳   Actualizaciones"),
 ]
 
 
@@ -60,7 +59,7 @@ class VentanaPrincipal(QMainWindow):
         self.estado_update: actualizador.Estado | None = None
         self.update_bloqueante = False
         self.actualizando = False
-        self._revisando = False
+        self.revisando = False
 
         central = QWidget()
         raiz = QVBoxLayout(central)
@@ -107,7 +106,6 @@ class VentanaPrincipal(QMainWindow):
             "capturas": PaginaCapturas(self),
             "historial": PaginaHistorial(self),
             "ajustes": PaginaAjustes(self),
-            "actualizaciones": PaginaActualizaciones(self),
         }
         for pagina in self.paginas.values():
             self.pila.addWidget(pagina)
@@ -163,7 +161,7 @@ class VentanaPrincipal(QMainWindow):
         if getattr(modo, "equipo", None) is not None:
             faltan = len(modo.equipo.faltantes())
         self._insignia("capturas", str(faltan) if faltan else "")
-        self._insignia("actualizaciones", "1" if self.estado_update and self.estado_update.hay_update else "")
+        self._insignia("inicio", "1" if self.estado_update and self.estado_update.hay_update else "")
 
     def _insignia(self, clave: str, texto: str):
         self.insignias[clave].setText(texto)
@@ -199,11 +197,11 @@ class VentanaPrincipal(QMainWindow):
 
     # ------------------------------------------------------------ actualizaciones
     def buscar_updates(self, manual: bool = False):
-        if self._revisando or self.actualizando:
+        if self.revisando or self.actualizando:
             return
-        self._revisando = True
+        self.revisando = True
         if manual:
-            self.paginas["actualizaciones"].lbl_estado.setText("Buscando...")
+            self.paginas["inicio"].refrescar()
 
         def revisar():
             try:
@@ -215,11 +213,11 @@ class VentanaPrincipal(QMainWindow):
         threading.Thread(target=revisar, daemon=True).start()
 
     def _resultado_revision(self, estado):
-        self._revisando = False
+        self.revisando = False
         self.estado_update = estado
         self.refrescar_insignias()
         self._barra()
-        self.paginas["actualizaciones"].refrescar()
+        self.paginas["inicio"].refrescar()
         if estado.hay_update and not self.update_bloqueante:
             self.update_bloqueante = True
             if self.puente.corriendo:

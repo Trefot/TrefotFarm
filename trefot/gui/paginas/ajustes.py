@@ -1,8 +1,8 @@
-"""Pagina Ajustes: ventana del juego, avisos al movil, teclas y vista previa."""
+"""Pagina Ajustes: ventana del juego, avisos al movil, teclas, vista previa y repositorio de actualizaciones."""
 
 from PyQt5.QtWidgets import QFormLayout, QGroupBox, QHBoxLayout, QLabel, QLineEdit, QMessageBox, QPushButton, QSpinBox
 
-from trefot import avisos, config
+from trefot import actualizador, avisos, config
 from trefot.gui.comun import Pagina
 
 
@@ -45,6 +45,15 @@ class PaginaAjustes(Pagina):
                          objectName="tenue", wordWrap=True))
         self.cuerpo.addWidget(movil)
 
+        repo = QGroupBox("Actualizaciones (GitHub)")
+        f4 = QFormLayout(repo)
+        self.url_repo = QLineEdit(placeholderText="https://github.com/usuario/TrefotFarm.git")
+        self.url_repo.setText(actualizador.url_remota())
+        f4.addRow("Repositorio", self.url_repo)
+        f4.addRow(QLabel("De aqui se bajan las actualizaciones obligatorias. Solo cambialo si mueves el repositorio.",
+                         objectName="tenue", wordWrap=True))
+        self.cuerpo.addWidget(repo)
+
         botones = QHBoxLayout()
         b_guardar = QPushButton("Guardar", objectName="primario")
         b_guardar.clicked.connect(self.guardar)
@@ -65,6 +74,14 @@ class PaginaAjustes(Pagina):
             "tecla_detener": self.tecla_detener.text().strip().lower() or "f10",
             "fps_vista_previa": self.fps.value(),
         })
+        url = self.url_repo.text().strip()
+        if url and url != actualizador.url_remota():
+            try:
+                actualizador.configurar_remoto(url)
+            except actualizador.ErrorActualizacion as e:
+                QMessageBox.warning(self, "Repositorio", f"No pude guardar el repositorio: {e}")
+                return
+            self.app.buscar_updates(manual=True)
         self.app.ajustes_guardados()
         if not silencioso:
             QMessageBox.information(self, "Ajustes", "Guardado.")

@@ -1,95 +1,9 @@
-"""Pagina Actualizaciones y pantalla de bloqueo cuando hay una actualizacion obligatoria."""
-
-import time
+"""Pantalla de bloqueo cuando hay una actualizacion obligatoria."""
 
 from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import QFormLayout, QFrame, QGroupBox, QHBoxLayout, QLabel, QLineEdit, QListWidget, QPushButton, QVBoxLayout, QWidget
+from PyQt5.QtWidgets import QFrame, QLabel, QListWidget, QPushButton, QVBoxLayout, QWidget
 
-from trefot import actualizador
 from trefot.control import control
-from trefot.gui.comun import Pagina
-
-
-class PaginaActualizaciones(Pagina):
-    titulo = "Actualizaciones"
-    subtitulo = "Las actualizaciones son obligatorias: cuando hay una nueva, el programa se bloquea hasta instalarla."
-
-    def __init__(self, app):
-        super().__init__()
-        self.app = app
-
-        estado = QGroupBox("Estado")
-        f = QFormLayout(estado)
-        self.lbl_version = QLabel()
-        self.lbl_remoto = QLabel(wordWrap=True)
-        self.lbl_revisado = QLabel()
-        self.lbl_estado = QLabel(wordWrap=True)
-        f.addRow("Version instalada", self.lbl_version)
-        f.addRow("Repositorio", self.lbl_remoto)
-        f.addRow("Ultima revision", self.lbl_revisado)
-        f.addRow("Estado", self.lbl_estado)
-        botones = QHBoxLayout()
-        self.b_buscar = QPushButton("Buscar actualizaciones")
-        self.b_buscar.clicked.connect(lambda: app.buscar_updates(manual=True))
-        self.b_actualizar = QPushButton("⟳  Actualizar", objectName="primario")
-        self.b_actualizar.clicked.connect(app.mostrar_bloqueo)
-        botones.addWidget(self.b_buscar)
-        botones.addWidget(self.b_actualizar)
-        botones.addStretch()
-        f.addRow(botones)
-        self.cuerpo.addWidget(estado)
-
-        self.grupo_cambios = QGroupBox("Cambios pendientes")
-        capa = QVBoxLayout(self.grupo_cambios)
-        self.lista = QListWidget()
-        capa.addWidget(self.lista)
-        self.cuerpo.addWidget(self.grupo_cambios)
-
-        self.grupo_repo = QGroupBox("Conectar con GitHub")
-        capa_repo = QVBoxLayout(self.grupo_repo)
-        capa_repo.addWidget(QLabel(
-            "Pega la URL de tu repositorio privado (p. ej. https://github.com/tu-usuario/TrefotFarm.git). "
-            "La primera vez Windows te pedira iniciar sesion en GitHub.", objectName="tenue", wordWrap=True))
-        fila = QHBoxLayout()
-        self.url = QLineEdit(placeholderText="https://github.com/usuario/TrefotFarm.git")
-        b = QPushButton("Guardar")
-        b.clicked.connect(self._guardar_url)
-        fila.addWidget(self.url, 1)
-        fila.addWidget(b)
-        capa_repo.addLayout(fila)
-        self.cuerpo.addWidget(self.grupo_repo)
-        self.cuerpo.addStretch()
-
-    def al_mostrar(self):
-        self.refrescar()
-
-    def _guardar_url(self):
-        try:
-            actualizador.configurar_remoto(self.url.text())
-        except actualizador.ErrorActualizacion as e:
-            self.lbl_estado.setText(str(e))
-            return
-        self.app.buscar_updates(manual=True)
-
-    def refrescar(self):
-        est = self.app.estado_update
-        remoto = actualizador.url_remota()
-        self.lbl_version.setText(f"v{actualizador.version_local()}")
-        self.lbl_remoto.setText(remoto or "sin configurar")
-        self.url.setText(remoto)
-        self.lbl_revisado.setText(time.strftime("%H:%M:%S", time.localtime(est.revisado)) if est else "—")
-        if est is None:
-            self.lbl_estado.setText("Buscando...")
-        elif est.hay_update:
-            self.lbl_estado.setText(f"Hay una actualizacion obligatoria: v{est.version_remota}")
-        elif est.error:
-            self.lbl_estado.setText(est.error)
-        else:
-            self.lbl_estado.setText("Estas al dia.")
-        self.b_actualizar.setEnabled(bool(est and est.hay_update))
-        self.lista.clear()
-        self.lista.addItems((est.cambios if est else []) or ["(ninguno)"])
-        self.grupo_cambios.setVisible(bool(est and est.hay_update))
 
 
 class PantallaBloqueo(QWidget):
