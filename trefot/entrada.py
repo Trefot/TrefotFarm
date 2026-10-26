@@ -52,14 +52,15 @@ def arrastrar(desde, hasta, origen, duracion: float = 0.4):
     x1, y1 = _punto(desde, origen)
     x2, y2 = _punto(hasta, origen)
     pyautogui.moveTo(x1, y1)
-    win32api.mouse_event(win32con.MOUSEEVENTF_LEFTDOWN, 0, 0)
     time.sleep(0.05)
+    win32api.mouse_event(win32con.MOUSEEVENTF_LEFTDOWN, 0, 0)
+    time.sleep(DURACION_CLIC)  # que el juego "agarre" la carta antes de moverla
     pasos = max(10, int(duracion * 60))
     for i in range(1, pasos + 1):
         t = i / pasos
         pyautogui.moveTo(int(x1 + (x2 - x1) * t), int(y1 + (y2 - y1) * t))
         time.sleep(duracion / pasos)
-    time.sleep(0.05)
+    time.sleep(0.1)  # soltar quieto sobre el destino
     win32api.mouse_event(win32con.MOUSEEVENTF_LEFTUP, 0, 0)
     control.actividad()
     control.esperar(0.15)

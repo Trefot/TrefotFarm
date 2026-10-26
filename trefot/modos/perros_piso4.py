@@ -5,7 +5,8 @@ Guion (si algo se sale de el, se rinde y reinicia, que es lo mas rapido con este
   Fase 1 T2: talento de Odin | perro IZQ | Freyja (si su ulti aun no esta) o Thonar (si ya esta) |
              single de Odin | single de Gawain | relleno sin gastar lo de la fase 2.
   Fase 2 T1: lobo azul (IZQ) | area de Gawain | ulti de Freyja | area de Odin | cualquier carta de G/F/O.
-  Fase 3 T1: no se ataca (el golpe secundario de la ulti de Freyja termina la pelea).
+  Fase 3 T1: no se lanza ninguna carta: se ponen bloqueadas o se mueven cartas (el golpe
+             secundario de la ulti de Freyja termina la pelea).
 
 Empieza desde cualquier pantalla de la taberna / menu de batalla / bestias demoniacas.
 """
@@ -114,12 +115,19 @@ class Estrategia:
         return (idx if idx is not None else self.derecha_jugable(mano)), None, False
 
     def _f3(self, mano):
-        """Gastar cartas sin atacar: primero las bloqueadas, luego una normal (nunca una ulti)."""
-        for tipo in (TipoCarta.BLOQUEADA, TipoCarta.NORMAL):
-            ids = [c.posicion for c in mano if c.tipo == tipo]
-            if ids:
-                return ids[-1]
-        return self.derecha_jugable(mano)
+        """No se lanza ninguna carta de ataque: el golpe extra de la ulti de Freyja termina la pelea.
+
+        Los huecos se gastan sin hacer dano: primero con cartas bloqueadas (no hacen nada) y, si no
+        hay, MOVIENDO cartas (arrastrar una carta sobre la de su izquierda tambien gasta un hueco).
+        Devuelve un indice (poner esa carta) o una tupla (origen, destino) para mover.
+        """
+        bloqueadas = [c.posicion for c in mano if c.tipo == TipoCarta.BLOQUEADA]
+        if bloqueadas:
+            return bloqueadas[-1]
+        for izq, der in zip(mano, mano[1:]):
+            if izq.tipo not in (TipoCarta.SUELO, TipoCarta.NINGUNA) and der.tipo not in (TipoCarta.SUELO, TipoCarta.NINGUNA):
+                return (der.posicion, izq.posicion)
+        raise Reiniciar("F3: no hay cartas que mover ni bloqueadas")
 
     # ------------------------------------------------------------------ ayudantes
     @staticmethod
@@ -394,14 +402,19 @@ class PerrosPiso4(Modo):
                 self.talento_usado = True
             if objetivo:
                 self._apuntar(objetivo)
-            carta = mano[idx]
-            self.log(f"Accion {accion + 1}: juego {carta}")
-            entrada.clic(carta.rect, o, espera=0)
+            if isinstance(idx, tuple):  # mover una carta sobre otra (gasta el hueco sin atacar)
+                origen, destino = mano[idx[0]], mano[idx[1]]
+                self.log(f"Accion {accion + 1}: muevo {origen} sobre {destino}")
+                entrada.arrastrar(origen.rect, destino.rect, o)
+            else:
+                carta = mano[idx]
+                self.log(f"Accion {accion + 1}: juego {carta}")
+                entrada.clic(carta.rect, o, espera=0)
             if self._esperar_hueco(huecos):
                 self.log("Carta colocada.", "debug")
             else:
                 self.log("La carta aun no ocupa su hueco; lo vuelvo a comprobar.", "debug")
-            fusiones = self.estrategia.fusiones_al_jugar(mano, idx)
+            fusiones = 0 if isinstance(idx, tuple) else self.estrategia.fusiones_al_jugar(mano, idx)
             self.esperar_corto(PAUSA_ENTRE_CARTAS + (0.6 if fusiones == 1 else 1.1 if fusiones > 1 else 0))
             ultima_accion = accion
             # Tambien la ultima carta se comprueba: el turno solo acaba cuando no quedan huecos.
