@@ -1,0 +1,10 @@
+numpy==1.26.1
+opencv-python
+PyQt5
+pyautogui
+pynput
+pywin32
+pyyaml
+requests
+dill
+scikit-learn==1.5.1

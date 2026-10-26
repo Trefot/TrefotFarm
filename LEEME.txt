@@ -1,0 +1,94 @@
+TREFOT // FARM  -  v2
+=====================
+
+Autofarming propio para 7DS Grand Cross (cliente de PC, modo vertical).
+Reutiliza las imagenes de pantalla y los dos modelos de cartas del proyecto AutoFarming
+(licencia MIT, ver LICENSE_AutoFarming_original.txt), pero el codigo es nuevo e independiente:
+el boton "Update" de AutoFarming no lo toca.
+
+
+INSTALAR (una vez)
+------------------
+Doble clic en Instalar.bat  (necesita Python 3.12, el mismo que usa AutoFarming).
+
+
+ARRANCAR
+--------
+Doble clic en TrefotFarm.bat.  Si no abre, TrefotFarm_con_consola.bat muestra el error.
+
+
+PRIMERA VEZ: CAPTURAS DE TUS CARTAS  (pagina "Capturas")
+---------------------------------------------------------
+Las cartas de Odin y Gawain no vienen en AutoFarming; hay que capturarlas una vez.
+1. Abre el juego y pulsa "Ajustar ventana" (deja el area de juego en 540x960).
+2. Entra a una pelea de Perros piso 4 con el equipo (izq. a der.): Odin, Gawain, Freyja roja, Thonar azul.
+3. Cuando salga tu mano, pulsa "Capturar mano". Debajo de cada carta ves que reconoce el bot.
+   En las que falten, elige en la lista que carta es y pulsa "Guardar".
+4. Repite en otros turnos hasta que no quede ninguna ✖ roja.
+   Las ◐ amarillas funcionan con la imagen de AutoFarming; si fallan, captura tambien esas.
+5. Talento de Odin: cuando el boton este disponible, "Capturar talento" y "Guardar como talento de Odin".
+   (Opcional, pero ayuda a detectar el inicio del primer turno y a confirmar que se activo.)
+6. "Probar reconocimiento" en varios turnos para comprobar que todo se reconoce bien.
+
+Las capturas quedan en assets\equipo\perros_trefot\ (un PNG por carta).
+
+
+LA INTERFAZ (menu de la izquierda)
+----------------------------------
+Inicio            estado del juego, del bot y de la version; avisos; arranque rapido; resumen de hoy.
+Farmear           modo, opciones, Iniciar / Pausar / Detener, registro y vista en vivo del juego.
+Capturas          sacar y comprobar las imagenes de tus cartas (la insignia roja = las que faltan).
+Historial         todas las sesiones con victorias, derrotas, % de exito y victorias por hora.
+Ajustes           ventana del juego, teclas rapidas y avisos al movil.
+Actualizaciones   version instalada, buscar actualizaciones y conexion con GitHub.
+
+Para farmear: juego abierto y visible, equipo puesto, Inicio -> "Iniciar ahora".
+F9 pausa / reanuda, F10 detiene (cambiables en Ajustes).
+Freno de emergencia: lleva el raton a una esquina de la pantalla.
+Mientras corre, el bot usa tu raton: no lo muevas.
+
+El guion de pelea esta explicado al principio de trefot\modos\perros_piso4.py.
+Si falta una carta clave o una fase dura mas de lo previsto, se rinde y reinicia la pelea.
+
+
+ACTUALIZACIONES (obligatorias)
+------------------------------
+El programa revisa tu repositorio privado de GitHub al abrir y cada 30 minutos.
+Si hay una version nueva, se bloquea hasta instalarla:
+  - si estaba farmeando, termina la pelea actual y se detiene (o pulsa "Detener el bot ya");
+  - "Actualizar ahora" la descarga, la instala y reinicia el programa.
+Tus capturas (assets\equipo), config.yaml, el historial y los logs nunca se tocan.
+Si habias editado a mano algun archivo del programa, se guarda una copia en logs\respaldo_<fecha>\.
+Sin internet o sin GitHub configurado, el programa funciona igual y lo vuelve a intentar despues.
+
+Conectar con GitHub (una vez): pagina Actualizaciones -> pega la URL del repositorio -> Guardar.
+
+
+AVISOS AL MOVIL (opcional)
+--------------------------
+Instala la app ntfy, suscribete a un canal con un nombre dificil de adivinar y escribelo en
+Ajustes. Te avisa (con foto) si el bot se queda atascado.
+
+
+CARPETAS
+--------
+assets\imagenes\   plantillas de pantalla (de AutoFarming)
+assets\modelos\    modelos de tipo de carta y de hueco vacio (de AutoFarming)
+assets\equipo\     tus capturas de cartas
+capturas\          fotos completas que guardes
+logs\              errores inesperados (errores.log)
+config.yaml        ajustes (se crea solo)
+trefot\            el codigo:
+   ventana.py  captura y tamano de la ventana     entrada.py  clics
+   vision.py   busqueda de imagenes               cartas.py   lectura de la mano
+   equipo.py   reconocer tus cartas               juego.py    imagenes y coordenadas del juego
+   motor.py    bucle de estados + vigilante       modos\      un archivo por modo de farmeo
+   gui\        la interfaz
+
+AGREGAR UN MODO NUEVO
+---------------------
+Copia modos\perros_piso4.py como base, cambia id/nombre/opciones/estados y anadelo a
+MODOS en modos\__init__.py. Aparece solo en la interfaz.
+
+
+Ojo: usar bots va contra las reglas de Netmarble y puede costar un baneo.
