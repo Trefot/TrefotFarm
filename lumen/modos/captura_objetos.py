@@ -19,6 +19,7 @@ import re
 import time
 
 import cv2
+import numpy as np
 
 from lumen import botin, entrada, ocr
 from lumen.control import control
@@ -29,10 +30,25 @@ INVENTARIO = Plantilla("objetos/inventario.png")  # boton "Sell Multiple" de la 
 CERRAR_FICHA = Plantilla("objetos/cerrar_ficha.png")  # la X roja de la ficha de un objeto
 CATEGORIAS = [("Ingredients", (72, 215)), ("Cooking", (173, 215)), ("1-Use", (273, 215)),
               ("Misc.", (382, 215)), ("Equipment", (478, 215))]
-# Estanteria: 4 columnas y filas cada 130 px (medido en la ventana de 554x960).
+# Estanteria: 4 columnas y filas cada 130 px (medido en la ventana de 554x960). Al bajarla no se mueve
+# justo 2 filas (sigue deslizandose): en la 2.a captura real quedo 69-92 px corrida y los toques caian
+# en las tablas. Por eso las filas se buscan en cada pagina por las tablas de la estanteria (filas_de).
 COLUMNAS = (85, 210, 337, 470)
-FILAS = (375, 505, 635, 765)
+FILAS = (375, 505, 635, 765)  # con la estanteria arriba del todo
 PASO_FILA = 130
+ZONA_ESTANTE = (330, 830)
+FASE_ARRIBA = 69  # fase de las tablas con la estanteria arriba del todo (medida)
+
+
+def filas_de(pantalla) -> list[int]:
+    """Centro de cada fila de objetos visible entera: las tablas son lineas horizontales a todo lo
+    ancho que se repiten cada 130 px; se busca su fase y de ahi salen las filas."""
+    y1, y2 = ZONA_ESTANTE
+    gris = cv2.cvtColor(pantalla, cv2.COLOR_BGR2GRAY).astype(np.float32)
+    cambio = np.abs(np.diff(gris[:, 30:520], axis=0)).mean(1)
+    fase = max(range(PASO_FILA), key=lambda f: sum(float(cambio[y - 1 : y + 2].sum()) for y in range(y1 + f, y2, PASO_FILA)))
+    desplazamiento = (fase - FASE_ARRIBA) % PASO_FILA
+    return [y for y in range(FILAS[0] + desplazamiento - PASO_FILA, 860, PASO_FILA) if y - 40 >= 325 and y + 15 <= 845]
 PARECIDO_CASILLA = 0.93  # dibujo de casilla ya visto (mismo objeto en otro monton o tras bajar)
 ESPERA_FICHA = 3.0  # sin ficha tras tocar: se reintenta una vez; si sigue sin ficha, casilla vacia
 VACIAS_FIN = 4  # casillas seguidas sin ficha = fin de la categoria
@@ -103,7 +119,8 @@ class CapturaObjetos(Modo):
         self.galeria = botin.cargar_galeria_local()
         self.categoria = 0
         self.vistos: list = []  # recortes de casilla ya tratados en esta categoria
-        self.casilla = 0  # siguiente casilla de esta pagina (0..15)
+        self.casilla = 0  # siguiente casilla de esta pagina
+        self.filas: list[int] = list(FILAS)  # filas de esta pagina (se buscan al empezarla)
         self.tocada: tuple | None = None
         self.desde = time.time()
         self.nuevos = self.leidos = 0
@@ -141,9 +158,11 @@ class CapturaObjetos(Modo):
     def recorrer(self, p, o):
         if not INVENTARIO.esta(p, 0.85):
             return None  # aun se cierra una ficha o cambia la categoria
-        while self.casilla < len(COLUMNAS) * len(FILAS):
+        if self.casilla == 0:
+            self.filas = filas_de(p) or list(FILAS)
+        while self.casilla < len(COLUMNAS) * len(self.filas):
             fila, columna = divmod(self.casilla, len(COLUMNAS))
-            cx, cy = COLUMNAS[columna], FILAS[fila]
+            cx, cy = COLUMNAS[columna], self.filas[fila]
             recorte = recorte_casilla(p, cx, cy)
             self.casilla += 1
             if ya_visto(p, cx, cy, self.vistos):
@@ -155,7 +174,7 @@ class CapturaObjetos(Modo):
             return "esperar_ficha"
         # Pagina terminada: bajar 2 filas. Si la estanteria no se mueve, la categoria termino.
         antes = p[330:830].copy()
-        entrada.arrastrar((275, 700), (275, 700 - 2 * PASO_FILA), o, duracion=0.9)
+        entrada.arrastrar((275, 700), (275, 700 - 2 * PASO_FILA), o, duracion=1.2)  # lento: menos deslizamiento
         control.esperar(1.5)
         despues = self.capturar()[0][330:830]
         if float(cv2.absdiff(antes, despues).mean()) < 4:
