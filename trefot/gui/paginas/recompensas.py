@@ -116,8 +116,8 @@ class PaginaRecompensas(Pagina):
 
         # ---- pestanas: Botin / Fotos
         self.pestanas = QTabWidget()
-        self.pestanas.addTab(self._crear_botin(), iconos.icono("recompensas", tema.TENUE), "Botín")
-        self.pestanas.addTab(self._crear_fotos(), iconos.icono("foto", tema.TENUE), "Fotos")
+        self.pestanas.addTab(self._crear_botin(), iconos.icono("recompensas", tema.TENUE), " Botín")
+        self.pestanas.addTab(self._crear_fotos(), iconos.icono("foto", tema.TENUE), " Fotos")
         self.cuerpo.addWidget(self.pestanas, 1)
 
         app.puente.stats.connect(self._quizas_nueva_foto)

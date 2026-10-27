@@ -213,6 +213,7 @@ QScrollBar:vertical {{ background: transparent; width: 10px; margin: 2px; }}
 QScrollBar::handle:vertical {{ background: {_s.borde}; border-radius: 4px; min-height: 30px; }}
 QScrollBar::handle:vertical:hover {{ background: {_s.borde_oro}; }}
 QScrollBar::add-line, QScrollBar::sub-line {{ height: 0; width: 0; }}
+QScrollBar::add-page, QScrollBar::sub-page {{ background: none; }}
 QScrollBar:horizontal {{ background: transparent; height: 10px; margin: 2px; }}
 QScrollBar::handle:horizontal {{ background: {_s.borde}; border-radius: 4px; min-width: 30px; }}
 QCheckBox::indicator {{ width: 15px; height: 15px; }}
@@ -232,6 +233,10 @@ QFrame#tarjeta_modo[seleccionada="true"] {{ border: 2px solid {_s.acento}; backg
 QFrame#tarjeta_pronto {{ background: transparent; border: 1px dashed {_s.borde}; border-radius: 14px; }}
 QLabel#iniciales {{ background: {_s.borde}; border-radius: 20px; color: {_s.texto}; font-weight: 700; }}
 QPushButton#chico {{ padding: 5px 10px; }}
+QPushButton#desplegable {{ background: transparent; border: none; text-align: left; padding: 8px 2px; font-weight: 700;
+                           font-size: 10.5pt; }}
+QWidget#cuerpo_desplegable {{ background: transparent; }}
+QPushButton#desplegable:hover, QPushButton#desplegable:checked {{ color: {_s.acento}; }}
 QPushButton#chip {{ padding: 6px 14px; border-radius: 15px; }}
 QPushButton#chip:checked {{ background: {_ORO}; color: {_s.sobre_acento}; border-color: {_s.borde_oro}; font-weight: 700; }}
 QPushButton#empezar {{ background: {_ORO}; color: {_s.sobre_acento}; border: 2px solid {_s.borde_oro}; border-radius: 12px;
@@ -254,7 +259,7 @@ QFrame#tarjeta_equipo:hover {{ border-color: {_s.borde_oro}; }}
 QTabWidget::pane {{ border: 1px solid {_s.borde}; border-radius: 8px; top: -1px; background: {_s.fondo}; }}
 QTabBar::tab {{ background: {_s.panel}; color: {_s.tenue}; padding: 8px 20px; border: 1px solid {_s.borde}; border-bottom: none;
                border-top-left-radius: 7px; border-top-right-radius: 7px; margin-right: 3px; font-family: {_TITULOS}; }}
-QTabBar::tab:selected {{ color: {_s.acento}; background: {_s.fondo}; font-weight: 700; border-top: 2px solid {_s.acento}; }}
+QTabBar::tab:selected {{ color: {_s.acento}; background: {_s.fondo}; border-top: 2px solid {_s.acento}; }}
 QTabBar::tab:hover {{ color: {_s.texto}; }}
 
 /* ---- barra inferior */

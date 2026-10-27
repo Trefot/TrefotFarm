@@ -357,6 +357,7 @@ class Asistente(QDialog):
         capa.addWidget(_punto("farmear", "2. Elige qué farmear", "Haz clic en la Demonic Beast que quieras."))
         capa.addWidget(_punto("trofeo", "3. Elige cuántas victorias", "Un número fijo, o sin límite."))
         capa.addWidget(_punto("jugar", "4. Pulsa Empezar", "Y déjame el ratón. En Farmear ves qué estoy haciendo."))
-        capa.addWidget(_texto("Puedes volver a ver este asistente cuando quieras desde <b>Ajustes</b>.", "tenue"))
+        capa.addWidget(_texto("¿Dudas? En <b>Ayuda</b> tienes una guía con capturas del juego, soluciones a los problemas "
+                              "más comunes y un glosario. Desde ahí también puedes volver a abrir este asistente.", "tenue"))
         capa.addStretch()
         return w

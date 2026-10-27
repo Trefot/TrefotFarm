@@ -24,6 +24,7 @@ from trefot.control import control
 from trefot.gui import iconos, tema
 from trefot.gui.paginas.actualizaciones import PantallaBloqueo
 from trefot.gui.paginas.ajustes import PaginaAjustes
+from trefot.gui.paginas.ayuda import PaginaAyuda
 from trefot.gui.paginas.capturas import PaginaCapturas
 from trefot.gui.paginas.editor_personajes import PaginaEditorPersonajes
 from trefot.gui.paginas.farmear import PaginaFarmear
@@ -45,6 +46,7 @@ MENU = [
     ("equipos", "Equipos"),
     ("recompensas", "Recompensas"),
     ("historial", "Historial"),
+    ("ayuda", "Ayuda"),
     ("ajustes", "Ajustes"),
     # Solo con el modo administrador (Ajustes): herramientas para mantener la base del bot.
     ("capturas", "Capturas"),
@@ -135,6 +137,7 @@ class VentanaPrincipal(QMainWindow):
             "equipos": PaginaEquipos(self),
             "historial": PaginaHistorial(self),
             "recompensas": PaginaRecompensas(self),
+            "ayuda": PaginaAyuda(self),
             "ajustes": PaginaAjustes(self),
         }
         for pagina in self.paginas.values():
