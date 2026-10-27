@@ -175,6 +175,7 @@ class VentanaPrincipal(QMainWindow):
         QTimer(self, timeout=self._barra, interval=2000).start()
         QTimer(self, timeout=self.buscar_updates, interval=MINUTOS_ENTRE_REVISIONES * 60 * 1000).start()
         self.puente.escuchar_teclas()
+        self.puente.escucha.aplicar_ajustes()
         self.navegar("inicio")
         self.refrescar_insignias()
         self.aplicar_modo_admin()
@@ -220,6 +221,7 @@ class VentanaPrincipal(QMainWindow):
     def ajustes_guardados(self):
         self.aplicar_modo_admin()
         self.farmear.actualizar_ayuda_teclas()
+        self.puente.escucha.aplicar_ajustes()
         self._barra()
 
     def _barra(self):

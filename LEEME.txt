@@ -78,6 +78,15 @@ AVISOS AL MOVIL (opcional)
 Instala la app ntfy, suscribete a un canal con un nombre dificil de adivinar y escribelo en
 Ajustes. Te avisa (con foto) si el bot se queda atascado.
 
+Ordenes desde el movil: marca "Aceptar ordenes desde el movil" en Ajustes y escribe en el canal
+desde la app ntfy. El bot contesta en el mismo canal:
+  estado     que esta haciendo, tiempo, victorias y derrotas
+  iniciar    empieza a farmear con el modo elegido en Farmear (el juego tiene que estar abierto)
+  pausar / reanudar / detener
+  captura    foto de la pantalla del juego
+  ayuda      la lista de ordenes
+Quien conozca el nombre del canal puede manejar el bot: usa un nombre largo y dificil de adivinar.
+
 
 CARPETAS
 --------

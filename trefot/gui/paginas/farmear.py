@@ -22,7 +22,7 @@ from PyQt5.QtWidgets import (
     QVBoxLayout,
 )
 
-from trefot import actualizador, config, ventana
+from trefot import actualizador, avisos, config, ordenes, ventana
 from trefot.control import control
 from trefot.gui import iconos, tema
 from trefot.gui.comun import Pagina, formatear_tiempo, tarjeta
@@ -159,6 +159,7 @@ class PaginaFarmear(Pagina):
         self.puente.stats.connect(self._stats)
         self.puente.terminado.connect(self._terminado)
         self.puente.tecla.connect(self._tecla)
+        self.puente.orden.connect(self._orden)
 
         self.temporizador = QTimer(self, timeout=self._refrescar)
         self.temporizador.start(1000)
@@ -240,7 +241,14 @@ class PaginaFarmear(Pagina):
                 campo.setText(str(valor))
 
     # ------------------------------------------------------------------ control
-    def iniciar(self):
+    def _problema(self, titulo: str, texto: str, remoto: bool):
+        """Avisa de por que no se puede arrancar: en pantalla, o al movil si la orden vino de ahi."""
+        if remoto:
+            avisos.enviar(f"{titulo}: {texto}")
+        else:
+            QMessageBox.warning(self, titulo, texto)
+
+    def iniciar(self, remoto: bool = False):
         # Antes de farmear, mirar si salio una version nueva (las revisiones automaticas son cada
         # 30 min y podria estar jugando con un guion viejo). Si no hay internet, sigue igual.
         est = self.app.estado_update
@@ -254,12 +262,17 @@ class PaginaFarmear(Pagina):
             self.app._resultado_revision(estado)
         if self.app.update_bloqueante:
             self.app.mostrar_bloqueo()
+            if remoto:
+                avisos.enviar("Hay una actualizacion obligatoria: instalala en el PC antes de farmear.")
             return
         cls = self.modo_cls
         equipo = getattr(cls, "equipo", None)
         if equipo is not None:
             equipo.recargar()
             faltan = equipo.faltantes()
+            if faltan and remoto:
+                self._problema("Faltan capturas", "\n".join(f"• {d.descripcion}" for d in faltan), True)
+                return
             if faltan:
                 r = QMessageBox.warning(
                     self, "Faltan capturas",
@@ -270,7 +283,7 @@ class PaginaFarmear(Pagina):
                 if r == QMessageBox.Yes:
                     self.app.navegar("capturas")
                 return
-        if not self._preparar_ventana():
+        if not self._preparar_ventana(remoto):
             return
         valores = self._valores()
         opciones = dict(config.obtener("opciones_modos") or {})
@@ -287,15 +300,15 @@ class PaginaFarmear(Pagina):
         self._pintar_estado()
         self.app.navegar("farmear")
 
-    def _preparar_ventana(self) -> bool:
+    def _preparar_ventana(self, remoto: bool = False) -> bool:
         """Juego abierto, del tamano correcto y al frente. False si no se puede arrancar."""
         if not ventana.ventana_abierta():
-            QMessageBox.warning(self, "Juego cerrado", f"No encuentro la ventana '{config.obtener('titulo_ventana')}'.")
+            self._problema("Juego cerrado", f"No encuentro la ventana '{config.obtener('titulo_ventana')}'.", remoto)
             return False
         if not ventana.ajustar_tamano():
             if ventana.ultimo_error == ventana.AVISO_ADMIN:
                 # Sin permisos tampoco funcionarian los clics: no tiene sentido arrancar.
-                QMessageBox.warning(self, "Faltan permisos", ventana.AVISO_ADMIN)
+                self._problema("Faltan permisos", ventana.AVISO_ADMIN, remoto)
                 return False
             self.escribir(f"{ventana.ultimo_error} Puede fallar el reconocimiento.", "aviso")
         ventana.traer_al_frente()
@@ -340,6 +353,53 @@ class PaginaFarmear(Pagina):
             self.pausar()
         elif cual == "detener":
             self.detener()
+
+    # ------------------------------------------------------------ ordenes del movil
+    def _orden(self, orden: str):
+        corriendo = self.puente.corriendo
+        if orden == "ayuda":
+            avisos.enviar(ordenes.texto_ayuda())
+        elif orden == "estado":
+            avisos.enviar(self._resumen())
+        elif orden == "captura":
+            try:
+                imagen, _ = ventana.capturar()
+            except Exception as error:
+                avisos.enviar(f"No pude sacar la foto: {error}")
+                return
+            avisos.enviar(self._resumen(), imagen)
+        elif orden == "iniciar":
+            if corriendo:
+                avisos.enviar("Ya esta en marcha. " + self._resumen())
+                return
+            self.escribir("Orden del movil: iniciar.", "info")
+            self.iniciar(remoto=True)
+            if self.puente.corriendo:
+                avisos.enviar(f"Empiezo: {self.modo_cls.nombre}.")
+        elif not corriendo:
+            avisos.enviar("El bot no esta en marcha. Escribe 'iniciar' para empezar.")
+        elif orden == "detener":
+            self.escribir("Orden del movil: detener.", "aviso")
+            self.detener()
+            avisos.enviar("Detenido.")
+        elif (orden == "pausar") != control.en_pausa:  # pausar sin pausa, o reanudar en pausa
+            self.escribir(f"Orden del movil: {orden}.", "info")
+            self.pausar()
+            avisos.enviar("En pausa." if control.en_pausa else "Reanudado.")
+        else:
+            avisos.enviar("Ya estaba en pausa." if control.en_pausa else "No estaba en pausa.")
+
+    def _resumen(self) -> str:
+        """El estado en pocas lineas, para el movil."""
+        self._pintar_estado()
+        lineas = [f"{self.lbl_estado.text()} · {self.lbl_detalle.text()}"]
+        if self.inicio:
+            lineas.append(f"Tiempo: {formatear_tiempo(time.time() - self.inicio)}")
+        s = self.ultimas_stats
+        if s:
+            lineas.append(" · ".join(f"{nombre}: {s[clave]:.0f}%" if clave == "tasa" else f"{nombre}: {s[clave]}"
+                                     for clave, nombre, _ in CIFRAS if clave in s))
+        return "\n".join(lineas)
 
     def _terminado(self):
         self._botones(False)

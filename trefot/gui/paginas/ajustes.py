@@ -102,8 +102,12 @@ class PaginaAjustes(Pagina):
         f.addRow("Canal de ntfy", self.ntfy)
         f.addRow("Avisar si se atasca (0 = no)", self.atasco)
         c.addLayout(f)
+        self.ordenes = QCheckBox("Aceptar órdenes desde el móvil (escribe 'ayuda' en el canal)")
+        self.ordenes.setChecked(bool(config.obtener("ntfy_ordenes")))
+        c.addWidget(self.ordenes)
         fila = QHBoxLayout()
-        fila.addWidget(nota("Instala la app gratuita ntfy y suscríbete a un canal con un nombre difícil de adivinar."), 1)
+        fila.addWidget(nota("Instala la app gratuita ntfy y suscríbete a un canal con un nombre difícil de adivinar: "
+                            "quien sepa el nombre puede leer los avisos y, con las órdenes activas, manejar el bot."), 1)
         b_probar = QPushButton(" Probar", objectName="chico")
         b_probar.setIcon(iconos.icono("movil", tema.TEXTO))
         b_probar.clicked.connect(self.probar)
@@ -148,6 +152,7 @@ class PaginaAjustes(Pagina):
             "skin": self.skin.currentData(),
             "titulo_ventana": self.titulo_ventana.text().strip() or "7DS",
             "ntfy_canal": self.ntfy.text().strip(),
+            "ntfy_ordenes": self.ordenes.isChecked(),
             "minutos_atasco": self.atasco.value(),
             "tecla_pausa": self.tecla_pausa.text().strip().lower() or "f9",
             "tecla_detener": self.tecla_detener.text().strip().lower() or "f10",

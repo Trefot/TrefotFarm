@@ -6,7 +6,7 @@ import traceback
 
 from PyQt5.QtCore import QObject, pyqtSignal
 
-from trefot import config
+from trefot import config, ordenes
 from trefot.control import control
 from trefot.rutas import LOGS
 
@@ -17,6 +17,7 @@ class Puente(QObject):
     stats = pyqtSignal(dict)
     terminado = pyqtSignal()
     tecla = pyqtSignal(str)  # "pausa" | "detener"
+    orden = pyqtSignal(str)  # una orden del movil (ver trefot/ordenes.py)
 
     def __init__(self):
         super().__init__()
@@ -27,6 +28,7 @@ class Puente(QObject):
         self._teclado = None
         self._archivo = None  # logs/sesion_<fecha>.log de la sesion en curso (incluye el detalle)
         self._lock_archivo = threading.Lock()
+        self.escucha = ordenes.Escucha(lambda o: self.orden.emit(o))
 
     def _registrar(self, mensaje: str, nivel: str):
         with self._lock_archivo:

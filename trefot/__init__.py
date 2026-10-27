@@ -1,3 +1,3 @@
 """TrefotFarm v2: autofarming propio para 7DS Grand Cross."""
 
-__version__ = "2.22.2"
+__version__ = "2.23.0"

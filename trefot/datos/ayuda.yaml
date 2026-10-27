@@ -154,7 +154,7 @@ glosario:
     definicion: "Cuando sale una versión nueva hay que instalarla para seguir usando el bot."
   - termino: "Avisos al móvil (ntfy)"
     tipo: bot
-    definicion: "App gratuita que recibe los avisos del bot si se atasca. Se configura en Ajustes."
+    definicion: "App gratuita que recibe los avisos del bot si se atasca. Con 'Aceptar órdenes desde el móvil' (Ajustes) también puedes escribirle: estado, iniciar, pausar, reanudar, detener, captura o ayuda."
   - termino: "Modo administrador"
     tipo: bot
     definicion: "Opciones para quien mantiene la base del bot (capturas, personajes y equipos). Un jugador normal no lo necesita."
