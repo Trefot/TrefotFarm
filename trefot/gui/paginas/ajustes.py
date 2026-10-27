@@ -56,6 +56,13 @@ class PaginaAjustes(Pagina):
         f.addRow("Título de la ventana", self.titulo_ventana)
         c.addLayout(f)
         c.addWidget(nota("Global: 7DS · Japón: グラクロ. Solo cámbialo si juegas en otro cliente."))
+        b_asistente = QPushButton(" Ver el asistente de primera vez", objectName="chico")
+        b_asistente.setIcon(iconos.icono("ayuda", tema.TEXTO))
+        b_asistente.clicked.connect(self.app.abrir_asistente)
+        fila_a = QHBoxLayout()
+        fila_a.addWidget(b_asistente)
+        fila_a.addStretch()
+        c.addLayout(fila_a)
         rejilla.addWidget(juego, 0, 0)
 
         aspecto, c = seccion("Aspecto", "aspecto")

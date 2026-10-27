@@ -175,6 +175,8 @@ class VentanaPrincipal(QMainWindow):
         self._barra()
         self.farmear.escribir("TrefotFarm listo.", "ok")
         QTimer.singleShot(300, self.buscar_updates)
+        if not config.obtener("asistente_visto"):
+            QTimer.singleShot(700, self.abrir_asistente)
 
     # ---------------------------------------------------------------- navegacion
     def navegar(self, clave: str):
@@ -325,6 +327,15 @@ class VentanaPrincipal(QMainWindow):
             return
         self.bloqueo.mensaje(texto + "  Reiniciando...")
         QTimer.singleShot(1200, self._reiniciar)
+
+    def abrir_asistente(self):
+        if self.update_bloqueante or self.actualizando:
+            return  # primero la actualizacion obligatoria; el asistente sale al volver a abrir
+        from trefot.gui.asistente import Asistente
+
+        Asistente(self).exec_()
+        self.paginas["personajes"].al_mostrar()
+        self.navegar("inicio")
 
     def _reiniciar(self):
         QProcess.startDetached(sys.executable, [str(RAIZ / "TrefotFarm.pyw")], str(RAIZ))

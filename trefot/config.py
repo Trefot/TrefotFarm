@@ -14,7 +14,8 @@ POR_DEFECTO = {
     "tecla_detener": "f10",
     "ultimo_modo": "perros_piso4",
     "modo_admin": False,  # muestra Capturas y el Editor de personajes
-    "skin": "auto",  # "auto" = segun la fecha; o el id de una skin de gui/tema.py
+    "skin": "auto",
+    "asistente_visto": False,  # el asistente de primera vez ya salio  # "auto" = segun la fecha; o el id de una skin de gui/tema.py
     "opciones_modos": {},
 }
 

@@ -33,8 +33,8 @@ EQUIPO = Equipo(
     "Odin, Gawain, Freyja roja, Thonar azul",
     # En el orden de la pantalla del equipo (izquierda a derecha)
     [
-        Puesto("Dano a un objetivo (F1) y en area (F2), con su talento", ("dano_single", "dano_area"), "odin"),
-        Puesto("Dano a un objetivo (F1) y en area (F2)", ("dano_single", "dano_area"), "gawain"),
+        Puesto("Daño a un objetivo (F1) y en área (F2), con su Talent", ("dano_single", "dano_area"), "odin"),
+        Puesto("Daño a un objetivo (F1) y en área (F2)", ("dano_single", "dano_area"), "gawain"),
         Puesto("Ulti en F2 cuyo golpe extra remata la F3", ("ulti_remate",), "freyja_roja"),
         Puesto("Quitar la postura del perro izquierdo (F1)", ("quita_postura",), "thonar_azul"),
     ],
