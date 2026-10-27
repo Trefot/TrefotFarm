@@ -1,7 +1,7 @@
 """Lectura de la mano de cartas: posicion, estado (normal, ulti, bloqueada, hueco), rango y huecos libres.
 
 - Hueco vacio (unidad muerta): modelo entrenado de AutoFarming (assets/modelos), sigue funcionando.
-- Bloqueada: la carta se ve en gris (poca saturacion de color).
+- Bloqueada: la carta se ve oscurecida (poco brillo).
 - Rango: plantillas de bronce/plata/oro; sin rango = ulti.
 El modelo de "tipo de carta" de AutoFarming ya no sirve con el diseno actual de las cartas (dice
 "ulti" para todas), asi que no se usa. Que carta ES (Odin single, Freyja ulti...) lo decide cada
@@ -29,9 +29,10 @@ class TipoCarta(Enum):
     NINGUNA = -100
 
 
-# Saturacion media del interior por debajo de la cual la carta esta en gris (bloqueada).
-# Medido en cartas reales: las normales dan 109-203 y una carta en gris da ~0.
-SATURACION_BLOQUEADA = 60
+# Una carta bloqueada se ve OSCURECIDA (no gris). Brillo medio del interior medido en 30 manos
+# reales: bloqueadas 73-83, normales 96 o mas (la mayoria 160+). Ojo: hay cartas con dibujo gris
+# pero brillante (la ulti de Thonar) que NO estan bloqueadas.
+BRILLO_BLOQUEADA = 90
 
 
 class Rango(Enum):
@@ -104,7 +105,7 @@ def tipo_de(carta: np.ndarray) -> TipoCarta:
     dentro = interior(carta)
     if bool(_modelo("ground_cards_predictor.svc").predict(_rasgos_suelo(dentro)).item()):
         return TipoCarta.SUELO
-    if cv2.cvtColor(dentro, cv2.COLOR_BGR2HSV)[..., 1].mean() < SATURACION_BLOQUEADA:
+    if cv2.cvtColor(dentro, cv2.COLOR_BGR2HSV)[..., 2].mean() < BRILLO_BLOQUEADA:
         return TipoCarta.BLOQUEADA
     return TipoCarta.NORMAL
 

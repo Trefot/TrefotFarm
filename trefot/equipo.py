@@ -163,8 +163,6 @@ class Equipo:
 
     def etiquetar(self, mano: list[Carta]) -> list[Carta]:
         for carta in mano:
+            # Una bloqueada tambien lleva su nombre (para el registro), pero sigue sin poder jugarse.
             carta.nombre = self.reconocer(carta)
-            if carta.nombre and carta.tipo == TipoCarta.BLOQUEADA:
-                # Se reconoce como carta del equipo: no estaba bloqueada, solo es gris.
-                carta.tipo = TipoCarta.ULTI if carta.rango == Rango.ULTI else TipoCarta.NORMAL
         return mano
