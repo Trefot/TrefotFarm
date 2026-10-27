@@ -22,7 +22,7 @@ def leer_imagen(ruta: Path) -> np.ndarray | None:
 def guardar_imagen(ruta: Path, imagen: np.ndarray) -> None:
     ruta = Path(ruta)
     ruta.parent.mkdir(parents=True, exist_ok=True)
-    ok, datos = cv2.imencode(".png", imagen)
+    ok, datos = cv2.imencode(ruta.suffix if ruta.suffix in (".png", ".jpg") else ".png", imagen)
     if not ok:
         raise RuntimeError(f"No se pudo guardar {ruta}")
     ruta.write_bytes(datos.tobytes())

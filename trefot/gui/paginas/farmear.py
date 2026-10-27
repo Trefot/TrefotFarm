@@ -52,6 +52,7 @@ class PaginaFarmear(Pagina):
         self.ultimas_stats: dict = {}
         self.estado_bot = ""
         self.fases: list[QLabel] = []
+        self.modo_externo = None  # una herramienta (p. ej. la captura de heroes) en vez del modo elegido
 
         fila = QHBoxLayout()
         fila.setSpacing(16)
@@ -269,16 +270,8 @@ class PaginaFarmear(Pagina):
                 if r == QMessageBox.Yes:
                     self.app.navegar("capturas")
                 return
-        if not ventana.ventana_abierta():
-            QMessageBox.warning(self, "Juego cerrado", f"No encuentro la ventana '{config.obtener('titulo_ventana')}'.")
+        if not self._preparar_ventana():
             return
-        if not ventana.ajustar_tamano():
-            if ventana.ultimo_error == ventana.AVISO_ADMIN:
-                # Sin permisos tampoco funcionarian los clics: no tiene sentido arrancar.
-                QMessageBox.warning(self, "Faltan permisos", ventana.AVISO_ADMIN)
-                return
-            self.escribir(f"{ventana.ultimo_error} Puede fallar el reconocimiento.", "aviso")
-        ventana.traer_al_frente()
         valores = self._valores()
         opciones = dict(config.obtener("opciones_modos") or {})
         opciones[cls.id] = valores
@@ -293,6 +286,34 @@ class PaginaFarmear(Pagina):
         self._botones(True)
         self._pintar_estado()
         self.app.navegar("farmear")
+
+    def _preparar_ventana(self) -> bool:
+        """Juego abierto, del tamano correcto y al frente. False si no se puede arrancar."""
+        if not ventana.ventana_abierta():
+            QMessageBox.warning(self, "Juego cerrado", f"No encuentro la ventana '{config.obtener('titulo_ventana')}'.")
+            return False
+        if not ventana.ajustar_tamano():
+            if ventana.ultimo_error == ventana.AVISO_ADMIN:
+                # Sin permisos tampoco funcionarian los clics: no tiene sentido arrancar.
+                QMessageBox.warning(self, "Faltan permisos", ventana.AVISO_ADMIN)
+                return False
+            self.escribir(f"{ventana.ultimo_error} Puede fallar el reconocimiento.", "aviso")
+        ventana.traer_al_frente()
+        return True
+
+    def ejecutar_herramienta(self, modo) -> bool:
+        """Arranca un modo que no es de farmeo (la captura de heroes) y muestra su avance aqui."""
+        if self.puente.corriendo or not self._preparar_ventana():
+            return False
+        self.modo_externo = type(modo)
+        self.ultimas_stats = {}
+        self.estado_bot = ""
+        self.inicio = time.time()
+        self.puente.iniciar(modo)
+        self._botones(True)
+        self._pintar_estado()
+        self.app.navegar("farmear")
+        return True
 
     def pausar(self):
         if not self.puente.corriendo:
@@ -324,6 +345,7 @@ class PaginaFarmear(Pagina):
         self._botones(False)
         self.inicio = None
         self.estado_bot = ""
+        self.modo_externo = None
         self._pintar_estado()
 
     def _botones(self, corriendo: bool):
@@ -347,8 +369,8 @@ class PaginaFarmear(Pagina):
             self._pintar_estado()
 
     def _pintar_estado(self):
-        cls = self.modo_cls
         corriendo = self.puente.corriendo
+        cls = self.modo_externo if corriendo and self.modo_externo else self.modo_cls
         if not corriendo:
             texto, detalle = "Detenido", "Pulsa Iniciar (o Empezar en Inicio) para farmear."
         elif control.en_pausa:

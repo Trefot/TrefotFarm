@@ -240,7 +240,8 @@ class PaginaEditorPersonajes(Pagina):
         self.actual: P.Personaje | None = None
 
         for texto, funcion, primario in (
-            ("Desde la ficha", self.ficha_desde_juego, True),
+            ("Capturar todos los héroes", self.captura_en_serie, True),
+            ("Desde la ficha", self.ficha_desde_juego, False),
             ("Ficha (foto)...", self.ficha_desde_foto, False),
             ("Retratos", self.retratos_desde_juego, False),
             ("Retratos (foto)...", self.retratos_desde_foto, False),
@@ -510,6 +511,24 @@ class PaginaEditorPersonajes(Pagina):
             QMessageBox.warning(self, "Ficha del heroe", str(error))
             return
         self._dialogo_ficha(pantalla)
+
+    def captura_en_serie(self):
+        from trefot import ocr
+        from trefot.modos.captura_heroes import CARPETA, CapturaHeroes
+
+        if not ocr.disponible():
+            QMessageBox.warning(self, "Captura de héroes",
+                                "Falta el lector de texto de Windows (paquetes winrt). Ejecuta Instalar.bat.")
+            return
+        r = QMessageBox.question(
+            self, "Capturar todos los héroes",
+            "1. En el juego abre Heroes y entra a la ficha del PRIMER héroe de la lista.\n"
+            "2. Pulsa Sí y no toques el ratón.\n\n"
+            "El bot lee cada ficha y cada carta (Skill Info) y pasa al siguiente con la flecha de la derecha. "
+            "Termina solo al volver al primero. F10 para parar.\n\n"
+            f"Se guarda aparte, en {CARPETA}, para revisarlo antes de publicarlo.")
+        if r == QMessageBox.Yes:
+            self.app.farmear.ejecutar_herramienta(CapturaHeroes({}))
 
     def ficha_desde_foto(self):
         ruta, _ = QFileDialog.getOpenFileName(self, "Foto de la ficha de un heroe", str(CAPTURAS), "Imagenes (*.png *.jpg)")

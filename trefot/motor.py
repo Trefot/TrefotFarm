@@ -48,6 +48,7 @@ class Modo:
     nombres_estados: dict[str, str] = {}  # estado -> texto para el jugador ("pelea" -> "Peleando")
     opciones: list[Opcion] = []
     pausa_entre_pasos = 0.5
+    guardar_historial = True  # False en herramientas que no son farmeo (p. ej. la captura de heroes)
 
     def __init__(self, valores: dict):
         self.valores = {o.clave: valores.get(o.clave, o.defecto) for o in self.opciones}
@@ -138,7 +139,7 @@ class Modo:
             self.al_terminar()
             sesion = {k: v for k, v in self.stats.items() if isinstance(v, (int, float, str))}
             sesion.update(modo=self.id, nombre=self.nombre, fin=time.time(), version=trefot.__version__)
-            if sesion["fin"] - sesion.get("inicio", sesion["fin"]) > 30:  # no guardar arranques en falso
+            if self.guardar_historial and sesion["fin"] - sesion.get("inicio", sesion["fin"]) > 30:  # no guardar arranques en falso
                 historial.registrar(sesion)
 
     # -------------------------------------------------------------- vigilante de atascos
