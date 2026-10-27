@@ -83,6 +83,15 @@ QPushButton#empezar[corriendo="true"] {{ background: #5f2c2c; color: {TEXTO}; bo
 QProgressBar {{ background: #101218; border: none; border-radius: 3px; }}
 QProgressBar::chunk {{ background: {OK}; border-radius: 3px; }}
 
+/* ---- galeria de personajes y equipos */
+QFrame#tarjeta_pj {{ background: {PANEL}; border: 1px solid {BORDE}; border-radius: 12px; }}
+QFrame#tarjeta_pj:hover {{ border-color: {TENUE}; }}
+QFrame#tarjeta_pj[tengo="true"] {{ border: 2px solid {ACENTO}; background: #221f17; }}
+QLabel#nombre_pj {{ font-weight: 700; }}
+QLabel#foto_pj {{ background: #0b0c10; border-radius: 8px; }}
+QFrame#tarjeta_equipo {{ background: {PANEL}; border: 1px solid {BORDE}; border-radius: 14px; }}
+QFrame#tarjeta_equipo:hover {{ border-color: {TENUE}; }}
+
 /* ---- pestanas */
 QTabWidget::pane {{ border: 1px solid {BORDE}; border-radius: 8px; top: -1px; background: {FONDO}; }}
 QTabBar::tab {{ background: {PANEL}; color: {TENUE}; padding: 8px 20px; border: 1px solid {BORDE}; border-bottom: none;

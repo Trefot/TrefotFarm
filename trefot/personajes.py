@@ -1,8 +1,10 @@
 """Biblioteca de personajes: ficha de cada personaje y sus capturas, compartidas por todos los modos.
 
-- Catalogo base: trefot/datos/personajes.yaml (lo traen las actualizaciones).
-- Lo tuyo: personajes/usuario.yaml (fichas nuevas, cambios, "lo tengo") y personajes/<id>/*.png
-  (capturas de cartas y del retrato). Nada de eso esta en git, asi que las actualizaciones no lo tocan.
+- Base fija (la mantiene el administrador y viaja con las actualizaciones):
+  trefot/datos/personajes.yaml (fichas) y assets/personajes/<id>/*.png (cartas y retrato).
+- Local de cada jugador (fuera de git): personajes/usuario.yaml ("lo tengo" y cambios) y
+  personajes/<id>/*.png (capturas nuevas del administrador antes de publicarlas). Una captura local
+  tiene prioridad sobre la de la base.
 
 Una carta se nombra "personaje.carta", p. ej. "odin.single" o "thonar_azul.postura".
 """
@@ -15,14 +17,16 @@ from pathlib import Path
 
 import yaml
 
-from trefot.rutas import EQUIPO, IMAGENES, RAIZ
+from trefot.rutas import ASSETS, EQUIPO, IMAGENES, RAIZ
 from trefot.vision import Plantilla, guardar_imagen
 
 BASE = Path(__file__).resolve().parent / "datos" / "personajes.yaml"
 CARPETA = RAIZ / "personajes"
 USUARIO = CARPETA / "usuario.yaml"
+CARPETA_BASE = ASSETS / "personajes"  # capturas de la base fija
 
-COLORES = ["rojo", "verde", "azul", "claro", "oscuro"]
+COLORES = ["rojo", "verde", "azul", "claro", "oscuro", "sin definir"]
+NOMBRE_COLOR = {"rojo": "Strength", "verde": "HP", "azul": "Speed", "claro": "Light", "oscuro": "Dark", "sin definir": "?"}
 RAZAS = ["sin definir", "humano", "gigante", "hada", "diosa", "demonio", "desconocida"]
 ROLES = {
     "quita_postura": "Quita posturas",
@@ -71,12 +75,32 @@ class Personaje:
     def carpeta(self) -> Path:
         return CARPETA / self.id
 
+    def _archivo(self, nombre: str) -> Path:
+        """La captura local si existe; si no, la de la base fija; si tampoco, la ruta local."""
+        local = self.carpeta / nombre
+        if local.is_file():
+            return local
+        base = CARPETA_BASE / self.id / nombre
+        return base if base.is_file() else local
+
     def ruta(self, carta: str) -> Path:
-        return self.carpeta / f"{carta}.png"
+        return self._archivo(f"{carta}.png")
 
     def ruta_ficha(self, carta: str) -> Path:
         """Carta sacada de la ficha del heroe (ya reescalada al tamano de la mano)."""
+        return self._archivo(f"{carta}{SUFIJO_FICHA}.png")
+
+    def ruta_local(self, carta: str) -> Path:
+        """Donde se guarda una captura nueva (siempre local; la base solo cambia al publicarla)."""
+        return self.carpeta / f"{carta}.png"
+
+    def ruta_ficha_local(self, carta: str) -> Path:
         return self.carpeta / f"{carta}{SUFIJO_FICHA}.png"
+
+    @property
+    def tiene_datos(self) -> bool:
+        """Tiene al menos una carta capturada (si no, el bot aun no lo conoce)."""
+        return any(self.estado_carta(c) != "falta" for c in self.cartas)
 
     def tiene_captura(self, carta: str) -> bool:
         return self.ruta(carta).is_file()
@@ -198,6 +222,15 @@ def guardar(p: Personaje) -> None:
         if quitadas:
             registro["cartas_quitadas"] = quitadas
         usuario[p.id] = registro
+        CARPETA.mkdir(parents=True, exist_ok=True)
+        USUARIO.write_text(yaml.safe_dump(usuario, allow_unicode=True, sort_keys=False), encoding="utf-8")
+
+
+def marcar_tengo(pid: str, tengo: bool) -> None:
+    """Lo unico que cambia un jugador normal: si tiene o no el personaje."""
+    with _lock:
+        usuario = _leer_yaml(USUARIO)
+        usuario.setdefault(pid, {})["tengo"] = bool(tengo)
         CARPETA.mkdir(parents=True, exist_ok=True)
         USUARIO.write_text(yaml.safe_dump(usuario, allow_unicode=True, sort_keys=False), encoding="utf-8")
 

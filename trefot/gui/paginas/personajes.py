@@ -1,525 +1,161 @@
-"""Pagina Personajes: la biblioteca. Ficha de cada personaje con sus cartas, retrato, roles y si lo tienes."""
+"""Pagina Personajes: galeria como en el juego. A color los que tienes, en gris los que no.
 
-import os
-from pathlib import Path
+El jugador solo marca si tiene cada personaje (clic en su tarjeta). Las fichas, cartas y retratos
+vienen en la base fija del bot; se editan en el Editor de personajes (modo administrador).
+"""
 
-from PyQt5.QtCore import QSize, Qt
-from PyQt5.QtGui import QColor, QIcon, QPixmap
+from PyQt5.QtCore import Qt, pyqtSignal
+from PyQt5.QtGui import QImage, QPixmap
 from PyQt5.QtWidgets import (
-    QCheckBox,
-    QComboBox,
-    QDialog,
-    QFileDialog,
-    QFormLayout,
+    QButtonGroup,
     QFrame,
     QGridLayout,
-    QGroupBox,
     QHBoxLayout,
-    QInputDialog,
     QLabel,
     QLineEdit,
-    QListWidget,
-    QListWidgetItem,
-    QMessageBox,
     QPushButton,
     QScrollArea,
     QVBoxLayout,
     QWidget,
 )
 
+from trefot import config
 from trefot import personajes as P
-from trefot import juego, ventana
-from trefot.equipo import recorte_desde_ficha, recorte_retrato
-from trefot.gui import tema
-from trefot.gui.comun import Pagina, a_pixmap
+from trefot.gui import iconos, tema
+from trefot.gui.comun import Pagina
 from trefot.modos import MODOS
-from trefot.rutas import CAPTURAS, IMAGENES
-from trefot.vision import guardar_imagen, leer_imagen
 
-COLOR_ATRIBUTO = {"rojo": "#e05a4f", "verde": "#4cc38a", "azul": "#4f8fe0", "claro": "#e6c84c", "oscuro": "#a06ad8"}
-
-
-def modos_que_usan(pid: str) -> list[str]:
-    return [m.nombre for m in MODOS.values() if getattr(m, "equipo", None) and pid in m.equipo.orden]
+COLUMNAS = 6
+COLOR_ATRIBUTO = {"rojo": "#e05a4f", "verde": "#4cc38a", "azul": "#4f8fe0", "claro": "#e6c84c", "oscuro": "#a06ad8",
+                  "sin definir": tema.TENUE}
 
 
-class DialogoRetratos(QDialog):
-    """Recorta las 4 caras de la pantalla del equipo y deja elegir de quien es cada una."""
-
-    def __init__(self, padre, pantalla, biblioteca: dict[str, P.Personaje], sugeridos: list[str]):
-        super().__init__(padre)
-        self.setWindowTitle("Retratos del equipo")
-        self.pantalla, self.biblioteca = pantalla, biblioteca
-        capa = QVBoxLayout(self)
-        capa.addWidget(QLabel("Elige quien esta en cada puesto (izquierda a derecha) y pulsa Guardar.", objectName="tenue"))
-        es_equipo = juego.empezar.esta(pantalla)
-        if not es_equipo:
-            # Los recortes solo son buenos en la pantalla del equipo (la que tiene el boton Start).
-            aviso = QLabel(
-                "⚠ Esta no parece la pantalla del equipo (no veo el boton Start). Los recortes pueden salir "
-                "movidos: revisalos antes de guardar.", wordWrap=True)
-            aviso.setStyleSheet(f"color: {tema.ERROR}; font-weight: 600;")
-            capa.addWidget(aviso)
-            sugeridos = []
-        fila = QHBoxLayout()
-        self.combos = []
-        for puesto in range(4):
-            caja = QFrame(objectName="tarjeta")
-            c = QVBoxLayout(caja)
-            img = QLabel(alignment=Qt.AlignCenter)
-            img.setPixmap(a_pixmap(recorte_retrato(pantalla, puesto), 96))
-            c.addWidget(img)
-            combo = QComboBox()
-            combo.addItem("(no guardar)", None)
-            for pj in biblioteca.values():
-                combo.addItem(pj.nombre, pj.id)
-            if puesto < len(sugeridos):
-                combo.setCurrentIndex(max(0, combo.findData(sugeridos[puesto])))
-            c.addWidget(combo)
-            self.combos.append(combo)
-            fila.addWidget(caja)
-        capa.addLayout(fila)
-        botones = QHBoxLayout()
-        botones.addStretch()
-        cancelar = QPushButton("Cancelar")
-        cancelar.clicked.connect(self.reject)
-        guardar = QPushButton("Guardar", objectName="primario")
-        guardar.clicked.connect(self._guardar)
-        botones.addWidget(cancelar)
-        botones.addWidget(guardar)
-        capa.addLayout(botones)
-
-    def _guardar(self):
-        elegidos = [(puesto, combo.currentData()) for puesto, combo in enumerate(self.combos) if combo.currentData()]
-        reemplaza = [self.biblioteca[pid].nombre for _, pid in elegidos if self.biblioteca[pid].tiene_captura(P.RETRATO)]
-        if reemplaza:
-            r = QMessageBox.question(
-                self, "Reemplazar retratos",
-                "Ya tienen retrato: " + ", ".join(reemplaza) + ".\n¿Reemplazarlos? (El anterior se guarda y se "
-                "puede recuperar desde su ficha con 'Volver al anterior'.)")
-            if r != QMessageBox.Yes:
-                return
-        for puesto, pid in elegidos:
-            P.guardar_con_respaldo(P.CARPETA / pid / f"{P.RETRATO}.png", recorte_retrato(self.pantalla, puesto))
-        self.accept()
+def _en_gris(pix: QPixmap) -> QPixmap:
+    img = pix.toImage().convertToFormat(QImage.Format_Grayscale8)
+    return QPixmap.fromImage(img)
 
 
-class DialogoFicha(QDialog):
-    """Saca las 3 cartas de la fila Skills de la ficha del heroe y las guarda en la biblioteca."""
+class TarjetaPersonaje(QFrame):
+    """Retrato con nombre y atributo. Clic = lo tengo / no lo tengo."""
 
-    def __init__(self, padre, pantalla, biblioteca: dict[str, P.Personaje], sugerido: str | None):
-        super().__init__(padre)
-        self.setWindowTitle("Cartas desde la ficha del heroe")
-        self.pantalla, self.biblioteca, self.guardado = pantalla, biblioteca, None
-        capa = QVBoxLayout(self)
-        capa.addWidget(QLabel(
-            "En el juego: Heroes -> el personaje (su ficha, con la fila 'Skills' abajo). "
-            "Elige de quien es y que carta es cada una.", objectName="tenue", wordWrap=True))
-        fila_pj = QHBoxLayout()
-        fila_pj.addWidget(QLabel("Personaje:"))
-        self.combo_pj = QComboBox()
-        for pj in biblioteca.values():
-            self.combo_pj.addItem(pj.nombre, pj.id)
-        self.combo_pj.setCurrentIndex(max(0, self.combo_pj.findData(sugerido)))
-        fila_pj.addWidget(self.combo_pj, 1)
-        self.color = QComboBox()
-        self.color.addItems(P.COLORES)
-        self.raza = QComboBox()
-        self.raza.addItems(P.RAZAS)
-        fila_pj.addWidget(QLabel("Color:"))
-        fila_pj.addWidget(self.color)
-        fila_pj.addWidget(QLabel("Raza:"))
-        fila_pj.addWidget(self.raza)
-        capa.addLayout(fila_pj)
-        capa.addWidget(QLabel("Color y raza: copialos de 'Attribute' y 'Race' de la ficha.", objectName="tenue"))
+    cambiado = pyqtSignal(str, bool)
 
-        fila = QHBoxLayout()
-        self.combos = []
-        for i, (x1, y1, x2, y2) in enumerate(juego.FICHA_CARTAS):
-            caja = QFrame(objectName="tarjeta")
-            c = QVBoxLayout(caja)
-            img = QLabel(alignment=Qt.AlignCenter)
-            img.setPixmap(a_pixmap(pantalla[y1:y2, x1:x2], 90))
-            c.addWidget(img)
-            combo = QComboBox()
-            c.addWidget(combo)
-            self.combos.append(combo)
-            fila.addWidget(caja)
-        capa.addLayout(fila)
-        self.combo_pj.currentIndexChanged.connect(self._cambiar_pj)
-        self._cambiar_pj()
-
-        botones = QHBoxLayout()
-        botones.addStretch()
-        cancelar = QPushButton("Cancelar")
-        cancelar.clicked.connect(self.reject)
-        guardar = QPushButton("Guardar", objectName="primario")
-        guardar.clicked.connect(self._guardar)
-        botones.addWidget(cancelar)
-        botones.addWidget(guardar)
-        capa.addLayout(botones)
-
-    def _cambiar_pj(self):
-        pj = self.biblioteca[self.combo_pj.currentData()]
-        self.color.setCurrentText(pj.color)
-        self.raza.setCurrentText(pj.raza)
-        cartas = [c for c in pj.cartas.values() if not c.boton]
-        for i, combo in enumerate(self.combos):
-            combo.clear()
-            combo.addItem("(no guardar)", None)
-            for c in cartas:
-                combo.addItem(c.descripcion, c.id)
-            if i < len(cartas):  # por defecto: normal 1, normal 2, ulti en el orden de la ficha
-                combo.setCurrentIndex(i + 1)
-
-    def _guardar(self):
-        pj = self.biblioteca[self.combo_pj.currentData()]
-        for i, combo in enumerate(self.combos):
-            if combo.currentData():
-                P.guardar_con_respaldo(pj.ruta_ficha(combo.currentData()), recorte_desde_ficha(self.pantalla, i))
-        pj.color, pj.raza = self.color.currentText(), self.raza.currentText()
-        P.guardar(pj)
-        self.guardado = pj.id
-        self.accept()
-
-
-class TarjetaCartaPj(QFrame):
-    """Una carta de la ficha: su imagen (propia, de AutoFarming o ninguna) y la opcion de borrarla."""
-
-    def __init__(self, pagina, pj: P.Personaje, carta: P.CartaPj | None, titulo: str, clave: str):
-        super().__init__(objectName="tarjeta")
-        self.setFixedWidth(150)
-        self.setMinimumHeight(250)  # con o sin botones extra, que nada se monte
+    def __init__(self, pj: P.Personaje, usado_en: list[str]):
+        super().__init__(objectName="tarjeta_pj")
+        self.pj = pj
+        self.setCursor(Qt.PointingHandCursor)
+        self.setFixedSize(138, 222)
+        self.setToolTip(("Lo tienes. " if pj.tengo else "No lo tienes. ") + "Clic para cambiar."
+                        + (f"\nSe usa en: {', '.join(usado_en)}" if usado_en else ""))
         capa = QVBoxLayout(self)
         capa.setContentsMargins(8, 8, 8, 8)
-        imagen = QLabel(alignment=Qt.AlignCenter)
-        imagen.setFixedHeight(96)
-        estado = pj.estado_carta(clave) if carta else ("propia" if pj.tiene_captura(clave) else "falta")
-        ruta = {"propia": pj.ruta(clave), "ficha": pj.ruta_ficha(clave),
-                "respaldo": IMAGENES / carta.respaldo if carta else None}.get(estado)
-        if ruta:
-            imagen.setPixmap(QPixmap(str(ruta)).scaled(120, 96, Qt.KeepAspectRatio, Qt.SmoothTransformation))
+        capa.setSpacing(4)
+
+        foto = QLabel(alignment=Qt.AlignCenter)
+        foto.setFixedSize(120, 140)
+        foto.setObjectName("foto_pj")
+        ruta = pj.ruta(P.RETRATO)
+        if ruta.is_file():
+            pix = QPixmap(str(ruta)).scaled(120, 140, Qt.KeepAspectRatioByExpanding, Qt.SmoothTransformation)
+            pix = pix.copy((pix.width() - 120) // 2, 0, 120, 140)
+            foto.setPixmap(pix if pj.tengo else _en_gris(pix))
         else:
-            imagen.setText("sin captura")
-        capa.addWidget(imagen)
-        capa.addWidget(QLabel(f"<b>{titulo}</b>", wordWrap=True))
-        texto, color = {"propia": ("✔ de una pelea", tema.OK), "ficha": ("✔ de la ficha", tema.OK),
-                        "respaldo": ("◐ de AutoFarming", tema.AVISO),
-                        "falta": ("✖ falta", tema.ERROR)}[estado]
-        capa.addWidget(QLabel(f"<span style='color:{color}'>{texto}</span>"))
-        if estado in ("propia", "ficha"):
-            b = QPushButton("Borrar captura")
-            b.setStyleSheet("padding: 4px;")
-            b.clicked.connect(lambda: pagina.borrar_captura(pj, clave))
-            capa.addWidget(b)
-        archivo = pj.ruta_ficha(clave) if estado == "ficha" else pj.ruta(clave)
-        if P.ruta_anterior(archivo).is_file():
-            b = QPushButton("Volver al anterior")
-            b.setStyleSheet("padding: 4px;")
-            b.clicked.connect(lambda: pagina.volver_anterior(pj, archivo))
-            capa.addWidget(b)
-        if carta is not None:  # el retrato no se renombra ni se quita
-            fila = QHBoxLayout()
-            for texto, accion in (("Renombrar", pagina.renombrar_carta), ("Quitar", pagina.quitar_carta)):
-                b = QPushButton(texto)
-                b.setStyleSheet("padding: 4px;")
-                b.clicked.connect(lambda _, a=accion: a(pj, clave))
-                fila.addWidget(b)
-            capa.addLayout(fila)
-        capa.addStretch()
+            foto.setPixmap(iconos.pixmap("mdi6.account-question", 56, tema.TENUE))
+        capa.addWidget(foto, 0, Qt.AlignHCenter)
+
+        nombre = QLabel(pj.nombre, alignment=Qt.AlignCenter, wordWrap=True)
+        nombre.setObjectName("nombre_pj")
+        capa.addWidget(nombre)
+        fila = QHBoxLayout()
+        fila.setSpacing(4)
+        punto = QLabel("●")
+        punto.setStyleSheet(f"color: {COLOR_ATRIBUTO.get(pj.color, tema.TENUE)}; font-size: 11pt;")
+        fila.addStretch()
+        fila.addWidget(punto)
+        fila.addWidget(QLabel(P.NOMBRE_COLOR.get(pj.color, "?"), objectName="tenue"))
+        fila.addStretch()
+        capa.addLayout(fila)
+        if not pj.tiene_datos:
+            capa.addWidget(QLabel("Sin datos aún", objectName="tenue", alignment=Qt.AlignCenter))
+
+        self.setProperty("tengo", pj.tengo)
+
+    def mousePressEvent(self, evento):
+        if evento.button() == Qt.LeftButton:
+            self.cambiado.emit(self.pj.id, not self.pj.tengo)
+        super().mousePressEvent(evento)
 
 
 class PaginaPersonajes(Pagina):
     titulo = "Personajes"
-    subtitulo = "Abre la ficha del heroe en el juego y pulsa 'Desde la ficha'. Sirve para todos los modos."
+    subtitulo = "Marca los personajes que tienes en el juego: haz clic en su tarjeta. A color = lo tienes."
 
     def __init__(self, app):
         super().__init__()
         self.app = app
-        self.biblioteca: dict[str, P.Personaje] = {}
-        self.actual: P.Personaje | None = None
+        self.b_editar = QPushButton("  Editar base", objectName="chico")
+        self.b_editar.setIcon(iconos.icono("mdi6.database-edit", tema.TEXTO))
+        self.b_editar.clicked.connect(lambda: app.navegar("editor"))
+        self.acciones.addWidget(self.b_editar)
 
-        for texto, funcion, primario in (
-            ("Desde la ficha", self.ficha_desde_juego, True),
-            ("Ficha (foto)...", self.ficha_desde_foto, False),
-            ("Retratos", self.retratos_desde_juego, False),
-            ("Retratos (foto)...", self.retratos_desde_foto, False),
-            ("Nuevo", self.nuevo, False),
-            ("Carpeta", lambda: os.startfile(P.CARPETA), False),
-        ):
-            b = QPushButton(texto, objectName="primario" if primario else "")
-            b.clicked.connect(funcion)
-            self.acciones.addWidget(b)
+        barra = QHBoxLayout()
+        self.buscar = QLineEdit(placeholderText="Buscar personaje...")
+        self.buscar.setClearButtonEnabled(True)
+        self.buscar.setMaximumWidth(280)
+        self.buscar.textChanged.connect(self._pintar)
+        barra.addWidget(self.buscar)
+        self.filtro = QButtonGroup(self, exclusive=True)
+        for i, texto in enumerate(("Todos", "Los tengo", "Me faltan")):
+            b = QPushButton(texto, objectName="chip", checkable=True)
+            b.setChecked(i == 0)
+            self.filtro.addButton(b, i)
+            barra.addWidget(b)
+        self.filtro.buttonClicked.connect(lambda _: self._pintar())
+        barra.addStretch()
+        self.contador = QLabel(objectName="titulo_seccion")
+        barra.addWidget(self.contador)
+        self.cuerpo.addLayout(barra)
 
-        fila = QHBoxLayout()
-        # ---- lista
-        izq = QVBoxLayout()
-        self.buscar = QLineEdit(placeholderText="Buscar...")
-        self.buscar.textChanged.connect(self._pintar_lista)
-        self.solo_mios = QCheckBox("Solo los que tengo")
-        self.solo_mios.toggled.connect(self._pintar_lista)
-        self.lista = QListWidget()
-        self.lista.setIconSize(QSize(40, 40))
-        self.lista.currentItemChanged.connect(lambda item, _: self._mostrar(item.data(Qt.UserRole) if item else None))
-        self.resumen = QLabel(objectName="tenue")
-        for w in (self.buscar, self.solo_mios, self.lista, self.resumen):
-            izq.addWidget(w)
-        contenedor_izq = QWidget()
-        contenedor_izq.setLayout(izq)
-        contenedor_izq.setFixedWidth(270)
-        fila.addWidget(contenedor_izq)
-
-        # ---- ficha
-        self.ficha = QWidget()
-        capa = QVBoxLayout(self.ficha)
-        capa.setContentsMargins(0, 0, 6, 0)
-        datos = QGroupBox("Datos")
-        f = QFormLayout(datos)
-        self.nombre = QLineEdit()
-        self.color = QComboBox()
-        self.color.addItems(P.COLORES)
-        self.raza = QComboBox()
-        self.raza.addItems(P.RAZAS)
-        self.tengo = QCheckBox("Lo tengo")
-        self.usado = QLabel(objectName="tenue", wordWrap=True)
-        f.addRow("Nombre", self.nombre)
-        f.addRow("Color", self.color)
-        f.addRow("Raza", self.raza)
-        f.addRow("", self.tengo)
-        f.addRow("Se usa en", self.usado)
-        capa.addWidget(datos)
-
-        roles = QGroupBox("Que hace en un equipo (roles)")
-        rejilla = QGridLayout(roles)
-        self.roles: dict[str, QCheckBox] = {}
-        for i, (clave, texto) in enumerate(P.ROLES.items()):
-            chk = QCheckBox(texto)
-            self.roles[clave] = chk
-            rejilla.addWidget(chk, i // 3, i % 3)
-        capa.addWidget(roles)
-
-        cartas = QGroupBox("Cartas y retrato")
-        capa_cartas = QVBoxLayout(cartas)
-        self.zona_cartas = QHBoxLayout()
-        self.zona_cartas.setAlignment(Qt.AlignLeft)
-        capa_cartas.addLayout(self.zona_cartas)
-        capa.addWidget(cartas)
-
-        botones = QHBoxLayout()
-        self.b_guardar = QPushButton("Guardar cambios", objectName="primario")
-        self.b_guardar.clicked.connect(self.guardar)
-        self.b_borrar = QPushButton("Quitar de la biblioteca")
-        self.b_borrar.clicked.connect(self.borrar)
-        b_carta = QPushButton("Agregar carta")
-        b_carta.clicked.connect(self.agregar_carta)
-        botones.addWidget(self.b_guardar)
-        botones.addWidget(b_carta)
-        botones.addWidget(self.b_borrar)
-        botones.addStretch()
-        capa.addLayout(botones)
-        capa.addStretch()
-
+        self.zona = QWidget()
+        self.rejilla = QGridLayout(self.zona)
+        self.rejilla.setSpacing(12)
+        self.rejilla.setAlignment(Qt.AlignTop | Qt.AlignLeft)
         desplazar = QScrollArea(widgetResizable=True)
-        desplazar.setWidget(self.ficha)
-        fila.addWidget(desplazar, 1)
-        self.cuerpo.addLayout(fila, 1)
+        desplazar.setWidget(self.zona)
+        self.cuerpo.addWidget(desplazar, 1)
         self.al_mostrar()
 
-    # ------------------------------------------------------------------- lista
     def al_mostrar(self):
-        seleccion = self.actual.id if self.actual else None
+        self.b_editar.setVisible(bool(config.obtener("modo_admin")))
         self.biblioteca = P.cargar()
-        self._pintar_lista(seleccion=seleccion)
+        self._pintar()
 
-    def _pintar_lista(self, *_args, seleccion: str | None = None):
-        seleccion = seleccion or (self.actual.id if self.actual else None)
-        texto = self.buscar.text().strip().lower()
-        self.lista.blockSignals(True)
-        self.lista.clear()
-        fila_sel = 0
-        for pj in sorted(self.biblioteca.values(), key=lambda x: (not x.tengo, x.nombre.lower())):
-            if texto and texto not in pj.nombre.lower():
-                continue
-            if self.solo_mios.isChecked() and not pj.tengo:
-                continue
-            cartas = [c for c in pj.cartas.values()]
-            listas = sum(1 for c in cartas if pj.estado_carta(c.id) != "falta")
-            item = QListWidgetItem(f"{pj.nombre}\n{pj.color} · {listas}/{len(cartas)} cartas" + ("" if pj.tengo else " · no lo tengo"))
-            if pj.tiene_captura(P.RETRATO):
-                item.setIcon(QIcon(QPixmap(str(pj.ruta(P.RETRATO)))))
-            item.setForeground(QColor(tema.TEXTO if pj.tengo else tema.TENUE))
-            item.setData(Qt.UserRole, pj.id)
-            self.lista.addItem(item)
-            if pj.id == seleccion:
-                fila_sel = self.lista.count() - 1
-        self.lista.blockSignals(False)
-        tengo = sum(1 for p in self.biblioteca.values() if p.tengo)
-        self.resumen.setText(f"{len(self.biblioteca)} personajes · tienes {tengo}")
-        if self.lista.count():
-            self.lista.setCurrentRow(fila_sel)
-            self._mostrar(self.lista.currentItem().data(Qt.UserRole))
-        else:
-            self._mostrar(None)
-
-    # ------------------------------------------------------------------- ficha
-    def _mostrar(self, pid: str | None):
-        self.actual = self.biblioteca.get(pid) if pid else None
-        self.ficha.setEnabled(self.actual is not None)
-        while self.zona_cartas.count():
-            w = self.zona_cartas.takeAt(0).widget()
+    def _pintar(self):
+        while self.rejilla.count():
+            w = self.rejilla.takeAt(0).widget()
             if w:
                 w.setParent(None)
-                w.deleteLater()
-        if not self.actual:
-            return
-        pj = self.actual
-        self.nombre.setText(pj.nombre)
-        self.color.setCurrentText(pj.color)
-        self.raza.setCurrentText(pj.raza)
-        self.tengo.setChecked(pj.tengo)
-        usado = modos_que_usan(pj.id)
-        self.usado.setText(", ".join(usado) if usado else "ningun modo todavia")
-        for clave, chk in self.roles.items():
-            chk.setChecked(clave in pj.roles)
-        for c in pj.cartas.values():
-            self.zona_cartas.addWidget(TarjetaCartaPj(self, pj, c, c.descripcion + (" (boton)" if c.boton else ""), c.id))
-        self.zona_cartas.addWidget(TarjetaCartaPj(self, pj, None, "Retrato", P.RETRATO))
-        self.b_borrar.setVisible(pj.propio)
+        texto = self.buscar.text().strip().lower()
+        filtro = self.filtro.checkedId()
+        lista = sorted(self.biblioteca.values(), key=lambda p: (not p.tengo, not p.tiene_datos, p.nombre.lower()))
+        n = 0
+        for pj in lista:
+            if texto and texto not in pj.nombre.lower():
+                continue
+            if (filtro == 1 and not pj.tengo) or (filtro == 2 and pj.tengo):
+                continue
+            usado = [m.titulo_juego or m.nombre for m in MODOS.values() if getattr(m, "equipo", None) and pj.id in m.equipo.orden]
+            t = TarjetaPersonaje(pj, usado)
+            t.cambiado.connect(self._cambiar)
+            self.rejilla.addWidget(t, n // COLUMNAS, n % COLUMNAS)
+            n += 1
+        tengo = sum(1 for p in self.biblioteca.values() if p.tengo)
+        self.contador.setText(f"Tienes {tengo} de {len(self.biblioteca)}")
 
-    def guardar(self):
-        pj = self.actual
-        if not pj:
-            return
-        pj.nombre = self.nombre.text().strip() or pj.nombre
-        pj.color = self.color.currentText()
-        pj.raza = self.raza.currentText()
-        pj.tengo = self.tengo.isChecked()
-        pj.roles = [clave for clave, chk in self.roles.items() if chk.isChecked()]
-        P.guardar(pj)
-        self._cambio()
-        QMessageBox.information(self, "Personajes", f"Guardado {pj.nombre}.")
-
-    def nuevo(self):
-        nombre, ok = QInputDialog.getText(self, "Nuevo personaje", "Nombre (p. ej. 'Meliodas azul'):")
-        if not ok or not nombre.strip():
-            return
-        pid = P.nuevo_id(nombre, self.biblioteca)
-        pj = P.Personaje(id=pid, nombre=nombre.strip(), tengo=True, propio=True, cartas={
-            "single": P.CartaPj("single", "Un objetivo"),
-            "area": P.CartaPj("area", "Area"),
-            "ulti": P.CartaPj("ulti", "Ulti"),
-        })
-        P.guardar(pj)
-        self.biblioteca = P.cargar()
-        self._pintar_lista(seleccion=pid)
-
-    def agregar_carta(self):
-        pj = self.actual
-        if not pj:
-            return
-        nombre, ok = QInputDialog.getText(self, "Agregar carta", "Nombre de la carta (p. ej. 'Postura'):")
-        if not ok or not nombre.strip():
-            return
-        cid = P.nuevo_id(nombre, pj.cartas)
-        pj.cartas[cid] = P.CartaPj(cid, nombre.strip())
-        P.guardar(pj)
-        self._cambio()
-
-    def renombrar_carta(self, pj: P.Personaje, cid: str):
-        carta = pj.cartas[cid]
-        nombre, ok = QInputDialog.getText(self, "Renombrar carta", "Nuevo nombre de la carta:", text=carta.descripcion)
-        if ok and nombre.strip():
-            carta.descripcion = nombre.strip()
-            P.guardar(pj)
-            self._cambio()
-
-    def quitar_carta(self, pj: P.Personaje, cid: str):
-        """Quita una carta que el personaje no tiene (p. ej. no tiene carta de un objetivo)."""
-        usan = [m.nombre for m in MODOS.values()
-                if getattr(m, "equipo", None) and f"{pj.id}.{cid}" in m.equipo.obligatorias]
-        aviso = f"\n\nOJO: '{', '.join(usan)}' necesita esta carta; sin ella ese modo no podra jugar." if usan else ""
-        r = QMessageBox.question(
-            self, "Quitar carta",
-            f"¿Quitar '{pj.cartas[cid].descripcion}' de {pj.nombre}? Sus capturas se quedan en la carpeta." + aviso)
-        if r == QMessageBox.Yes:
-            del pj.cartas[cid]
-            P.guardar(pj)
-            self._cambio()
-
-    def borrar(self):
-        pj = self.actual
-        if not pj or not pj.propio:
-            return
-        r = QMessageBox.question(self, "Quitar", f"¿Quitar a {pj.nombre} de la biblioteca? Sus capturas quedan en la carpeta.")
-        if r == QMessageBox.Yes:
-            P.borrar_propio(pj.id)
-            self.actual = None
-            self.al_mostrar()
-            self.app.refrescar_insignias()
-
-    def borrar_captura(self, pj: P.Personaje, clave: str):
-        r = QMessageBox.question(self, "Borrar captura", f"¿Borrar la captura '{clave}' de {pj.nombre}?")
-        if r == QMessageBox.Yes:
-            pj.ruta(clave).unlink(missing_ok=True)
-            pj.ruta_ficha(clave).unlink(missing_ok=True)
-            self._cambio()
-
-    def volver_anterior(self, pj: P.Personaje, archivo):
-        if P.volver_a_anterior(archivo):
-            self._cambio()
-
-    def _cambio(self):
-        """Tras cualquier cambio: recargar la biblioteca y los equipos de los modos."""
+    def _cambiar(self, pid: str, tengo: bool):
+        P.marcar_tengo(pid, tengo)
         for modo in MODOS.values():
             if getattr(modo, "equipo", None):
                 modo.equipo.recargar()
         self.al_mostrar()
         self.app.refrescar_insignias()
-
-    # ----------------------------------------------------------------- retratos
-    def _sugeridos(self) -> list[str]:
-        from trefot import config
-
-        modo = MODOS.get(config.obtener("ultimo_modo"))
-        return modo.equipo.orden if modo and getattr(modo, "equipo", None) else []
-
-    def _dialogo_retratos(self, pantalla):
-        if DialogoRetratos(self, pantalla, self.biblioteca, self._sugeridos()).exec_():
-            self._cambio()
-
-    def retratos_desde_juego(self):
-        try:
-            pantalla, _ = ventana.capturar()
-        except Exception as error:
-            QMessageBox.warning(self, "Retratos", str(error))
-            return
-        self._dialogo_retratos(pantalla)
-
-    def _dialogo_ficha(self, pantalla):
-        sugerido = self.actual.id if self.actual else None
-        dialogo = DialogoFicha(self, pantalla, self.biblioteca, sugerido)
-        if dialogo.exec_():
-            self._cambio()
-            self._pintar_lista(seleccion=dialogo.guardado)
-
-    def ficha_desde_juego(self):
-        try:
-            pantalla, _ = ventana.capturar()
-        except Exception as error:
-            QMessageBox.warning(self, "Ficha del heroe", str(error))
-            return
-        self._dialogo_ficha(pantalla)
-
-    def ficha_desde_foto(self):
-        ruta, _ = QFileDialog.getOpenFileName(self, "Foto de la ficha de un heroe", str(CAPTURAS), "Imagenes (*.png *.jpg)")
-        if ruta:
-            pantalla = leer_imagen(Path(ruta))
-            if pantalla is not None:
-                self._dialogo_ficha(pantalla)
-
-    def retratos_desde_foto(self):
-        ruta, _ = QFileDialog.getOpenFileName(self, "Foto de la pantalla del equipo", str(CAPTURAS), "Imagenes (*.png *.jpg)")
-        if ruta:
-            pantalla = leer_imagen(Path(ruta))
-            if pantalla is not None:
-                self._dialogo_retratos(pantalla)

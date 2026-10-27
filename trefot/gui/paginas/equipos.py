@@ -1,174 +1,194 @@
-"""Pagina Equipos: para cada contenido, que equipo necesitas, si lo tienes y con quien sustituir."""
+"""Pagina Equipos: equipos recomendados por cada contenido, del mejor al mas dificil.
 
+Los equipos vienen de trefot/datos/equipos.yaml (base fija que mantiene el administrador). Cada
+equipo es una tarjeta desplegable: retratos (en gris los que no tienes), nivel, si el bot lo juega,
+que te falta y como se juega.
+"""
+
+from pathlib import Path
+
+import yaml
 from PyQt5.QtCore import Qt
-from PyQt5.QtGui import QColor
-from PyQt5.QtWidgets import (
-    QAbstractItemView,
-    QFrame,
-    QGroupBox,
-    QHBoxLayout,
-    QHeaderView,
-    QLabel,
-    QListWidget,
-    QListWidgetItem,
-    QPushButton,
-    QTableWidget,
-    QTableWidgetItem,
-    QVBoxLayout,
-    QWidget,
-)
+from PyQt5.QtGui import QPixmap
+from PyQt5.QtWidgets import QButtonGroup, QFrame, QHBoxLayout, QLabel, QPushButton, QScrollArea, QVBoxLayout, QWidget
 
-from trefot import armador
+from trefot import config
 from trefot import personajes as P
-from trefot.gui import tema
+from trefot.gui import iconos, tema
 from trefot.gui.comun import Pagina
+from trefot.gui.paginas.personajes import _en_gris
 from trefot.modos import MODOS
+from trefot.rutas import IMAGENES
 
-FALTAN_CAPTURAS = "faltan_capturas"
-ESTADO = {
-    armador.LISTO: ("✔ Listo para farmear", tema.OK),
-    FALTAN_CAPTURAS: ("◐ Tienes el equipo; faltan capturas", tema.AVISO),
-    armador.CON_SUSTITUTOS: ("◐ Posible con sustitutos (a mano)", tema.AVISO),
-    armador.INCOMPLETO: ("✖ Te faltan personajes", tema.ERROR),
+ARCHIVO = Path(__file__).resolve().parents[2] / "datos" / "equipos.yaml"
+NIVELES = {
+    "recomendado": ("Recomendado", tema.OK),
+    "bueno": ("Bueno", "#4f8fe0"),
+    "alternativa": ("Alternativa", tema.AVISO),
 }
+
+
+def cargar_equipos() -> dict:
+    if not ARCHIVO.is_file():
+        return {}
+    with ARCHIVO.open(encoding="utf-8") as f:
+        return yaml.safe_load(f) or {}
+
+
+def _retrato(pj: P.Personaje | None, nombre: str, tengo: bool, tam=(64, 84)) -> QWidget:
+    caja = QWidget()
+    capa = QVBoxLayout(caja)
+    capa.setContentsMargins(0, 0, 0, 0)
+    capa.setSpacing(2)
+    foto = QLabel(alignment=Qt.AlignCenter)
+    foto.setFixedSize(*tam)
+    foto.setObjectName("foto_pj")
+    ruta = pj.ruta(P.RETRATO) if pj else None
+    if ruta and ruta.is_file():
+        pix = QPixmap(str(ruta)).scaled(tam[0], tam[1], Qt.KeepAspectRatioByExpanding, Qt.SmoothTransformation)
+        pix = pix.copy((pix.width() - tam[0]) // 2, 0, tam[0], tam[1])
+        foto.setPixmap(pix if tengo else _en_gris(pix))
+    else:
+        foto.setPixmap(iconos.pixmap("mdi6.account-question", 34, tema.TENUE))
+    foto.setProperty("tengo", tengo)
+    capa.addWidget(foto, 0, Qt.AlignHCenter)
+    texto = QLabel(nombre, alignment=Qt.AlignCenter, wordWrap=True)
+    texto.setFixedWidth(tam[0] + 22)
+    texto.setStyleSheet(f"color: {tema.TEXTO if tengo else tema.TENUE}; font-size: 8.5pt;")
+    capa.addWidget(texto, 0, Qt.AlignHCenter)
+    return caja
+
+
+class TarjetaEquipo(QFrame):
+    """Un equipo recomendado: cabecera siempre visible y detalle desplegable."""
+
+    def __init__(self, datos: dict, biblioteca: dict, abierto: bool):
+        super().__init__(objectName="tarjeta_equipo")
+        capa = QVBoxLayout(self)
+        capa.setContentsMargins(14, 12, 14, 12)
+
+        ids = datos.get("personajes") or []
+        faltan = [pid for pid in ids if not (biblioteca.get(pid) and biblioteca[pid].tengo)]
+        alternativas = datos.get("alternativas") or {}
+        # Un hueco con alternativa cuenta como cubierto si tienes alguna de ellas.
+        faltan = [pid for pid in faltan if not any(biblioteca.get(a) and biblioteca[a].tengo for a in alternativas.get(pid, []))]
+        self.completo = not faltan
+
+        cab = QHBoxLayout()
+        nivel_texto, nivel_color = NIVELES.get(datos.get("nivel", ""), ("", tema.TENUE))
+        nivel = QLabel(nivel_texto)
+        nivel.setStyleSheet(f"background: {nivel_color}; color: #14161c; border-radius: 9px; padding: 2px 10px; font-weight: 700;")
+        cab.addWidget(nivel)
+        cab.addWidget(QLabel(datos.get("nombre", ""), objectName="titulo_tarjeta"))
+        if datos.get("bot"):
+            bot = QLabel("  El bot lo juega")
+            bot.setStyleSheet(f"color: {tema.ACENTO}; font-weight: 700;")
+            cab.addWidget(bot)
+        cab.addStretch()
+        estado = QLabel()
+        if self.completo:
+            estado.setText(f"<span style='color:{tema.OK}'><b>Lo tienes completo</b></span>")
+        else:
+            nombres = [biblioteca[p].nombre if p in biblioteca else p for p in faltan]
+            estado.setText(f"<span style='color:{tema.AVISO}'>Te falta: {', '.join(nombres)}</span>")
+        cab.addWidget(estado)
+        self.flecha = QPushButton(objectName="chico")
+        self.flecha.setFlat(True)
+        self.flecha.clicked.connect(self._alternar)
+        cab.addWidget(self.flecha)
+        capa.addLayout(cab)
+
+        fila = QHBoxLayout()
+        fila.setSpacing(10)
+        for pid in ids:
+            pj = biblioteca.get(pid)
+            tengo = bool(pj and pj.tengo) or any(biblioteca.get(a) and biblioteca[a].tengo for a in alternativas.get(pid, []))
+            nombre = pj.nombre if pj else pid
+            if pid in alternativas:
+                nombre += " (o " + " / ".join(biblioteca[a].nombre if a in biblioteca else a for a in alternativas[pid]) + ")"
+            fila.addWidget(_retrato(pj, nombre, tengo))
+        fila.addStretch()
+        capa.addLayout(fila)
+
+        self.detalle = QLabel(datos.get("notas", ""), wordWrap=True, objectName="tenue")
+        self.detalle.setContentsMargins(4, 6, 4, 0)
+        capa.addWidget(self.detalle)
+        self.abierto = abierto
+        self._mostrar()
+
+    def _alternar(self):
+        self.abierto = not self.abierto
+        self._mostrar()
+
+    def _mostrar(self):
+        self.detalle.setVisible(self.abierto)
+        self.flecha.setIcon(iconos.icono("mdi6.chevron-up" if self.abierto else "mdi6.chevron-down", tema.TEXTO))
+        self.flecha.setToolTip("Ocultar detalles" if self.abierto else "Ver como se juega")
+
+    def mousePressEvent(self, evento):
+        self._alternar()
+        super().mousePressEvent(evento)
 
 
 class PaginaEquipos(Pagina):
     titulo = "Equipos"
-    subtitulo = (
-        "Que equipo pide cada contenido y si lo puedes armar con los personajes que tienes. "
-        "Marca los tuyos y sus roles en la pagina Personajes."
-    )
+    subtitulo = "Equipos recomendados para cada contenido, del mejor al que pasa con más dificultad."
 
     def __init__(self, app):
         super().__init__()
         self.app = app
-        fila = QHBoxLayout()
+        self.selector = QHBoxLayout()
+        self.grupo = QButtonGroup(self, exclusive=True)
+        for i, modo in enumerate(MODOS.values()):
+            b = QPushButton("  " + (modo.titulo_juego or modo.nombre).replace("&", "&&"), objectName="chip", checkable=True)
+            pix = iconos.redondo(IMAGENES / modo.imagen, 28) if modo.imagen else None
+            if pix:
+                from PyQt5.QtGui import QIcon
 
-        izq = QVBoxLayout()
-        izq.addWidget(QLabel("<b>Contenidos</b>"))
-        self.lista = QListWidget()
-        self.lista.currentItemChanged.connect(lambda item, _: self._mostrar(item.data(Qt.UserRole) if item else None))
-        izq.addWidget(self.lista)
-        contenedor = QWidget()
-        contenedor.setLayout(izq)
-        contenedor.setFixedWidth(300)
-        fila.addWidget(contenedor)
+                b.setIcon(QIcon(pix))
+            b.setProperty("modo", modo.id)
+            b.setChecked(modo.id == config.obtener("ultimo_modo") or i == 0)
+            self.grupo.addButton(b)
+            self.selector.addWidget(b)
+        self.grupo.buttonClicked.connect(lambda _: self.al_mostrar())
+        self.selector.addStretch()
+        self.cuerpo.addLayout(self.selector)
+        self.subtitulo_modo = QLabel(objectName="tenue")
+        self.cuerpo.addWidget(self.subtitulo_modo)
 
-        der = QVBoxLayout()
-        self.titulo_modo = QLabel(objectName="cifra")
-        self.estado = QLabel()
-        der.addWidget(self.titulo_modo)
-        der.addWidget(self.estado)
-
-        grupo = QGroupBox("Puestos (izquierda a derecha en la pantalla del equipo)")
-        capa = QVBoxLayout(grupo)
-        self.tabla = QTableWidget(0, 5)
-        self.tabla.setHorizontalHeaderLabels(["#", "Funcion", "Recomendado", "¿Lo tienes?", "Sustitutos tuyos"])
-        self.tabla.verticalHeader().setVisible(False)
-        self.tabla.setEditTriggers(QAbstractItemView.NoEditTriggers)
-        self.tabla.setSelectionMode(QAbstractItemView.NoSelection)
-        self.tabla.setWordWrap(True)
-        cab = self.tabla.horizontalHeader()
-        cab.setSectionResizeMode(0, QHeaderView.ResizeToContents)
-        cab.setSectionResizeMode(1, QHeaderView.Stretch)
-        cab.setSectionResizeMode(2, QHeaderView.ResizeToContents)
-        cab.setSectionResizeMode(3, QHeaderView.ResizeToContents)
-        cab.setSectionResizeMode(4, QHeaderView.Stretch)
-        capa.addWidget(self.tabla)
-        der.addWidget(grupo, 1)
-
-        self.capturas = QLabel(wordWrap=True)
-        der.addWidget(self.capturas)
-
-        nota = QFrame(objectName="aviso")
-        capa_nota = QHBoxLayout(nota)
-        capa_nota.addWidget(QLabel(
-            "El bot solo juega el guion con el equipo <b>recomendado</b>. Los sustitutos te sirven para jugar a mano "
-            "o como punto de partida de un guion nuevo.", wordWrap=True), 1)
-        der.addWidget(nota)
-
-        botones = QHBoxLayout()
-        b_pj = QPushButton("Ir a Personajes")
-        b_pj.clicked.connect(lambda: app.navegar("personajes"))
-        b_cap = QPushButton("Ir a Capturas")
-        b_cap.clicked.connect(lambda: app.navegar("capturas"))
-        botones.addWidget(b_pj)
-        botones.addWidget(b_cap)
-        botones.addStretch()
-        der.addLayout(botones)
-
-        fila.addLayout(der, 1)
-        self.cuerpo.addLayout(fila, 1)
+        self.zona = QWidget()
+        self.lista = QVBoxLayout(self.zona)
+        self.lista.setSpacing(10)
+        self.lista.setAlignment(Qt.AlignTop)
+        desplazar = QScrollArea(widgetResizable=True)
+        desplazar.setWidget(self.zona)
+        self.cuerpo.addWidget(desplazar, 1)
         self.al_mostrar()
 
     def al_mostrar(self):
-        self.biblioteca = P.cargar()
-        actual = self.lista.currentItem().data(Qt.UserRole) if self.lista.currentItem() else None
-        self.lista.blockSignals(True)
-        self.lista.clear()
-        for modo in MODOS.values():
-            if not getattr(modo, "equipo", None):
-                continue
-            texto, color = ESTADO[self._estado(modo)]
-            item = QListWidgetItem(f"{modo.nombre}\n{texto}")
-            item.setForeground(QColor(color))
-            item.setData(Qt.UserRole, modo.id)
-            self.lista.addItem(item)
-        self.lista.blockSignals(False)
-        fila = next((i for i in range(self.lista.count()) if self.lista.item(i).data(Qt.UserRole) == actual), 0)
-        if self.lista.count():
-            self.lista.setCurrentRow(fila)
-            self._mostrar(self.lista.item(fila).data(Qt.UserRole))
-
-    def _estado(self, modo, analisis=None) -> str:
-        """El estado del armador, pero 'listo' solo si ademas estan todas las capturas obligatorias."""
-        estado = (analisis or armador.analizar(modo.equipo, self.biblioteca)).estado
-        if estado == armador.LISTO and modo.equipo.faltantes():
-            return FALTAN_CAPTURAS
-        return estado
-
-    def _mostrar(self, id_modo: str | None):
-        if not id_modo:
-            return
-        modo = MODOS[id_modo]
-        modo.equipo.recargar()
-        analisis = armador.analizar(modo.equipo, self.biblioteca)
-        self.titulo_modo.setText(modo.nombre)
-        texto, color = ESTADO[self._estado(modo, analisis)]
-        self.estado.setText(f"<span style='color:{color}'><b>{texto}</b></span>")
-
-        self.tabla.setRowCount(len(analisis.puestos))
-        for fila, a in enumerate(analisis.puestos):
-            roles = ", ".join(P.ROLES.get(r, r) for r in a.puesto.roles)
-            if a.lo_tienes:
-                sustitutos = "—"
-            elif a.sustitutos:
-                sustitutos = ", ".join(pj.nombre + (" (sugerido)" if pj is a.elegido else "") for pj in a.sustitutos)
-            else:
-                sustitutos = "ninguno de tus personajes tiene esos roles"
-            celdas = [
-                (str(fila + 1), None),
-                (f"{a.puesto.funcion}\nRoles: {roles}", None),
-                (a.recomendado.nombre if a.recomendado else a.puesto.recomendado, None),
-                ("✔ si" if a.lo_tienes else "✖ no", tema.OK if a.lo_tienes else tema.ERROR),
-                (sustitutos, tema.TENUE if a.lo_tienes else None),
-            ]
-            for col, (valor, color_celda) in enumerate(celdas):
-                item = QTableWidgetItem(valor)
-                if color_celda:
-                    item.setForeground(QColor(color_celda))
-                self.tabla.setItem(fila, col, item)
-        self.tabla.resizeRowsToContents()
-
-        estado_cartas = modo.equipo.estado()
-        listas = sum(1 for d, e in estado_cartas if e != "falta")
-        faltan = modo.equipo.faltantes()
-        sin_retrato = [pid for pid in modo.equipo.orden if pid in self.biblioteca and not self.biblioteca[pid].tiene_captura(P.RETRATO)]
-        partes = [f"Cartas listas: {listas}/{len(estado_cartas)}"]
-        if faltan:
-            partes.append(f"<span style='color:{tema.ERROR}'>obligatorias que faltan: {len(faltan)}</span>")
-        if sin_retrato:
-            nombres = ", ".join(self.biblioteca[p].nombre for p in sin_retrato)
-            partes.append(f"<span style='color:{tema.AVISO}'>sin retrato (no se puede comprobar el equipo): {nombres}</span>")
-        self.capturas.setText(" · ".join(partes))
+        while self.lista.count():
+            w = self.lista.takeAt(0).widget()
+            if w:
+                w.setParent(None)
+        boton = self.grupo.checkedButton()
+        modo = MODOS[boton.property("modo")] if boton else next(iter(MODOS.values()))
+        self.subtitulo_modo.setText(f"{modo.subtitulo_juego}. Haz clic en un equipo para ver cómo se juega.")
+        biblioteca = P.cargar()
+        equipos = cargar_equipos().get(modo.id, [])
+        abierto_ya = False
+        tarjetas = []
+        for datos in equipos:
+            t = TarjetaEquipo(datos, biblioteca, abierto=False)
+            tarjetas.append(t)
+        # Se abre de entrada el mejor equipo que ya puedes armar (o el primero si no tienes ninguno).
+        for t in tarjetas:
+            if t.completo and not abierto_ya:
+                t.abierto = abierto_ya = True
+                t._mostrar()
+        if tarjetas and not abierto_ya:
+            tarjetas[0].abierto = True
+            tarjetas[0]._mostrar()
+        for t in tarjetas:
+            self.lista.addWidget(t)
+        if not tarjetas:
+            self.lista.addWidget(QLabel("Todavía no hay equipos recomendados para este contenido.", objectName="tenue"))

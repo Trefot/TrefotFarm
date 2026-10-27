@@ -1,6 +1,17 @@
 """Pagina Ajustes: ventana del juego, avisos al movil, teclas, vista previa y repositorio de actualizaciones."""
 
-from PyQt5.QtWidgets import QFormLayout, QGroupBox, QHBoxLayout, QLabel, QLineEdit, QMessageBox, QPushButton, QSpinBox
+from PyQt5.QtWidgets import (
+    QCheckBox,
+    QFormLayout,
+    QGroupBox,
+    QHBoxLayout,
+    QLabel,
+    QLineEdit,
+    QMessageBox,
+    QPushButton,
+    QSpinBox,
+    QVBoxLayout,
+)
 
 from trefot import actualizador, avisos, config
 from trefot.gui.comun import Pagina
@@ -45,6 +56,15 @@ class PaginaAjustes(Pagina):
                          objectName="tenue", wordWrap=True))
         self.cuerpo.addWidget(movil)
 
+        admin = QGroupBox("Administrador")
+        fa = QVBoxLayout(admin)
+        self.modo_admin = QCheckBox("Modo administrador: mostrar Capturas y el Editor de personajes")
+        self.modo_admin.setChecked(bool(config.obtener("modo_admin")))
+        fa.addWidget(self.modo_admin)
+        fa.addWidget(QLabel("Solo para quien mantiene la base del bot (cartas, retratos y equipos). "
+                            "Los jugadores normales no lo necesitan.", objectName="tenue", wordWrap=True))
+        self.cuerpo.addWidget(admin)
+
         repo = QGroupBox("Actualizaciones (GitHub)")
         f4 = QFormLayout(repo)
         self.url_repo = QLineEdit(placeholderText="https://github.com/usuario/TrefotFarm.git")
@@ -73,6 +93,7 @@ class PaginaAjustes(Pagina):
             "tecla_pausa": self.tecla_pausa.text().strip().lower() or "f9",
             "tecla_detener": self.tecla_detener.text().strip().lower() or "f10",
             "fps_vista_previa": self.fps.value(),
+            "modo_admin": self.modo_admin.isChecked(),
         })
         url = self.url_repo.text().strip()
         if url and url != actualizador.url_remota():

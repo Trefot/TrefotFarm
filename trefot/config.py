@@ -14,6 +14,7 @@ POR_DEFECTO = {
     "tecla_detener": "f10",
     "fps_vista_previa": 3,
     "ultimo_modo": "perros_piso4",
+    "modo_admin": False,  # muestra Capturas y el Editor de personajes
     "opciones_modos": {},
 }
 

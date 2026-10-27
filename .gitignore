@@ -1,8 +1,8 @@
 __pycache__/
 *.pyc
 config.yaml
-logs/
-capturas/
+/logs/
+/capturas/
 assets/equipo/
-recompensas/
-personajes/
+/recompensas/
+/personajes/

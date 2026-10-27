@@ -51,3 +51,63 @@ thonar_azul:
     postura: {descripcion: "Quita la postura (Light Barrage, un objetivo)", respaldo: dogs/b_thonar_stance.png}
     otra: {descripcion: "Area (Heavenly Strike)", respaldo: dogs/b_thonar_gauge.png}
     ulti: {descripcion: "Ulti (Realization of Justice, un objetivo)"}
+
+ludociel_lr:
+  nombre: Ludociel LR
+  color: azul
+  raza: diosa
+  roles: []
+  cartas:
+    area: {descripcion: Area}
+    ulti: {descripcion: Ulti}
+    buffo: {descripcion: Buffo}
+
+# --- Personajes de otros equipos recomendados (sin capturas todavia) -------------------------
+escanor:
+  nombre: Escanor
+  color: sin definir
+  raza: humano
+  roles: []
+  cartas: {}
+
+meliodas_3000:
+  nombre: Meliodas (3000 years)
+  color: sin definir
+  raza: demonio
+  roles: []
+  cartas: {}
+
+gowther_azul:
+  nombre: Gowther (Speed)
+  color: azul
+  raza: sin definir
+  roles: []
+  cartas: {}
+
+nasiens:
+  nombre: Nasiens
+  color: sin definir
+  raza: humano
+  roles: []
+  cartas: {}
+
+roxy:
+  nombre: Roxy
+  color: sin definir
+  raza: sin definir
+  roles: []
+  cartas: {}
+
+lillia:
+  nombre: Lillia
+  color: sin definir
+  raza: sin definir
+  roles: []
+  cartas: {}
+
+cusack:
+  nombre: Cusack
+  color: sin definir
+  raza: sin definir
+  roles: []
+  cartas: {}

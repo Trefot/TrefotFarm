@@ -25,6 +25,7 @@ from trefot.gui import iconos, tema
 from trefot.gui.paginas.actualizaciones import PantallaBloqueo
 from trefot.gui.paginas.ajustes import PaginaAjustes
 from trefot.gui.paginas.capturas import PaginaCapturas
+from trefot.gui.paginas.editor_personajes import PaginaEditorPersonajes
 from trefot.gui.paginas.farmear import PaginaFarmear
 from trefot.gui.paginas.historial import PaginaHistorial
 from trefot.gui.paginas.equipos import PaginaEquipos
@@ -40,13 +41,16 @@ MINUTOS_ENTRE_REVISIONES = 30
 MENU = [
     ("inicio", "Inicio"),
     ("farmear", "Farmear"),
-    ("capturas", "Capturas"),
     ("personajes", "Personajes"),
     ("equipos", "Equipos"),
-    ("historial", "Historial"),
     ("recompensas", "Recompensas"),
+    ("historial", "Historial"),
     ("ajustes", "Ajustes"),
+    # Solo con el modo administrador (Ajustes): herramientas para mantener la base del bot.
+    ("capturas", "Capturas"),
+    ("editor", "Editor de personajes"),
 ]
+SOLO_ADMIN = {"capturas", "editor"}
 
 
 class _Senales(QObject):
@@ -90,7 +94,7 @@ class VentanaPrincipal(QMainWindow):
         for clave, texto in MENU:
             fila_b = QHBoxLayout()
             b = QPushButton("  " + texto, objectName="menu", checkable=True)
-            b.setIcon(iconos.icono(clave, tema.TENUE, tema.ACENTO))
+            b.setIcon(iconos.icono("mdi6.database-edit" if clave == "editor" else clave, tema.TENUE, tema.ACENTO))
             b.setIconSize(QSize(20, 20))
             b.setCursor(Qt.PointingHandCursor)
             b.clicked.connect(lambda _, c=clave: self.navegar(c))
@@ -115,6 +119,7 @@ class VentanaPrincipal(QMainWindow):
             "farmear": self.farmear,
             "capturas": PaginaCapturas(self),
             "personajes": PaginaPersonajes(self),
+            "editor": PaginaEditorPersonajes(self),
             "equipos": PaginaEquipos(self),
             "historial": PaginaHistorial(self),
             "recompensas": PaginaRecompensas(self),
@@ -154,6 +159,7 @@ class VentanaPrincipal(QMainWindow):
         self.puente.escuchar_teclas()
         self.navegar("inicio")
         self.refrescar_insignias()
+        self.aplicar_modo_admin()
         self._barra()
         self.farmear.escribir("TrefotFarm listo.", "ok")
         QTimer.singleShot(300, self.buscar_updates)
@@ -178,9 +184,19 @@ class VentanaPrincipal(QMainWindow):
 
     def _insignia(self, clave: str, texto: str):
         self.insignias[clave].setText(texto)
-        self.insignias[clave].setVisible(bool(texto))
+        self.insignias[clave].setVisible(bool(texto) and (clave not in SOLO_ADMIN or bool(config.obtener("modo_admin"))))
+
+    def aplicar_modo_admin(self):
+        """Muestra u oculta las herramientas de administrador del menu."""
+        admin = bool(config.obtener("modo_admin"))
+        for clave in SOLO_ADMIN:
+            self.botones[clave].setVisible(admin)
+            self.insignias[clave].setVisible(admin and bool(self.insignias[clave].text()))
+        if not admin and self.pila.currentWidget() in (self.paginas[c] for c in SOLO_ADMIN):
+            self.navegar("inicio")
 
     def ajustes_guardados(self):
+        self.aplicar_modo_admin()
         self.farmear.actualizar_ayuda_teclas()
         self.farmear.ajustar_fps()
         self._barra()
