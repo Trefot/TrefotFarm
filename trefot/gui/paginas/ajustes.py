@@ -2,6 +2,7 @@
 
 from PyQt5.QtWidgets import (
     QCheckBox,
+    QComboBox,
     QFormLayout,
     QGroupBox,
     QHBoxLayout,
@@ -14,6 +15,7 @@ from PyQt5.QtWidgets import (
 )
 
 from trefot import actualizador, avisos, config
+from trefot.gui import tema
 from trefot.gui.comun import Pagina
 
 
@@ -44,6 +46,18 @@ class PaginaAjustes(Pagina):
         f2.addRow(QLabel("Nombres como f9, f10, pause, end...", objectName="tenue"))
         fila.addWidget(controles)
         self.cuerpo.addLayout(fila)
+
+        aspecto = QGroupBox("Aspecto")
+        fs = QFormLayout(aspecto)
+        self.skin = QComboBox()
+        self.skin.addItem(f"Automática según la fecha (hoy: {tema.skin_de_fecha().nombre})", "auto")
+        for skin in tema.SKINS.values():
+            self.skin.addItem(skin.nombre, skin.id)
+        self.skin.setCurrentIndex(max(0, self.skin.findData(config.obtener("skin"))))
+        fs.addRow("Skin", self.skin)
+        fs.addRow(QLabel("En automática, la interfaz se viste para Halloween, Navidad, Año Nuevo, San Valentín "
+                         "y el aniversario del juego.", objectName="tenue", wordWrap=True))
+        self.cuerpo.addWidget(aspecto)
 
         movil = QGroupBox("Avisos al movil (ntfy)")
         f3 = QFormLayout(movil)
@@ -86,7 +100,9 @@ class PaginaAjustes(Pagina):
         self.cuerpo.addStretch()
 
     def guardar(self, silencioso=False):
+        skin_cambiada = self.skin.currentData() != config.obtener("skin")
         config.guardar({
+            "skin": self.skin.currentData(),
             "titulo_ventana": self.titulo_ventana.text().strip() or "7DS",
             "ntfy_canal": self.ntfy.text().strip(),
             "minutos_atasco": self.atasco.value(),
@@ -104,6 +120,11 @@ class PaginaAjustes(Pagina):
                 return
             self.app.buscar_updates(manual=True)
         self.app.ajustes_guardados()
+        if skin_cambiada and not self.app.puente.corriendo:
+            r = QMessageBox.question(self, "Skin", "La skin nueva se ve al reiniciar TrefotFarm. ¿Reiniciar ahora?")
+            if r == QMessageBox.Yes:
+                self.app._reiniciar()
+                return
         if not silencioso:
             QMessageBox.information(self, "Ajustes", "Guardado.")
 

@@ -77,7 +77,7 @@ class TarjetaEquipo(QFrame):
         cab = QHBoxLayout()
         nivel_texto, nivel_color = NIVELES.get(datos.get("nivel", ""), ("", tema.TENUE))
         nivel = QLabel(nivel_texto)
-        nivel.setStyleSheet(f"background: {nivel_color}; color: #14161c; border-radius: 9px; padding: 2px 10px; font-weight: 700;")
+        nivel.setStyleSheet(f"background: {nivel_color}; color: {tema.FONDO}; border-radius: 9px; padding: 2px 10px; font-weight: 700;")
         cab.addWidget(nivel)
         cab.addWidget(QLabel(datos.get("nombre", ""), objectName="titulo_tarjeta"))
         if datos.get("bot"):

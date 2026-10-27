@@ -64,6 +64,7 @@ def main():
     QApplication.setAttribute(Qt.AA_UseHighDpiPixmaps, True)
     app = QApplication(sys.argv)
     app.setApplicationName("TrefotFarm")
+    tema.cargar_fuentes()
     app.setStyleSheet(tema.HOJA)
     principal = VentanaPrincipal()
     principal.show()

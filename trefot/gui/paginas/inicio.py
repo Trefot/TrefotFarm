@@ -155,7 +155,7 @@ class PaginaInicio(Pagina):
         self.b_buscar.setToolTip("Buscar actualizaciones")
         self.b_buscar.clicked.connect(lambda: app.buscar_updates(manual=True))
         self.b_actualizar = QPushButton(" Actualizar", objectName="primario")
-        self.b_actualizar.setIcon(iconos.icono("actualizar", "#1a1406"))
+        self.b_actualizar.setIcon(iconos.icono("actualizar", tema.SOBRE_ACENTO))
         self.b_actualizar.clicked.connect(app.accion_actualizar)
         self.acciones.addWidget(self.b_buscar)
         self.acciones.addWidget(self.b_actualizar)
@@ -355,7 +355,7 @@ class PaginaInicio(Pagina):
     def _refrescar_vivo(self):
         corriendo = self.app.puente.corriendo
         self.b_empezar.setText("  Detener" if corriendo else "  Empezar")
-        self.b_empezar.setIcon(iconos.icono("detener" if corriendo else "jugar", "#1a1406" if not corriendo else tema.TEXTO))
+        self.b_empezar.setIcon(iconos.icono("detener" if corriendo else "jugar", tema.SOBRE_ACENTO if not corriendo else tema.TEXTO))
         self.b_empezar.setProperty("corriendo", corriendo)
         self.b_empezar.style().unpolish(self.b_empezar)
         self.b_empezar.style().polish(self.b_empezar)
