@@ -8,6 +8,7 @@
 #         "boton: true" = no es una carta de la mano sino un boton de la pantalla (p. ej. un talento).
 
 odin:
+  clave: "[Almighty] Supreme God Odin"  # nombre completo en el juego (lo usa la captura de heroes)
   nombre: Odin
   # Ficha: "[Almighty] Supreme God Odin" - Attribute Light, Race Unknown, Ragnarok / God
   color: claro
@@ -20,6 +21,7 @@ odin:
     talento: {descripcion: Boton del talento, boton: true}
 
 gawain:
+  clave: "[Gold-Colored Magic] Knight of the Sun Gawain"  # nombre completo en el juego (lo usa la captura de heroes)
   nombre: Gawain
   # Ficha: "[Gold-Colored Magic] Knight of the Sun Gawain" - Attribute Light, Race Unknown, Four Knights
   color: claro
@@ -31,6 +33,7 @@ gawain:
     ulti: {descripcion: "Ulti (Sunshine Burst, area)"}
 
 freyja_roja:
+  clave: "[Spellbinding Queen] Goddess of Beauty Freyja"  # nombre completo en el juego (lo usa la captura de heroes)
   nombre: Freyja roja
   # Ficha: "[Spellbinding Queen] Goddess of Beauty Freyja" - Attribute Strength, Race Unknown, Ragnarok / God
   color: rojo
@@ -42,6 +45,7 @@ freyja_roja:
     ulti: {descripcion: "Ulti (Aesthetic Overflow)", respaldo: snake/freyja_ult.png}
 
 thonar_azul:
+  clave: "[Battle-Hardened Mercenary] Wanderer Thonar"  # nombre completo en el juego (lo usa la captura de heroes)
   nombre: Thonar azul
   # Ficha: "[Battle-Hardened Mercenary] Wanderer Thonar" - Attribute Speed, Race Human, Ragnarok
   color: azul
@@ -53,6 +57,7 @@ thonar_azul:
     ulti: {descripcion: "Ulti (Realization of Justice, un objetivo)"}
 
 ludociel_lr:
+  clave: "[Advent of Flash] Covenant of Light Ludociel"  # nombre completo en el juego (lo usa la captura de heroes)
   nombre: Ludociel LR
   color: azul
   raza: diosa

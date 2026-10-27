@@ -312,7 +312,7 @@ class Asistente(QDialog):
                 capa_h.setSpacing(4)
                 capa_h.addWidget(QLabel(f"Puesto {n}", objectName="lema", alignment=Qt.AlignCenter))
                 foto = QLabel(alignment=Qt.AlignCenter)
-                retrato = iconos.redondo(pj.ruta(P.RETRATO), 72, tema.ACENTO if pj.tengo else tema.BORDE) if pj else None
+                retrato = iconos.redondo(pj.ruta_cara(), 72, tema.ACENTO if pj.tengo else tema.BORDE) if pj else None
                 if retrato:
                     foto.setPixmap(retrato)
                 capa_h.addWidget(foto)

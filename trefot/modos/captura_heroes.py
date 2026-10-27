@@ -26,7 +26,7 @@ from trefot import personajes as P
 from trefot.control import control
 from trefot.motor import Modo, TerminarModo
 from trefot.rutas import RAIZ
-from trefot.vision import Plantilla, guardar_imagen
+from trefot.vision import Plantilla, guardar_imagen, leer_imagen
 
 CARPETA = RAIZ / "capturas" / "heroes"
 CATALOGO = CARPETA / "catalogo.yaml"
@@ -341,6 +341,102 @@ def atributo_de_casilla(icono) -> str:
 def recorte_carta(pantalla, i: int):
     x1, y1, x2, y2 = juego.FICHA_CARTAS[i]
     return pantalla[y1:y2, x1:x2].copy()
+
+
+# ------------------------------------------------------------ pasar a la biblioteca
+TIPO_ES = {"single": "Un objetivo", "area": "Área", "defensa": "Defensa", "apoyo": "Apoyo", "otro": "Otro"}
+
+
+def roles_de(h: dict) -> list[str]:
+    """Roles del heroe a partir de sus cartas (para armar equipos)."""
+    roles = []
+    for c in h.get("cartas") or []:
+        t = (c.get("texto") or "").lower()
+        nuevos = {"single": ["dano_single"], "area": ["dano_area"], "defensa": ["aguante"], "apoyo": ["buff"]}.get(
+            c.get("tipo"), [])
+        if re.search(r"removes? stances?", t):
+            nuevos.append("quita_postura")
+        if re.search(r"restores?.{0,40}\bhp\b|recovers?.{0,30}\bhp\b", t):
+            nuevos.append("curacion")
+        if re.search(r"decreases?.{0,60}enem", t):
+            nuevos.append("debuff")
+        roles += [r for r in nuevos if r not in roles]
+    return roles
+
+
+def _existente(h: dict, biblioteca: dict, base: dict, capturados: list[dict]) -> str | None:
+    """El personaje de la biblioteca que es este heroe, si ya existe.
+
+    1) el que tiene su misma clave del juego; 2) uno "de relleno" de la base (sin cartas, de los
+    equipos recomendados) cuyo nombre aparece en el del heroe y del mismo color, pero solo si es el
+    unico heroe capturado que encaja (con dos Escanor no se adivina cual es)."""
+    for pid, datos in base.items():
+        clave = (datos or {}).get("clave", "")
+        # misma clave, o mismo nombre aunque el titulo se haya leido distinto
+        if clave and (clave == h["clave"] or clave.split("] ")[-1].lower() == h["nombre"].lower()):
+            return pid
+    for pid, pj in biblioteca.items():
+        if pj.cartas or pj.id not in base:
+            continue
+        palabra = pj.nombre.split("(")[0].split()[0].lower()
+        def encaja(otro):
+            return re.search(rf"\b{re.escape(palabra)}\b", otro["nombre"].lower()) and \
+                pj.color in ("sin definir", otro.get("color"))
+        if encaja(h) and sum(1 for otro in capturados if encaja(otro)) == 1:
+            return pid
+    return None
+
+
+def pasar_a_biblioteca(catalogo: dict) -> tuple[int, int]:
+    """Pasa los heroes capturados a la biblioteca local (pagina Personajes) y los marca como tuyos.
+
+    Los que ya estan (los del guion de Perros...) solo reciben su icono: sus cartas y su retrato no se
+    tocan, porque el bot los usa para pelear. Devuelve (nuevos, ya existentes)."""
+    import shutil
+
+    from trefot.equipo import recorte_para_plantilla
+
+    biblioteca = P.cargar()
+    base = P._leer_yaml(P.BASE)
+    capturados = list(catalogo.values())
+    nuevos = existentes = 0
+    for pid_captura, h in catalogo.items():
+        origen = CARPETA / pid_captura
+        destino = _existente(h, biblioteca, base, capturados)
+        cara = origen / "icono.png" if (origen / "icono.png").is_file() else origen / "retrato_ficha.png"
+        if destino and biblioteca[destino].cartas:
+            if cara.is_file():
+                (P.CARPETA / destino).mkdir(parents=True, exist_ok=True)
+                shutil.copyfile(cara, P.CARPETA / destino / f"{P.ICONO}.png")
+            P.marcar_tengo(destino, True)
+            existentes += 1
+            continue
+        pid = destino or pid_captura
+        cartas, normales = {}, 0
+        carpeta = P.CARPETA / pid
+        for i, c in enumerate(h.get("cartas") or [], start=1):
+            if c.get("ulti"):
+                cid = "ulti"
+            else:
+                normales += 1
+                cid = f"skill_{normales}"
+            cartas[cid] = P.CartaPj(cid, f"{TIPO_ES.get(c.get('tipo'), 'Otro')} ({c.get('nombre', '')})")
+            crudo = leer_imagen(origen / f"carta_{i}{P.SUFIJO_FICHA}.png")
+            if crudo is not None:  # igual que el Editor: sin marco y al tamano de la carta en la mano
+                ex, ey = P.ESCALA_FICHA
+                plantilla = cv2.resize(recorte_para_plantilla(crudo), None, fx=ex, fy=ey, interpolation=cv2.INTER_AREA)
+                guardar_imagen(carpeta / f"{cid}{P.SUFIJO_FICHA}.png", plantilla)
+        if cara.is_file():
+            carpeta.mkdir(parents=True, exist_ok=True)
+            shutil.copyfile(cara, carpeta / f"{P.ICONO}.png")
+        P.guardar(P.Personaje(id=pid, nombre=h["nombre"], color=h.get("color", "sin definir"),
+                              raza=h.get("raza", "sin definir"), roles=roles_de(h), cartas=cartas, tengo=True,
+                              propio=pid not in base))
+        if destino:
+            existentes += 1
+        else:
+            nuevos += 1
+    return nuevos, existentes
 
 
 def cargar_catalogo() -> dict:

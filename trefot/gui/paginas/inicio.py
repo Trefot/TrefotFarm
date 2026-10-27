@@ -115,7 +115,7 @@ class TarjetaModo(QFrame):
             foto = QLabel()
             foto.setFixedSize(40, 40)
             foto.setToolTip(pj.nombre if pj else pid)
-            pix = iconos.redondo(pj.ruta(P.RETRATO), 40, tema.BORDE) if pj else None
+            pix = iconos.redondo(pj.ruta_cara(), 40, tema.BORDE) if pj else None
             if pix:
                 foto.setPixmap(pix)
             else:

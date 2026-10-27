@@ -218,17 +218,18 @@ class FilaHeroe(QFrame):
 
 class PaginaHeroesCapturados(Pagina):
     titulo = "Héroes capturados"
-    subtitulo = ("Lo que guardó la captura en serie, antes de pasarlo a la base del bot. Pasa el ratón por una carta "
-                 "para leer su descripción.")
+    subtitulo = ("Lo que guardó la captura (se guarda sola mientras captura). Revísalo y pulsa \"Pasar a Personajes\". "
+                 "Pasa el ratón por una carta para leer su descripción.")
 
     def __init__(self, app):
         super().__init__()
         self.app = app
         self.catalogo: dict = {}
         for texto, ic, funcion, primario in (
-            ("Capturar todos los héroes", "jugar", self._capturar, True),
+            ("Pasar a Personajes", "personajes", self._pasar, True),
+            ("Capturar todos los héroes", "jugar", self._capturar, False),
             ("Abrir carpeta", "carpeta", self._abrir_carpeta, False),
-            ("Actualizar", "actualizar", self.al_mostrar, False),
+            ("Recargar", "actualizar", self.al_mostrar, False),
         ):
             b = QPushButton(" " + texto, objectName="primario" if primario else "chico")
             b.setIcon(iconos.icono(ic, tema.SOBRE_ACENTO if primario else tema.TEXTO))
@@ -310,6 +311,32 @@ class PaginaHeroesCapturados(Pagina):
             del self.catalogo[pid]
             C.guardar_catalogo(self.catalogo)
             self._pintar()
+
+    def _pasar(self):
+        if not self.catalogo:
+            QMessageBox.information(self, "Pasar a Personajes", "Todavía no hay héroes capturados.")
+            return
+        revisar = sum(1 for h in self.catalogo.values() if avisos_de(h))
+        r = QMessageBox.question(
+            self, "Pasar a Personajes",
+            f"Paso {len(self.catalogo)} héroes a la página Personajes y los marco como tuyos."
+            + (f"\n\n{revisar} tienen algo para revisar; puedes corregirlos después y volver a pasarlos." if revisar else "")
+            + "\n\nLos que el bot ya conocía (Odin, Gawain, Freyja, Thonar...) solo reciben su icono: sus cartas no "
+              "se tocan. ¿Seguir?")
+        if r != QMessageBox.Yes:
+            return
+        try:
+            nuevos, existentes = C.pasar_a_biblioteca(self.catalogo)
+        except Exception as error:
+            QMessageBox.warning(self, "Pasar a Personajes", f"No pude pasarlos: {error}")
+            return
+        self.app.paginas["personajes"].al_mostrar()
+        QMessageBox.information(
+            self, "Pasar a Personajes",
+            f"Listo: {nuevos} héroes nuevos y {existentes} que ya estaban, ahora en Personajes y marcados como tuyos.\n\n"
+            "Por ahora solo los ves tú. Para que les lleguen a todos con la próxima actualización, avísame y los "
+            "publico en la base del bot.")
+        self.app.navegar("personajes")
 
     def _capturar(self):
         self.app.paginas["editor"].captura_en_serie()

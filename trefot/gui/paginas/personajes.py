@@ -54,10 +54,14 @@ class TarjetaPersonaje(QFrame):
         foto = QLabel(alignment=Qt.AlignCenter)
         foto.setFixedSize(120, 140)
         foto.setObjectName("foto_pj")
-        ruta = pj.ruta(P.RETRATO)
+        ruta = pj.ruta_cara()
         if ruta.is_file():
-            pix = QPixmap(str(ruta)).scaled(120, 140, Qt.KeepAspectRatioByExpanding, Qt.SmoothTransformation)
-            pix = pix.copy((pix.width() - 120) // 2, 0, 120, 140)
+            pix = QPixmap(str(ruta))
+            if pix.width() >= pix.height():  # icono cuadrado de la lista de Heroes: entero
+                pix = pix.scaled(120, 140, Qt.KeepAspectRatio, Qt.SmoothTransformation)
+            else:  # retrato alargado de la pantalla del equipo: recortado al centro
+                pix = pix.scaled(120, 140, Qt.KeepAspectRatioByExpanding, Qt.SmoothTransformation)
+                pix = pix.copy((pix.width() - 120) // 2, 0, 120, 140)
             foto.setPixmap(pix if pj.tengo else _en_gris(pix))
         else:
             foto.setPixmap(iconos.pixmap("mdi6.account-question", 56, tema.TENUE))
