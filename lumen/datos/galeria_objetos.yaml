@@ -1,0 +1,3 @@
+# Galeria de objetos del inventario (la publica el administrador tras "Capturar objetos").
+# id -> nombre, tipo, descripcion, categoria; icono en assets/objetos/<id>_ficha.png. Ver lumen/botin.py.
+{}

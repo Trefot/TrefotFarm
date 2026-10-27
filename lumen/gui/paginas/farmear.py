@@ -429,6 +429,8 @@ class PaginaFarmear(Pagina):
             self.app.navegar("capturados")
         elif herramienta == "aprender":  # y lo medido con las peleas que jugo el admin
             self.app.navegar("equipos")
+        elif herramienta == "captura_objetos":  # y la galeria de objetos
+            self.app.navegar("recompensas")
 
     def _botones(self, corriendo: bool):
         self.b_iniciar.setEnabled(not corriendo)

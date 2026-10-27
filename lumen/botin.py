@@ -14,6 +14,10 @@ Catalogo de objetos en dos capas, como los personajes: la base (lumen/datos/obje
 assets/objetos/, la publica el administrador con los nombres puestos) y la local de cada jugador
 (recompensas/objetos/), que se mezcla encima. Un objeto puede estar "unido" a otro (era el mismo,
 leido raro: cuenta como el otro) o "descartado" (no era un objeto: p. ej. un cofre a medio abrir).
+
+Galeria: los objetos del inventario del juego con su nombre, tipo y descripcion (los captura el admin
+con lumen/modos/captura_objetos.py; base en lumen/datos/galeria_objetos.yaml + assets/objetos/<id>_ficha.png,
+local en capturas/objetos/). Un objeto del botin que se parece a uno de la galeria toma su nombre solo.
 """
 
 import threading
@@ -38,6 +42,14 @@ CATALOGO = CARPETA / "catalogo.yaml"
 CARPETA_BASE = ASSETS / "objetos"
 CATALOGO_BASE = Path(__file__).resolve().parent / "datos" / "objetos.yaml"
 _lock = threading.RLock()
+
+CARPETA_GALERIA = RAIZ / "capturas" / "objetos"
+GALERIA = CARPETA_GALERIA / "galeria.yaml"
+GALERIA_BASE = Path(__file__).resolve().parent / "datos" / "galeria_objetos.yaml"
+# Icono de la ficha del inventario (86 px) reducido a 63 px frente al icono del botin: el mismo objeto
+# da 0.97 y los demas <=0.33 (medido con el orbe de Skoll y Hati y los 7 objetos del botin).
+LADO_FICHA = LADO
+UMBRAL_GALERIA = 0.85
 
 # Pantalla quieta: entre dos capturas seguidas con el OK ya visible, la zona del botin cambia 1-4
 # (fondo animado) si esta quieta y 10-22 si aun se abren cofres o llegan casillas (medido en peleas reales).
@@ -217,6 +229,87 @@ def visibles(catalogo: dict) -> list[str]:
     return [oid for oid, d in catalogo.items() if not (d or {}).get("unido_a") and not (d or {}).get("descartado")]
 
 
+# ------------------------------------------------------------------ galeria del inventario
+def cargar_galeria_local() -> dict[str, dict]:
+    return _leer_yaml(GALERIA)
+
+
+def guardar_galeria_local(galeria: dict) -> None:
+    with _lock:
+        CARPETA_GALERIA.mkdir(parents=True, exist_ok=True)
+        GALERIA.write_text(yaml.safe_dump(galeria, allow_unicode=True, sort_keys=False, width=110), encoding="utf-8")
+
+
+def cargar_galeria() -> dict[str, dict]:
+    """La galeria publicada con la capturada en esta PC encima."""
+    return {**_leer_yaml(GALERIA_BASE), **cargar_galeria_local()}
+
+
+def ruta_ficha(gid: str) -> Path:
+    local = CARPETA_GALERIA / f"{gid}_ficha.png"
+    return local if local.is_file() else CARPETA_BASE / f"{gid}_ficha.png"
+
+
+def guardar_ficha(gid: str, icono_ficha) -> None:
+    guardar_imagen(CARPETA_GALERIA / f"{gid}_ficha.png", icono_ficha)
+
+
+def _icono_de_ficha(gid: str):
+    """El icono de la galeria como se ve en el botin (63 px, parte de arriba)."""
+    img = leer_imagen(ruta_ficha(gid))
+    if img is None:
+        return None
+    return icono(cv2.resize(img, (LADO_FICHA, LADO_FICHA), interpolation=cv2.INTER_AREA))
+
+
+_cache_galeria: dict[str, object] = {}
+
+
+def en_galeria(img_icono, galeria: dict) -> str | None:
+    """El objeto de la galeria con ese icono (o None)."""
+    mejor, mejor_valor = None, UMBRAL_GALERIA
+    for gid in galeria:
+        if gid not in _cache_galeria:
+            _cache_galeria[gid] = _icono_de_ficha(gid)
+        ref = _cache_galeria[gid]
+        if ref is None or ref.shape != img_icono.shape:
+            continue
+        valor = float(cv2.matchTemplate(img_icono, ref, cv2.TM_CCOEFF_NORMED).max())
+        if valor >= mejor_valor:
+            mejor, mejor_valor = gid, valor
+    return mejor
+
+
+def _datos_galeria(g: dict) -> dict:
+    return {k: g[k] for k in ("nombre", "tipo", "descripcion") if g.get(k)}
+
+
+def vincular_galeria() -> int:
+    """Pone nombre, tipo y descripcion de la galeria a los objetos del botin que se le parecen.
+    El nombre que ya les puso el jugador se respeta. Devuelve cuantos vinculo."""
+    with _lock:
+        galeria = cargar_galeria()
+        if not galeria:
+            return 0
+        catalogo = cargar_catalogo()
+        hechos = 0
+        for oid in visibles(catalogo):
+            datos = catalogo[oid]
+            if datos.get("galeria"):
+                continue
+            img = leer_imagen(ruta_icono(oid))
+            gid = en_galeria(img, galeria) if img is not None else None
+            if gid:
+                nombre_propio = datos.get("nombre")
+                datos.update(_datos_galeria(galeria[gid]), galeria=gid)
+                if nombre_propio:
+                    datos["nombre"] = nombre_propio
+                hechos += 1
+        if hechos:
+            guardar_catalogo(catalogo)
+        return hechos
+
+
 def identificar(img_icono, catalogo: dict) -> str | None:
     """Id del objeto; si no se parece a ninguno conocido, se agrega al catalogo como 'sin nombre'.
     None si se parece a uno descartado (no es un objeto)."""
@@ -231,12 +324,15 @@ def identificar(img_icono, catalogo: dict) -> str | None:
             mejor, mejor_valor = oid, valor
     if mejor:
         return destino(mejor, catalogo)
+    galeria = cargar_galeria()
+    gid = en_galeria(img_icono, galeria) if galeria else None
     n = 1
     while f"objeto_{n}" in catalogo:
         n += 1
     oid = f"objeto_{n}"
-    catalogo[oid] = {"nombre": ""}
-    guardar_imagen(ruta_icono(oid), img_icono)
+    # Si esta en la galeria del inventario, entra ya con su nombre y descripcion.
+    catalogo[oid] = {"nombre": "", **(_datos_galeria(galeria[gid]) if gid else {}), **({"galeria": gid} if gid else {})}
+    guardar_imagen(CARPETA / f"{oid}.png", img_icono)
     return oid
 
 
