@@ -254,13 +254,17 @@ class PaginaRecompensas(Pagina):
         self.lista_objetos.addStretch(1)
 
     def _capturar_objetos(self):
-        from lumen.modos.captura_objetos import CapturaObjetos
+        from lumen.modos.captura_objetos import CATEGORIAS, CapturaObjetos
 
-        texto = ("CAPTURAR OBJETOS\n\nAbre en el juego el inventario (Menu -> Inventory) y no toques el ratón.\n\n"
-                 "El bot recorre las 5 categorías, toca cada objeto, lee su nombre, tipo y descripción y lo cierra "
-                 "con la X. Nunca toca «Sell», «Location» ni «Go Now».\n\nF10 para parar.")
+        opciones = ["Todas"] + [n for n, _ in CATEGORIAS]
+        elegida, ok = QInputDialog.getItem(self, "Capturar objetos", "¿Qué categoría del inventario?", opciones, 0, False)
+        if not ok:
+            return
+        texto = ("CAPTURAR OBJETOS · " + elegida + "\n\nAbre en el juego el inventario (Menu -> Inventory) y no toques "
+                 "el ratón.\n\nEl bot toca cada objeto, lee su nombre, tipo y descripción y lo cierra con la X. "
+                 "Los que ya capturó antes los salta sin abrirlos. Nunca toca «Sell», «Location» ni «Go Now».\n\nF10 para parar.")
         if QMessageBox.question(self, "Capturar objetos", texto) == QMessageBox.Yes:
-            self.app.farmear.ejecutar_herramienta(CapturaObjetos({}))
+            self.app.farmear.ejecutar_herramienta(CapturaObjetos({} if elegida == "Todas" else {"solo": elegida}))
 
     def _crear_fotos(self) -> QWidget:
         w = QWidget()

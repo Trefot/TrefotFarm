@@ -24,7 +24,7 @@ import numpy as np
 from lumen import botin, entrada, ocr
 from lumen.control import control
 from lumen.motor import Modo, TerminarModo
-from lumen.vision import Plantilla, guardar_imagen
+from lumen.vision import Plantilla, guardar_imagen, leer_imagen
 
 INVENTARIO = Plantilla("objetos/inventario.png")  # boton "Sell Multiple" de la lista (solo para reconocerla)
 CERRAR_FICHA = Plantilla("objetos/cerrar_ficha.png")  # la X roja de la ficha de un objeto
@@ -117,7 +117,14 @@ class CapturaObjetos(Modo):
     def __init__(self, valores: dict):
         super().__init__(valores)
         self.galeria = botin.cargar_galeria_local()
-        self.categoria = 0
+        # "solo": una categoria (su nombre); si no, todas.
+        nombres = [n for n, _ in CATEGORIAS]
+        solo = valores.get("solo")
+        self.categoria = nombres.index(solo) if solo in nombres else 0
+        self.ultima = self.categoria if solo in nombres else len(CATEGORIAS) - 1
+        # Dibujo en la estanteria de lo ya capturado en otras pasadas: se salta sin abrirlo.
+        self.conocidos = [img for img in (leer_imagen(r) for r in botin.CARPETA_GALERIA.glob("*_estante.png")) if img is not None]
+        self.recorte_actual = None
         self.vistos: list = []  # recortes de casilla ya tratados en esta categoria
         self.casilla = 0  # siguiente casilla de esta pagina
         self.filas: list[int] = list(FILAS)  # filas de esta pagina (se buscan al empezarla)
@@ -143,11 +150,12 @@ class CapturaObjetos(Modo):
         if not INVENTARIO.esta(p, 0.85):
             self.log("No veo el inventario. Ábrelo en el juego (Menu -> Inventory) y vuelve a empezar.", "error")
             raise TerminarModo()
-        self.log("Inventario encontrado: empiezo por Ingredients.", "ok")
+        self.log(f"Inventario encontrado: empiezo por {CATEGORIAS[self.categoria][0]} "
+                 f"({len(self.conocidos)} objetos ya conocidos se saltan sin abrirlos).", "ok")
         return "categoria"
 
     def abrir_categoria(self, p, o):
-        if self.categoria >= len(CATEGORIAS):
+        if self.categoria > self.ultima:
             raise TerminarModo()
         nombre, punto = CATEGORIAS[self.categoria]
         entrada.clic(punto, o, espera=1.5)
@@ -168,6 +176,9 @@ class CapturaObjetos(Modo):
             if ya_visto(p, cx, cy, self.vistos):
                 continue  # mismo objeto que otro ya leido
             self.vistos.append(recorte)
+            if ya_visto(p, cx, cy, self.conocidos):
+                continue  # capturado en otra pasada
+            self.recorte_actual = recorte
             self.tocada = (cx, cy)
             entrada.clic((cx, cy), o, espera=0.8)
             self.desde = time.time()
@@ -230,6 +241,8 @@ class CapturaObjetos(Modo):
                 "capturado": time.strftime("%Y-%m-%d %H:%M"),
             }
             botin.guardar_ficha(gid, ficha["icono"])
+            if self.recorte_actual is not None:  # para saltarlo sin abrirlo la proxima vez
+                guardar_imagen(botin.CARPETA_GALERIA / f"{gid}_estante.png", self.recorte_actual)
             botin.guardar_galeria_local(self.galeria)
             self.leidos += 1
             self.nuevos += nuevo
