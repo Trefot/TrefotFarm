@@ -44,7 +44,7 @@ PRIMERA_FILA = 221  # con la lista arriba del todo
 LIMITE_LISTA = 700  # mas abajo pasa el cartel de avisos del juego por encima de las casillas
 LIMITE_LISTA_FINAL = 745  # al final de la lista se acepta la ultima fila aunque el cartel la cruce
 ICONO_CASILLA = (64, 0, 88, 18)  # atributo, arriba a la derecha de la casilla
-BORDE_CASILLA = 200  # punto mas claro del marco de arriba: con heroe 234-241 (aun corrida 4 px); madera <=160
+BORDE_CASILLA = 130  # punto mas claro del marco de arriba: LR plateado ~230, UR rojo 172-202; hueco vacio <=80
 
 # Medido en capturas reales de 550x940 (Wanderer Thonar, Gawain).
 CABECERA = (130, 125, 445, 195)  # [titulo] y nombre
@@ -247,36 +247,74 @@ ULTIMATE = re.compile(r"^\s*(?:max\s*)?l[vi1](?:\.|\s+\d)\s*\d*\s*", re.I)  # "L
 
 
 def nombre_de_carta(linea: str) -> tuple[str, bool] | None:
-    """(nombre, es_ultimate) si la linea es la del nombre de la carta.
-
-    Va entre comillas, pero el OCR a veces lee las comillas como ' o *. Las Ultimates empiezan por
-    "Lv. 1" o "MAX Lv."; algunas tienen formas: 'MAX Lv. Spirit Spear Basquias, First Form: "Basquias"'."""
-    es_ulti = bool(ULTIMATE.match(linea))
-    entre = re.search(f"[{re.escape(COMILLAS)}](.+)[{re.escape(COMILLAS)}]", linea)  # de la primera a la ultima
-    if not entre and not es_ulti:
+    leido = _nombre_de_carta(linea)
+    if not leido:
         return None
-    if es_ulti:
+    nombre = re.sub(r"^[^\w(]+|[^\w)!?]+$", "", leido[0])  # restos de comillas o simbolos en los bordes
+    return (nombre, leido[1]) if len(nombre) >= 3 else None
+
+
+def _nombre_de_carta(linea: str) -> tuple[str, bool] | None:
+    """(nombre, es_ultimate) si la linea es la del nombre de la carta. Formatos vistos en el juego:
+    '"Ruthless Violence"', 'Lv. 1 "X"', 'MAX Lv. "X"', 'Enchant: "Hellbringer"',
+    'Spirit Spear Chastiefol, Third Form: "Fossilization"'. El OCR a veces cambia las comillas por ' o *.
+    Se queda con lo de entre comillas (las formas de una misma lanza tienen nombres distintos)."""
+    es_ulti = bool(ULTIMATE.match(linea))
+    limpia = linea.strip().rstrip(".")
+    if not es_ulti and limpia[:1] in "*※" and ":" in limpia[:40]:
+        return None  # nota al pie de la descripcion ("*Sunfire: ...")
+    forma = re.search(r",\s*\w+\s+form\s*:\s*(.+)$", linea, re.I)
+    if forma:  # 'Spirit Spear Chastiefol, Eighth Form: "Pollen Garden"' (a veces la comilla sale como -)
+        nombre = forma.group(1).strip(" -" + COMILLAS)
+        return (nombre, es_ulti) if len(nombre) >= 3 else None
+    entre = re.search(f"[{re.escape(COMILLAS)}](.+)[{re.escape(COMILLAS)}]", linea)  # de la primera a la ultima
+    if entre and (es_ulti or limpia[:1] in COMILLAS or (limpia[-1:] in COMILLAS and len(limpia) <= 70)):
+        nombre = entre.group(1)  # el nombre empieza o termina la linea (no comillas sueltas de la descripcion)
+    elif es_ulti:
         resto = ULTIMATE.sub("", linea)
         forma = re.search(r",\s*\w+\s+form\b", resto, re.I)
-        nombre = resto[:forma.start()] if forma else (entre.group(1) if entre else resto)
-    elif linea.strip()[:1] in COMILLAS:  # la linea del nombre empieza por la comilla
-        nombre = entre.group(1)
-    else:  # comillas o apostrofes dentro de la descripcion ("enemies' ... hero's")
+        nombre = resto[:forma.start()] if forma else resto
+    else:
         return None
     nombre = nombre.strip(" " + COMILLAS)
     return (nombre, es_ulti) if len(nombre) >= 3 else None
 
 
-def _leer_skill(lineas) -> dict | None:
+DESCRIPCION = re.compile(r"^(inflicts|increases|decreases|removes|restores|assumes|applies|grants|deals|recovers|"
+                         r"taunts|reflects|creates|blocks|nullifies|heals|cleanses|attacks|depletes|steals)\b|\d+\s*%",
+                         re.I)
+
+
+def _sin_comillas(lineas) -> tuple[int, str] | None:
+    """Algunas cartas no llevan comillas ("Tornado"): el nombre es la linea corta justo antes de la
+    primera linea de descripcion."""
     for i, linea in enumerate(lineas):
-        if linea.lower().startswith("two adjacent"):
-            continue
-        leido = nombre_de_carta(linea)
-        if not leido:
-            continue
+        if DESCRIPCION.search(linea):
+            if i == 0:
+                return None
+            nombre = lineas[i - 1].strip(" " + COMILLAS)
+            if 3 <= len(nombre) <= 45 and "%" not in nombre and "adjacent skills" not in nombre.lower():
+                return i - 1, nombre
+            return None
+    return None
+
+
+def _leer_skill(lineas) -> dict | None:
+    candidatos = []
+    for i, linea in enumerate(lineas):
+        if "adjacent skills" not in linea.lower():  # "Two adjacent skills..." (a veces "Tvqo adjacent")
+            leido = nombre_de_carta(linea)
+            if leido:
+                candidatos.append((i, leido))
+                break
+    if not candidatos:
+        sin = _sin_comillas(lineas)
+        if sin:
+            candidatos.append((sin[0], (sin[1], False)))
+    for i, leido in candidatos:
         descripcion = []
         for resto in lineas[i + 1:]:
-            if re.match(r"^l?v\.?\s*\d+\s*/\s*\d+$", resto.lower()) or resto.lower().startswith(("preview", "two adjacent")):
+            if re.match(r"^l?v\.?\s*\d+\s*/\s*\d+$", resto.lower()) or resto.lower().startswith("preview")                     or "adjacent skills" in resto.lower():
                 continue
             descripcion.append(resto)
         texto = " ".join(descripcion)
