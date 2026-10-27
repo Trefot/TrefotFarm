@@ -19,14 +19,14 @@ perros_piso4:
 
   - nombre: Escanor y Meliodas 3000
     nivel: bueno
-    personajes: [escanor, meliodas_3000, gowther_azul, nasiens]
+    personajes: [escanor, traitor_meliodas_oscuro, holy_knight_gowther_azul, herbalist_nasiens_verde]
     notas: >-
       Equipo "whale" que usa AutoFarming para el Floor 4. Muy fuerte, pero son personajes dificiles
       de conseguir. El bot todavia no sabe jugarlo.
 
   - nombre: Escanor y Roxy
     nivel: alternativa
-    personajes: [escanor, roxy, nasiens, thonar_azul]
+    personajes: [escanor, roxy, herbalist_nasiens_verde, thonar_azul]
     alternativas:
       roxy: [lillia, cusack]
     notas: >-

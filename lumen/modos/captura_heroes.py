@@ -462,8 +462,10 @@ def _existente(h: dict, biblioteca: dict, base: dict, capturados: list[dict]) ->
     unico heroe capturado que encaja (con dos Escanor no se adivina cual es)."""
     for pid, datos in base.items():
         clave = (datos or {}).get("clave", "")
-        # misma clave, o mismo nombre aunque el titulo se haya leido distinto
-        if clave and (clave == h["clave"] or clave.split("] ")[-1].lower() == h["nombre"].lower()):
+        # misma clave, o mismo nombre y color aunque el titulo se haya leido distinto (sin el color,
+        # Thonar rojo y verde se juntaban con Thonar azul)
+        mismo_nombre = clave.split("] ")[-1].lower() == h["nombre"].lower() and datos.get("color") == h.get("color")
+        if clave and (clave == h["clave"] or mismo_nombre):
             return pid
     for pid, pj in biblioteca.items():
         if pj.cartas or pj.id not in base:

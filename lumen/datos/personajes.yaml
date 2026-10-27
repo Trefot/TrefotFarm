@@ -75,27 +75,6 @@ escanor:
   roles: []
   cartas: {}
 
-meliodas_3000:
-  nombre: Meliodas (3000 years)
-  color: sin definir
-  raza: demonio
-  roles: []
-  cartas: {}
-
-gowther_azul:
-  nombre: Gowther (Speed)
-  color: azul
-  raza: sin definir
-  roles: []
-  cartas: {}
-
-nasiens:
-  nombre: Nasiens
-  color: sin definir
-  raza: humano
-  roles: []
-  cartas: {}
-
 roxy:
   nombre: Roxy
   color: sin definir
@@ -116,3 +95,5384 @@ cusack:
   raza: sin definir
   roles: []
   cartas: {}
+
+# ---------------------------------------------------------------------------------------------
+# Heroes capturados del juego (Heroes -> ficha de cada uno), en el orden de la lista del juego.
+# Cartas sacadas de la ficha: skill_1, skill_2 y ulti.
+
+merlin_the_daughter_of_belialuin_verde:
+  clave: '[Divine Protection] Merlin the Daughter of Belialuin'
+  nombre: Merlin the Daughter of Belialuin
+  color: verde
+  raza: desconocida
+  roles:
+  - dano_single
+  - dano_area
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Mana Ballista)
+    skill_2:
+      descripcion: Área (Double Mana Fusion)
+    ulti:
+      descripcion: Área (All Elemental)
+nemesis_meliodas_oscuro:
+  clave: '[The Seven Deadly Sins] Nemesis Meliodas'
+  nombre: Nemesis Meliodas
+  color: oscuro
+  raza: demonio
+  roles:
+  - dano_single
+  - dano_area
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Abyssal Strike)
+    skill_2:
+      descripcion: Área (Violet Lightning Flash)
+    ulti:
+      descripcion: 'Área ((The Sevel Deadly Sinsl Cornbined Attack: "Nemesis)'
+milim_nava_rojo:
+  clave: '[Proven Power] Milim Nava'
+  nombre: Milim Nava
+  color: rojo
+  raza: desconocida
+  roles:
+  - dano_single
+  - dano_area
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Heavenly Demon Slash)
+    skill_2:
+      descripcion: Área (Tyrant's Roar)
+    ulti:
+      descripcion: Área (Drago Nova)
+boy_of_hope_percival_verde:
+  clave: '[A New Adventure] Boy of Hope Percival'
+  nombre: Boy of Hope Percival
+  color: verde
+  raza: humano
+  roles:
+  - dano_single
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Lively Combo)
+    skill_2:
+      descripcion: Un objetivo (Immature Slash)
+    ulti:
+      descripcion: Un objetivo (Angry Slap)
+estarossa_of_love_verde:
+  clave: '[Elite Demon] Estarossa of Love'
+  nombre: Estarossa of Love
+  color: verde
+  raza: demonio
+  roles:
+  - dano_single
+  - aguante
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Guillotine)
+    skill_2:
+      descripcion: Defensa (Full Counter)
+    ulti:
+      descripcion: Defensa (Blackout)
+gloxinia_of_repose_verde:
+  clave: '[The Ten Commandments] Gloxinia of Repose'
+  nombre: Gloxinia of Repose
+  color: verde
+  raza: hada
+  roles:
+  - dano_single
+  - dano_area
+  - debuff
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Vine Stab)
+    skill_2:
+      descripcion: Área (Death Thorn)
+    ulti:
+      descripcion: Un objetivo (Basquias)
+roxy_of_madness_azul:
+  clave: '[Vengeful Saw Blade] Roxy of Madness'
+  nombre: Roxy of Madness
+  color: azul
+  raza: humano
+  roles:
+  - dano_single
+  - dano_area
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Crazy Blade)
+    skill_2:
+      descripcion: Área (Flame Grinder)
+    ulti:
+      descripcion: Un objetivo (Horrific Vengeance)
+galland_of_truth_azul:
+  clave: '[The Ten Commandments] Galland of Truth'
+  nombre: Galland of Truth
+  color: azul
+  raza: demonio
+  roles:
+  - dano_single
+  - dano_area
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (One Stroke)
+    skill_2:
+      descripcion: Área (Dismal Scatter Cut)
+    ulti:
+      descripcion: Un objetivo (Critical Over)
+demon_lord_rimuru_tempest_verde:
+  clave: '[Octagram] Demon Lord Rimuru Tempest'
+  nombre: Demon Lord Rimuru Tempest
+  color: verde
+  raza: desconocida
+  roles:
+  - dano_single
+  - dano_area
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Swift Slash)
+    skill_2:
+      descripcion: Área (Beelzebuth)
+    ulti:
+      descripcion: Área (Megiddo)
+queen_diane_rojo:
+  clave: '[Waves of the Earth] Queen Diane'
+  nombre: Queen Diane
+  color: rojo
+  raza: gigante
+  roles:
+  - dano_single
+  - debuff
+  - aguante
+  - dano_area
+  - curacion
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Crazy Rush)
+    skill_2:
+      descripcion: Defensa (Spinning Hammer)
+    ulti:
+      descripcion: Área (Queen's Embrace)
+hijack_gowther_verde:
+  clave: '[Restored Emotions] Hijack Gowther'
+  nombre: Hijack Gowther
+  color: verde
+  raza: desconocida
+  roles:
+  - dano_single
+  - dano_area
+  - debuff
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Armored Breaker)
+    skill_2:
+      descripcion: Área (Jack Light)
+    ulti:
+      descripcion: Área (Blackout Arrow)
+fairy_helbram_rojo:
+  clave: '[Reincarnation of Revenge] Fairy Helbram'
+  nombre: Fairy Helbram
+  color: rojo
+  raza: hada
+  roles:
+  - dano_single
+  - dano_area
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Fog Wave)
+    skill_2:
+      descripcion: Un objetivo (Stone Needle)
+    ulti:
+      descripcion: Área (Hunter Wisp)
+adventurer_ban_verde:
+  clave: '[The Fox Sin of Greed] Adventurer Ban'
+  nombre: Adventurer Ban
+  color: verde
+  raza: humano
+  roles:
+  - dano_area
+  - dano_single
+  cartas:
+    skill_1:
+      descripcion: Área (Drain)
+    skill_2:
+      descripcion: Área (Snatch)
+    ulti:
+      descripcion: Un objetivo (Fox Hunt)
+princess_elizabeth_rojo:
+  clave: '[New Legend] Princess Elizabeth'
+  nombre: Princess Elizabeth
+  color: rojo
+  raza: diosa
+  roles:
+  - dano_area
+  - curacion
+  - buff
+  cartas:
+    skill_1:
+      descripcion: Área (Royal Dignity)
+    skill_2:
+      descripcion: Apoyo (Blessing Light)
+    ulti:
+      descripcion: Apoyo (Life Authority)
+dual_swordsman_cusack_azul:
+  clave: '[Napping Reaper] Dual Swordsman Cusack'
+  nombre: Dual Swordsman Cusack
+  color: azul
+  raza: demonio
+  roles:
+  - dano_single
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Demonic Blade)
+    skill_2:
+      descripcion: Un objetivo (Evil Sword Beam)
+    ulti:
+      descripcion: Un objetivo (Resonant)
+golden_wings_elaine_rojo:
+  clave: '[Fairy of Blessings] Golden Wings Elaine'
+  nombre: Golden Wings Elaine
+  color: rojo
+  raza: hada
+  roles:
+  - dano_single
+  - dano_area
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Happy Holidays)
+    skill_2:
+      descripcion: Área (Snowball Fight)
+    ulti:
+      descripcion: Área (Tempest Fall)
+lillia_of_desire_rojo:
+  clave: '[Advent of Destruction] Lillia of Desire'
+  nombre: Lillia of Desire
+  color: rojo
+  raza: humano
+  roles:
+  - dano_single
+  - dano_area
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Free Shooter)
+    skill_2:
+      descripcion: Área (La Traviata)
+    ulti:
+      descripcion: Área (Leviathan)
+captain_hawk_verde:
+  clave: '[Knighthood of Scraps Disposal] Captain Hawk'
+  nombre: Captain Hawk
+  color: verde
+  raza: desconocida
+  roles:
+  - dano_single
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Charging Body)
+    skill_2:
+      descripcion: Un objetivo (Hind Leg)
+    ulti:
+      descripcion: Un objetivo (Hectic Blow)
+gamer_shin_verde:
+  clave: '[Dungeon Raider] Gamer Shin'
+  nombre: Gamer Shin
+  color: verde
+  raza: humano
+  roles:
+  - dano_area
+  cartas:
+    skill_1:
+      descripcion: Área (Concentrate Fire)
+    skill_2:
+      descripcion: Área (Volley Fire)
+    ulti:
+      descripcion: Área (Satellite Cannon)
+subaru_beatrice_oscuro:
+  clave: '[Re:ZER0] Subaru & Beatrice'
+  nombre: Subaru & Beatrice
+  color: oscuro
+  raza: hada
+  roles:
+  - dano_single
+  - dano_area
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Partners' Attack)
+    skill_2:
+      descripcion: Área (Absolute Expel)
+    ulti:
+      descripcion: Área (Unbeatable Together)
+zeldris_of_piety_azul:
+  clave: '[The Ten Commandments] Zeldris of Piety'
+  nombre: Zeldris of Piety
+  color: azul
+  raza: demonio
+  roles:
+  - dano_single
+  - dano_area
+  - curacion
+  - debuff
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Slash Hack)
+    skill_2:
+      descripcion: Área (Invisible Blade)
+    ulti:
+      descripcion: Un objetivo (Reckless Line)
+melascula_of_faith_rojo:
+  clave: '[Elite Demon] Melascula of Faith'
+  nombre: Melascula of Faith
+  color: rojo
+  raza: demonio
+  roles:
+  - dano_single
+  - dano_area
+  - curacion
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Death Stab)
+    skill_2:
+      descripcion: Área (Spirit Consume)
+    ulti:
+      descripcion: Un objetivo (Summon Soul)
+the_master_swordsman_reinhard_rojo:
+  clave: '[Re:ZER0] The Master Swordsman Reinhard'
+  nombre: The Master Swordsman Reinhard
+  color: rojo
+  raza: humano
+  roles:
+  - dano_single
+  - dano_area
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Nimble Movement)
+    skill_2:
+      descripcion: Un objetivo (Sword Dance of the Knight)
+    ulti:
+      descripcion: Área (Divine Protection of the Master Swordsman)
+sun_god_freyr_rojo:
+  clave: '[Master of Light] Sun God Freyr'
+  nombre: Sun God Freyr
+  color: rojo
+  raza: desconocida
+  roles:
+  - dano_single
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Blitz Charge)
+    skill_2:
+      descripcion: Un objetivo (Raining Blades)
+    ulti:
+      descripcion: Un objetivo (Sword of the Sun)
+holy_knight_escanor_verde:
+  clave: '["Sunshine"] Holy Knight Escanor'
+  nombre: Holy Knight Escanor
+  color: verde
+  raza: humano
+  roles:
+  - dano_single
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Elegant Blow)
+    skill_2:
+      descripcion: Un objetivo (Cruel Sun)
+    ulti:
+      descripcion: Un objetivo (Punishment)
+princess_brunhild_rojo:
+  clave: '[Bride of the Snow Country] Princess Brunhild'
+  nombre: Princess Brunhild
+  color: rojo
+  raza: humano
+  roles:
+  - dano_single
+  - debuff
+  - dano_area
+  - curacion
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Aisle of Flowers)
+    skill_2:
+      descripcion: Área (Wedding Reception)
+    ulti:
+      descripcion: Un objetivo (Valkyrie Strike)
+lostvayne_meliodas_rojo:
+  clave: '["Virtual Body Doubles"] Lostvayne Meliodas'
+  nombre: Lostvayne Meliodas
+  color: rojo
+  raza: demonio
+  roles:
+  - dano_single
+  - dano_area
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Division Impact)
+    skill_2:
+      descripcion: Área (Triple Avatar)
+    ulti:
+      descripcion: Área (Virtual Body Doubles)
+champion_taizoo_rojo:
+  clave: '[Vaizel Fight Festival] Champion Taizoo'
+  nombre: Champion Taizoo
+  color: rojo
+  raza: humano
+  roles:
+  - dano_single
+  - aguante
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Powerful Punch)
+    skill_2:
+      descripcion: Defensa (Muscle Mania)
+    ulti:
+      descripcion: Un objetivo (Full Power Dropkick)
+guardian_griamore_verde:
+  clave: '[Iron-wall Knight] Guardian Griamore'
+  nombre: Guardian Griamore
+  color: verde
+  raza: humano
+  roles:
+  - dano_area
+  - aguante
+  cartas:
+    skill_1:
+      descripcion: Área (Blockade)
+    skill_2:
+      descripcion: Defensa (Shield Wall)
+    ulti:
+      descripcion: Defensa (Wailing Wall)
+holy_knight_howzer_rojo:
+  clave: '["Tempest"] Holy Knight Howzer'
+  nombre: Holy Knight Howzer
+  color: rojo
+  raza: humano
+  roles:
+  - dano_area
+  cartas:
+    skill_1:
+      descripcion: Área (Rising Storm)
+    skill_2:
+      descripcion: Área (Super Cyclone)
+    ulti:
+      descripcion: Área (Rising Tornado)
+guardian_gilthunder_rojo:
+  clave: '["Thunderbolt"] Guardian Gilthunder'
+  nombre: Guardian Gilthunder
+  color: rojo
+  raza: humano
+  roles:
+  - dano_area
+  - aguante
+  - dano_single
+  cartas:
+    skill_1:
+      descripcion: Área (Lightning Beasts Chase)
+    skill_2:
+      descripcion: Defensa (Lightning King's Heavy Armor)
+    ulti:
+      descripcion: Un objetivo (Lightning King Sword)
+king_the_fairy_king_azul:
+  clave: '[The Grizzly Sin of Sloth] King the Fairy King'
+  nombre: King the Fairy King
+  color: azul
+  raza: hada
+  roles:
+  - dano_single
+  - buff
+  - dano_area
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Fossilization)
+    skill_2:
+      descripcion: Apoyo (Pollen Garden)
+    ulti:
+      descripcion: Área (Sunflower)
+truth_seeker_merlin_verde:
+  clave: '[Ragnarok] Truth Seeker Merlin'
+  nombre: Truth Seeker Merlin
+  color: verde
+  raza: desconocida
+  roles:
+  - dano_area
+  - dano_single
+  - debuff
+  cartas:
+    skill_1:
+      descripcion: Área (Lightning Field)
+    skill_2:
+      descripcion: Un objetivo (Blizzard Tornado)
+    ulti:
+      descripcion: Área (Frost Blast)
+valenti_of_obsession_azul:
+  clave: '[Fullmetal Engineer] Valenti of Obsession'
+  nombre: Valenti of Obsession
+  color: azul
+  raza: humano
+  roles:
+  - dano_single
+  - dano_area
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Kinetic & Potential)
+    skill_2:
+      descripcion: Área (Quantum Condensing Test)
+    ulti:
+      descripcion: Área (Event Horizon)
+berserk_meliodas_azul:
+  clave: '[Cruel Nightmare] Berserk Meliodas'
+  nombre: Berserk Meliodas
+  color: azul
+  raza: demonio
+  roles:
+  - dano_single
+  - dano_area
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Demonic Assault)
+    skill_2:
+      descripcion: Un objetivo (Sword of Dark Light)
+    ulti:
+      descripcion: Área (Dark Pressure)
+foreign_swordsman_nanashi_azul:
+  clave: '[Swift Sword] Foreign Swordsman Nanashi'
+  nombre: Foreign Swordsman Nanashi
+  color: azul
+  raza: desconocida
+  roles:
+  - dano_single
+  - dano_area
+  - curacion
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Gale Weasel)
+    skill_2:
+      descripcion: Área (Thunderclap)
+    ulti:
+      descripcion: Un objetivo (Leaf Slash)
+sariel_of_tornado_rojo:
+  clave: '[The Four Archangels] Sariel of Tornado'
+  nombre: Sariel of Tornado
+  color: rojo
+  raza: diosa
+  roles:
+  - dano_area
+  - dano_single
+  cartas:
+    skill_1:
+      descripcion: Área (Sharp Wind)
+    skill_2:
+      descripcion: Un objetivo (Tornado)
+    ulti:
+      descripcion: Un objetivo (Twin Wind Blade)
+guardian_deity_camila_verde:
+  clave: '[Hybrid Instinct] Guardian Deity Camila'
+  nombre: Guardian Deity Camila
+  color: verde
+  raza: desconocida
+  roles:
+  - dano_single
+  - dano_area
+  - buff
+  - curacion
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Feral Stab)
+    skill_2:
+      descripcion: Área (Abyssal Claw)
+    ulti:
+      descripcion: Apoyo (Emancipation)
+another_meliodas_oscuro:
+  clave: '[A Twisted World] Another Meliodas'
+  nombre: Another Meliodas
+  color: oscuro
+  raza: demonio
+  roles:
+  - dano_single
+  - dano_area
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Dark Blade)
+    skill_2:
+      descripcion: Área (Cyclone Dark)
+    ulti:
+      descripcion: Área (Diabolic Coronation)
+nightmare_salos_verde:
+  clave: '[Chains of Despair] Nightmare Salos'
+  nombre: Nightmare Salos
+  color: verde
+  raza: desconocida
+  roles:
+  - dano_single
+  - dano_area
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Wave of Torment)
+    skill_2:
+      descripcion: Área (Guillotine)
+    ulti:
+      descripcion: Área (Embrace of Death)
+sh_kusakabe_azul:
+  clave: '[Frozen Time] Shō Kusakabe'
+  nombre: Shō Kusakabe
+  color: azul
+  raza: humano
+  roles:
+  - dano_single
+  - dano_area
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Phantom Slash)
+    skill_2:
+      descripcion: Área (Frost Slash)
+    ulti:
+      descripcion: Un objetivo (Severed Universe)
+shinra_kusakabe_rojo:
+  clave: '[Hero of Flames] Shinra Kusakabe'
+  nombre: Shinra Kusakabe
+  color: rojo
+  raza: humano
+  roles:
+  - dano_single
+  - dano_area
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Dance Break on Fire)
+    skill_2:
+      descripcion: Área (Corna)
+    ulti:
+      descripcion: Área (Press of Death)
+merlin_escanor_verde:
+  clave: '[Dusk''s Oath] Merlin & Escanor'
+  nombre: Merlin & Escanor
+  color: verde
+  raza: desconocida
+  roles:
+  - dano_single
+  - dano_area
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Crystalline Javelin)
+    skill_2:
+      descripcion: Área (Final Combustion)
+    ulti:
+      descripcion: Área (Eternal Ember)
+knight_of_the_prophecy_tristan_verde:
+  clave: '[Light of Liones] Knight of the Prophecy Tristan'
+  nombre: Knight of the Prophecy Tristan
+  color: claro
+  raza: diosa y demonio
+  roles:
+  - dano_single
+  - dano_area
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Twinkling Star)
+    skill_2:
+      descripcion: Área (Hellbringer)
+    ulti:
+      descripcion: Área (Dual Providence)
+knight_darkness_verde:
+  clave: '[Crusader] Knight Darkness'
+  nombre: Knight Darkness
+  color: verde
+  raza: humano
+  roles:
+  - dano_single
+  - aguante
+  - buff
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (l Challenge You)
+    skill_2:
+      descripcion: Defensa (Decoy)
+    ulti:
+      descripcion: Apoyo (Knight Exemplar)
+water_goddess_aqua_claro:
+  clave: '[Arch Priest] Water Goddess Aqua'
+  nombre: Water Goddess Aqua
+  color: claro
+  raza: diosa
+  roles:
+  - dano_single
+  - buff
+  - curacion
+  - dano_area
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Water Attack)
+    skill_2:
+      descripcion: Apoyo (Healing Zone)
+    ulti:
+      descripcion: Área (God Requiem)
+god_of_mischief_loki_verde:
+  clave: '[Banished Chaos] God of Mischief Loki'
+  nombre: God of Mischief Loki
+  color: verde
+  raza: gigante
+  roles:
+  - dano_single
+  - dano_area
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Summon Wolf)
+    skill_2:
+      descripcion: Área (Raining Tricks)
+    ulti:
+      descripcion: Área (Master of Games)
+goddess_of_fate_skuld_verde:
+  clave: '[Destiny Defier] Goddess of Fate Skuld'
+  nombre: Goddess of Fate Skuld
+  color: verde
+  raza: gigante
+  roles:
+  - dano_single
+  - aguante
+  - dano_area
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Crescent Grace)
+    skill_2:
+      descripcion: Defensa (Unbound Prophecy)
+    ulti:
+      descripcion: Área (Sisters of Fate)
+promise_keeper_gelda_verde:
+  clave: '[Passionate Summer] Promise Keeper Gelda'
+  nombre: Promise Keeper Gelda
+  color: verde
+  raza: desconocida
+  roles:
+  - dano_area
+  cartas:
+    skill_1:
+      descripcion: Área (Ruptured Vein)
+    skill_2:
+      descripcion: Área (Scarlet Tempest)
+    ulti:
+      descripcion: Área (Kiss of Thorns)
+oppressor_demon_king_oscuro:
+  clave: '[Incomplete Control] Oppressor Demon King'
+  nombre: Oppressor Demon King
+  color: oscuro
+  raza: demonio
+  roles:
+  - dano_single
+  - dano_area
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Tyrant Smash)
+    skill_2:
+      descripcion: Área (Extinction Order)
+    ulti:
+      descripcion: Área (Sword of Imprisonment)
+black_knight_pellegarde_rojo:
+  clave: '[Burning Spirit] Black Knight Pellegarde'
+  nombre: Black Knight Pellegarde
+  color: rojo
+  raza: humano
+  roles:
+  - dano_single
+  - dano_area
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Destroyer's Mace)
+    skill_2:
+      descripcion: Área (Raging Flames)
+    ulti:
+      descripcion: Un objetivo (Pyre)
+king_diane_azul:
+  clave: '[Rulers of the New Era] King & Diane'
+  nombre: King & Diane
+  color: azul
+  raza: gigante
+  roles:
+  - dano_single
+  - debuff
+  - dano_area
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Flawless Unity)
+    skill_2:
+      descripcion: Área (Sprout Destruction)
+    ulti:
+      descripcion: Área (Universal Judgment)
+repose_of_souls_hel_verde:
+  clave: '[Principled Prefect] Repose of Souls Hel'
+  nombre: Repose of Souls Hel
+  color: verde
+  raza: desconocida
+  roles:
+  - dano_area
+  cartas:
+    skill_1:
+      descripcion: Área (Strict Overseer)
+    skill_2:
+      descripcion: Área (Scolding Chop)
+    ulti:
+      descripcion: Área (Soul Slaughter)
+first_member_alpha_azul:
+  clave: '[Shadow Garden] First Member Alpha'
+  nombre: First Member Alpha
+  color: azul
+  raza: hada
+  roles:
+  - dano_single
+  - dano_area
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Lightning Reaver)
+    skill_2:
+      descripcion: Un objetivo (Celestial Strike)
+    ulti:
+      descripcion: Área (Phantom Mist)
+angel_of_despair_mael_oscuro:
+  clave: '[Blackened Wings] Angel of Despair Mael'
+  nombre: Angel of Despair Mael
+  color: oscuro
+  raza: diosa
+  roles:
+  - dano_single
+  - dano_area
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Scythe of Silence)
+    skill_2:
+      descripcion: Área (Bell of Truth)
+    ulti:
+      descripcion: Área (Incense of Purity & Light Jade of Love)
+elizabeth_meliodas_claro:
+  clave: '[Light of the Holy War] Elizabeth & Meliodas'
+  nombre: Elizabeth & Meliodas
+  color: claro
+  raza: demonio
+  roles:
+  - dano_single
+  - dano_area
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Tandem Steps)
+    skill_2:
+      descripcion: Área (Dance of Duality)
+    ulti:
+      descripcion: Área (Deicide)
+herbalist_nasiens_verde:
+  clave: '["Venom Mixing"] Herbalist Nasiens'
+  nombre: Herbalist Nasiens
+  color: verde
+  raza: humano
+  roles:
+  - dano_single
+  - buff
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Venomous Dance)
+    skill_2:
+      descripcion: Apoyo (Mist of Recovery)
+    ulti:
+      descripcion: Apoyo (Powered Doping)
+young_knight_lancelot_verde:
+  clave: '[Free Wind] Young Knight Lancelot'
+  nombre: Young Knight Lancelot
+  color: verde
+  raza: hada
+  roles:
+  - dano_single
+  - aguante
+  - dano_area
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Kill Shot)
+    skill_2:
+      descripcion: Defensa (Chance Unwind)
+    ulti:
+      descripcion: Área (Shining Road)
+young_knight_lancelot_azul:
+  clave: '[Hero''s Bloodline] Young Knight Lancelot'
+  nombre: Young Knight Lancelot
+  color: azul
+  raza: hada
+  roles:
+  - dano_single
+  - dano_area
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Rough Play)
+    skill_2:
+      descripcion: Área (Crashing Barrage)
+    ulti:
+      descripcion: Área (Shining Road)
+shion_verde:
+  clave: '[Demon Lordls Secretary] Shion'
+  nombre: Shion
+  color: verde
+  raza: desconocida
+  roles:
+  - dano_single
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Ogre Guillotine)
+    skill_2:
+      descripcion: Un objetivo (Ogre Spirit Slash)
+    ulti:
+      descripcion: Un objetivo (Maximum Magic Bullet)
+little_hero_percival_claro:
+  clave: '[Unknown Power] Little Hero Percival'
+  nombre: Little Hero Percival
+  color: claro
+  raza: humano
+  roles:
+  - dano_single
+  - dano_area
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Tiny Rush)
+    skill_2:
+      descripcion: Área (Magic Slap)
+    ulti:
+      descripcion: Área (Mini Percivals, Go!)
+demiurge_rojo:
+  clave: '[Creator of the Blazing Inferno] Demiurge'
+  nombre: Demiurge
+  color: rojo
+  raza: desconocida
+  roles:
+  - dano_single
+  - dano_area
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Claws of Hellfire)
+    skill_2:
+      descripcion: Área (Inferno)
+    ulti:
+      descripcion: Área (Asteroid)
+thor_the_god_of_thunder_azul:
+  clave: '[Hammer of Justice] Thor, the God of Thunder'
+  nombre: Thor, the God of Thunder
+  color: azul
+  raza: desconocida
+  roles:
+  - dano_single
+  - dano_area
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Lightning Shift)
+    skill_2:
+      descripcion: Un objetivo (Thunderstorm)
+    ulti:
+      descripcion: Área (God of Thunder)
+nightmare_sabunak_rojo:
+  clave: '[Abyssal Shadow] Nightmare Sabunak'
+  nombre: Nightmare Sabunak
+  color: rojo
+  raza: desconocida
+  roles:
+  - dano_area
+  cartas:
+    skill_1:
+      descripcion: Área (Evil Touch)
+    skill_2:
+      descripcion: Área (Biting Shadow)
+    ulti:
+      descripcion: Área (True Nightmare)
+escanor_the_indomitable_verde:
+  clave: '[Eternal Sun] Escanor the Indomitable'
+  nombre: Escanor the Indomitable
+  color: verde
+  raza: humano
+  roles:
+  - dano_single
+  - dano_area
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Bright Rush)
+    skill_2:
+      descripcion: Área (Burst Flare)
+    ulti:
+      descripcion: Área (Ultimate Divine Lance)
+wandering_knight_gowther_rojo:
+  clave: '[Journey for Peace] Wandering Knight Gowther'
+  nombre: Wandering Knight Gowther
+  color: rojo
+  raza: desconocida
+  roles:
+  - dano_single
+  - dano_area
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Vicious Arrow)
+    skill_2:
+      descripcion: Otro (Interstellar Intersection)
+    ulti:
+      descripcion: Área (Celestial Rain)
+vampire_gelda_rojo:
+  clave: '[Undying Love] Vampire Gelda'
+  nombre: Vampire Gelda
+  color: rojo
+  raza: desconocida
+  roles:
+  - dano_single
+  - dano_area
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Dust to Dust)
+    skill_2:
+      descripcion: Área (Blood Thorn)
+    ulti:
+      descripcion: Un objetivo (Vermillion Blossom)
+chaos_arthur_verde:
+  clave: '[Broken Balance] Chaos Arthur'
+  nombre: Chaos Arthur
+  color: verde
+  raza: humano
+  roles:
+  - dano_single
+  - dano_area
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Divine Slash)
+    skill_2:
+      descripcion: Área (Wicked Bite)
+    ulti:
+      descripcion: Área (Into the Chaos)
+jue_viole_grace_rojo:
+  clave: '[Slayer Candidate] Jue Viole Grace'
+  nombre: Jue Viole Grace
+  color: rojo
+  raza: humano
+  roles:
+  - dano_single
+  - debuff
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Floral Butterfly Piercing Technique)
+    skill_2:
+      descripcion: Otro (Furious Thorn)
+    ulti:
+      descripcion: Un objetivo (Peacock Wings)
+demon_king_meliodas_azul:
+  clave: '[Erais End] Demon King Meliodas'
+  nombre: Demon King Meliodas
+  color: azul
+  raza: demonio
+  roles:
+  - dano_single
+  - dano_area
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Raging Fist)
+    skill_2:
+      descripcion: Área (Impulse)
+    ulti:
+      descripcion: Área (Obliteration)
+queen_elizabeth_azul:
+  clave: '[Gift of the Snow] Queen Elizabeth'
+  nombre: Queen Elizabeth
+  color: azul
+  raza: diosa
+  roles:
+  - dano_single
+  - buff
+  - dano_area
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Merry Slide)
+    skill_2:
+      descripcion: Apoyo (Let It Snow)
+    ulti:
+      descripcion: Área (Wall of Light)
+queen_elizabeth_claro:
+  clave: '[Brilliant Protection] Queen Elizabeth'
+  nombre: Queen Elizabeth
+  color: claro
+  raza: diosa
+  roles:
+  - dano_single
+  - dano_area
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Expurgation)
+    skill_2:
+      descripcion: Área (Divine Sparkle)
+    ulti:
+      descripcion: Área (Wall of Light)
+queen_hel_oscuro:
+  clave: '[Shepherd of Souls] Queen Hel'
+  nombre: Queen Hel
+  color: oscuro
+  raza: desconocida
+  roles:
+  - dano_single
+  - dano_area
+  - debuff
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Soul Drain)
+    skill_2:
+      descripcion: Área (Reaping Death)
+    ulti:
+      descripcion: Área (Damnation)
+tyrant_demon_king_oscuro:
+  clave: '["The Ruler"] Tyrant Demon King'
+  nombre: Tyrant Demon King
+  color: oscuro
+  raza: demonio
+  roles:
+  - dano_single
+  - dano_area
+  - debuff
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Quietus)
+    skill_2:
+      descripcion: Área (Sword of Imprisonment)
+    ulti:
+      descripcion: Área (Incursion)
+god_of_war_tyr_verde:
+  clave: '[Fiery Youth] God of War Tyr'
+  nombre: God of War Tyr
+  color: verde
+  raza: desconocida
+  roles:
+  - dano_single
+  - dano_area
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Violent Thrashing)
+    skill_2:
+      descripcion: Un objetivo (Rebellious Spirit)
+    ulti:
+      descripcion: Área (Meteor Strike)
+transcendent_ban_azul:
+  clave: '[Helping Hands] Transcendent Ban'
+  nombre: Transcendent Ban
+  color: azul
+  raza: humano
+  roles:
+  - dano_single
+  - dano_area
+  - debuff
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Dangerous Blocks)
+    skill_2:
+      descripcion: Área (Killing Storm)
+    ulti:
+      descripcion: Área (Assault Hunt)
+transcendent_ban_claro:
+  clave: '[The Seven Deadly Sins] Transcendent Ban'
+  nombre: Transcendent Ban
+  color: claro
+  raza: humano
+  roles:
+  - dano_single
+  - dano_area
+  - debuff
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Blitz)
+    skill_2:
+      descripcion: Un objetivo (Tornado Blast)
+    ulti:
+      descripcion: Área (Assault Hunt)
+monspeet_of_reticence_rojo:
+  clave: '[The Ten Commandments] Monspeet of Reticence'
+  nombre: Monspeet of Reticence
+  color: rojo
+  raza: demonio
+  roles:
+  - dano_single
+  - dano_area
+  - quita_postura
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Conflagration)
+    skill_2:
+      descripcion: Área (Scarlet Blaze Shot)
+    ulti:
+      descripcion: Área (Hell's Phoenix)
+mael_of_sunshine_claro:
+  clave: '[The Four Archangels] Mael of Sunshine'
+  nombre: Mael of Sunshine
+  color: claro
+  raza: diosa
+  roles:
+  - dano_single
+  - dano_area
+  - quita_postura
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Sun Cutter)
+    skill_2:
+      descripcion: Área (Solar Ray)
+    ulti:
+      descripcion: Área (Rising Sun)
+ultimate_escanor_claro:
+  clave: '[Fire of Life] "Ultimate" Escanor'
+  nombre: '"Ultimate" Escanor'
+  color: claro
+  raza: humano
+  roles:
+  - dano_single
+  - dano_area
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Burning Spear)
+    skill_2:
+      descripcion: Área (Crazy Prominence)
+    ulti:
+      descripcion: Área (Final Prominence)
+mage_of_infinity_merlin_verde:
+  clave: '[Last Philosopher] Mage of Infinity Merlin'
+  nombre: Mage of Infinity Merlin
+  color: verde
+  raza: desconocida
+  roles:
+  - dano_area
+  cartas:
+    skill_1:
+      descripcion: Área (Double Impact)
+    skill_2:
+      descripcion: Área (Fusion Reactor)
+    ulti:
+      descripcion: Área (Max Infinity)
+berserk_estarossa_azul:
+  clave: '[Twisted Darkness] Berserk Estarossa'
+  nombre: Berserk Estarossa
+  color: azul
+  raza: demonio
+  roles:
+  - dano_single
+  - dano_area
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Tentacle Blade)
+    skill_2:
+      descripcion: Un objetivo (Frenzy)
+    ulti:
+      descripcion: Área (Evil Hound)
+covenant_of_light_tarmiel_rojo:
+  clave: '[Advent of Ocean] Covenant of Light Tarmiel'
+  nombre: Covenant of Light Tarmiel
+  color: rojo
+  raza: diosa
+  roles:
+  - dano_single
+  - dano_area
+  - debuff
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Piercing Spout)
+    skill_2:
+      descripcion: Área (Holy Light)
+    ulti:
+      descripcion: Área (Ocean)
+covenant_of_light_sariel_rojo:
+  clave: '[Winds of Hope] Covenant of Light Sariel'
+  nombre: Covenant of Light Sariel
+  color: rojo
+  raza: diosa
+  roles:
+  - dano_single
+  - aguante
+  - dano_area
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Winged Messenger)
+    skill_2:
+      descripcion: Defensa (Windy Payback)
+    ulti:
+      descripcion: Área (Tornado)
+traitor_meliodas_oscuro:
+  clave: '[Holy Warrior] Traitor Meliodas'
+  nombre: Traitor Meliodas
+  color: oscuro
+  raza: demonio
+  roles:
+  - dano_single
+  - dano_area
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Torso Cut)
+    skill_2:
+      descripcion: Área (Spinning Slash)
+    ulti:
+      descripcion: Área (Apocalypse)
+blessing_of_the_earth_diane_azul:
+  clave: '[Shining Wish] Blessing of the Earth Diane'
+  nombre: Blessing of the Earth Diane
+  color: azul
+  raza: gigante
+  roles:
+  - dano_single
+  - dano_area
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Emerald Tree)
+    skill_2:
+      descripcion: Área (Duo of the Holy Knights)
+    ulti:
+      descripcion: Área (Giantize)
+blessing_of_the_earth_diane_rojo:
+  clave: '[Beach Guardian] Blessing of the Earth Diane'
+  nombre: Blessing of the Earth Diane
+  color: rojo
+  raza: gigante
+  roles:
+  - dano_single
+  - dano_area
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Play in the Sand)
+    skill_2:
+      descripcion: Área (Cute Water Blaster)
+    ulti:
+      descripcion: Área (Giantize)
+covenant_of_light_ludociel_rojo:
+  clave: '[Summer Mirage] Covenant of Light Ludociel'
+  nombre: Covenant of Light Ludociel
+  color: rojo
+  raza: diosa
+  roles:
+  - dano_single
+  - buff
+  - debuff
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Fruit Shower)
+    skill_2:
+      descripcion: Apoyo (Memories of Summer)
+    ulti:
+      descripcion: Un objetivo (Opening Greeting)
+truth_seeker_merlin_rojo:
+  clave: '[Witch of the Snow] Truth Seeker Merlin'
+  nombre: Truth Seeker Merlin
+  color: rojo
+  raza: desconocida
+  roles:
+  - dano_single
+  - dano_area
+  - debuff
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Trick and Treat)
+    skill_2:
+      descripcion: Área (Horrible Blizzard)
+    ulti:
+      descripcion: Área (Frost Blast)
+wanderer_thonar_rojo:
+  clave: '[Clandestine Savior] Wanderer Thonar'
+  nombre: Wanderer Thonar
+  color: rojo
+  raza: humano
+  roles:
+  - dano_single
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Falling Tornado)
+    skill_2:
+      descripcion: Un objetivo (Chain Fists)
+    ulti:
+      descripcion: Un objetivo (Realization of Justice)
+wanderer_thonar_verde:
+  clave: '[Warrior of Justice] Wanderer Thonar'
+  nombre: Wanderer Thonar
+  color: verde
+  raza: humano
+  roles:
+  - dano_area
+  - dano_single
+  cartas:
+    skill_1:
+      descripcion: Área (Conviction of Light)
+    skill_2:
+      descripcion: Un objetivo (Body Charge)
+    ulti:
+      descripcion: Un objetivo (Realization of Justice)
+prince_sigurd_verde:
+  clave: '[Curse of Greed] Prince Sigurd'
+  nombre: Prince Sigurd
+  color: verde
+  raza: humano
+  roles:
+  - dano_single
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Draconic Slash)
+    skill_2:
+      descripcion: Un objetivo (Dark Onslaught)
+    ulti:
+      descripcion: Un objetivo (Slay Fafnir)
+prince_sigurd_rojo:
+  clave: '[Wielder of Gram] Prince Sigurd'
+  nombre: Prince Sigurd
+  color: rojo
+  raza: humano
+  roles:
+  - dano_area
+  - dano_single
+  cartas:
+    skill_1:
+      descripcion: Área (Guardian Slash)
+    skill_2:
+      descripcion: Un objetivo (Cursed Strike)
+    ulti:
+      descripcion: Un objetivo (Slay Fafnir)
+purgatory_ban_rojo:
+  clave: '[Immortal''s Return] Purgatory Ban'
+  nombre: Purgatory Ban
+  color: rojo
+  raza: humano
+  roles:
+  - dano_area
+  - buff
+  - curacion
+  cartas:
+    skill_1:
+      descripcion: Área (Heart Crusher)
+    skill_2:
+      descripcion: Apoyo (Gift)
+    ulti:
+      descripcion: Área (Crazy Hunt)
+excalibur_arthur_verde:
+  clave: '[Will of the Holy Sword] Excalibur Arthur'
+  nombre: Excalibur Arthur
+  color: verde
+  raza: humano
+  roles:
+  - dano_single
+  - aguante
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Wrath of the King)
+    skill_2:
+      descripcion: Defensa (Do or Die)
+    ulti:
+      descripcion: Otro (Deathpecker)
+excalibur_arthur_rojo:
+  clave: '[Chosen King] Excalibur Arthur'
+  nombre: Excalibur Arthur
+  color: rojo
+  raza: humano
+  roles:
+  - dano_area
+  - aguante
+  cartas:
+    skill_1:
+      descripcion: Área (The King's Slash)
+    skill_2:
+      descripcion: Defensa (Nameless Dance)
+    ulti:
+      descripcion: Otro (Deathpecker)
+mage_chandler_verde:
+  clave: '[Archpriest of Despair] Mage Chandler'
+  nombre: Mage Chandler
+  color: verde
+  raza: demonio
+  roles:
+  - dano_single
+  - dano_area
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Grudge Blade)
+    skill_2:
+      descripcion: Área (Crimson Requiem)
+    ulti:
+      descripcion: Otro (Meteorworks)
+mage_chandler_rojo:
+  clave: '[Ancient Demon] Mage Chandler'
+  nombre: Mage Chandler
+  color: rojo
+  raza: demonio
+  roles:
+  - dano_area
+  - aguante
+  cartas:
+    skill_1:
+      descripcion: Área (Death Rain)
+    skill_2:
+      descripcion: Defensa (Mystic Barrier)
+    ulti:
+      descripcion: Otro (Meteorworks)
+mage_chandler_azul:
+  clave: '[Pacifier Fiend] Mage Chandler'
+  nombre: Mage Chandler
+  color: azul
+  raza: demonio
+  roles:
+  - dano_single
+  - aguante
+  - dano_area
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Dragon Claw)
+    skill_2:
+      descripcion: Defensa (Full Counter)
+    ulti:
+      descripcion: Área (Meteorworks)
+executioner_zeldris_verde:
+  clave: '[Demon King''s Deputy] Executioner Zeldris'
+  nombre: Executioner Zeldris
+  color: verde
+  raza: demonio
+  roles:
+  - dano_single
+  - dano_area
+  - debuff
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Black Road)
+    skill_2:
+      descripcion: Área (Demonic Zone)
+    ulti:
+      descripcion: Un objetivo (Dies irae)
+merlin_the_daughter_of_belialuin_rojo:
+  clave: '[Wave Researcher] Merlin the Daughter of Belialuin'
+  nombre: Merlin the Daughter of Belialuin
+  color: rojo
+  raza: desconocida
+  roles:
+  - dano_single
+  - dano_area
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Tropical Water Cannon)
+    skill_2:
+      descripcion: Un objetivo (Mysterious Ocean)
+    ulti:
+      descripcion: Área (All Elemental)
+valenti_of_obsession_rojo:
+  clave: '[Gift of the White Snow] Valenti of Obsession'
+  nombre: Valenti of Obsession
+  color: rojo
+  raza: humano
+  roles:
+  - dano_single
+  - dano_area
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Snowball Impact)
+    skill_2:
+      descripcion: Área (Gift Shower)
+    ulti:
+      descripcion: Área (Event Horizon)
+knight_of_danafor_liz_rojo:
+  clave: '[Starry Night''s Illusion] Knight of Danafor Liz'
+  nombre: Knight of Danafor Liz
+  color: rojo
+  raza: diosa
+  roles:
+  - dano_single
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Blessing Ribbon)
+    skill_2:
+      descripcion: Un objetivo (Gift for You)
+    ulti:
+      descripcion: Un objetivo (Last Attack)
+knight_of_danafor_liz_verde:
+  clave: '[Memory Fragment] Knight of Danafor Liz'
+  nombre: Knight of Danafor Liz
+  color: verde
+  raza: diosa
+  roles:
+  - dano_single
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Cross Cut)
+    skill_2:
+      descripcion: Un objetivo (Angry Attack)
+    ulti:
+      descripcion: Un objetivo (Last Attack)
+berserk_meliodas_verde:
+  clave: '["Assault Mode"] Berserk Meliodas'
+  nombre: Berserk Meliodas
+  color: verde
+  raza: demonio
+  roles:
+  - dano_area
+  - dano_single
+  cartas:
+    skill_1:
+      descripcion: Área (1,000 Divine Cuts)
+    skill_2:
+      descripcion: Un objetivo (Dark Sword)
+    ulti:
+      descripcion: Área (Dark Pressure)
+golden_wings_elaine_verde:
+  clave: '[Fulfilled Promise] Golden Wings Elaine'
+  nombre: Golden Wings Elaine
+  color: verde
+  raza: hada
+  roles:
+  - dano_single
+  - dano_area
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Lovely Blossom)
+    skill_2:
+      descripcion: Otro (Flowery Breeze)
+    ulti:
+      descripcion: Área (Tempest Fall)
+the_one_escanor_azul:
+  clave: '[Invincible Avatar] ''The One" Escanor'
+  nombre: '''The One" Escanor'
+  color: azul
+  raza: humano
+  roles:
+  - dano_single
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Super Slash)
+    skill_2:
+      descripcion: Un objetivo (Supernova)
+    ulti:
+      descripcion: Un objetivo (Divine Sword Escanor)
+oslo_hawk_rojo:
+  clave: '[Knighthood of Scraps Disposal] Oslo & Hawk'
+  nombre: Oslo & Hawk
+  color: rojo
+  raza: desconocida
+  roles:
+  - dano_single
+  - dano_area
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Charge!)
+    skill_2:
+      descripcion: Área (Fire the Catapult!)
+    ulti:
+      descripcion: Un objetivo (Charge Again?!)
+lillia_of_desire_azul:
+  clave: '[Starry Night''s Illusion] Lillia of Desire'
+  nombre: Lillia of Desire
+  color: azul
+  raza: humano
+  roles:
+  - dano_single
+  - dano_area
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Unique Present)
+    skill_2:
+      descripcion: Área (Shadow Illusion)
+    ulti:
+      descripcion: Área (Leviathan)
+demon_hendrickson_verde:
+  clave: '[Ashen Desire] Demon Hendrickson'
+  nombre: Demon Hendrickson
+  color: verde
+  raza: demonio
+  roles:
+  - dano_area
+  - dano_single
+  cartas:
+    skill_1:
+      descripcion: Área (Dark Nebula)
+    skill_2:
+      descripcion: Área (Dark Snow)
+    ulti:
+      descripcion: Un objetivo (Dead End)
+new_wings_king_verde:
+  clave: '[Sweet Jelly] New Wings King'
+  nombre: New Wings King
+  color: verde
+  raza: hada
+  roles:
+  - dano_single
+  - dano_area
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Valentine's Gift)
+    skill_2:
+      descripcion: Área (Rolling Macaroons)
+    ulti:
+      descripcion: Área (Tyrant Tempest)
+new_wings_king_azul:
+  clave: '[Signs of Maturity] New Wings King'
+  nombre: New Wings King
+  color: azul
+  raza: hada
+  roles:
+  - dano_single
+  - dano_area
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Guardian Punch)
+    skill_2:
+      descripcion: Área (Increase)
+    ulti:
+      descripcion: Área (Tyrant Tempest)
+tarmiel_of_ocean_azul:
+  clave: '[The Four Archangels] Tarmiel of Ocean'
+  nombre: Tarmiel of Ocean
+  color: azul
+  raza: diosa
+  roles:
+  - dano_single
+  - aguante
+  - dano_area
+  - curacion
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Ark Beam)
+    skill_2:
+      descripcion: Defensa (Ark Shield)
+    ulti:
+      descripcion: Área (Ark)
+aide_gerharde_verde:
+  clave: '[Three Millennia of Memories] Aide Gerharde'
+  nombre: Aide Gerharde
+  color: verde
+  raza: hada
+  roles:
+  - dano_area
+  - buff
+  - dano_single
+  cartas:
+    skill_1:
+      descripcion: Área (Nature's Cage)
+    skill_2:
+      descripcion: Apoyo (Lying Hand)
+    ulti:
+      descripcion: Un objetivo (Piercing Roots)
+ludociel_of_flash_verde:
+  clave: '[Divine Proxy] Ludociel of Flash'
+  nombre: Ludociel of Flash
+  color: verde
+  raza: diosa
+  roles:
+  - dano_single
+  - buff
+  - dano_area
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Light of Judgment)
+    skill_2:
+      descripcion: Apoyo (Shining Redemption)
+    ulti:
+      descripcion: Área (Goddess Holy Ark)
+ludociel_of_flash_azul:
+  clave: '[The Four Archangels] Ludociel of Flash)'
+  nombre: Ludociel of Flash)
+  color: azul
+  raza: diosa
+  roles:
+  - dano_single
+  - dano_area
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Blue Shine Blade)
+    skill_2:
+      descripcion: Área (Holy Beam)
+    ulti:
+      descripcion: Área (Goddess Holy Ark)
+goddess_elizabeth_rojo:
+  clave: '[Spring Fantasy] Goddess Elizabeth'
+  nombre: Goddess Elizabeth
+  color: rojo
+  raza: diosa
+  roles:
+  - dano_single
+  - dano_area
+  - aguante
+  - curacion
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Coming of Spring)
+    skill_2:
+      descripcion: Área (Cherry Blossom in the Wind)
+    ulti:
+      descripcion: Defensa (Goddess Pattern)
+captain_hawk_rojo:
+  clave: '[New Tavern] Captain Hawk'
+  nombre: Captain Hawk
+  color: rojo
+  raza: desconocida
+  roles:
+  - dano_single
+  - dano_area
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Chorizo Strike)
+    skill_2:
+      descripcion: Área (Scraps Breath)
+    ulti:
+      descripcion: Un objetivo (Hectic Blow)
+mikasa_ackermann_azul:
+  clave: '[Greatest Soldier] Mikasa Ackermann'
+  nombre: Mikasa Ackermann
+  color: azul
+  raza: humano
+  roles:
+  - dano_single
+  - dano_area
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Get Out of My Way or Die)
+    skill_2:
+      descripcion: Área (l Will Win)
+    ulti:
+      descripcion: Un objetivo (Look Closely)
+levi_rojo:
+  clave: '[Greatest Soldier] Levi'
+  nombre: Levi
+  color: rojo
+  raza: humano
+  roles:
+  - dano_single
+  - dano_area
+  - curacion
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (l Will Exterminate Them)
+    skill_2:
+      descripcion: Área (l Can Do It Myself)
+    ulti:
+      descripcion: Un objetivo (1 Will Be the One)
+eren_jaeger_azul:
+  clave: '[Cadet Corps] Eren Jaeger'
+  nombre: Eren Jaeger
+  color: azul
+  raza: humano
+  roles:
+  - dano_single
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Now's the Time!)
+    skill_2:
+      descripcion: Otro (I Will Succeed!)
+    ulti:
+      descripcion: Un objetivo (1 Will Wipe You Out!)
+grandmaster_zaratras_verde:
+  clave: '[Reincarnation of Conviction] Grandmaster Zaratras'
+  nombre: Grandmaster Zaratras
+  color: verde
+  raza: humano
+  roles:
+  - dano_area
+  - dano_single
+  cartas:
+    skill_1:
+      descripcion: Área (Purge of the Lightning God)
+    skill_2:
+      descripcion: Un objetivo (Lightning God Sword)
+    ulti:
+      descripcion: Un objetivo (Punishment of the Lightning Gocr)
+druid_zaneri_azul:
+  clave: '[Holiday Diviner] Druid Zaneri'
+  nombre: Druid Zaneri
+  color: azul
+  raza: humano
+  roles:
+  - dano_single
+  - buff
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Helio, Mr. Snowman)
+    skill_2:
+      descripcion: Apoyo (Holly Jolly Glow)
+    ulti:
+      descripcion: Apoyo (Rising Nature)
+druid_zaneri_verde:
+  clave: '[Sweet Temptation] Druid Zaneri'
+  nombre: Druid Zaneri
+  color: verde
+  raza: humano
+  roles:
+  - dano_single
+  - buff
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Nimbus)
+    skill_2:
+      descripcion: Apoyo (Point Light)
+    ulti:
+      descripcion: Apoyo (Rising Nature)
+druid_jenna_rojo:
+  clave: '[Guardian of Istal] Druid Jenna'
+  nombre: Druid Jenna
+  color: rojo
+  raza: humano
+  roles:
+  - dano_single
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Trailing Flare)
+    skill_2:
+      descripcion: Un objetivo (Luminous Impact)
+    ulti:
+      descripcion: Un objetivo (Outset Light)
+captain_bellion_azul:
+  clave: '[The Six Knights of Black] Captain Bellion'
+  nombre: Captain Bellion
+  color: azul
+  raza: demonio
+  roles:
+  - dano_area
+  - dano_single
+  cartas:
+    skill_1:
+      descripcion: Área (Flash Lightning)
+    skill_2:
+      descripcion: Un objetivo (Lightning Blade)
+    ulti:
+      descripcion: Área (Earth Strike)
+celestial_ellatte_verde:
+  clave: '[Pure Justice] Celestial Ellatte'
+  nombre: Celestial Ellatte
+  color: verde
+  raza: diosa
+  roles:
+  - dano_single
+  - buff
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Angel Assault)
+    skill_2:
+      descripcion: Apoyo (Healing Mist)
+    ulti:
+      descripcion: Apoyo (Dancing Ray)
+celestial_ellatte_azul:
+  clave: '[Sky Temple Protector] Celestial Ellatte'
+  nombre: Celestial Ellatte
+  color: azul
+  raza: diosa
+  roles:
+  - dano_single
+  - buff
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Holy Strike)
+    skill_2:
+      descripcion: Apoyo (Blessing of Victory)
+    ulti:
+      descripcion: Apoyo (Dancing Ray)
+celestial_ellatte_rojo:
+  clave: '[Wings of the Sky] Celestial Ellatte'
+  nombre: Celestial Ellatte
+  color: rojo
+  raza: diosa
+  roles:
+  - dano_single
+  - buff
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Angel Blade)
+    skill_2:
+      descripcion: Un objetivo (Anger Light)
+    ulti:
+      descripcion: Apoyo (Dancing Ray)
+guardian_deity_camila_azul:
+  clave: '[Heart of a Beast] Guardian Deity Camila'
+  nombre: Guardian Deity Camila
+  color: azul
+  raza: desconocida
+  roles:
+  - dano_single
+  - buff
+  - curacion
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Black Saw)
+    skill_2:
+      descripcion: Otro (Wide Roar)
+    ulti:
+      descripcion: Apoyo (Emancipation)
+queen_of_explosions_roxy_rojo:
+  clave: '[Mad Destroyer] Queen of Explosions Roxy'
+  nombre: Queen of Explosions Roxy
+  color: rojo
+  raza: humano
+  roles:
+  - dano_area
+  - dano_single
+  cartas:
+    skill_1:
+      descripcion: Área (Magma Swing)
+    skill_2:
+      descripcion: Un objetivo (Magma Break)
+    ulti:
+      descripcion: Un objetivo (Volcanic Ash)
+human_weapon_mono_verde:
+  clave: '[Blade in the Dark] Human Weapon Mono'
+  nombre: Human Weapon Mono
+  color: verde
+  raza: humano
+  roles:
+  - dano_single
+  - dano_area
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Shadow Assassin)
+    skill_2:
+      descripcion: Área (Edge of Darkness)
+    ulti:
+      descripcion: Un objetivo (Endless Pain)
+human_weapon_mono_azul:
+  clave: '[Advent of Destruction] Human Weapon Mono'
+  nombre: Human Weapon Mono
+  color: azul
+  raza: humano
+  roles:
+  - dano_single
+  - dano_area
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Blade Dance)
+    skill_2:
+      descripcion: Área (Shadow Cut)
+    ulti:
+      descripcion: Un objetivo (Endless Pain)
+weapon_researcher_valenti_rojo:
+  clave: '[Mad Inventor] Weapon Researcher Valenti'
+  nombre: Weapon Researcher Valenti
+  color: rojo
+  raza: humano
+  roles:
+  - dano_area
+  - dano_single
+  cartas:
+    skill_1:
+      descripcion: Área (Hover Strike)
+    skill_2:
+      descripcion: Área (Photon Volley)
+    ulti:
+      descripcion: Un objetivo (Maxwell's Goblin)
+weapon_researcher_valenti_verde:
+  clave: '[Earthshaker] Weapon Researcher Valenti'
+  nombre: Weapon Researcher Valenti
+  color: verde
+  raza: humano
+  roles:
+  - dano_single
+  - dano_area
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (2nd Law of Motion)
+    skill_2:
+      descripcion: Área (Genesis)
+    ulti:
+      descripcion: Un objetivo (Maxwell's Goblin)
+holy_knight_arden_azul:
+  clave: '[The Pleiades of the Azure Sky] Holy Knight Arden'
+  nombre: Holy Knight Arden
+  color: azul
+  raza: humano
+  roles:
+  - dano_single
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Cheap Shot)
+    skill_2:
+      descripcion: Un objetivo (Mid-Air Shot)
+    ulti:
+      descripcion: Un objetivo (Vaina)
+holy_knight_deldry_rojo:
+  clave: '[The Pleiades of the Azure Sky] Holy Knight Deldry'
+  nombre: Holy Knight Deldry
+  color: rojo
+  raza: humano
+  roles:
+  - dano_single
+  - aguante
+  - dano_area
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Unhappy Hit)
+    skill_2:
+      descripcion: Defensa (Blow Kiss)
+    ulti:
+      descripcion: Área (Love Drive)
+captain_denzel_rojo:
+  clave: '[The Pleiades of the Azure Sky] Captain Denzel'
+  nombre: Captain Denzel
+  color: rojo
+  raza: humano
+  roles:
+  - dano_single
+  - aguante
+  - dano_area
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Royal Impact)
+    skill_2:
+      descripcion: Defensa (Dead Man's Revenge)
+    ulti:
+      descripcion: Área (Divine Execution)
+holy_knight_dogedo_rojo:
+  clave: '[The Pleiades of the Azure Sky] Holy Knight Dogedo'
+  nombre: Holy Knight Dogedo
+  color: rojo
+  raza: humano
+  roles:
+  - dano_single
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Nitro Rush)
+    skill_2:
+      descripcion: Un objetivo (Burst Combination)
+    ulti:
+      descripcion: Un objetivo (Boost Hammer)
+holy_knight_deathpierce_verde:
+  clave: '[The Pleiades of the Azure Sky] Holy Knight Deathpierce'
+  nombre: Holy Knight Deathpierce
+  color: verde
+  raza: humano
+  roles:
+  - dano_single
+  - dano_area
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Accelerando)
+    skill_2:
+      descripcion: Un objetivo (Grazioso)
+    ulti:
+      descripcion: Área (Brillante)
+god_of_observation_heimdallr_rojo:
+  clave: '[Omniscient Watcher] God of Observation Heimdallr'
+  nombre: God of Observation Heimdallr
+  color: rojo
+  raza: desconocida
+  roles:
+  - dano_single
+  - dano_area
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Capital Punishment)
+    skill_2:
+      descripcion: Área (Chain of Command)
+    ulti:
+      descripcion: Un objetivo (Absolute Surveillance)
+another_ban_claro:
+  clave: '[A Twisted World] Another Ban'
+  nombre: Another Ban
+  color: claro
+  raza: humano
+  roles:
+  - dano_single
+  - dano_area
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Captivating Beauty)
+    skill_2:
+      descripcion: Área (Assault Hunt)
+    ulti:
+      descripcion: Área (Beauty of the Hunt)
+cleaner_riyo_verde:
+  clave: '[Team Akuta] Cleaner Riyo'
+  nombre: Cleaner Riyo
+  color: verde
+  raza: humano
+  roles:
+  - dano_single
+  - dano_area
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Dance With the Ripper)
+    skill_2:
+      descripcion: Área (Deep Cleaning)
+    ulti:
+      descripcion: Un objetivo (Penetrating Ripper)
+cleaner_zanka_azul:
+  clave: '[Team Akuta] Cleaner Zanka'
+  nombre: Cleaner Zanka
+  color: azul
+  raza: humano
+  roles:
+  - dano_single
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Lovely Assistaff Barrage)
+    skill_2:
+      descripcion: Un objetivo (Overturning Earth)
+    ulti:
+      descripcion: Un objetivo (Lovely Assistaff Resonance)
+cleaner_enjin_claro:
+  clave: '[Team Akuta] Cleaner Enjin'
+  nombre: Cleaner Enjin
+  color: claro
+  raza: humano
+  roles:
+  - dano_single
+  - dano_area
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Spinning Slicer)
+    skill_2:
+      descripcion: Área (Noxious Blitz)
+    ulti:
+      descripcion: Área (Umbreaker Octashredder)
+cleaner_rudo_rojo:
+  clave: '[Team Akuta] Cleaner Rudo'
+  nombre: Cleaner Rudo
+  color: rojo
+  raza: humano
+  roles:
+  - dano_single
+  - dano_area
+  - debuff
+  - quita_postura
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Trash or Treasure)
+    skill_2:
+      descripcion: Área (Bastard Bash)
+    ulti:
+      descripcion: Área (Nail Nuker)
+hermit_gowther_rojo:
+  clave: '[Legendary Sinner] Hermit Gowther'
+  nombre: Hermit Gowther
+  color: rojo
+  raza: sin definir
+  roles:
+  - dano_area
+  - buff
+  - debuff
+  cartas:
+    skill_1:
+      descripcion: Área (Converging Arrow)
+    skill_2:
+      descripcion: Apoyo (Kindle Mind)
+    ulti:
+      descripcion: Área (Aether Pierce)
+youngest_princess_tioreh_azul:
+  clave: '[Fairy King''s Daughter] Youngest Princess Tioreh'
+  nombre: Youngest Princess Tioreh
+  color: azul
+  raza: gigante
+  roles:
+  - dano_area
+  - buff
+  - curacion
+  cartas:
+    skill_1:
+      descripcion: Área (Fire Release)
+    skill_2:
+      descripcion: Apoyo (Healing Fox)
+    ulti:
+      descripcion: Área (Burning Lion)
+sun_princess_priscilla_rojo:
+  clave: '[Re:ZER0] Sun Princess Priscilla'
+  nombre: Sun Princess Priscilla
+  color: rojo
+  raza: humano
+  roles:
+  - dano_single
+  - buff
+  - dano_area
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Stellar Strike)
+    skill_2:
+      descripcion: Apoyo (Flickering Flame)
+    ulti:
+      descripcion: Área (Flame Sonata)
+freezing_witch_emilia_rojo:
+  clave: '[Re:ZER0] Freezing Witch Emilia'
+  nombre: Freezing Witch Emilia
+  color: rojo
+  raza: hada
+  roles:
+  - dano_single
+  - dano_area
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Arts of Ice)
+    skill_2:
+      descripcion: Área (Ul Huma)
+    ulti:
+      descripcion: Un objetivo (A1 Huma)
+tree_guardian_king_claro:
+  clave: '[Friendly Classmate] Tree Guardian King'
+  nombre: Tree Guardian King
+  color: claro
+  raza: hada
+  roles:
+  - dano_single
+  - aguante
+  - dano_area
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (The Power of Knowledge)
+    skill_2:
+      descripcion: Defensa (Elastic Stem)
+    ulti:
+      descripcion: Área (Yggdra Flamenco)
+tamaki_kotatsu_azul:
+  clave: '[Red Flame Nekomata] Tamaki Kotatsu'
+  nombre: Tamaki Kotatsu
+  color: azul
+  raza: humano
+  roles:
+  - dano_single
+  - quita_postura
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Twin Tail Rush)
+    skill_2:
+      descripcion: Un objetivo (Nekomata Fireball)
+    ulti:
+      descripcion: Un objetivo (Nekomata Falling Star)
+crimson_demon_girl_megumin_rojo:
+  clave: '[Arch Wizard] Crimson Demon Girl Megumin'
+  nombre: Crimson Demon Girl Megumin
+  color: rojo
+  raza: humano
+  roles:
+  - dano_single
+  - quita_postura
+  - dano_area
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Staff Attack)
+    skill_2:
+      descripcion: Área (Fire Bomb)
+    ulti:
+      descripcion: Área (Explosion)
+predator_beru_azul:
+  clave: '[Army of Shadows] Predator Beru'
+  nombre: Predator Beru
+  color: azul
+  raza: desconocida
+  roles:
+  - dano_single
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Hypersonic Assault)
+    skill_2:
+      descripcion: Un objetivo (Fleeting Claw)
+    ulti:
+      descripcion: Un objetivo (Abyssal Chase)
+the_dancer_cha_hae_ln_azul:
+  clave: '[S-Rank Hunter] The Dancer Cha Hae-ln'
+  nombre: The Dancer Cha Hae-ln
+  color: azul
+  raza: humano
+  roles:
+  - dano_single
+  - dano_area
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Sword Rain)
+    skill_2:
+      descripcion: Un objetivo (Fierce Dance)
+    ulti:
+      descripcion: Área (Light Barrage)
+monarch_of_shadows_sung_jinwoo_oscuro:
+  clave: '[S-Rank Hunter] Monarch of Shadows Sung Jinwoo'
+  nombre: Monarch of Shadows Sung Jinwoo
+  color: oscuro
+  raza: humano
+  roles:
+  - dano_single
+  - dano_area
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Mutilate)
+    skill_2:
+      descripcion: Área (Igris)
+    ulti:
+      descripcion: Área (Monarch's Domain)
+second_member_beta_azul:
+  clave: '[Shadow Garden] Second Member Beta'
+  nombre: Second Member Beta
+  color: azul
+  raza: hada
+  roles:
+  - dano_single
+  - buff
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Blade Symphony)
+    skill_2:
+      descripcion: Apoyo (Fangirl Chronicle)
+    ulti:
+      descripcion: Un objetivo (Knight in Slime Armor)
+leader_shadow_verde:
+  clave: '[The Eminence in Shadow] Leader Shadow'
+  nombre: Leader Shadow
+  color: verde
+  raza: humano
+  roles:
+  - dano_single
+  - dano_area
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Demonic Vanquishment)
+    skill_2:
+      descripcion: Área (Blazing Darkness)
+    ulti:
+      descripcion: Área (l Am Atomic)
+brave_girl_anghalhad_rojo:
+  clave: '[Sweet Temptation] Brave Girl Anghalhad'
+  nombre: Brave Girl Anghalhad
+  color: rojo
+  raza: humano
+  roles:
+  - dano_single
+  - dano_area
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Clumsy Delivery)
+    skill_2:
+      descripcion: Área (Bursting With Love)
+    ulti:
+      descripcion: Un objetivo (Truth Seeker)
+brave_girl_anghalhad_azul:
+  clave: '[A New Adventure] Brave Girl Anghalhad'
+  nombre: Brave Girl Anghalhad
+  color: azul
+  raza: humano
+  roles:
+  - dano_single
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (One Thousand Stabs)
+    skill_2:
+      descripcion: Un objetivo (Sharp Needle)
+    ulti:
+      descripcion: Un objetivo (Truth Seeker)
+yihwa_yeon_rojo:
+  clave: '[Red Flame Princess] Yihwa Yeon'
+  nombre: Yihwa Yeon
+  color: rojo
+  raza: humano
+  roles:
+  - dano_single
+  - dano_area
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Scorching Path)
+    skill_2:
+      descripcion: Área (Blooming Flare)
+    ulti:
+      descripcion: Área (Razing Fire)
+urek_mazino_azul:
+  clave: '[Free Spirit] Urek Mazino'
+  nombre: Urek Mazino
+  color: azul
+  raza: humano
+  roles:
+  - dano_single
+  - debuff
+  - dano_area
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Violent Rays)
+    skill_2:
+      descripcion: Un objetivo (Blue End)
+    ulti:
+      descripcion: Área (Gorgon Fist)
+retired_knight_varghese_verde:
+  clave: '[Veteran Warrior] Retired Knight Varghese'
+  nombre: Retired Knight Varghese
+  color: verde
+  raza: humano
+  roles:
+  - dano_single
+  - buff
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Charge Assault)
+    skill_2:
+      descripcion: Apoyo (Battlecry)
+    ulti:
+      descripcion: Un objetivo (Hunter's Harpoon)
+god_of_light_baldr_verde:
+  clave: '[Hidden Glimmer] God of Light Baldr'
+  nombre: God of Light Baldr
+  color: verde
+  raza: desconocida
+  roles:
+  - dano_single
+  - aguante
+  - dano_area
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Gradient Slash)
+    skill_2:
+      descripcion: Defensa (Reflection Halo)
+    ulti:
+      descripcion: Área (Shining Judgment)
+narberal_gamma_azul:
+  clave: '[Pleiades] Narberal Gamma'
+  nombre: Narberal Gamma
+  color: azul
+  raza: desconocida
+  roles:
+  - dano_single
+  - dano_area
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Lightning)
+    skill_2:
+      descripcion: Área (Twin Maximize Magic Electrosphere)
+    ulti:
+      descripcion: Un objetivo (I 'Twin Maxirnize Magic Chain Dragon Lightning)
+warrior_of_purgatory_wild_verde:
+  clave: '[Proud Spirit] Warrior of Purgatory Wild'
+  nombre: Warrior of Purgatory Wild
+  color: verde
+  raza: desconocida
+  roles:
+  - dano_single
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Spinning Wild)
+    skill_2:
+      descripcion: Un objetivo (Rush Wild)
+    ulti:
+      descripcion: Un objetivo (Wild Full Throttle)
+glass_verde:
+  clave: '[Vassal Wielder] Glass'
+  nombre: Glass
+  color: verde
+  raza: desconocida
+  roles:
+  - dano_single
+  - dano_area
+  cartas:
+    skill_1:
+      descripcion: 'Un objetivo (Circle Dance Zero Formation: Reverse Snow Moon Flower)'
+    skill_2:
+      descripcion: 'Un objetivo (Circle Dance Rupture Formation: Tortoise Shell Cracker)'
+    ulti:
+      descripcion: 'Área (Circle Dance of Nothingness: Moon Break)'
+fitoria_azul:
+  clave: '[Filolial Queen] Fitoria'
+  nombre: Fitoria
+  color: azul
+  raza: desconocida
+  roles:
+  - dano_single
+  - debuff
+  - dano_area
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Piercing Gale)
+    skill_2:
+      descripcion: Área (Vicious Tempest)
+    ulti:
+      descripcion: Área (The Queen's Descent)
+ha_yuri_zahard_azul:
+  clave: '[Princess of Zahard] Ha Yuri Zahard'
+  nombre: Ha Yuri Zahard
+  color: azul
+  raza: humano
+  roles:
+  - dano_single
+  - dano_area
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Scarlet Gatling)
+    skill_2:
+      descripcion: Área (Red Velvet Shot)
+    ulti:
+      descripcion: Un objetivo (Kranos)
+cocytus_verde:
+  clave: '[Guardian of the Glacier] Cocytus'
+  nombre: Cocytus
+  color: verde
+  raza: desconocida
+  roles:
+  - dano_single
+  - dano_area
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Continuous Cleaving)
+    skill_2:
+      descripcion: Un objetivo (Breath of Niflheim)
+    ulti:
+      descripcion: Área (Guillotine)
+shalltear_bloodfallen_rojo:
+  clave: '[Bloody Valkyrie] Shalltear Bloodfallen'
+  nombre: Shalltear Bloodfallen
+  color: rojo
+  raza: desconocida
+  roles:
+  - dano_single
+  - dano_area
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Shadow Stalker)
+    skill_2:
+      descripcion: Área (Hemokinesis)
+    ulti:
+      descripcion: Área (Crimson Valkyrie)
+albedo_azul:
+  clave: '[Pure-White Devil] Albedo'
+  nombre: Albedo
+  color: azul
+  raza: desconocida
+  roles:
+  - dano_single
+  - aguante
+  - dano_area
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Pillar of Muspelheim)
+    skill_2:
+      descripcion: Defensa (Untouchable)
+    ulti:
+      descripcion: Área (True Hatred)
+estarossa_of_love_rojo:
+  clave: '[The Ten Commandments] Estarossa of Love'
+  nombre: Estarossa of Love
+  color: rojo
+  raza: demonio
+  roles:
+  - dano_single
+  - aguante
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Reverse Blade)
+    skill_2:
+      descripcion: Un objetivo (Rebellion)
+    ulti:
+      descripcion: Defensa (Blackout)
+derieri_of_purity_azul:
+  clave: '[Sweet Temptation] Derieri of Purity'
+  nombre: Derieri of Purity
+  color: azul
+  raza: demonio
+  roles:
+  - dano_single
+  - aguante
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Heavy Impact)
+    skill_2:
+      descripcion: Defensa (Valentine's Gift)
+    ulti:
+      descripcion: Un objetivo (Combo Star)
+derieri_of_purity_rojo:
+  clave: '[The Ten Commandments] Derieri of Purity'
+  nombre: Derieri of Purity
+  color: rojo
+  raza: demonio
+  roles:
+  - dano_single
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Darkness Hand)
+    skill_2:
+      descripcion: Otro (Injection)
+    ulti:
+      descripcion: Un objetivo (Combo Star)
+fraudrin_of_selflessness_verde:
+  clave: '[The Ten Commandments] Fraudrin of Selflessness'
+  nombre: Fraudrin of Selflessness
+  color: verde
+  raza: demonio
+  roles:
+  - dano_single
+  - dano_area
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Cold Gaze)
+    skill_2:
+      descripcion: Área (Evil Slayer)
+    ulti:
+      descripcion: Un objetivo (Shadow Barrage)
+drole_of_patience_verde:
+  clave: '[The Ten Commandments] Drole of Patience'
+  nombre: Drole of Patience
+  color: verde
+  raza: gigante
+  roles:
+  - dano_single
+  - dano_area
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Giga Pick)
+    skill_2:
+      descripcion: Área (Bedrock Arise)
+    ulti:
+      descripcion: Área (Giga Fall)
+gloxinia_of_repose_rojo:
+  clave: '[Elite Demon] Gloxinia of Repose'
+  nombre: Gloxinia of Repose
+  color: rojo
+  raza: hada
+  roles:
+  - dano_area
+  - buff
+  - dano_single
+  cartas:
+    skill_1:
+      descripcion: Área (Pierce Stick)
+    skill_2:
+      descripcion: Apoyo (Moon Rose)
+    ulti:
+      descripcion: Un objetivo (Basquias)
+levi_verde:
+  clave: '[Indomitable Wings] Levi'
+  nombre: Levi
+  color: verde
+  raza: humano
+  roles:
+  - dano_single
+  - dano_area
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (1'11 Take You Down)
+    skill_2:
+      descripcion: Área (Stay Out of My Way)
+    ulti:
+      descripcion: Área (Let's Enjoy This!)
+eren_jaeger_azul_2:
+  clave: '[Steadfast Resolve] Eren Jaeger'
+  nombre: Eren Jaeger
+  color: azul
+  raza: humano
+  roles:
+  - dano_single
+  - debuff
+  - dano_area
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (l Hated You)
+    skill_2:
+      descripcion: Un objetivo (1'11 Keep Moving Forward)
+    ulti:
+      descripcion: Área (1'11 Put an End to This)
+god_of_war_tyr_rojo:
+  clave: '[Indomitable Will] God of War Tyr'
+  nombre: God of War Tyr
+  color: rojo
+  raza: desconocida
+  roles:
+  - dano_single
+  - dano_area
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Afterburner)
+    skill_2:
+      descripcion: Área (Volcano Rush)
+    ulti:
+      descripcion: Área (Meteor Strike)
+prince_tristan_verde:
+  clave: '[Holy Knight Aspirant] Prince Tristan'
+  nombre: Prince Tristan
+  color: verde
+  raza: desconocida
+  roles:
+  - dano_single
+  - debuff
+  - dano_area
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Multiple Cuts)
+    skill_2:
+      descripcion: Un objetivo (Swirling Blade)
+    ulti:
+      descripcion: Área (Get the Bad Guy!)
+prince_tristan_azul:
+  clave: '[Future of Liones] Prince Tristan'
+  nombre: Prince Tristan
+  color: azul
+  raza: desconocida
+  roles:
+  - dano_single
+  - buff
+  - dano_area
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Quick Movement)
+    skill_2:
+      descripcion: Apoyo (Triumph)
+    ulti:
+      descripcion: Área (Get the Bad Guy!)
+roxy_of_madness_rojo:
+  clave: '[Winter Whirlwind] Roxy of Madness'
+  nombre: Roxy of Madness
+  color: rojo
+  raza: humano
+  roles:
+  - dano_single
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Snow Dust)
+    skill_2:
+      descripcion: Un objetivo (Santa in the Box)
+    ulti:
+      descripcion: Un objetivo (Horrific Vengeance)
+goddess_of_beauty_freyja_verde:
+  clave: '[Summer Mirage] Goddess of Beauty Freyja'
+  nombre: Goddess of Beauty Freyja
+  color: verde
+  raza: desconocida
+  roles:
+  - dano_single
+  - dano_area
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Frisbee)
+    skill_2:
+      descripcion: Un objetivo (Sweet Ice Flakes)
+    ulti:
+      descripcion: Área (Aesthetic Overflow)
+purgatory_meliodas_oscuro:
+  clave: '[Cursed Shackles] Purgatory Meliodas'
+  nombre: Purgatory Meliodas
+  color: oscuro
+  raza: demonio
+  roles:
+  - dano_single
+  - dano_area
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Pierce and Strike)
+    skill_2:
+      descripcion: Área (Chain Slash)
+    ulti:
+      descripcion: Área (Trillion Dark)
+highest_ranking_demon_cusack_azul:
+  clave: '[Origin Fragment] Highest-ranking Demon Cusack'
+  nombre: Highest-ranking Demon Cusack
+  color: azul
+  raza: demonio
+  roles:
+  - dano_single
+  - dano_area
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Triple Strike)
+    skill_2:
+      descripcion: Área (Demonic Eye)
+    ulti:
+      descripcion: Un objetivo (Evil Onslaught)
+kazayama_kizuna_rojo:
+  clave: '[Hunting Hero] Kazayama Kizuna'
+  nombre: Kazayama Kizuna
+  color: rojo
+  raza: humano
+  roles:
+  - dano_area
+  cartas:
+    skill_1:
+      descripcion: Área (Hook Sink)
+    skill_2:
+      descripcion: Otro (Sensitive Instinct)
+    ulti:
+      descripcion: Área (Hunting Master)
+filo_verde:
+  clave: '[Queen''s Successor] Filo'
+  nombre: Filo
+  color: verde
+  raza: desconocida
+  roles:
+  - dano_area
+  - dano_single
+  - debuff
+  cartas:
+    skill_1:
+      descripcion: Área (Drifa Tornado)
+    skill_2:
+      descripcion: Un objetivo (Spiral Strike)
+    ulti:
+      descripcion: Un objetivo (Filolial Smash)
+melascula_of_faith_verde:
+  clave: '[Sweet & Scary] Melascula of Faith'
+  nombre: Melascula of Faith
+  color: verde
+  raza: demonio
+  roles:
+  - dano_single
+  - buff
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Take My Chocolate)
+    skill_2:
+      descripcion: Apoyo (Lovely Atmosphere)
+    ulti:
+      descripcion: Un objetivo (Summon Soul)
+melascula_of_faith_azul:
+  clave: '[The Ten Commandments] Melascula of Faith'
+  nombre: Melascula of Faith
+  color: azul
+  raza: demonio
+  roles:
+  - dano_single
+  - dano_area
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Darkness Whip)
+    skill_2:
+      descripcion: Área (Demon Flash)
+    ulti:
+      descripcion: Un objetivo (Summon Soul)
+iwatani_naofumi_azul:
+  clave: '[Shield Hero] Iwatani Naofumi'
+  nombre: Iwatani Naofumi
+  color: azul
+  raza: humano
+  roles:
+  - aguante
+  - dano_area
+  - dano_single
+  - debuff
+  cartas:
+    skill_1:
+      descripcion: Defensa (Shooting Star Shield)
+    skill_2:
+      descripcion: Área (Dark Curse Burning)
+    ulti:
+      descripcion: Un objetivo (Iron Maiden)
+mage_of_infinity_merlin_azul:
+  clave: '[Ocean Seeker] Mage of Infinity Merlin'
+  nombre: Mage of Infinity Merlin
+  color: azul
+  raza: desconocida
+  roles:
+  - dano_single
+  - debuff
+  - dano_area
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Increasing Drops)
+    skill_2:
+      descripcion: Área (Song of Temptation)
+    ulti:
+      descripcion: Área (Max Infinity)
+prince_of_darkness_zeldris_azul:
+  clave: '["Ominous Nebula"] Prince of Darkness Zeldris'
+  nombre: Prince of Darkness Zeldris
+  color: azul
+  raza: demonio
+  roles:
+  - dano_single
+  - dano_area
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Absorbing Slash)
+    skill_2:
+      descripcion: Área (Chaos Blaze)
+    ulti:
+      descripcion: Área (Ominous Nebula)
+berserk_estarossa_rojo:
+  clave: '[Holy War Nightmare] Berserk Estarossa'
+  nombre: Berserk Estarossa
+  color: rojo
+  raza: demonio
+  roles:
+  - dano_single
+  - dano_area
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Ravenous Bash)
+    skill_2:
+      descripcion: Área (Living Graveyard)
+    ulti:
+      descripcion: Área (Treat Howler)
+sun_god_freyr_azul:
+  clave: '[Prince of the Vanir Gods] Sun God Freyr'
+  nombre: Sun God Freyr
+  color: azul
+  raza: desconocida
+  roles:
+  - dano_single
+  - dano_area
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Shattering Light)
+    skill_2:
+      descripcion: Área (Storm Blaze)
+    ulti:
+      descripcion: Un objetivo (Sword of the Sun)
+highest_ranking_demon_chandler_verde:
+  clave: '[Origin Fragment] Highest-ranking Demon Chandler'
+  nombre: Highest-ranking Demon Chandler
+  color: verde
+  raza: demonio
+  roles:
+  - dano_single
+  - dano_area
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Exterminate Ray)
+    skill_2:
+      descripcion: Área (Cut Down)
+    ulti:
+      descripcion: Un objetivo (Demonic Judgment)
+mono_of_blood_and_iron_azul:
+  clave: '[Full Moon''s Shadow] Mono of Blood and Iron'
+  nombre: Mono of Blood and Iron
+  color: azul
+  raza: humano
+  roles:
+  - dano_area
+  - buff
+  cartas:
+    skill_1:
+      descripcion: Área (Slashing Master)
+    skill_2:
+      descripcion: Apoyo (All Clear)
+    ulti:
+      descripcion: Área (Full Unleash)
+mono_of_blood_and_iron_verde:
+  clave: '[Weapon Master] Mono of Blood and Iron'
+  nombre: Mono of Blood and Iron
+  color: verde
+  raza: humano
+  roles:
+  - dano_single
+  - dano_area
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Assassin's Strike)
+    skill_2:
+      descripcion: Área (Sawing Scythe)
+    ulti:
+      descripcion: Área (Full Unleash)
+world_serpent_jormungand_rojo:
+  clave: '[Sweet Temptation] World Serpent Jormungand'
+  nombre: World Serpent Jormungand
+  color: rojo
+  raza: desconocida
+  roles:
+  - dano_single
+  - dano_area
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Sweet Fireworks)
+    skill_2:
+      descripcion: Área (Sweet Talker)
+    ulti:
+      descripcion: Un objetivo (Ground Detection)
+world_serpent_jormungand_verde:
+  clave: '[Serpent Queller] World Serpent Jormungand'
+  nombre: World Serpent Jormungand
+  color: verde
+  raza: desconocida
+  roles:
+  - dano_single
+  - curacion
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Swift Rush)
+    skill_2:
+      descripcion: Un objetivo (Snake Whip)
+    ulti:
+      descripcion: Un objetivo (Ground Detection)
+queen_diane_verde:
+  clave: '[Messenger of Love] Queen Diane'
+  nombre: Queen Diane
+  color: verde
+  raza: gigante
+  roles:
+  - dano_single
+  - aguante
+  - buff
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Sweet Impact)
+    skill_2:
+      descripcion: Defensa (Diamond Shield)
+    ulti:
+      descripcion: Apoyo (Queen's Embrace)
+giant_skadi_verde:
+  clave: '[Frostbane Warrior] Giant Skadi'
+  nombre: Giant Skadi
+  color: verde
+  raza: gigante
+  roles:
+  - dano_area
+  - curacion
+  cartas:
+    skill_1:
+      descripcion: Área (Winter's Fury)
+    skill_2:
+      descripcion: Área (Hailing Arrows)
+    ulti:
+      descripcion: Área (Glacial Blast)
+giant_skadi_rojo:
+  clave: '[Tundra Hunter] Giant Skadi'
+  nombre: Giant Skadi
+  color: rojo
+  raza: gigante
+  roles:
+  - dano_single
+  - debuff
+  - dano_area
+  - curacion
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Hunting Beast)
+    skill_2:
+      descripcion: Un objetivo (Icicle Dagger)
+    ulti:
+      descripcion: Área (Glacial Blast)
+covenant_of_light_sariel_verde:
+  clave: '[Advent of Tornado] Covenant of Light Sariel'
+  nombre: Covenant of Light Sariel
+  color: verde
+  raza: diosa
+  roles:
+  - dano_area
+  - aguante
+  cartas:
+    skill_1:
+      descripcion: Área (Wind Explosion)
+    skill_2:
+      descripcion: Defensa (Slashing Wind)
+    ulti:
+      descripcion: Área (Tornado)
+elizabeth_of_eternal_rebirth_claro:
+  clave: '[Restored Memories] Elizabeth of Eternal Rebirth'
+  nombre: Elizabeth of Eternal Rebirth
+  color: claro
+  raza: diosa
+  roles:
+  - dano_single
+  - dano_area
+  - aguante
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Spiral Light)
+    skill_2:
+      descripcion: Área (Volley of Light)
+    ulti:
+      descripcion: Defensa (Jonah's Ordeal)
+holy_knight_escanor_rojo:
+  clave: '[The Lion Sin of Pride] Holy Knight Escanor'
+  nombre: Holy Knight Escanor
+  color: rojo
+  raza: humano
+  roles:
+  - dano_single
+  - dano_area
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Blazing Sun)
+    skill_2:
+      descripcion: Área (Charge and Fire)
+    ulti:
+      descripcion: Un objetivo (Punishment)
+fairy_king_harlequin_rojo:
+  clave: '[The Grizzly Sin of Sloth] Fairy King Harlequin'
+  nombre: Fairy King Harlequin
+  color: rojo
+  raza: hada
+  roles:
+  - dano_single
+  - quita_postura
+  - buff
+  - curacion
+  - dano_area
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Guardian)
+    skill_2:
+      descripcion: Apoyo (P01181 Gardm)
+    ulti:
+      descripcion: Área (Sunflower)
+fairy_king_harlequin_verde:
+  clave: '[Symbol of Unity] Fairy King Harlequin'
+  nombre: Fairy King Harlequin
+  color: verde
+  raza: hada
+  roles:
+  - dano_single
+  - dano_area
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Prayer of Peace)
+    skill_2:
+      descripcion: Área (Blade Tempest)
+    ulti:
+      descripcion: Área (Sunflower)
+fairy_king_harlequin_azul:
+  clave: '[Protector King] Fairy King Harlequin'
+  nombre: Fairy King Harlequin
+  color: azul
+  raza: hada
+  roles:
+  - dano_area
+  cartas:
+    skill_1:
+      descripcion: Área (Increase)
+    skill_2:
+      descripcion: Área (Chastiefor)
+    ulti:
+      descripcion: Área (Sunflower)
+valkyrie_megellda_rojo:
+  clave: '[Pride of Valhalla] Valkyrie Megellda'
+  nombre: Valkyrie Megellda
+  color: rojo
+  raza: desconocida
+  roles:
+  - dano_single
+  - buff
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Falling Valkyrie)
+    skill_2:
+      descripcion: Apoyo (Requiescat)
+    ulti:
+      descripcion: Un objetivo (Blundering Blow)
+valkyrie_megellda_azul:
+  clave: '[Guide to Valhalla] Valkyrie Megellda'
+  nombre: Valkyrie Megellda
+  color: azul
+  raza: desconocida
+  roles:
+  - dano_single
+  - buff
+  - curacion
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Raining Swords of Light)
+    skill_2:
+      descripcion: Apoyo (Valkyrie's Prayer)
+    ulti:
+      descripcion: Un objetivo (Blundering Blow)
+eastin_of_authority_azul:
+  clave: '[Deep Sea Explorer] Eastin of Authority'
+  nombre: Eastin of Authority
+  color: azul
+  raza: humano
+  roles:
+  - dano_single
+  - dano_area
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (La Marea)
+    skill_2:
+      descripcion: Área (Undir)
+    ulti:
+      descripcion: Un objetivo (Queen's Amusement)
+eastin_of_authority_verde:
+  clave: '[Spooky Party] Eastin of Authority'
+  nombre: Eastin of Authority
+  color: verde
+  raza: humano
+  roles:
+  - dano_single
+  - dano_area
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Cannon Show)
+    skill_2:
+      descripcion: Área (Magic Hat)
+    ulti:
+      descripcion: Un objetivo (Queen's Amusement)
+princess_brunhild_verde:
+  clave: '[Battlefield Guardian] Princess Brunhild'
+  nombre: Princess Brunhild
+  color: verde
+  raza: humano
+  roles:
+  - dano_single
+  - curacion
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Nimble Spear)
+    skill_2:
+      descripcion: Un objetivo (Stab Rush)
+    ulti:
+      descripcion: Un objetivo (Valkyrie Strike)
+blessing_of_the_earth_diane_verde:
+  clave: '[Ragnarok] Blessing of the Earth Diane'
+  nombre: Blessing of the Earth Diane
+  color: verde
+  raza: gigante
+  roles:
+  - dano_single
+  - dano_area
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Triple Thrust)
+    skill_2:
+      descripcion: Un objetivo (Rock Blast)
+    ulti:
+      descripcion: Área (Giantize)
+mage_lillia_azul:
+  clave: '[Mastermind] Mage Lillia'
+  nombre: Mage Lillia
+  color: azul
+  raza: humano
+  roles:
+  - dano_area
+  - buff
+  cartas:
+    skill_1:
+      descripcion: Área (Pathetique)
+    skill_2:
+      descripcion: Apoyo (Eroica)
+    ulti:
+      descripcion: Área (Star Link)
+rimuru_tempest_verde:
+  clave: '[Slime] Rimuru Tempest'
+  nombre: Rimuru Tempest
+  color: verde
+  raza: desconocida
+  roles:
+  - dano_single
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Aqua Blade)
+    skill_2:
+      descripcion: Otro (Full Potion)
+    ulti:
+      descripcion: Un objetivo (Black Lightning)
+fart_king_rojo:
+  clave: '["Disaster"] Fart King'
+  nombre: Fart King
+  color: rojo
+  raza: hada
+  roles:
+  - dano_area
+  - buff
+  - curacion
+  - dano_single
+  cartas:
+    skill_1:
+      descripcion: Área (Fight Fire with Fire)
+    skill_2:
+      descripcion: Apoyo (Pollen Garden)
+    ulti:
+      descripcion: Un objetivo (Guardian Attack)
+old_fart_king_azul:
+  clave: '[The Seven Deadly] Old Fart King'
+  nombre: Old Fart King
+  color: azul
+  raza: hada
+  roles:
+  - dano_single
+  - aguante
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Chastiefol)
+    skill_2:
+      descripcion: Defensa (Increase)
+    ulti:
+      descripcion: Un objetivo (Guardian Attack)
+old_fart_king_verde:
+  clave: '[Protector of Dolis] Old Fart King'
+  nombre: Old Fart King
+  color: verde
+  raza: hada
+  roles:
+  - dano_area
+  - dano_single
+  cartas:
+    skill_1:
+      descripcion: Área (Guardian)
+    skill_2:
+      descripcion: Área (Permeate)
+    ulti:
+      descripcion: Un objetivo (Guardian Attack)
+brawler_ban_rojo:
+  clave: '[Ragnarok] Brawler Ban'
+  nombre: Brawler Ban
+  color: rojo
+  raza: humano
+  roles:
+  - dano_area
+  - dano_single
+  cartas:
+    skill_1:
+      descripcion: Área (Impact Shower)
+    skill_2:
+      descripcion: Área (Shakedown)
+    ulti:
+      descripcion: Un objetivo (Physical Hunt)
+prisoner_ban_rojo:
+  clave: '[Undead] Prisoner Ban'
+  nombre: Prisoner Ban
+  color: rojo
+  raza: humano
+  roles:
+  - dano_single
+  - aguante
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Eliminate Spirit)
+    skill_2:
+      descripcion: Defensa (Undead Physical)
+    ulti:
+      descripcion: Un objetivo (Power Hunt Effect)
+brawler_ban_azul:
+  clave: '[Outlaw] Brawler Ban'
+  nombre: Brawler Ban
+  color: azul
+  raza: humano
+  roles:
+  - dano_single
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Critical Pierce)
+    skill_2:
+      descripcion: Un objetivo (Toxic Bottle)
+    ulti:
+      descripcion: Un objetivo (Physical Hunt)
+brawler_ban_verde:
+  clave: '["Snatch"] Brawler Ban'
+  nombre: Brawler Ban
+  color: verde
+  raza: humano
+  roles:
+  - dano_single
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Fearless Shot)
+    skill_2:
+      descripcion: Un objetivo (Snatch)
+    ulti:
+      descripcion: Un objetivo (Physical Hunt)
+adventurer_ban_azul:
+  clave: '[Ale Collector] Adventurer Ban'
+  nombre: Adventurer Ban
+  color: azul
+  raza: humano
+  roles:
+  - dano_single
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Rage Attack)
+    skill_2:
+      descripcion: Un objetivo (Stretch Chain Stick)
+    ulti:
+      descripcion: Un objetivo (Fox Hunt)
+fighter_diane_claro:
+  clave: '[Bubbly Classmate] Fighter Diane'
+  nombre: Fighter Diane
+  color: claro
+  raza: gigante
+  roles:
+  - dano_single
+  - dano_area
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Toast Crash)
+    skill_2:
+      descripcion: Área (What's in My Bag?)
+    ulti:
+      descripcion: Un objetivo (Dragon Kick)
+fighter_diane_verde:
+  clave: '["Creation"] Fighter Diane'
+  nombre: Fighter Diane
+  color: verde
+  raza: gigante
+  roles:
+  - dano_single
+  - aguante
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Metal Shock)
+    skill_2:
+      descripcion: Defensa (Heavy Metal)
+    ulti:
+      descripcion: Un objetivo (Dragon Kick)
+fighter_diane_rojo:
+  clave: '[Kungfu Master] Fighter Diane'
+  nombre: Fighter Diane
+  color: rojo
+  raza: gigante
+  roles:
+  - dano_single
+  - debuff
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Ground Strike)
+    skill_2:
+      descripcion: Un objetivo (Sand Whirl)
+    ulti:
+      descripcion: Un objetivo (Dragon Kick)
+fighter_diane_azul:
+  clave: '[Matrona] Fighter Diane'
+  nombre: Fighter Diane
+  color: azul
+  raza: gigante
+  roles:
+  - dano_single
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Break Muscle)
+    skill_2:
+      descripcion: Un objetivo (Friends)
+    ulti:
+      descripcion: Un objetivo (Dragon Kick)
+guardian_hawk_elizabeth_azul:
+  clave: Guardian Hawk & Elizabeth
+  nombre: Guardian Hawk & Elizabeth
+  color: azul
+  raza: diosa
+  roles:
+  - dano_single
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Fire Breath)
+    skill_2:
+      descripcion: Otro (Digest)
+    ulti:
+      descripcion: Un objetivo (Rush Hawk)
+hawk_elizabeth_verde:
+  clave: '[Mascot] Hawk & Elizabeth'
+  nombre: Hawk & Elizabeth
+  color: verde
+  raza: diosa
+  roles:
+  - dano_single
+  - dano_area
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Super Pork Loin Illusion)
+    skill_2:
+      descripcion: Área (Super Hawk Illusion)
+    ulti:
+      descripcion: Un objetivo (Final Pork Stomping)
+hawk_elizabeth_rojo:
+  clave: '[Mobile Tavern] Hawk & Elizabeth'
+  nombre: Hawk & Elizabeth
+  color: rojo
+  raza: diosa
+  roles:
+  - dano_single
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Rolling Ham Attack)
+    skill_2:
+      descripcion: Un objetivo (Hawk Night Rush)
+    ulti:
+      descripcion: Un objetivo (Final Pork Stomping)
+demon_meliodas_azul:
+  clave: '[Knight of Wrath] Demon Meliodas'
+  nombre: Demon Meliodas
+  color: azul
+  raza: demonio
+  roles:
+  - dano_area
+  - dano_single
+  cartas:
+    skill_1:
+      descripcion: Área (Hell Blaze)
+    skill_2:
+      descripcion: Área (Darkness Flutter)
+    ulti:
+      descripcion: Un objetivo (Hell Buster)
+demon_meliodas_rojo:
+  clave: '[The Dragon Sin of Wrath] Demon Meliodas'
+  nombre: Demon Meliodas
+  color: rojo
+  raza: demonio
+  roles:
+  - dano_single
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Hellfire)
+    skill_2:
+      descripcion: Un objetivo (Blaze Burst)
+    ulti:
+      descripcion: Un objetivo (Hell Buster)
+mercenary_matrona_verde:
+  clave: '[Honor of Giants] Mercenary Matrona'
+  nombre: Mercenary Matrona
+  color: verde
+  raza: gigante
+  roles:
+  - dano_single
+  - aguante
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Stone Strike)
+    skill_2:
+      descripcion: Defensa (Fighting Pride)
+    ulti:
+      descripcion: Un objetivo (Prison Gripa)
+mercenary_matrona_rojo:
+  clave: '[Halloween] Mercenary Matrona'
+  nombre: Mercenary Matrona
+  color: rojo
+  raza: gigante
+  roles:
+  - dano_single
+  - aguante
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Rising Rock Pillar)
+    skill_2:
+      descripcion: Defensa (Heavy Metal)
+    ulti:
+      descripcion: Un objetivo (Prison Grip)
+mercenary_matrona_azul:
+  clave: '[Fang of the Land] Mercenary Matrona'
+  nombre: Mercenary Matrona
+  color: azul
+  raza: gigante
+  roles:
+  - dano_single
+  - dano_area
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Geokinesis)
+    skill_2:
+      descripcion: Área (Aerial Stem)
+    ulti:
+      descripcion: Un objetivo (Prison Gripa)
+new_king_arthur_verde:
+  clave: '[Light of Hope] New King Arthur'
+  nombre: New King Arthur
+  color: verde
+  raza: humano
+  roles:
+  - dano_single
+  - dano_area
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Typhoon Slash)
+    skill_2:
+      descripcion: Área (Silent Slash)
+    ulti:
+      descripcion: Un objetivo (Legendary)
+new_king_arthur_azul:
+  clave: '[Destined Heir] New King Arthur'
+  nombre: New King Arthur
+  color: azul
+  raza: humano
+  roles:
+  - dano_single
+  - dano_area
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Raise Blade)
+    skill_2:
+      descripcion: Área (Catapulta)
+    ulti:
+      descripcion: Un objetivo (Legendary)
+adventurer_arthur_azul:
+  clave: '[King of Prophecies] Adventurer Arthur'
+  nombre: Adventurer Arthur
+  color: azul
+  raza: humano
+  roles:
+  - dano_single
+  - dano_area
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Sharp Blade)
+    skill_2:
+      descripcion: Área (Covering Fire)
+    ulti:
+      descripcion: Un objetivo (Cross Blade)
+new_king_arthur_rojo:
+  clave: '[Camelot''s Sword] New King Arthur'
+  nombre: New King Arthur
+  color: rojo
+  raza: humano
+  roles:
+  - dano_single
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Light Pillar)
+    skill_2:
+      descripcion: Otro (Royal Sword)
+    ulti:
+      descripcion: Un objetivo (Legendary)
+lostvayne_meliodas_azul:
+  clave: '[Ragnarok] Lostvayne Meliodas'
+  nombre: Lostvayne Meliodas
+  color: azul
+  raza: demonio
+  roles:
+  - dano_single
+  - dano_area
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Advance Front)
+    skill_2:
+      descripcion: Un objetivo (Despair Burn)
+    ulti:
+      descripcion: Área (Virtual Body Doubles)
+guardian_elaine_verde:
+  clave: '[Fairy King''s Forest] Guardian Elaine'
+  nombre: Guardian Elaine
+  color: verde
+  raza: hada
+  roles:
+  - dano_single
+  - dano_area
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Wind of the Fairy King's Forest)
+    skill_2:
+      descripcion: Área (Wrath of the Gentle Breeze)
+    ulti:
+      descripcion: Un objetivo (Wrath of the Autumn Wind)
+grandmaster_dreyfus_rojo:
+  clave: '[Omen of Chaos] Grandmaster Dreyfus'
+  nombre: Grandmaster Dreyfus
+  color: rojo
+  raza: humano
+  roles:
+  - dano_single
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Pierce)
+    skill_2:
+      descripcion: Un objetivo (Piercing Stab)
+    ulti:
+      descripcion: Un objetivo (Milky Way Jail Break Blade)
+grandmaster_dreyfus_verde:
+  clave: '["Break"] Grandmaster Dreyfus'
+  nombre: Grandmaster Dreyfus
+  color: verde
+  raza: humano
+  roles:
+  - dano_single
+  - dano_area
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Imperial Sword Art Type 3)
+    skill_2:
+      descripcion: Área (Demolishing Attack)
+    ulti:
+      descripcion: Un objetivo (Milky Way Jail Break Blade)
+grandmaster_hendrickson_azul:
+  clave: '["Melt"] Grandmaster Hendrickson'
+  nombre: Grandmaster Hendrickson
+  color: azul
+  raza: humano
+  roles:
+  - dano_single
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Ingest)
+    skill_2:
+      descripcion: Un objetivo (Flame Wave)
+    ulti:
+      descripcion: Un objetivo (Hell Blaze Wave)
+druid_hendrickson_verde:
+  clave: '[Omen of Chaos] Druid Hendrickson'
+  nombre: Druid Hendrickson
+  color: verde
+  raza: humano
+  roles:
+  - dano_area
+  - buff
+  - curacion
+  cartas:
+    skill_1:
+      descripcion: Área (Acid Tower)
+    skill_2:
+      descripcion: Apoyo (Purge)
+    ulti:
+      descripcion: Otro (Acid Down)
+mage_vivian_rojo:
+  clave: '[Reincarnation of Obsession] Mage Vivian'
+  nombre: Mage Vivian
+  color: rojo
+  raza: humano
+  roles:
+  - dano_single
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Darkness Bolt)
+    skill_2:
+      descripcion: Un objetivo (Freeze Coffin)
+    ulti:
+      descripcion: Un objetivo (Destroy Four Elements)
+holy_knight_jillian_verde:
+  clave: '[Roars of Dawn] Holy Knight Jillian'
+  nombre: Holy Knight Jillian
+  color: verde
+  raza: humano
+  roles:
+  - dano_single
+  - dano_area
+  - quita_postura
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Cross Shot)
+    skill_2:
+      descripcion: Área (Cancellation)
+    ulti:
+      descripcion: Un objetivo (Bind)
+holy_knight_hugo_verde:
+  clave: '[Roars of Dawn] Holy Knight Hugo'
+  nombre: Holy Knight Hugo
+  color: verde
+  raza: humano
+  roles:
+  - dano_single
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Wind Destroy)
+    skill_2:
+      descripcion: Un objetivo (Tornado Shot)
+    ulti:
+      descripcion: Un objetivo (Chaos Blast)
+holy_knight_weinheidt_azul:
+  clave: '[Roars of Dawn] Holy Knight Weinheidt'
+  nombre: Holy Knight Weinheidt
+  color: azul
+  raza: humano
+  roles:
+  - dano_area
+  - dano_single
+  cartas:
+    skill_1:
+      descripcion: Área (Flash Arrow)
+    skill_2:
+      descripcion: Área (Death Arrow)
+    ulti:
+      descripcion: Un objetivo (Blackout Arrow)
+holy_knight_simon_rojo:
+  clave: '[Roars of Dawn] Holy Knight Simon'
+  nombre: Holy Knight Simon
+  color: rojo
+  raza: humano
+  roles:
+  - dano_single
+  - dano_area
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Burning Wind Strike)
+    skill_2:
+      descripcion: Área (Yellow Dragon Sky Blade)
+    ulti:
+      descripcion: Área (Ring)
+captain_slater_rojo:
+  clave: '[Roars of Dawn] Captain Slater'
+  nombre: Captain Slater
+  color: rojo
+  raza: humano
+  roles:
+  - dano_single
+  - debuff
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Blade Wave)
+    skill_2:
+      descripcion: Un objetivo (Overpower)
+    ulti:
+      descripcion: Un objetivo (Vertical Saw)
+hunter_slater_azul:
+  clave: '["Overpower"] Hunter Slater'
+  nombre: Hunter Slater
+  color: azul
+  raza: humano
+  roles:
+  - dano_single
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Iron Slash)
+    skill_2:
+      descripcion: Un objetivo (Sawblade)
+    ulti:
+      descripcion: Un objetivo (Overpower)
+holy_knight_gustav_verde:
+  clave: '[Knight of Ice] Holy Knight Gustav'
+  nombre: Holy Knight Gustav
+  color: verde
+  raza: humano
+  roles:
+  - dano_single
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Blizzard Axel)
+    skill_2:
+      descripcion: Un objetivo (Freezing Field)
+    ulti:
+      descripcion: Otro (Killer Iceberg)
+holy_knight_marmas_azul:
+  clave: '[Boom Boom Pow] Holy Knight Marmas'
+  nombre: Holy Knight Marmas
+  color: azul
+  raza: humano
+  roles:
+  - dano_area
+  - debuff
+  cartas:
+    skill_1:
+      descripcion: Área (Maraca Smash)
+    skill_2:
+      descripcion: Área (Gravity x10)
+    ulti:
+      descripcion: Área (Hyper Gravity)
+knight_of_danafor_cain_verde:
+  clave: '[Burning Ember] Knight of Danafor Cain'
+  nombre: Knight of Danafor Cain
+  color: verde
+  raza: humano
+  roles:
+  - dano_single
+  - dano_area
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Chain Vertical Kick)
+    skill_2:
+      descripcion: Un objetivo (Charge Fire)
+    ulti:
+      descripcion: Área (Fire Tornado)
+holy_knight_freesia_azul:
+  clave: '[Weird Fangs] Holy Knight Freesia'
+  nombre: Holy Knight Freesia
+  color: azul
+  raza: humano
+  roles:
+  - dano_area
+  cartas:
+    skill_1:
+      descripcion: Área (Storm Rondo)
+    skill_2:
+      descripcion: Área (Corrosive Bug)
+    ulti:
+      descripcion: Área (Rain Capriccio)
+holy_knight_jude_rojo:
+  clave: '[Weird Fangs] Holy Knight Jude'
+  nombre: Holy Knight Jude
+  color: rojo
+  raza: humano
+  roles:
+  - dano_single
+  - dano_area
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Thorn Shot)
+    skill_2:
+      descripcion: Área (Shadow Thorn)
+    ulti:
+      descripcion: Un objetivo (Thorn Hunt)
+holy_knight_ruin_verde:
+  clave: '[Weird Fangs] Holy Knight Ruin'
+  nombre: Holy Knight Ruin
+  color: verde
+  raza: humano
+  roles:
+  - dano_single
+  - dano_area
+  - debuff
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Death Blade)
+    skill_2:
+      descripcion: Área (Nightmare Illusion)
+    ulti:
+      descripcion: Un objetivo (Heavy Hammer)
+holy_knight_golgius_azul:
+  clave: '[Weird Fangs] Holy Knight Golgius'
+  nombre: Holy Knight Golgius
+  color: azul
+  raza: humano
+  roles:
+  - dano_single
+  - dano_area
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Blade Slash)
+    skill_2:
+      descripcion: Área (Throwing Star)
+    ulti:
+      descripcion: Un objetivo (Silent Strike)
+apprentice_holy_knight_twigo_rojo:
+  clave: '[Confirmation] Apprentice Holy Knight Twigo'
+  nombre: Apprentice Holy Knight Twigo
+  color: rojo
+  raza: humano
+  roles:
+  - dano_single
+  - dano_area
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Blood Strike)
+    skill_2:
+      descripcion: Área (Strike Decision)
+    ulti:
+      descripcion: Área (Extermination Strike)
+member_allioni_verde:
+  clave: '[Beard of the Mountain Cat] Member Allioni'
+  nombre: Member Allioni
+  color: verde
+  raza: humano
+  roles:
+  - dano_single
+  - aguante
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Charge Forward!)
+    skill_2:
+      descripcion: Defensa (Ah! Emergency!)
+    ulti:
+      descripcion: Un objetivo (Beard of the Mountain Cat, Assemble!)
+great_mage_merlin_verde:
+  clave: '[The Boar Sin of Gluttony] Great Mage Merlin'
+  nombre: Great Mage Merlin
+  color: verde
+  raza: desconocida
+  roles:
+  - dano_single
+  - buff
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Sphere Explosion)
+    skill_2:
+      descripcion: Apoyo (Perfect Cube)
+    ulti:
+      descripcion: Un objetivo (Exterminate Ray)
+great_mage_merlin_azul:
+  clave: '["Infinity"] Great Mage Merlin'
+  nombre: Great Mage Merlin
+  color: azul
+  raza: desconocida
+  roles:
+  - dano_single
+  - dano_area
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Dark Void Buster)
+    skill_2:
+      descripcion: Área (Curse Engage)
+    ulti:
+      descripcion: Un objetivo (Exterminate Ray)
+great_mage_merlin_rojo:
+  clave: '[Collector] Great Mage Merlin'
+  nombre: Great Mage Merlin
+  color: rojo
+  raza: desconocida
+  roles:
+  - dano_single
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Poison Wave)
+    skill_2:
+      descripcion: Un objetivo (Frozen Factor)
+    ulti:
+      descripcion: Un objetivo (Exterminate Ray)
+fairy_helbram_azul:
+  clave: '[Royalty] Fairy Helbram'
+  nombre: Fairy Helbram
+  color: azul
+  raza: hada
+  roles:
+  - dano_area
+  - buff
+  cartas:
+    skill_1:
+      descripcion: Área (Blood suck)
+    skill_2:
+      descripcion: Apoyo (Increase Recovery)
+    ulti:
+      descripcion: Área (Hunter Wisp)
+fairy_helbram_verde:
+  clave: '[Forest Guardian] Fairy Helbram'
+  nombre: Fairy Helbram
+  color: verde
+  raza: hada
+  roles:
+  - dano_area
+  cartas:
+    skill_1:
+      descripcion: Área (Throwing Edge)
+    skill_2:
+      descripcion: Otro (Fairy Wind)
+    ulti:
+      descripcion: Área (Hunter Wisp)
+guardian_jericho_rojo:
+  clave: '[Knight of Frost] Guardian Jericho'
+  nombre: Guardian Jericho
+  color: rojo
+  raza: humano
+  roles:
+  - dano_single
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Ice Blade)
+    skill_2:
+      descripcion: Un objetivo (Ice Wave)
+    ulti:
+      descripcion: Un objetivo (Silent Split)
+guardian_jericho_verde:
+  clave: '[Godspeed Knight] Guardian Jericho'
+  nombre: Guardian Jericho
+  color: verde
+  raza: humano
+  roles:
+  - dano_single
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Flash Attack)
+    skill_2:
+      descripcion: Un objetivo (Flash Strike)
+    ulti:
+      descripcion: Un objetivo (Silent Split)
+holy_knight_jericho_rojo:
+  clave: '[Adventurer] Holy Knight Jericho'
+  nombre: Holy Knight Jericho
+  color: rojo
+  raza: humano
+  roles:
+  - dano_single
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Count Smash)
+    skill_2:
+      descripcion: Un objetivo (Pain Blade)
+    ulti:
+      descripcion: Un objetivo (Godspeed Ten Flashes)
+holy_knight_jericho_azul:
+  clave: '[New Generation] Holy Knight Jericho'
+  nombre: Holy Knight Jericho
+  color: azul
+  raza: humano
+  roles:
+  - dano_single
+  - buff
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Godspeed Bone Cutter)
+    skill_2:
+      descripcion: Apoyo (Super Recovery Spell)
+    ulti:
+      descripcion: Un objetivo (Godspeed Ten Flashes)
+guardian_griamore_azul:
+  clave: '[Knight of the Holy War] Guardian Griamore'
+  nombre: Guardian Griamore
+  color: azul
+  raza: humano
+  roles:
+  - dano_single
+  - aguante
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Shell Blast)
+    skill_2:
+      descripcion: Otro (Battle Shout)
+    ulti:
+      descripcion: Defensa (Wailing Wall)
+ranger_griamore_rojo:
+  clave: '[Champion] Ranger Griamore'
+  nombre: Ranger Griamore
+  color: rojo
+  raza: humano
+  roles:
+  - dano_single
+  - buff
+  - dano_area
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Burning Strike)
+    skill_2:
+      descripcion: Apoyo (Wall)
+    ulti:
+      descripcion: Área (Panic Room)
+ranger_griamore_azul:
+  clave: '[Adventurer] Ranger Griamore'
+  nombre: Ranger Griamore
+  color: azul
+  raza: humano
+  roles:
+  - dano_single
+  - aguante
+  - dano_area
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Wall Crush)
+    skill_2:
+      descripcion: Defensa (Long Shield)
+    ulti:
+      descripcion: Área (Panic Room)
+ranger_howzer_azul:
+  clave: '[Star of the Kingdom] Ranger Howzer'
+  nombre: Ranger Howzer
+  color: azul
+  raza: humano
+  roles:
+  - dano_area
+  - dano_single
+  cartas:
+    skill_1:
+      descripcion: Área (Wind Break)
+    skill_2:
+      descripcion: Un objetivo (Block Shield)
+    ulti:
+      descripcion: Un objetivo (Triple Upper)
+holy_knight_howzer_azul:
+  clave: '[Knight of the Holy War] Holy Knight Howzer'
+  nombre: Holy Knight Howzer
+  color: azul
+  raza: humano
+  roles:
+  - dano_single
+  - dano_area
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Concentrated Wind)
+    skill_2:
+      descripcion: Área (Breakthrough)
+    ulti:
+      descripcion: Área (Rising Tornado)
+ranger_howzer_verde:
+  clave: '[Liones Royalty] Ranger Howzer'
+  nombre: Ranger Howzer
+  color: verde
+  raza: humano
+  roles:
+  - dano_single
+  - aguante
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Whirl shock)
+    skill_2:
+      descripcion: Defensa (Wind Shoot)
+    ulti:
+      descripcion: Un objetivo (Triple Upper)
+holy_knight_guila_azul:
+  clave: '[Rapier] Holy Knight Guila'
+  nombre: Holy Knight Guila
+  color: azul
+  raza: humano
+  roles:
+  - dano_area
+  - buff
+  - quita_postura
+  cartas:
+    skill_1:
+      descripcion: Área (Flame Focus)
+    skill_2:
+      descripcion: Apoyo (Rejuvenation)
+    ulti:
+      descripcion: Área (Brilliant Detonation)
+guardian_guila_rojo:
+  clave: '["Explosion"] Guardian Guila'
+  nombre: Guardian Guila
+  color: rojo
+  raza: humano
+  roles:
+  - dano_single
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Killer Mines)
+    skill_2:
+      descripcion: Un objetivo (Shot Bombs)
+    ulti:
+      descripcion: Otro (Chain Explosion)
+holy_knight_gilthunder_verde:
+  clave: '[Chivalrous] Holy Knight Gilthunder'
+  nombre: Holy Knight Gilthunder
+  color: verde
+  raza: humano
+  roles:
+  - dano_area
+  - buff
+  - dano_single
+  cartas:
+    skill_1:
+      descripcion: Área (Lightning)
+    skill_2:
+      descripcion: Apoyo (Lightning Power)
+    ulti:
+      descripcion: Un objetivo (Lightning King Decapitation)
+holy_knight_gilthunder_azul:
+  clave: '[Star of the Kingdom] Holy Knight Gilthunder'
+  nombre: Holy Knight Gilthunder
+  color: azul
+  raza: humano
+  roles:
+  - dano_single
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Thunder Scream Strike)
+    skill_2:
+      descripcion: Un objetivo (Lightning King Iron Hammer)
+    ulti:
+      descripcion: Un objetivo (Lightning King Decapitation)
+holy_knight_gowther_verde:
+  clave: '[Halloween] Holy Knight Gowther'
+  nombre: Holy Knight Gowther
+  color: verde
+  raza: desconocida
+  roles:
+  - dano_area
+  cartas:
+    skill_1:
+      descripcion: Área (Halloween Darkness)
+    skill_2:
+      descripcion: Otro (Invasion Arrow)
+    ulti:
+      descripcion: Área (Rewrite Halloween)
+young_villager_gowther_verde:
+  clave: '[Wanted Man] Young Villager Gowther'
+  nombre: Young Villager Gowther
+  color: verde
+  raza: desconocida
+  roles:
+  - dano_single
+  - debuff
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Overdrive)
+    skill_2:
+      descripcion: Un objetivo (Nightmare Teller)
+    ulti:
+      descripcion: Un objetivo (Gatling Jack)
+holy_knight_gowther_rojo:
+  clave: '[The Goat Sin of Lust] Holy Knight Gowther'
+  nombre: Holy Knight Gowther
+  color: rojo
+  raza: desconocida
+  roles:
+  - dano_area
+  cartas:
+    skill_1:
+      descripcion: Área (Arrow Shot)
+    skill_2:
+      descripcion: Otro (Invasion Arrow)
+    ulti:
+      descripcion: Área (Rewrite Light)
+holy_knight_gowther_azul:
+  clave: '[Liones''s Hero] Holy Knight Gowther'
+  nombre: Holy Knight Gowther
+  color: azul
+  raza: desconocida
+  roles:
+  - dano_area
+  cartas:
+    skill_1:
+      descripcion: Área (Pain Edition)
+    skill_2:
+      descripcion: Área (Blackout)
+    ulti:
+      descripcion: Área (Rewrite Light)
+king_the_fairy_king_rojo:
+  clave: '[Harlequin] King the Fairy King'
+  nombre: King the Fairy King
+  color: rojo
+  raza: hada
+  roles:
+  - dano_area
+  cartas:
+    skill_1:
+      descripcion: Área (Split spear)
+    skill_2:
+      descripcion: Área (Fight Fire with Fire)
+    ulti:
+      descripcion: Área (Sunflower)
+king_the_fairy_king_verde:
+  clave: '[Forest Guardian] King the Fairy King'
+  nombre: King the Fairy King
+  color: verde
+  raza: hada
+  roles:
+  - dano_single
+  - dano_area
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Chastiefol)
+    skill_2:
+      descripcion: Un objetivo (Poisoning Garden)
+    ulti:
+      descripcion: Área (Sunflower)
+holy_knight_diane_verde:
+  clave: '[The Seven Deadly Sins] Holy Knight Diane'
+  nombre: Holy Knight Diane
+  color: verde
+  raza: gigante
+  roles:
+  - dano_area
+  cartas:
+    skill_1:
+      descripcion: Área (Rising Meteor)
+    skill_2:
+      descripcion: Área (Shockwave)
+    ulti:
+      descripcion: Área (Mother Earth Catastrophe)
+mercenary_diane_rojo:
+  clave: '[Heart of the Land] Mercenary Diane'
+  nombre: Mercenary Diane
+  color: rojo
+  raza: gigante
+  roles:
+  - dano_single
+  - dano_area
+  - debuff
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Metal Fist)
+    skill_2:
+      descripcion: Área (Sand Whirl)
+    ulti:
+      descripcion: Área (Stone Blast)
+holy_knight_diane_azul:
+  clave: '[The Serpent Sin of Envy] Holy Knight Diane'
+  nombre: Holy Knight Diane
+  color: azul
+  raza: gigante
+  roles:
+  - dano_single
+  - dano_area
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Rush Rock)
+    skill_2:
+      descripcion: Área (Ground Gladius)
+    ulti:
+      descripcion: Área (Mother Earth Catastrophe)
+hostess_elizabeth_rojo:
+  clave: '[Boar Hatl Tavern] Hostess Elizabeth'
+  nombre: Hostess Elizabeth
+  color: rojo
+  raza: diosa
+  roles:
+  - dano_single
+  - buff
+  - curacion
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Slide Serve)
+    skill_2:
+      descripcion: Apoyo (Nurse Call)
+    ulti:
+      descripcion: Apoyo (Miracle Wave)
+princess_elizabeth_azul:
+  clave: '[A New Adventure] Princess Elizabeth'
+  nombre: Princess Elizabeth
+  color: azul
+  raza: diosa
+  roles:
+  - dano_area
+  - buff
+  cartas:
+    skill_1:
+      descripcion: Área (Radiant Explosion)
+    skill_2:
+      descripcion: Otro (Brilliant Protection)
+    ulti:
+      descripcion: Apoyo (Life Authority)
+princess_elizabeth_verde:
+  clave: '[Liones] Princess Elizabeth'
+  nombre: Princess Elizabeth
+  color: verde
+  raza: diosa
+  roles:
+  - dano_single
+  - buff
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Punishing Strike)
+    skill_2:
+      descripcion: Apoyo (Healing Grace)
+    ulti:
+      descripcion: Apoyo (Life Authority)
+captain_meliodas_azul:
+  clave: '[Tomorrow''s Champion] Captain Meliodas'
+  nombre: Captain Meliodas
+  color: azul
+  raza: demonio
+  roles:
+  - dano_single
+  - dano_area
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Boot Slash)
+    skill_2:
+      descripcion: Área (Dark Condensation)
+    ulti:
+      descripcion: Un objetivo (1,000 Divine Cuts)
+captain_meliodas_verde:
+  clave: '[The Seven Deadly Sins] Captain Meliodas'
+  nombre: Captain Meliodas
+  color: verde
+  raza: demonio
+  roles:
+  - dano_single
+  - aguante
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Hell Blaze)
+    skill_2:
+      descripcion: Defensa (Outburst Counter)
+    ulti:
+      descripcion: Un objetivo (1,000 Divine Cuts)
+master_meliodas_azul:
+  clave: '[Boar Hatl Tavern] Master Meliodas'
+  nombre: Master Meliodas
+  color: azul
+  raza: demonio
+  roles:
+  - dano_single
+  - aguante
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Triple Attack)
+    skill_2:
+      descripcion: Defensa (Full Counter)
+    ulti:
+      descripcion: Un objetivo (Evil spirit)
+truth_seeker_merlin_azul:
+  clave: '[Beach Girl] Truth Seeker Merlin'
+  nombre: Truth Seeker Merlin
+  color: azul
+  raza: desconocida
+  roles:
+  - dano_single
+  - dano_area
+  - debuff
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Summer Rocket)
+    skill_2:
+      descripcion: Área (Sandcastle)
+    ulti:
+      descripcion: Área (Frost Blast)
+golden_wings_elaine_azul:
+  clave: '[Scent of Spring] Golden Wings Elaine'
+  nombre: Golden Wings Elaine
+  color: azul
+  raza: hada
+  roles:
+  - dano_area
+  - buff
+  cartas:
+    skill_1:
+      descripcion: Área (Flower Blast)
+    skill_2:
+      descripcion: Apoyo (Conducting Nature)
+    ulti:
+      descripcion: Área (Tempest Fall)
+oslo_hawk_verde:
+  clave: '[Maritime Troublemakers] Oslo & Hawk'
+  nombre: Oslo & Hawk
+  color: verde
+  raza: desconocida
+  roles:
+  - dano_single
+  - buff
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (A Captain and His Buddy)
+    skill_2:
+      descripcion: Apoyo (Heavenly Taste)
+    ulti:
+      descripcion: Un objetivo (Charge Again?!)
+oslo_hawk_azul:
+  clave: '[Awesome Party] Oslo & Hawk'
+  nombre: Oslo & Hawk
+  color: azul
+  raza: desconocida
+  roles:
+  - dano_single
+  - dano_area
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Ping Pong Duo)
+    skill_2:
+      descripcion: Área (Cake Bomb)
+    ulti:
+      descripcion: Un objetivo (Charge Again?!)
+noblesse_eastin_azul:
+  clave: '[Ruler of Stormy Seas] Noblesse Eastin'
+  nombre: Noblesse Eastin
+  color: azul
+  raza: humano
+  roles:
+  - dano_area
+  cartas:
+    skill_1:
+      descripcion: Área (Quebrar)
+    skill_2:
+      descripcion: Otro (La Sed)
+    ulti:
+      descripcion: Otro (Triste Fin)
+fox_sin_verde:
+  clave: '[Adventure Guide] Fox Sin'
+  nombre: Fox Sin
+  color: verde
+  raza: hada
+  roles:
+  - dano_single
+  - buff
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Soft Fox Attack)
+    skill_2:
+      descripcion: Otro (Springing Power)
+    ulti:
+      descripcion: Apoyo (Vibrant Vitality)
+ainz_ooal_gown_azul:
+  clave: '[Ruler of Nazarick] Ainz Ooal Gown'
+  nombre: Ainz Ooal Gown
+  color: azul
+  raza: desconocida
+  roles:
+  - dano_single
+  - dano_area
+  - debuff
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Death Quartet)
+    skill_2:
+      descripcion: Área (Dark Blaster)
+    ulti:
+      descripcion: Un objetivo (Heart Gripo)
+derieri_of_purity_verde:
+  clave: '[Elite Demon] Derieri of Purity'
+  nombre: Derieri of Purity
+  color: verde
+  raza: demonio
+  roles:
+  - dano_single
+  - dano_area
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Chain Strike)
+    skill_2:
+      descripcion: Área (Leap Shock)
+    ulti:
+      descripcion: Un objetivo (Combo Star)
+fraudrin_of_selflessness_azul:
+  clave: '[Elite Demon] Fraudrin of Selflessness'
+  nombre: Fraudrin of Selflessness
+  color: azul
+  raza: demonio
+  roles:
+  - dano_single
+  - aguante
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Dark Energy)
+    skill_2:
+      descripcion: Defensa (Full Bloom)
+    ulti:
+      descripcion: Un objetivo (Shadow Barrage)
+mono_of_blood_and_iron_rojo:
+  clave: '[Blade Unleashed] Mono of Blood and Iron'
+  nombre: Mono of Blood and Iron
+  color: rojo
+  raza: humano
+  roles:
+  - dano_area
+  cartas:
+    skill_1:
+      descripcion: Área (Slashing Flurry)
+    skill_2:
+      descripcion: Área (Blade Blitz)
+    ulti:
+      descripcion: Área (Full Unleash)
+eastin_of_authority_rojo:
+  clave: '[Empress of the Sea] Eastin of Authority'
+  nombre: Eastin of Authority
+  color: rojo
+  raza: humano
+  roles:
+  - dano_single
+  - dano_area
+  - debuff
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Abyssal Explosion)
+    skill_2:
+      descripcion: Área (Phalanx Squad)
+    ulti:
+      descripcion: Un objetivo (Queen's Amusement)
+mage_lillia_verde:
+  clave: '[Doombringer] Mage Lillia'
+  nombre: Mage Lillia
+  color: verde
+  raza: humano
+  roles:
+  - dano_single
+  - dano_area
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (La Sylphide)
+    skill_2:
+      descripcion: Área (Requiem)
+    ulti:
+      descripcion: Área (Star Link)
+benimaru_rojo:
+  clave: '[Kijin] Benimaru'
+  nombre: Benimaru
+  color: rojo
+  raza: desconocida
+  roles:
+  - dano_single
+  - dano_area
+  - debuff
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Fire Slash)
+    skill_2:
+      descripcion: Área (Rising Dragon Strike)
+    ulti:
+      descripcion: Un objetivo (Hell Fiare)
+guardian_elaine_rojo:
+  clave: '[Sweet Temptation] Guardian Elaine'
+  nombre: Guardian Elaine
+  color: rojo
+  raza: hada
+  roles:
+  - dano_single
+  - dano_area
+  - debuff
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Slicing Winds)
+    skill_2:
+      descripcion: Área (Binding Roots)
+    ulti:
+      descripcion: Un objetivo (Wrath of the Autumn Wind)
+adventurer_ban_rojo:
+  clave: '[Nunchaku] Adventurer Ban'
+  nombre: Adventurer Ban
+  color: rojo
+  raza: humano
+  roles:
+  - dano_single
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Brandisher Stick)
+    skill_2:
+      descripcion: Un objetivo (Mana Drain)
+    ulti:
+      descripcion: Un objetivo (Fox Hunt)
+beatrice_azul:
+  clave: '[The Caretaker of the Forbidden Library] Beatrice'
+  nombre: Beatrice
+  color: azul
+  raza: desconocida
+  roles:
+  - dano_single
+  - dano_area
+  - curacion
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Mana Collection)
+    skill_2:
+      descripcion: Área (1'11 Let You Know, I Suppose)
+    ulti:
+      descripcion: Área (Yin Magic Expert)
+twin_maid_ram_verde:
+  clave: '[Re:ZERO] Twin Maid Ram'
+  nombre: Twin Maid Ram
+  color: verde
+  raza: desconocida
+  roles:
+  - dano_single
+  - dano_area
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Fura)
+    skill_2:
+      descripcion: Área (Eat This)
+    ulti:
+      descripcion: Área (Don't Disturb Ram)
+twin_maid_rem_rojo:
+  clave: '[Re:ZERO] Twin Maid Rem'
+  nombre: Twin Maid Rem
+  color: rojo
+  raza: desconocida
+  roles:
+  - dano_single
+  - dano_area
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Crushing Strike)
+    skill_2:
+      descripcion: Área (Spirited Dance of the Demon)
+    ulti:
+      descripcion: Área (Night Parade of the Blue Demon)
+royal_candidate_emilia_azul:
+  clave: '[Re:ZER0] Royal Candidate Emilia'
+  nombre: Royal Candidate Emilia
+  color: azul
+  raza: desconocida
+  roles:
+  - dano_single
+  - dano_area
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Counting on You, Puck!)
+    skill_2:
+      descripcion: Área (A1 Huma)
+    ulti:
+      descripcion: Área (Bond With the Great Spirit)
+valenti_of_obsession_verde:
+  clave: '[Magic Weapon MK-II] Valenti of Obsession'
+  nombre: Valenti of Obsession
+  color: verde
+  raza: humano
+  roles:
+  - dano_area
+  - dano_single
+  cartas:
+    skill_1:
+      descripcion: Área (Chain Reaction)
+    skill_2:
+      descripcion: Un objetivo (Rocket Punch)
+    ulti:
+      descripcion: Área (Event Horizon)
+knight_of_danafor_liz_azul:
+  clave: '[Gift of Happiness] Knight of Danafor Liz'
+  nombre: Knight of Danafor Liz
+  color: azul
+  raza: diosa
+  roles:
+  - dano_single
+  - dano_area
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Bundle of Gifts)
+    skill_2:
+      descripcion: Área (Tree Strike)
+    ulti:
+      descripcion: Un objetivo (Last Attack)
+goddess_elizabeth_azul:
+  clave: '[Holy Warrior] Goddess Elizabeth'
+  nombre: Goddess Elizabeth
+  color: azul
+  raza: diosa
+  roles:
+  - dano_single
+  - buff
+  - aguante
+  - curacion
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Let There Be Light)
+    skill_2:
+      descripcion: Apoyo (Goddess Bless)
+    ulti:
+      descripcion: Defensa (Goddess Pattern)
+cardinal_helbram_azul:
+  clave: '[One-eyed Despot] Cardinal Helbram'
+  nombre: Cardinal Helbram
+  color: azul
+  raza: hada
+  roles:
+  - dano_single
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Edge Grind)
+    skill_2:
+      descripcion: Otro (Combat Roar)
+    ulti:
+      descripcion: Un objetivo (Killer Iceberg)
+druid_jenna_azul:
+  clave: '[Sweet Temptation] Druid Jenna'
+  nombre: Druid Jenna
+  color: azul
+  raza: humano
+  roles:
+  - dano_area
+  - dano_single
+  cartas:
+    skill_1:
+      descripcion: Área (Flash)
+    skill_2:
+      descripcion: Un objetivo (Bright Shot)
+    ulti:
+      descripcion: Un objetivo (Outset Light)
+guardian_deity_camila_rojo:
+  clave: '[Executor of Darkness] Guardian Deity Camila'
+  nombre: Guardian Deity Camila
+  color: rojo
+  raza: desconocida
+  roles:
+  - dano_single
+  - dano_area
+  - buff
+  - curacion
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Dark Blade)
+    skill_2:
+      descripcion: Área (Dark Crescent)
+    ulti:
+      descripcion: Apoyo (Emancipation)
+gamer_shin_azul:
+  clave: '[The Guild''s Rising Star] Gamer Shin'
+  nombre: Gamer Shin
+  color: azul
+  raza: humano
+  roles:
+  - dano_single
+  - dano_area
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Exploding Hornet)
+    skill_2:
+      descripcion: Área (Photon Eraser)
+    ulti:
+      descripcion: Área (Satellite Cannon)
+gamer_shin_rojo:
+  clave: '[Halloween] Gamer Shin'
+  nombre: Gamer Shin
+  color: rojo
+  raza: humano
+  roles:
+  - dano_single
+  - dano_area
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Hero Laser)
+    skill_2:
+      descripcion: Área (Smiling Jack O' Lantern)
+    ulti:
+      descripcion: Área (Satellite Cannon)
+queen_of_explosions_roxy_azul:
+  clave: '[Summer Sun] Queen of Explosions Roxy'
+  nombre: Queen of Explosions Roxy
+  color: azul
+  raza: humano
+  roles:
+  - dano_single
+  - dano_area
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Crazy Surfer)
+    skill_2:
+      descripcion: Área (Rubber Duck Bomb)
+    ulti:
+      descripcion: Un objetivo (Volcanic Ash)
+queen_of_explosions_roxy_verde:
+  clave: '[Halloween] Queen of Explosions Roxy'
+  nombre: Queen of Explosions Roxy
+  color: verde
+  raza: humano
+  roles:
+  - dano_single
+  - dano_area
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Chain Smash)
+    skill_2:
+      descripcion: Área (Surprise Jack O' Lantern)
+    ulti:
+      descripcion: Un objetivo (Volcanic Ash)
+human_weapon_mono_rojo:
+  clave: '[Shepherd of Death] Human Weapon Mono'
+  nombre: Human Weapon Mono
+  color: rojo
+  raza: humano
+  roles:
+  - dano_single
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Fatal Melody)
+    skill_2:
+      descripcion: Un objetivo (Biohazard)
+    ulti:
+      descripcion: Un objetivo (Endless Pain)
+noblesse_eastin_rojo:
+  clave: '[Oceanic Harmonizer] Noblesse Eastin'
+  nombre: Noblesse Eastin
+  color: rojo
+  raza: humano
+  roles:
+  - dano_single
+  - buff
+  - dano_area
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Water Canon)
+    skill_2:
+      descripcion: Apoyo (Bubble Shower)
+    ulti:
+      descripcion: Área (Triste Fin)
+noblesse_eastin_verde:
+  clave: '[Sunny Vacation] Noblesse Eastin'
+  nombre: Noblesse Eastin
+  color: verde
+  raza: humano
+  roles:
+  - dano_single
+  - dano_area
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Faisceau d'eau)
+    skill_2:
+      descripcion: Área (Vague de Dauphin)
+    ulti:
+      descripcion: Área (Triste Fin)
+weapon_researcher_valenti_azul:
+  clave: '[Sunny Vacation] Weapon Researcher Valenti'
+  nombre: Weapon Researcher Valenti
+  color: azul
+  raza: humano
+  roles:
+  - dano_area
+  - dano_single
+  cartas:
+    skill_1:
+      descripcion: Área (Positional Energy)
+    skill_2:
+      descripcion: Un objetivo (Hydrokinesis)
+    ulti:
+      descripcion: Un objetivo (Maxwell's Goblin)
+holy_knight_waillo_azul:
+  clave: '[The Pleiades of the Azure Sky] Holy Knight Waillo'
+  nombre: Holy Knight Waillo
+  color: azul
+  raza: humano
+  roles:
+  - dano_single
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Marriage! Blood-Stained!)
+    skill_2:
+      descripcion: Otro (Marriage! Desire!)
+    ulti:
+      descripcion: Un objetivo (Marriage! Possible!)
+retired_knight_varghese_rojo:
+  clave: '[Hermit] Retired Knight Varghese'
+  nombre: Retired Knight Varghese
+  color: rojo
+  raza: humano
+  roles:
+  - dano_single
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Palm Strike)
+    skill_2:
+      descripcion: Un objetivo (Takedown)
+    ulti:
+      descripcion: Un objetivo (Hunter's Harpoon)
+eris_boreas_greyrat_rojo:
+  clave: '[Mad Dog] Eris Boreas Greyrat'
+  nombre: Eris Boreas Greyrat
+  color: rojo
+  raza: humano
+  roles:
+  - dano_single
+  - dano_area
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Deft Strike)
+    skill_2:
+      descripcion: Área (Swift Smash)
+    ulti:
+      descripcion: Un objetivo (Offensive Dive)
+zeldris_of_piety_rojo:
+  clave: '[Elite Demon] Zeldris of Piety'
+  nombre: Zeldris of Piety
+  color: rojo
+  raza: demonio
+  roles:
+  - dano_single
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Indicate Abyss)
+    skill_2:
+      descripcion: Un objetivo (Nimble Shred)
+    ulti:
+      descripcion: Un objetivo (Reckless Line)
+drole_of_patience_rojo:
+  clave: '[Great Warrior] Drole of Patience'
+  nombre: Drole of Patience
+  color: rojo
+  raza: gigante
+  roles:
+  - dano_single
+  - dano_area
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Colossal Toss)
+    skill_2:
+      descripcion: Un objetivo (Earth Charge)
+    ulti:
+      descripcion: Área (Giga Fall)
+drole_of_patience_azul:
+  clave: '[Elite Demon] Drole of Patience'
+  nombre: Drole of Patience
+  color: azul
+  raza: gigante
+  roles:
+  - dano_single
+  - aguante
+  - dano_area
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Heavy Assault)
+    skill_2:
+      descripcion: Defensa (Heavy Metal)
+    ulti:
+      descripcion: Área (Giga Fall)
+lead_vocalist_zena_azul:
+  clave: '[MAVE:] Lead Vocalist Zena'
+  nombre: Lead Vocalist Zena
+  color: azul
+  raza: desconocida
+  roles:
+  - dano_single
+  - buff
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Killer Beat)
+    skill_2:
+      descripcion: Apoyo (Full Potential)
+    ulti:
+      descripcion: Apoyo (Pandora)
+monspeet_of_reticence_verde:
+  clave: '[Elite Demon] Monspeet of Reticence'
+  nombre: Monspeet of Reticence
+  color: verde
+  raza: demonio
+  roles:
+  - dano_single
+  - dano_area
+  - quita_postura
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Flame Ball)
+    skill_2:
+      descripcion: Un objetivo (Black Fire)
+    ulti:
+      descripcion: Área (Hell's Phoenix)
+goddess_of_beauty_freyja_azul:
+  clave: '[Queen of Abundance] Goddess of Beauty Freyja'
+  nombre: Goddess of Beauty Freyja
+  color: azul
+  raza: desconocida
+  roles:
+  - dano_single
+  - buff
+  - dano_area
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Golden Allure)
+    skill_2:
+      descripcion: Apoyo (Roar of Prosperity)
+    ulti:
+      descripcion: Área (Aesthetic Overflow)
+raphtalia_azul:
+  clave: '[Naofumi''s Sword] Raphtalia'
+  nombre: Raphtalia
+  color: azul
+  raza: desconocida
+  roles:
+  - dano_single
+  - dano_area
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Eight Trigrams Blade of Destiny)
+    skill_2:
+      descripcion: Un objetivo (Illusion Sword)
+    ulti:
+      descripcion: Área (Ying-Yang Blade)
+witch_of_greed_echidna_verde:
+  clave: '[Re:ZER0] Witch of Greed Echidna'
+  nombre: Witch of Greed Echidna
+  color: verde
+  raza: desconocida
+  roles:
+  - dano_area
+  cartas:
+    skill_1:
+      descripcion: Área (It's Simple Magic)
+    skill_2:
+      descripcion: Área (How Interesting)
+    ulti:
+      descripcion: Área (l'm a Bad Witch)
+galland_of_truth_rojo:
+  clave: '[Elite Demon] Galland of Truth'
+  nombre: Galland of Truth
+  color: rojo
+  raza: demonio
+  roles:
+  - dano_single
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Conflagration)
+    skill_2:
+      descripcion: Un objetivo (Beheading)
+    ulti:
+      descripcion: Un objetivo (Critical Over)
+shuna_verde:
+  clave: '[Oni] Shuna'
+  nombre: Shuna
+  color: verde
+  raza: desconocida
+  roles:
+  - dano_single
+  - buff
+  - curacion
+  - dano_area
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Confusion)
+    skill_2:
+      descripcion: Apoyo (Holy Bell)
+    ulti:
+      descripcion: Área (Alignment Field)
+giant_skadi_azul:
+  clave: '[The Hunter] Giant Skadi'
+  nombre: Giant Skadi
+  color: azul
+  raza: gigante
+  roles:
+  - dano_single
+  - debuff
+  - dano_area
+  - curacion
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Art of Hunting)
+    skill_2:
+      descripcion: Área (Winter Bomb)
+    ulti:
+      descripcion: Área (Glacial Blast)
+protective_heart_diane_verde:
+  clave: '[Halloween] Protective Heart Diane'
+  nombre: Protective Heart Diane
+  color: verde
+  raza: gigante
+  roles:
+  - dano_single
+  - dano_area
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Exorcise)
+    skill_2:
+      descripcion: Área (Shooting Pumpkins)
+    ulti:
+      descripcion: Un objetivo (Ascending Ground)
+milim_nava_azul:
+  clave: '[Tyrant of Destruction] Milim Nava'
+  nombre: Milim Nava
+  color: azul
+  raza: desconocida
+  roles:
+  - dano_single
+  - dano_area
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Fire Storm)
+    skill_2:
+      descripcion: Un objetivo (Knife Wind)
+    ulti:
+      descripcion: Área (Dragon Buster)
+rimuru_tempest_azul:
+  clave: '[Ruler of Monsters] Rimuru Tempest'
+  nombre: Rimuru Tempest
+  color: azul
+  raza: desconocida
+  roles:
+  - dano_single
+  - aguante
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Indigo Flower)
+    skill_2:
+      descripcion: Defensa (Drop Deepen)
+    ulti:
+      descripcion: Un objetivo (Gluttony)
+demon_meliodas_verde:
+  clave: '[New Legend] Demon Meliodas'
+  nombre: Demon Meliodas
+  color: verde
+  raza: demonio
+  roles:
+  - dano_single
+  - dano_area
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Chain Blow)
+    skill_2:
+      descripcion: Área (Devil Spear)
+    ulti:
+      descripcion: Un objetivo (Hell Buster)
+guardian_elaine_azul:
+  clave: '[Halloween] Guardian Elaine'
+  nombre: Guardian Elaine
+  color: azul
+  raza: hada
+  roles:
+  - dano_area
+  - buff
+  - dano_single
+  cartas:
+    skill_1:
+      descripcion: Área (Heightening Fear)
+    skill_2:
+      descripcion: Apoyo (Pumpkin Basket)
+    ulti:
+      descripcion: Un objetivo (Rage Candy)
+hunter_slater_rojo:
+  clave: '[Halloween] Hunter Slater'
+  nombre: Hunter Slater
+  color: rojo
+  raza: humano
+  roles:
+  - dano_single
+  - debuff
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Ghost Chase)
+    skill_2:
+      descripcion: Un objetivo (Bat Hunt)
+    ulti:
+      descripcion: Un objetivo (Overpower)
+guardian_jericho_azul:
+  clave: '[New Legend] Guardian Jericho'
+  nombre: Guardian Jericho
+  color: azul
+  raza: humano
+  roles:
+  - dano_single
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Swift Dash)
+    skill_2:
+      descripcion: Un objetivo (Tornado Slash)
+    ulti:
+      descripcion: Un objetivo (Silent Split)
+guardian_guila_verde:
+  clave: '[Halloween] Guardian Guila'
+  nombre: Guardian Guila
+  color: verde
+  raza: humano
+  roles:
+  - dano_single
+  - dano_area
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Feline Step)
+    skill_2:
+      descripcion: Área (Jack-o'-lantern)
+    ulti:
+      descripcion: Área (Chain Explosion)
+guardian_gilthunder_azul:
+  clave: '[Knight of the Holy War] Guardian Gilthunder'
+  nombre: Guardian Gilthunder
+  color: azul
+  raza: humano
+  roles:
+  - dano_single
+  - dano_area
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Embrace of the Lightning God)
+    skill_2:
+      descripcion: Área (Agility of the Lightning King)
+    ulti:
+      descripcion: Un objetivo (Lightning King Sword)
+holy_knight_diane_rojo:
+  clave: '[Eternal Promise] Holy Knight Diane'
+  nombre: Holy Knight Diane
+  color: rojo
+  raza: gigante
+  roles:
+  - dano_single
+  - dano_area
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Rising Bouquet)
+    skill_2:
+      descripcion: Área (Bridesmaid)
+    ulti:
+      descripcion: Área (Mother Earth Catastrophe)
+captain_meliodas_rojo:
+  clave: '[Halloween] Captain Meliodas'
+  nombre: Captain Meliodas
+  color: rojo
+  raza: demonio
+  roles:
+  - dano_single
+  - dano_area
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Death Bat)
+    skill_2:
+      descripcion: Área (Blood Beat)
+    ulti:
+      descripcion: Un objetivo (Moonlight Divide)
