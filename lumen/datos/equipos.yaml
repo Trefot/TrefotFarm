@@ -16,10 +16,10 @@ _pisos:
   rata: Floors 1–2
   serpiente: ""
 
-# Heroes que salen en algun equipo pero no estan en la base (nadie los ha capturado aun).
-_nombres:
-  lr_liz: LR Liz
-  margaret_roja: Margaret roja
+# Heroes que salen en algun equipo pero no estan en la base (nadie los ha capturado aun): id -> nombre.
+# Nicknames de AutoFarming ya resueltos: "LR Liz" = Princess Elizabeth roja [New Legend] (sello LR);
+# "Margaret roja" = Covenant of Light Ludociel rojo [Summer Mirage] (Ludociel en el cuerpo de Margaret).
+_nombres: {}
 
 perros_piso4:
   - nombre: Equipo Lumen
@@ -99,9 +99,10 @@ ciervo:
 serpiente:
   - nombre: Mael y Freyja
     nivel: recomendado
-    personajes: [mael_of_sunshine_claro, margaret_roja, freyja_roja, lr_liz]
+    personajes: [mael_of_sunshine_claro, covenant_of_light_ludociel_rojo, freyja_roja, princess_elizabeth_rojo]
     notas: >-
       De AutoFarming. Freyja con reliquia. Mael (el antiguo) se puede cambiar por Tristan.
+      "Margaret roja" es el Ludociel de verano (rojo) y "LR Liz" la Princess Elizabeth LR (roja).
 
   - nombre: Jinwoo y Cha Hae-In
     nivel: bueno
@@ -116,7 +117,7 @@ serpiente:
 rata:
   - nombre: Liz, Valenti y Jormungand
     nivel: recomendado
-    personajes: [lr_liz, valenti_of_obsession_azul, world_serpent_jormungand_rojo, king_diane_azul]
+    personajes: [princess_elizabeth_rojo, valenti_of_obsession_azul, world_serpent_jormungand_rojo, king_diane_azul]
     alternativas:
       king_diane_azul: [merlin_escanor_verde]
     notas: >-
