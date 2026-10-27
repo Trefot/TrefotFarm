@@ -159,12 +159,12 @@ def _crear(pid: str, datos: dict, propio: bool) -> Personaje:
 
 
 def _primera_vez():
-    """Al estrenar la biblioteca: marca como tuyos los personajes del equipo de Perros y mueve
-    las capturas que hubiera de la version anterior (assets/equipo/perros_trefot)."""
+    """Al estrenar la biblioteca: un jugador nuevo empieza sin ningun personaje marcado (los marca
+    en la pagina Personajes). Tambien mueve capturas de la version anterior (assets/equipo/perros_trefot)."""
     CARPETA.mkdir(parents=True, exist_ok=True)
     if not USUARIO.is_file():
-        datos = {pid: {"tengo": True} for pid in ("odin", "gawain", "freyja_roja", "thonar_azul")}
-        USUARIO.write_text(yaml.safe_dump(datos, allow_unicode=True, sort_keys=False), encoding="utf-8")
+        USUARIO.write_text("{}
+", encoding="utf-8")
     viejo = EQUIPO / "perros_trefot"
     nombres_viejos = {
         "odin_single": ("odin", "single"), "odin_area": ("odin", "area"), "odin_ulti": ("odin", "ulti"),
