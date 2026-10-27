@@ -12,6 +12,7 @@ from PyQt5.QtWidgets import (
     QMessageBox,
     QPushButton,
     QToolButton,
+    QVBoxLayout,
 )
 
 from lumen import config, historial, ventana
@@ -22,7 +23,7 @@ from lumen.gui import iconos, tema
 from lumen.gui.comun import Pagina, formatear_tiempo
 from lumen.gui.rueda import Rueda
 from lumen.modos import MODOS
-from lumen.modos.catalogo import CATALOGO, contenido_de
+from lumen.modos.catalogo import CATALOGO, GRUPOS, contenido_de
 
 OPCIONES_VICTORIAS = [("1", 1), ("5", 5), ("10", 10), ("25", 25), ("∞", 0)]
 
@@ -95,11 +96,27 @@ class PaginaInicio(Pagina):
         fila_pasos.addStretch()
         self.cuerpo.addLayout(fila_pasos)
 
-        # ---- 2. La rueda
-        listos = {c.id for c in CATALOGO if any(d.id in MODOS for d in c.destinos)}
-        self.rueda = Rueda(CATALOGO, listos, CATALOGO.index(self.contenido))
-        self.rueda.cambiado.connect(self._girada)
-        self.cuerpo.addWidget(self.rueda)
+        # ---- 2. Secciones (Bestias demoniacas / Demonios / Fuerte Solgres) y la rueda de la elegida
+        fila_grupos = QHBoxLayout()
+        fila_grupos.setSpacing(8)
+        fila_grupos.addStretch()
+        self.botones_grupo = QButtonGroup(self, exclusive=True)
+        for grupo in GRUPOS:
+            listos = sum(1 for c in CATALOGO if c.grupo == grupo and any(d.id in MODOS for d in c.destinos))
+            b = QPushButton(f"{grupo}  ·  {listos}" if listos else grupo, objectName="chip", checkable=True)
+            b.setCursor(Qt.PointingHandCursor)
+            b.setToolTip(f"{listos} listo(s) para farmear" if listos else "Todavía nada listo para farmear")
+            b.setProperty("grupo", grupo)
+            b.setChecked(grupo == self.contenido.grupo)
+            self.botones_grupo.addButton(b)
+            fila_grupos.addWidget(b)
+        fila_grupos.addStretch()
+        self.botones_grupo.buttonClicked.connect(lambda b: self._cambiar_grupo(b.property("grupo")))
+        self.cuerpo.addLayout(fila_grupos)
+        self.caja_rueda = QVBoxLayout()
+        self.cuerpo.addLayout(self.caja_rueda)
+        self.rueda = None
+        self._poner_rueda(self.contenido.grupo)
         self.lbl_nombre = QLabel(objectName="nombre_rueda", alignment=Qt.AlignCenter)
         self.lbl_descripcion = QLabel(objectName="tenue", alignment=Qt.AlignCenter)
         self.cuerpo.addWidget(self.lbl_nombre)
@@ -166,8 +183,29 @@ class PaginaInicio(Pagina):
         """El destino elegido ya se puede farmear."""
         return self.modo_id in MODOS
 
+    def _poner_rueda(self, grupo: str):
+        """La rueda con los contenidos de una seccion (se rehace al cambiar de seccion)."""
+        self.lista = [c for c in CATALOGO if c.grupo == grupo] or list(CATALOGO)
+        listos = {c.id for c in self.lista if any(d.id in MODOS for d in c.destinos)}
+        if self.contenido not in self.lista:
+            self.contenido = next((c for c in self.lista if c.id in listos), self.lista[0])
+        if self.rueda is not None:
+            self.caja_rueda.removeWidget(self.rueda)
+            self.rueda.setParent(None)
+        self.rueda = Rueda(self.lista, listos, self.lista.index(self.contenido))
+        self.rueda.cambiado.connect(self._girada)
+        self.caja_rueda.addWidget(self.rueda)
+
+    def _cambiar_grupo(self, grupo: str):
+        if grupo == self.contenido.grupo:
+            return
+        self.contenido = None
+        self._poner_rueda(grupo)
+        self._girada(self.lista.index(self.contenido))
+        self.rueda.setFocus()
+
     def _girada(self, indice: int):
-        self.contenido = CATALOGO[indice]
+        self.contenido = self.lista[indice]
         listos = [d.id for d in self.contenido.destinos if d.id in MODOS]
         self._elegir_destino((listos or [d.id for d in self.contenido.destinos])[-1], pintar=True)
 
