@@ -522,7 +522,7 @@ class PaginaEditorPersonajes(Pagina):
             return
         r = QMessageBox.question(
             self, "Capturar todos los héroes",
-            "1. En el juego abre Heroes y entra a la ficha del PRIMER héroe de la lista.\n"
+            "1. En el juego abre Heroes y déjalo en la lista (así también recorto el icono de cada héroe).\n"
             "2. Pulsa Sí y no toques el ratón.\n\n"
             "El bot lee cada ficha y cada carta (Skill Info) y pasa al siguiente con la flecha de la derecha. "
             "Termina solo al volver al primero. F10 para parar.\n\n"

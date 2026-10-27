@@ -1,6 +1,10 @@
 """Captura de heroes en serie (solo administrador): recorre las fichas del juego y guarda cada heroe.
 
-En el juego: Heroes -> abrir la ficha de un heroe. El bot lee el nombre, el titulo, Attribute, Race y
+Si empieza en la lista de Heroes, primero recorta el icono de cada heroe en orden (bajando la lista) y
+abre el primero; el icono k es el del heroe k, porque la flecha de la ficha sigue el orden de la lista
+(se comprueba con el color del atributo). Si empieza en una ficha, se salta los iconos.
+
+En cada ficha el bot lee el nombre, el titulo, Attribute, Race y
 Characteristics (OCR de Windows), recorta las cartas de la fila Skills, abre Skill Info para leer el
 nombre y la descripcion de cada carta, y pasa al siguiente heroe con la flecha de la derecha. Termina
 al volver a un heroe ya capturado.
@@ -30,6 +34,17 @@ CATALOGO = CARPETA / "catalogo.yaml"
 FICHA = Plantilla("heroes/ficha_attribute.png")  # la palabra "Attribute" de la ficha del heroe
 SKILL_INFO = Plantilla("heroes/skill_info.png")  # titulo de la ventana Skill Info
 CERRAR = Plantilla("heroes/cerrar.png")  # la X roja de Skill Info
+LISTA = Plantilla("heroes/lista_search_skills.png")  # boton "Search Skills" de la lista de Heroes
+
+# Lista de Heroes: rejilla de 5 columnas. Medido en una captura real de 550x940.
+COLUMNAS_LISTA = (39, 136, 232, 329, 425)
+LADO_CASILLA = 88
+PASO_FILA = 95
+PRIMERA_FILA = 221  # con la lista arriba del todo
+LIMITE_LISTA = 700  # mas abajo pasa el cartel de avisos del juego por encima de las casillas
+LIMITE_LISTA_FINAL = 745  # al final de la lista se acepta la ultima fila aunque el cartel la cruce
+ICONO_CASILLA = (64, 0, 88, 18)  # atributo, arriba a la derecha de la casilla
+BORDE_CASILLA = 120  # brillo del borde de una casilla con heroe (medido ~160; hueco vacio ~45)
 
 # Medido en capturas reales de 550x940 (Wanderer Thonar, Gawain).
 CABECERA = (130, 125, 445, 195)  # [titulo] y nombre
@@ -132,11 +147,16 @@ def leer_datos(pantalla) -> tuple[str, str, str]:
 def atributo_por_icono(pantalla) -> str:
     """Attribute por el color de su icono (no lo tapan las figuras): Speed azul, Light amarillo..."""
     x1, y1, x2, y2 = ICONO_ATRIBUTO
-    hsv = cv2.cvtColor(pantalla[y1:y2, x1:x2], cv2.COLOR_BGR2HSV)
+    return atributo_por_color(pantalla[y1:y2, x1:x2])
+
+
+def atributo_por_color(icono, minimo: int = 60) -> str:
+    """Medido en la ficha y en la lista: Speed ~100, HP ~50, Dark ~142, Strength ~4, Light ~20."""
+    hsv = cv2.cvtColor(icono, cv2.COLOR_BGR2HSV)
     tonos = hsv[..., 0][hsv[..., 1] > 90]
-    if tonos.size < 60:
+    if tonos.size < minimo:
         return ""
-    tono = float(np.median(tonos))  # medido: Speed 100, Light 20
+    tono = float(np.median(tonos))
     if tono < 8 or tono >= 165:
         return "Strength"
     if tono < 40:
@@ -224,6 +244,44 @@ def recorte_retrato(pantalla):
     return pantalla[y1:y2, x1:x2].copy()
 
 
+# ------------------------------------------------------------- lista de Heroes (iconos)
+def casilla_vacia(pantalla, x: int, y: int) -> bool:
+    borde = cv2.cvtColor(pantalla[y + 1:y + 3, x + 10:x + 78], cv2.COLOR_BGR2GRAY)
+    return float(borde.mean()) < BORDE_CASILLA
+
+
+def leer_filas(pantalla, filas, limite: int) -> tuple[list, bool]:
+    """Iconos de esas filas, de izquierda a derecha. True si aparecio un hueco vacio (fin de la lista)."""
+    iconos = []
+    for y in filas:
+        if y + LADO_CASILLA > limite:
+            break
+        for x in COLUMNAS_LISTA:
+            if casilla_vacia(pantalla, x, y):
+                return iconos, True
+            iconos.append(pantalla[y:y + LADO_CASILLA, x:x + LADO_CASILLA].copy())
+    return iconos, False
+
+
+def recorte_fila(pantalla, y: int):
+    return pantalla[y:y + LADO_CASILLA, COLUMNAS_LISTA[0] - 5:COLUMNAS_LISTA[-1] + LADO_CASILLA + 5].copy()
+
+
+def buscar_fila(pantalla, fila) -> int | None:
+    """Altura de esa fila en la pantalla (tras bajar la lista), o None si no esta."""
+    x0 = COLUMNAS_LISTA[0] - 5
+    zona = pantalla[150:LIMITE_LISTA_FINAL, x0:x0 + fila.shape[1]]
+    if zona.shape[0] < fila.shape[0]:
+        return None
+    _, valor, _, (_, y) = cv2.minMaxLoc(cv2.matchTemplate(zona, fila, cv2.TM_CCOEFF_NORMED))
+    return y + 150 if valor >= 0.9 else None
+
+
+def atributo_de_casilla(icono) -> str:
+    x1, y1, x2, y2 = ICONO_CASILLA
+    return atributo_por_color(icono[y1:y2, x1:x2], minimo=40)
+
+
 def recorte_carta(pantalla, i: int):
     x1, y1, x2, y2 = juego.FICHA_CARTAS[i]
     return pantalla[y1:y2, x1:x2].copy()
@@ -255,6 +313,8 @@ class CapturaHeroes(Modo):
         "leer_cartas": "Leyendo las cartas (Skill Info)",
         "cerrar": "Cerrando Skill Info",
         "siguiente": "Pasando al siguiente héroe",
+        "lista": "Recortando los iconos de la lista",
+        "abrir_primero": "Abriendo el primer héroe",
     }
 
     def __init__(self, valores: dict):
@@ -271,6 +331,8 @@ class CapturaHeroes(Modo):
         self.quieta_desde = time.time()
         self.sin_ficha_desde: float | None = None
         self.misma_carta = 0
+        self.iconos: list | None = None  # iconos de la lista, en orden (None = se empezo en una ficha)
+        self.fichas_vistas = 0  # posicion del heroe actual en la lista
 
     def estado_inicial(self):
         return "buscar_ficha"
@@ -282,6 +344,8 @@ class CapturaHeroes(Modo):
             "leer_cartas": self.leer_cartas,
             "cerrar": self.cerrar,
             "siguiente": self.siguiente,
+            "lista": self.lista,
+            "abrir_primero": self.abrir_primero,
         }
 
     # ------------------------------------------------------------------ utilidades
@@ -315,13 +379,65 @@ class CapturaHeroes(Modo):
             raise TerminarModo()
         if SKILL_INFO.esta(p, 0.85):
             return "cerrar"
+        if self.iconos is None and LISTA.esta(p, 0.85):
+            return "lista"
         if FICHA.esta(p, 0.85):
             self.anterior = None
-            self.log("Ficha de héroe encontrada: empiezo.", "ok")
+            self.log("Ficha de héroe encontrada: empiezo." if self.iconos is not None else
+                     "Ficha de héroe encontrada: empiezo (sin iconos: para tenerlos, empieza en la lista de Heroes).", "ok")
             return "leer_ficha"
         if time.time() - self.esperando_desde > 90:
             self.log("No veo la ficha de ningún héroe. Ábrela en el juego (Heroes -> un héroe) y vuelve a empezar.", "error")
             raise TerminarModo()
+        return None
+
+    def _subir_lista(self, o):
+        for _ in range(4):
+            entrada.arrastrar((275, 300), (275, 690), o, duracion=0.3)
+            control.esperar(0.4)
+        control.esperar(1.0)
+
+    def lista(self, p, o):
+        """Recorta el icono de cada heroe de la lista, en orden, bajando fila a fila hasta el final."""
+        self.log("Lista de Heroes: recorto el icono de cada héroe en orden...", "ok")
+        self._subir_lista(o)
+        p = self.capturar()[0]
+        filas = [PRIMERA_FILA + PASO_FILA * k for k in range(6)]
+        iconos, fin = leer_filas(p, filas, LIMITE_LISTA)
+        ultima = max(y for y in filas if y + LADO_CASILLA <= LIMITE_LISTA)
+        while not fin and len(iconos) < 600:
+            referencia = recorte_fila(p, ultima)
+            entrada.arrastrar((275, 650), (275, 650 - 3 * PASO_FILA), o, duracion=0.8)
+            control.esperar(1.2)  # que termine de deslizarse
+            p = self.capturar()[0]
+            y = buscar_fila(p, referencia)
+            if y is None:
+                self.log(f"Perdí la cuenta al bajar la lista: me quedo con {len(iconos)} iconos.", "aviso")
+                break
+            if abs(y - ultima) < 4:  # no bajo mas: es el final; leer lo que queda (aunque lo cruce el cartel)
+                abajo = [y + PASO_FILA * k for k in range(1, 4)]
+                restantes, _ = leer_filas(p, abajo, LIMITE_LISTA_FINAL)
+                iconos += restantes
+                break
+            nuevas = [y + PASO_FILA * k for k in range(1, 8) if y + PASO_FILA * k + LADO_CASILLA <= LIMITE_LISTA]
+            mas, fin = leer_filas(p, nuevas, LIMITE_LISTA)
+            iconos += mas
+            ultima = nuevas[-1] if nuevas else y
+            control.actividad()
+        self.iconos = iconos
+        self.log(f"{len(iconos)} iconos recortados. Abro el primer héroe.", "ok")
+        self._subir_lista(o)
+        entrada.clic((COLUMNAS_LISTA[0] + LADO_CASILLA // 2, PRIMERA_FILA + LADO_CASILLA // 2), o, espera=1.5)
+        self.esperando_desde = time.time()
+        return "abrir_primero"
+
+    def abrir_primero(self, p, o):
+        if FICHA.esta(p, 0.85):
+            self.anterior = None
+            return "leer_ficha"
+        if LISTA.esta(p, 0.85) and time.time() - self.esperando_desde > 5:
+            entrada.clic((COLUMNAS_LISTA[0] + LADO_CASILLA // 2, PRIMERA_FILA + LADO_CASILLA // 2), o, espera=1.5)
+            self.esperando_desde = time.time()
         return None
 
     def leer_ficha(self, p, o):
@@ -350,6 +466,7 @@ class CapturaHeroes(Modo):
                 self.log("No pude leer el nombre de este héroe: lo salto.", "aviso")
                 self.intentos = 0
                 guardar_imagen(CARPETA / "sin_leer" / f"{time.strftime('%H%M%S')}.jpg", p)
+                self.fichas_vistas += 1  # aunque no se lea, ocupa su sitio en la lista
                 return "siguiente"
             return None
         self.intentos = 0
@@ -374,8 +491,9 @@ class CapturaHeroes(Modo):
             "raza_juego": raza, "raza": RAZA_ES.get(raza.lower().strip(), "sin definir"),
             "caracteristicas": caracteristicas,
             "cartas": [], "_recortes": [recorte_carta(p, i) for i in range(len(juego.FICHA_CARTAS))],
-            "_ficha": p.copy(),
+            "_ficha": p.copy(), "_indice": self.fichas_vistas,
         }
+        self.fichas_vistas += 1
         self.log(f"Héroe: {clave} · {atributo} · {raza}")
         entrada.clic(_centro(juego.FICHA_CARTAS[0]), o, espera=0.6)
         return "leer_cartas"
@@ -453,8 +571,24 @@ class CapturaHeroes(Modo):
         ficha = h.pop("_ficha")
         guardar_imagen(carpeta / "ficha.jpg", ficha)
         guardar_imagen(carpeta / "retrato_ficha.png", recorte_retrato(ficha))
+        indice = h.pop("_indice")
+        if self.iconos is not None and indice < len(self.iconos):
+            icono = self.iconos[indice]
+            del_icono = atributo_de_casilla(icono)
+            if del_icono and del_icono != h["atributo"]:
+                # El orden no cuadra (p. ej. la lista cambio): mejor sin icono que con el de otro.
+                self.log(f"El icono nº {indice + 1} de la lista es {del_icono} y {h['nombre']} es {h['atributo']}: "
+                         "no se lo pongo.", "aviso")
+            else:
+                guardar_imagen(carpeta / "icono.png", icono)
         h["capturado"] = time.strftime("%Y-%m-%d %H:%M")
         self.catalogo[pid] = h
+        # Capturas viejas de este mismo heroe guardadas con su titulo como nombre (antes de leer bien
+        # los titulos sin corchetes: "Waves of the Earth" era Queen Diane).
+        for otro, datos in list(self.catalogo.items()):
+            if otro != pid and h["titulo"] and datos.get("nombre") == h["titulo"] and not datos.get("titulo"):
+                del self.catalogo[otro]
+                self.log(f"Quité la captura vieja '{h['titulo']}' (era {h['nombre']}).", "debug")
         guardar_catalogo(self.catalogo)
         self.capturados += 1
         self.ultima_clave = h["clave"]

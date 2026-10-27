@@ -55,7 +55,11 @@ def avisos_de(h: dict) -> list[str]:
 
 
 def retrato(pid: str) -> QPixmap:
-    """Cara del heroe; las capturas de antes del retrato la sacan ahora de su ficha.jpg."""
+    """Cara del heroe: el icono de la lista de Heroes si se capturo; si no, el de su habilidad Unique
+    (las capturas de antes del retrato lo sacan ahora de su ficha.jpg)."""
+    icono = C.CARPETA / pid / "icono.png"
+    if icono.is_file():
+        return QPixmap(str(icono))
     ruta = C.CARPETA / pid / "retrato_ficha.png"
     if not ruta.is_file():
         ficha = leer_imagen(C.CARPETA / pid / "ficha.jpg")
@@ -150,10 +154,10 @@ class FilaHeroe(QFrame):
         fila.setSpacing(14)
 
         cara = QLabel(alignment=Qt.AlignCenter)
-        cara.setFixedSize(64, 78)
+        cara.setFixedSize(78, 78)
         pix = retrato(pid)
         if not pix.isNull():
-            cara.setPixmap(pix.scaled(64, 78, Qt.KeepAspectRatio, Qt.SmoothTransformation))
+            cara.setPixmap(pix.scaled(78, 78, Qt.KeepAspectRatio, Qt.SmoothTransformation))
         fila.addWidget(cara, 0, Qt.AlignTop)
 
         datos = QVBoxLayout()
