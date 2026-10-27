@@ -359,7 +359,7 @@ add_assault_team_squad:
 king_s_onslaught_bracelet:
   nombre: King's Onslaught - Bracelet
   tipo: Equipment
-  descripcion: 'Attack 1,240 Attack +15% Attack +400 upon equipping King 4 Set: Attack +20%'
+  descripcion: 'Attack 1,240 Attack 1,240 Attack +15% Attack +400 upon equipping King 4 Set: Attack +20%'
   categoria: Equipment
 cha_hae_ln_s_onslaught_bracelet:
   nombre: Cha Hae-ln's Onslaught - Bracelet
@@ -501,3 +501,287 @@ tyr_s_onslaught_bracelet:
   tipo: Equipment
   descripcion: 'Attack 1,236 Attack +15% Attack +399 upon equipping Tyr 4 Set: Attack +20%'
   categoria: Equipment
+eikthyrnir_token:
+  nombre: Eikthyrnir Token
+  tipo: Holy Relic Crafting
+  descripcion: 'A mystical token imbued with Eikthyrnir''s power. Can be used to craft Holy Relics from Demonic
+    Beast Battle: Eikthyrnir without using any Other materials.'
+  categoria: Ingredients
+hraesvelgr_token:
+  nombre: Hraesvelgr Token
+  tipo: Holy Relic Crafting
+  descripcion: 'A mystical token imbued with Hraesvelgr''s power. Can be used to craft Holy Relics from Demonic
+    Beast Battle: Hraesvelgr without using any Other materials.'
+  categoria: Ingredients
+source_of_fire:
+  nombre: Source of Fire
+  tipo: Holy Relic Crafting Material
+  descripcion: An item required to craft Holy Relics. Acquired from Surtr and the Primordial Flame in Demonic Beast
+    Battle.
+  categoria: Ingredients
+source_of_the_cycle:
+  nombre: Source of the Cycle
+  tipo: Holy Relic Crafting Material
+  descripcion: An item required to craft Holy Relics. Acquired from Ratatoskr in Demonic Beast Battle.
+  categoria: Ingredients
+source_of_the_roots_corruption:
+  nombre: Source of the Roots' Corruption
+  tipo: Holy Relic Crafting Material
+  descripcion: An item required to craft Holy Relics. Acquired from Nidhoggr in Demonic Beast Battle.
+  categoria: Ingredients
+twilight_source:
+  nombre: Twilight Source
+  tipo: Holy Relic Crafting Material
+  descripcion: An item required to craft Holy Relics. Acquired from Skoll and Hati in Demonic Beast Battle.
+  categoria: Ingredients
+river_source:
+  nombre: River Source
+  tipo: Holy Relic Crafting Material
+  descripcion: An item required to craft Holy Relics. Acquired from Eikthyrnir in Demonic Beast Battle.
+  categoria: Ingredients
+wind_source:
+  nombre: Wind Source
+  tipo: Holy Relic Crafting Material
+  descripcion: An item required to craft Holy Relics. Acquired from Hraesvelgr in Demonic Beast Battle.
+  categoria: Ingredients
+alluring_perfume:
+  nombre: Alluring Perfume
+  tipo: Enhance Material
+  descripcion: Used to enhance Cosmetic Items.
+  categoria: Ingredients
+splendid_fabric:
+  nombre: Splendid Fabric
+  tipo: Enhance Material
+  descripcion: Used to enhance Outfit Costumes.
+  categoria: Ingredients
+brilliant_component:
+  nombre: Brilliant Component
+  tipo: Enhance Material
+  descripcion: Used to enhance Weapon Costumes.
+  categoria: Ingredients
+original_demon_s_energy:
+  nombre: Original Demon's Energy
+  tipo: High-level Upgrade Material
+  descripcion: Material used to Limit Break heroes.
+  categoria: Ingredients
+demonic_beast_bellmoth_s_core:
+  nombre: Demonic Beast Bellmoth's Core
+  tipo: High-level IJpgrade Material
+  descripcion: Material used to Limit Break heroes. It was taken from the carcass of Demonic Beast Bellmoth.
+  categoria: Ingredients
+demonic_beast_howlex_s_ear:
+  nombre: Demonic Beast Howlex's Ear
+  tipo: High-level IJpgrade Material
+  descripcion: Material used to Limit Break heroes. It was taken from the carcass of the Demonic Beast Howlex.
+  categoria: Ingredients
+gray_demon_s_wing:
+  nombre: Gray Demon's Wing
+  tipo: High-level I..Jpgrade Material
+  descripcion: Material used to Limit Break heroes. It was taken from the carcass of a Gray Demon.
+  categoria: Ingredients
+red_demon_s_horn:
+  nombre: Red Demon's Horn
+  tipo: High-level I..Jpgrade Material
+  descripcion: Material used to Limit Break heroes. It was taken from the carcass of a Red Demon.
+  categoria: Ingredients
+evolution_pendant:
+  nombre: Evolution Pendant
+  tipo: High-level I..Jpgrade Material
+  descripcion: Evolution material for heroes with Starting Grade SSR.
+  categoria: Ingredients
+hero_enhance_potion:
+  nombre: Hero Enhance Potion
+  tipo: Enhance Material
+  descripcion: Use to acquire EXP when enhancing. Hero EXP +48600 t 00
+  categoria: Ingredients
+awakening_stone:
+  nombre: Awakening Stone
+  tipo: Awakening Materials
+  descripcion: A mysterious stone used as an ingredient to awaken Grade SSR equipment.
+  categoria: Ingredients
+grimoire_of_speed:
+  nombre: Grimoire of Speed
+  tipo: Evolution Material
+  descripcion: Evolution material for Speed-type heroes.
+  categoria: Ingredients
+grimoire_of_hp:
+  nombre: Grimoire of HP
+  tipo: Evolution Material
+  descripcion: Evolution material for HP-type heroes.
+  categoria: Ingredients
+grimoire_of_strength:
+  nombre: Grimoire of Strength
+  tipo: Evolution Material
+  descripcion: Evolution material for Strength-type heroes. 'AL6ç'atiotV'IiL
+  categoria: Ingredients
+super_awakening_coin_fragment:
+  nombre: Super Awakening Coin Fragment
+  tipo: Super Awakening Coin Exchange Material
+  descripcion: Exchange for Super Awakening Coins at the Material Exchange.
+  categoria: Ingredients
+primordial_will_darkness:
+  nombre: Primordial Will (Darkness)
+  tipo: True Awakening Material
+  descripcion: A mystical power that can be obtained from the Supreme Deity Battle. Used as True Awakening (Supreme
+    Deitys Protection) material for Darkness attribute heroes. Sello
+  categoria: Ingredients
+primordial_will_light:
+  nombre: Primordial Will (Light)
+  tipo: True Awakening Material
+  descripcion: A mystical power that can be obtained from the Supreme Deity Battle. Used as True Awakening (Supreme
+    Deitys Protection) material for Light attribute heroes. Sello
+  categoria: Ingredients
+memory_crystal_fairy:
+  nombre: Memory Crystal (Fairy)
+  tipo: True Awakening Material
+  descripcion: A magic crystal that can be obtained from the Demon King Battle. Used as True Awakening (Demon IQn@s
+    Protection) material for Fairy heroes.
+  categoria: Ingredients
+memory_crystal_unknown:
+  nombre: Memory Crystal (Unknown)
+  tipo: True Awakening Material
+  descripcion: A magic crystal that can be obtained from the Demon King Battle. Used as True Awakening (Demon Kings
+    Protection) material for Unknown race heroes.
+  categoria: Ingredients
+memory_crystal_goddess:
+  nombre: Memory Crystal (Goddess)
+  tipo: True Awakening Material
+  descripcion: A magic crystal that can be obtained from the Demon King Battle. Used as True Awakening (Demon Kings
+    Protection) material for Goddess heroes. "Ldcationu 4.
+  categoria: Ingredients
+memory_crystal_demon:
+  nombre: Memory Crystal (Demon)
+  tipo: True Awakening Material
+  descripcion: A magic crystal that can be obtained from the Demon King Battle. Used as True Awakening (Demon Kings
+    Protection) material for Demon heroes.
+  categoria: Ingredients
+super_awakening_coin:
+  nombre: Super Awakening Coin
+  tipo: Super Awakening Materials
+  descripcion: A coin that is used for Super Awakening Heroes.
+  categoria: Ingredients
+awakening_essence:
+  nombre: Awakening Essence
+  tipo: Essential Awakening Material
+  descripcion: Item needed to Awaken heroes.
+  categoria: Ingredients
+plate_card:
+  nombre: Plate Card
+  tipo: Artifact Set Bonus Enhancement Material
+  descripcion: Material used to enhance Artifact Sets. Artifact Set EXP +800 Sellc
+  categoria: Ingredients
+magic_rune:
+  nombre: Magic Rune
+  tipo: Holy Relic Crafting Material
+  descripcion: A rune found in the Hall of Genesis. Acquired from Surtr and the Primordial Flame in Demonic Beast
+    Battle.
+  categoria: Ingredients
+fruit_of_yggdrasil:
+  nombre: Fruit of Yggdrasil
+  tipo: Holy Relic Crafting Material
+  descripcion: A mystical fruit that Ratatoskr treasures. Acquired from Ratatoskr in Demonic Beast Battle.
+  categoria: Ingredients
+dark_red_crystal:
+  nombre: Dark Red Crystal
+  tipo: Holy Relic Crafting Material
+  descripcion: A precious mineral that symbolizes the endlessness of the land of darkness. Acquired from Nidhoggr
+    in Demonic Beast Battle.
+  categoria: Ingredients
+honor_of_the_einherjar:
+  nombre: Honor of the Einherjar
+  tipo: Holy Relic Crafting Material
+  descripcion: A rare gem given only to the most honorable of warriors. Acquired from Skoll and Hati in Demonic
+    Beast Battle.
+  categoria: Ingredients
+magnificence_of_valhalla:
+  nombre: Magnificence of Valhalla
+  tipo: Holy Relic Crafting Material
+  descripcion: A brilliant gem reminiscent of Valhalla. Acquired from Hraesvelgr in Demonic Beast Battle.
+  categoria: Ingredients
+grimoire_of_darkness:
+  nombre: Grimoire of Darkness
+  tipo: Evolution Material
+  descripcion: Evolution material for Darkness-type heroes. Exchange on the Evolution and Limit Break screens of
+    Darkness heroes.
+  categoria: Ingredients
+chaos_fragment:
+  nombre: Chaos Fragment
+  tipo: Material Item
+  descripcion: Material required to use [Chaos of Constellationsl.
+  categoria: 1-Use
+anvil:
+  nombre: Anvil
+  tipo: A magical anvil which changes an equipments
+  descripcion: bonus effects according to set rates.
+  categoria: 1-Use
+hammer_of_vaizel:
+  nombre: Hammer of Vaizel
+  tipo: 1-IJse
+  descripcion: A mystical hammer which increases the value of bonus effects of Awakened equipment according to set
+    rates.
+  categoria: 1-Use
+brokkr_s_strength:
+  nombre: Brokkr's Strength
+  tipo: Holy Relic Crafting Material
+  descripcion: A Slate containing Brokkr's strength.
+  categoria: 1-Use
+volundr_s_tenacity:
+  nombre: Volundr's Tenacity
+  tipo: Holy Relic Crafting Material
+  descripcion: A Slate containing Volundr's tenacity. Acquired at the World Tree Tower Exchange Shop.
+  categoria: 1-Use
+eitri_s_meticulousness:
+  nombre: Eitri's Meticulousness
+  tipo: Holy Relic Crafting Material
+  descripcion: A Slate containing Eitris meticulousness. Acquired at the World Tree Tower Exchange Shop.
+  categoria: 1-Use
+blue_magic_essence:
+  nombre: Blue Magic Essence
+  tipo: Holy Relic Crafting Material
+  descripcion: Magic essence used to craft Holy Relics for [Human & Fairyl, [Human), and [Unknown racel heroes.
+  categoria: 1-Use
+unknown_magic_essence:
+  nombre: Unknown Magic Essence
+  tipo: Holy Relic Crafting Material
+  descripcion: Magic essence used to craft Holy Relics for Fairies, Giants, and Unknown races.
+  categoria: 1-Use
+golden_magic_essence:
+  nombre: Golden Magic Essence
+  tipo: Holy Relic Crafting Material
+  descripcion: Magic essence used to craft Holy Relics for Goddesses.
+  categoria: 1-Use
+primordial_will_speed:
+  nombre: Primordial Will (Speed)
+  tipo: True Awakening Material
+  descripcion: A mystical power that can be obtained from the Supreme Deity Battle. Used as True Awakening (Supreme
+    Deitys Protection) material for Speed attribute heroes. Sello
+  categoria: Ingredients
+primordial_will_hp:
+  nombre: Primordial Will (HP)
+  tipo: True Awakening Material
+  descripcion: A mystical power that can be obtained from the Supreme Deity Battle. Used as True Awakening (Supreme
+    Deitys Protection) material for HP attribute heroes. Sello
+  categoria: Ingredients
+primordial_will_strength:
+  nombre: Primordial Will (Strength)
+  tipo: True Awakening Material
+  descripcion: A mystical power that can be obtained from the Supreme Deity Battle. Used as True Awakening (Supreme
+    Deitys Protection) material for Strength attribute heroes. Sello
+  categoria: Ingredients
+memory_crystal_human:
+  nombre: Memory Crystal (Human)
+  tipo: True Awakening Material
+  descripcion: A magic crystal that can be obtained from the Demon King Battle. Used as True Awakening (Demon Kings
+    Protection) material for Human heroes.
+  categoria: Ingredients
+memory_crystal_giant:
+  nombre: Memory Crystal (Giant)
+  tipo: True Awakening Material
+  descripcion: A magic crystal that can be obtained from the Demon King Battle. Used as True Awakening (Demon IQn@s
+    Protection) material for Giant heroes.
+  categoria: Ingredients
+sublimity_of_valkyries:
+  nombre: Sublimity of Valkyries
+  tipo: Holy Relic Crafting Material
+  descripcion: A high-quality ore symbolizing the noble guides. Acquired from Eikthyrnir in Demonic Beast Battle.
+  categoria: Ingredients

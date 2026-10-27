@@ -134,10 +134,32 @@ def unir_repetidos_de_galeria() -> int:
             continue
         if gid in primero:
             unir_objeto(oid, primero[gid])
+            catalogo = botin.cargar_catalogo()
+            catalogo[oid]["unido_auto"] = True  # union hecha por el bot (se deshace si el vinculo era malo)
+            botin.guardar_catalogo(catalogo)
             unidos += 1
         else:
             primero[gid] = oid
     return unidos
+
+
+def deshacer_uniones_malas() -> int:
+    """Uniones hechas porque dos objetos tenian el mismo de la galeria, cuando uno de esos vinculos ya no
+    vale (p. ej. el cubo gris tomado por Blue Magic Essence): se separan y se releen las fotos para que
+    cada uno recupere sus cantidades. Devuelve cuantas deshizo."""
+    catalogo = botin.cargar_catalogo()
+    deshechas = 0
+    for oid, datos in catalogo.items():
+        destino = (datos or {}).get("unido_a")
+        gid = (datos or {}).get("galeria")
+        if destino and gid and (catalogo.get(destino) or {}).get("galeria") != gid:
+            datos.pop("unido_a", None)
+            datos.pop("unido_auto", None)
+            deshechas += 1
+    if deshechas:
+        botin.guardar_catalogo(catalogo)
+        reanalizar_pendientes(todas=True)
+    return deshechas
 
 
 def horas_de(registros: list[dict], sesiones_historial: list[dict]) -> float:

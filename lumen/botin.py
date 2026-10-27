@@ -47,7 +47,9 @@ CARPETA_GALERIA = RAIZ / "capturas" / "objetos"
 GALERIA = CARPETA_GALERIA / "galeria.yaml"
 GALERIA_BASE = Path(__file__).resolve().parent / "datos" / "galeria_objetos.yaml"
 # Icono de la ficha del inventario (86 px) reducido a 63 px frente al icono del botin: el mismo objeto
-# da 0.97 y los demas <=0.33 (medido con el orbe de Skoll y Hati y los 7 objetos del botin).
+# da 0.97 y los demas <=0.33 (medido con el orbe de Skoll y Hati y los 7 objetos del botin). Pero los
+# cubos de esencia tienen la misma forma y solo cambia el color (cubo gris frente a Blue Magic Essence:
+# forma 0.89, color 53): tambien se exige color parecido (DIF_COLOR_MAX; mismo objeto: 0.8-3.5).
 LADO_FICHA = LADO
 UMBRAL_GALERIA = 0.85
 
@@ -281,7 +283,8 @@ def en_galeria(img_icono, galeria: dict) -> str | None:
         if ref is None or ref.shape != img_icono.shape:
             continue
         valor = float(cv2.matchTemplate(img_icono, ref, cv2.TM_CCOEFF_NORMED).max())
-        if valor >= mejor_valor:
+        dif_color = float(np.abs(img_icono.reshape(-1, 3).mean(0) - ref.reshape(-1, 3).mean(0)).max())
+        if valor >= mejor_valor and dif_color <= DIF_COLOR_MAX:
             mejor, mejor_valor = gid, valor
     return mejor
 
@@ -301,9 +304,27 @@ def vincular_galeria() -> int:
         hechos = 0
         for oid in visibles(catalogo):
             datos = catalogo[oid]
-            if datos.get("galeria"):
-                continue
             img = leer_imagen(ruta_icono(oid))
+            if datos.get("galeria"):
+                # Vinculos de antes de exigir el color (v3.6.4 llamo "Blue Magic Essence" al cubo gris): deshacer.
+                gid_viejo = datos["galeria"]
+                if img is not None and gid_viejo in galeria and en_galeria(img, {gid_viejo: galeria[gid_viejo]}) is None:
+                    for campo, valor in _datos_galeria(galeria[gid_viejo]).items():
+                        if datos.get(campo) == valor:
+                            datos[campo] = "" if campo == "nombre" else None
+                    datos.pop("galeria", None)
+                    for campo in ("tipo", "descripcion"):
+                        if datos.get(campo) is None:
+                            datos.pop(campo, None)
+                    hechos += 1
+                elif gid_viejo in galeria:
+                    # Vinculo bueno: si la galeria tiene ahora un texto mas completo, se actualiza ("Enha...").
+                    for campo in ("tipo", "descripcion"):
+                        nuevo = galeria[gid_viejo].get(campo) or ""
+                        if len(nuevo) > len(datos.get(campo) or ""):
+                            datos[campo] = nuevo
+                            hechos += 1
+                continue
             gid = en_galeria(img, galeria) if img is not None else None
             if gid:
                 nombre_propio = datos.get("nombre")
