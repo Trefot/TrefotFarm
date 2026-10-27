@@ -1,0 +1,160 @@
+# Contenido de la pagina Ayuda. Las imagenes estan en assets/ayuda.
+# Los terminos del juego van con su nombre del cliente Global (en ingles).
+
+guia:
+  - titulo: "1. Arma el equipo"
+    imagen: equipo.jpg
+    texto: >-
+      Antes de farmear, pon el equipo en la pantalla de la Demonic Beast <b>en este orden, de izquierda
+      a derecha</b>: Odin, Gawain, Freyja (Strength) y Thonar (Speed). Al empezar, el bot compara los
+      retratos con los suyos y no pulsa <b>Start!</b> si el equipo no cuadra.
+  - titulo: "2. Fase 1: el perro de la derecha"
+    imagen: fase1.jpg
+    texto: >-
+      En cada turno tienes <b>8 cartas</b> en la mano y <b>4 huecos</b> donde ponerlas. El perro de la
+      izquierda está dentro de una burbuja (su <b>Stance</b>) y no se puede seleccionar, así que el bot ataca
+      al de la derecha. En el segundo turno, la carta single de Odin va siempre la última.
+  - titulo: "3. Fase 2: el lobo azul"
+    imagen: fase2.jpg
+    texto: >-
+      Ahora la burbuja está en el perro dorado y el objetivo es el <b>lobo azul de la izquierda</b>. Primero
+      le quita la Stance (con la carta de Thonar, la single de Odin o el área de Gawain, la que no esté
+      bloqueada) y después suelta la <b>Ultimate de Freyja</b>.
+  - titulo: "4. Fase 3: solo mover cartas"
+    imagen: fase3.jpg
+    texto: >-
+      En la última fase el bot <b>no juega ninguna carta</b>: solo las mueve. El golpe extra que dejó la
+      Ultimate de Freyja termina la pelea.
+  - titulo: "5. Victory: el botín"
+    imagen: victoria.jpg
+    texto: >-
+      Al ganar, el bot guarda una foto de la pantalla, lee los objetos y el oro y los suma en
+      <b>Recompensas</b>. Luego pulsa OK y repite.
+  - titulo: "Si algo sale distinto"
+    texto: >-
+      Si falta una carta clave o una fase dura más de lo previsto, el bot se rinde (<b>Forfeit</b>) y repite
+      la pelea desde el principio. Cuenta como "reinicio", no como derrota. Que pase de vez en cuando es
+      normal: depende de las cartas que salen.
+
+problemas:
+  - pregunta: "No encuentra el juego"
+    respuesta: >-
+      Abre el juego (cliente de PC, servidor Global) y déjalo en la Tavern. Si juegas en otro cliente,
+      revisa el <b>Título de la ventana</b> en Ajustes: en Global es <i>7DS</i>.
+  - pregunta: "Me pide permiso de administrador"
+    respuesta: >-
+      El juego corre como administrador y Windows no deja que otro programa le haga clic si no lo es
+      también. Cierra LumenFarm, ábrelo otra vez y acepta el aviso de Windows.
+  - pregunta: "Dice que el equipo no coincide"
+    imagen: equipo.jpg
+    respuesta: >-
+      Los 4 personajes tienen que estar en el orden del guion: 1 Odin, 2 Gawain, 3 Freyja (Strength),
+      4 Thonar (Speed). Cámbialo en la pantalla de la Demonic Beast y vuelve a pulsar Empezar.
+  - pregunta: "Se rinde muchas veces"
+    respuesta: >-
+      Se rinde cuando no le salen las cartas que necesita o están bloqueadas. Algunas veces es normal.
+      Si pasa casi siempre, marca <b>Ver detalle técnico</b> en Farmear: el registro dice qué carta faltó.
+  - pregunta: "Se quedó quieto o hizo algo raro"
+    respuesta: >-
+      Pulsa <b>F10</b> para detenerlo (o lleva el ratón a una esquina). Comprueba que nada tape el juego y
+      vuelve a empezar. Si activas los avisos al móvil en Ajustes, te escribe cuando se atasca.
+  - pregunta: "Hay objetos sin nombre en Recompensas"
+    imagen: victoria.jpg
+    respuesta: >-
+      La primera vez que sale un objeto, el bot no sabe cómo se llama. Haz doble clic en su casilla en
+      Recompensas y escríbele el nombre: a partir de ahí lo reconoce solo.
+  - pregunta: "No me deja usarlo hasta que actualice"
+    respuesta: >-
+      Las actualizaciones son obligatorias para que todos jueguen con el guion más reciente. Pulsa
+      <b>Actualizar</b> (hace falta internet); el bot se reinicia solo en unos segundos.
+  - pregunta: "Necesito el ratón un momento"
+    respuesta: >-
+      Pulsa <b>F9</b> para pausar y otra vez F9 para seguir. Las teclas se cambian en Ajustes.
+
+glosario:
+  # ---- del juego
+  - termino: "Demonic Beast"
+    tipo: juego
+    definicion: "Jefes especiales que se pelean por pisos (Floors). Dan materiales para mejorar el equipo."
+  - termino: "Skollandhati & Hati"
+    tipo: juego
+    definicion: "La Demonic Beast de los perros: un lobo dorado y uno azul. En el juego sale como Skoll and Hati."
+  - termino: "Floor"
+    tipo: juego
+    definicion: "Piso o nivel de dificultad de una Demonic Beast. El bot farmea el Floor 4."
+  - termino: "Phase"
+    tipo: juego
+    definicion: "Cada parte de una pelea. La de los perros tiene 3 fases y en cada una cambia qué hay que hacer."
+  - termino: "Turn"
+    tipo: juego
+    definicion: "Turno. En cada uno pones hasta 4 cartas en los huecos y luego atacan los enemigos."
+  - termino: "Stance"
+    tipo: juego
+    definicion: "Postura defensiva de un enemigo. En los perros se ve como una burbuja: mientras la tiene, ese perro no se puede seleccionar. Algunas cartas la quitan."
+  - termino: "Skill / carta"
+    tipo: juego
+    definicion: "Cada personaje trae habilidades que aparecen como cartas en tu mano."
+  - termino: "Rank"
+    tipo: juego
+    definicion: "Nivel de una carta: 1, 2 o 3 estrellas. Juntar dos cartas iguales sube su rango."
+  - termino: "Ultimate"
+    tipo: juego
+    definicion: "La carta especial de cada personaje (la 'ulti'). Se carga usando sus otras cartas."
+  - termino: "Talent"
+    tipo: juego
+    definicion: "Habilidad especial de algunos personajes que se activa con un botón durante la pelea, como la de Odin."
+  - termino: "Carta bloqueada"
+    tipo: juego
+    definicion: "Carta oscurecida por un efecto del enemigo. No hace efecto, así que el bot nunca la juega."
+  - termino: "Atributos"
+    tipo: juego
+    definicion: "Strength (rojo), Speed (azul), HP (verde), Light (claro) y Dark (oscuro). Un mismo personaje puede tener versiones de distinto atributo."
+  - termino: "CC"
+    tipo: juego
+    definicion: "Combat Class: el poder total de un personaje o de un equipo."
+  - termino: "Forfeit"
+    tipo: juego
+    definicion: "Rendirse. El bot lo usa para repetir una pelea que no va según el guion."
+  - termino: "Stamina"
+    tipo: juego
+    definicion: "Energía para entrar a las peleas. Se recupera con el tiempo o con pociones; el bot puede usarlas si se lo permites."
+  - termino: "Tavern"
+    tipo: juego
+    definicion: "La pantalla principal del juego, en el bar Boar Hat. Desde ahí el bot sabe llegar solo a la Demonic Beast."
+  - termino: "Extra"
+    tipo: juego
+    definicion: "Casilla que aparece al abrir un piso. El bot la marca en las primeras peleas si se lo pides."
+  - termino: "Victory"
+    tipo: juego
+    definicion: "Pantalla final de una pelea ganada, con el botín y el oro."
+  # ---- del bot
+  - termino: "Modo"
+    tipo: bot
+    definicion: "Una actividad que el bot sabe farmear solo, por ejemplo Skollandhati & Hati · Floor 4."
+  - termino: "Guion"
+    tipo: bot
+    definicion: "El orden de cartas probado que sigue el bot en cada fase y turno."
+  - termino: "Sesión"
+    tipo: bot
+    definicion: "Todo lo que farmea desde que pulsas Empezar hasta que se detiene. Queda guardada en Historial."
+  - termino: "Reinicio"
+    tipo: bot
+    definicion: "Una pelea que el bot abandonó con Forfeit para repetirla. No cuenta como derrota."
+  - termino: "Captura"
+    tipo: bot
+    definicion: "Imagen pequeña de una carta o un retrato que el bot usa para reconocerlos. Vienen incluidas con el bot."
+  - termino: "Skin"
+    tipo: bot
+    definicion: "El aspecto de la interfaz. Cambia solo en fechas especiales, o eliges uno en Ajustes."
+  - termino: "Freno de emergencia"
+    tipo: bot
+    definicion: "Llevar el ratón de golpe a una esquina de la pantalla: el bot se detiene al instante."
+  - termino: "Actualización obligatoria"
+    tipo: bot
+    definicion: "Cuando sale una versión nueva hay que instalarla para seguir usando el bot."
+  - termino: "Avisos al móvil (ntfy)"
+    tipo: bot
+    definicion: "App gratuita que recibe los avisos del bot si se atasca. Con 'Aceptar órdenes desde el móvil' (Ajustes) también puedes escribirle: estado, iniciar, pausar, reanudar, detener, captura o ayuda."
+  - termino: "Modo administrador"
+    tipo: bot
+    definicion: "Opciones para quien mantiene la base del bot (capturas, personajes y equipos). Un jugador normal no lo necesita."

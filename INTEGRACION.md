@@ -1,7 +1,7 @@
-# Integrar TrefotFarm en otro bot
+# Integrar LumenFarm en otro bot
 
-Guía para reutilizar las piezas de TrefotFarm (7DS Grand Cross, cliente de PC Global) dentro de
-otro bot. Todo el código está en `trefot/`; la interfaz (`trefot/gui/`) es opcional.
+Guía para reutilizar las piezas de LumenFarm (7DS Grand Cross, cliente de PC Global) dentro de
+otro bot. Todo el código está en `lumen/`; la interfaz (`lumen/gui/`) es opcional.
 
 > Probado: Skollandhati & Hati · Floor 4 con Odin, Gawain, Freyja (Strength) y Thonar (Speed):
 > **5 de 5 victorias seguidas, ~2,5 min por pelea, sin reinicios**.
@@ -73,16 +73,16 @@ Las coordenadas son relativas a la esquina superior izquierda de la **ventana** 
 
 ## 5. Base de personajes
 
-- `trefot/datos/personajes.yaml`: ficha de cada personaje (atributo, raza, roles, cartas).
+- `lumen/datos/personajes.yaml`: ficha de cada personaje (atributo, raza, roles, cartas).
 - `assets/personajes/<id>/`: `<carta>_ficha.png` (de la ficha del héroe), `<carta>.png` (de una pelea,
   tiene prioridad), `retrato.png`, `talento.png`.
-- `trefot/datos/equipos.yaml`: equipos recomendados por contenido.
+- `lumen/datos/equipos.yaml`: equipos recomendados por contenido.
 - Una carta se nombra `personaje.carta`, p. ej. `odin.single`, `thonar_azul.postura`.
 
 ## 6. Créditos y licencia
 
 Las plantillas de `assets/imagenes` y el modelo de `assets/modelos` vienen de
 [AutoFarming](https://github.com/PhantomPilots/AutoFarming) (licencia MIT, ver
-`LICENSE_AutoFarming_original.txt`); hay que conservar ese aviso. El resto del código es de TrefotFarm.
+`LICENSE_AutoFarming_original.txt`); hay que conservar ese aviso. El resto del código es de LumenFarm.
 
 Usar bots va contra las reglas de Netmarble y puede costar un baneo.

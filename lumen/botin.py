@@ -1,0 +1,200 @@
+"""Lectura del botin en la pantalla de recompensas (Victory): que objetos salieron, cuantos y el oro.
+
+- Las casillas siguen una cuadricula fija (medida con capturas reales): columnas cada 81 px desde
+  x=85 y filas en y=405 (una fila), 362/449 (dos) o 319/406/493 (tres). Se detectan las que se
+  puedan por su borde y con eso se sabe cuantas filas hay; luego se revisa cada casilla.
+- Que objeto es: se compara la parte de arriba del icono (sin el numero ni el cartel "Guaranteed")
+  con el catalogo de objetos que se va aprendiendo. Un icono nuevo se guarda como "sin nombre" y
+  el usuario le pone nombre una sola vez en la pagina Recompensas.
+- Cantidad: los digitos blancos de la esquina inferior derecha (si no hay, es 1).
+- Oro: los digitos amarillos junto a la moneda.
+Los digitos se comparan con assets/digitos (dibujados con fuentes con remate parecidas a la del juego).
+"""
+
+import threading
+from pathlib import Path
+
+import cv2
+import numpy as np
+import yaml
+
+from lumen.rutas import ASSETS, RAIZ
+from lumen.vision import guardar_imagen, leer_imagen
+
+COLUMNAS_X = [85 + 81 * i for i in range(5)]
+FILAS_Y = {1: [405], 2: [362, 449], 3: [319, 406, 493]}
+LADO = 63
+ZONA_ORO = (85, 540, 175, 572)  # x1, y1, x2, y2: "24,000" a la derecha de la moneda
+UMBRAL_OBJETO = 0.88  # parecido minimo de forma para decir que dos iconos son el mismo objeto
+DIF_COLOR_MAX = 18.0  # y diferencia maxima de color medio (cubo azul y cubo gris: misma forma)
+
+CARPETA = RAIZ / "recompensas" / "objetos"
+CATALOGO = CARPETA / "catalogo.yaml"
+_lock = threading.RLock()
+
+
+# ------------------------------------------------------------------ casillas
+def _cajas_por_borde(pantalla) -> list[tuple[int, int]]:
+    zona = pantalla[280:540]
+    bordes = cv2.dilate(cv2.Canny(cv2.cvtColor(zona, cv2.COLOR_BGR2GRAY), 60, 160), np.ones((2, 2), np.uint8))
+    contornos, _ = cv2.findContours(bordes, cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
+    cajas = []
+    for c in contornos:
+        x, y, w, h = cv2.boundingRect(c)
+        if 54 <= w <= 68 and 54 <= h <= 68 and abs(w - h) <= 6:
+            cajas.append((x, y + 280))
+    return cajas
+
+
+def _hay_objeto(celda) -> bool:
+    """Una casilla con objeto tiene marco y dibujo brillantes; el fondo detras esta oscuro."""
+    v = cv2.cvtColor(celda, cv2.COLOR_BGR2HSV)[..., 2]
+    return float(v.mean()) > 95 and float(v.std()) > 25
+
+
+def casillas(pantalla) -> list[tuple[int, int]]:
+    """Esquinas (x, y) de las casillas con objeto, en orden de lectura."""
+    detectadas = _cajas_por_borde(pantalla)
+    if detectadas:
+        y_arriba = min(y for _, y in detectadas)
+        filas = min(FILAS_Y, key=lambda n: abs(FILAS_Y[n][0] - y_arriba))
+        candidatas = {n: FILAS_Y[n] for n in (filas,)}
+    else:  # sin bordes claros: probar las tres disposiciones y quedarse con la que mas objetos ve
+        candidatas = FILAS_Y
+    mejor = []
+    for ys in candidatas.values():
+        encontradas = [(x, y) for y in ys for x in COLUMNAS_X if _hay_objeto(pantalla[y : y + LADO, x : x + LADO])]
+        if len(encontradas) > len(mejor):
+            mejor = encontradas
+    return mejor
+
+
+# ------------------------------------------------------------------ digitos
+_digitos: list[tuple[str, np.ndarray]] | None = None
+TAM_DIGITO = (10, 14)
+
+
+def _normalizar(mascara) -> np.ndarray:
+    v = cv2.resize(mascara.astype(np.float32), TAM_DIGITO, interpolation=cv2.INTER_AREA).flatten()
+    return (v - v.mean()) / (v.std() + 1e-6)
+
+
+def _referencias():
+    global _digitos
+    if _digitos is None:
+        _digitos = [(f.name[0], _normalizar(leer_imagen(f)[..., 0] > 128)) for f in sorted((ASSETS / "digitos").glob("*.png"))]
+    return _digitos
+
+
+def _clasificar(mascara) -> str:
+    v = _normalizar(mascara)
+    return max(_referencias(), key=lambda r: float((v * r[1]).mean()))[0]
+
+
+def _componentes(mascara, alto_min: int, alto_max: int):
+    n, etiquetas, stats, _ = cv2.connectedComponentsWithStats(mascara.astype(np.uint8), connectivity=8)
+    comps = []
+    for i in range(1, n):
+        x, y, w, h, area = stats[i]
+        if alto_min <= h <= alto_max and 2 <= w <= 14 and area >= 10:
+            comps.append((x, y, w, h, etiquetas[y : y + h, x : x + w] == i))
+    return sorted(comps, key=lambda c: c[0])
+
+
+def _grupo_derecho(comps, ancho: int, hueco: int = 3):
+    """Los digitos de un numero van juntos, pegados al borde derecho, con la misma altura y
+    alineados abajo; lo que no cumple eso es parte del dibujo (p. ej. una arista del cubo)."""
+    grupo = []
+    for c in reversed(comps):
+        x, y, w, h, _ = c
+        if not grupo:
+            if ancho - (x + w) <= 8:
+                grupo.append(c)
+            continue
+        ref_x, ref_y, _, ref_h, _ = grupo[0]
+        if ref_x - (x + w) <= hueco and abs(h - ref_h) <= 2 and abs((y + h) - (ref_y + ref_h)) <= 2:
+            grupo.insert(0, c)
+        else:
+            break
+    return grupo
+
+
+def leer_cantidad(celda) -> int:
+    esquina = celda[36:62, 30:LADO]
+    hsv = cv2.cvtColor(esquina, cv2.COLOR_BGR2HSV)
+    blanco = (hsv[..., 2] >= 185) & (hsv[..., 1] <= 80)
+    grupo = _grupo_derecho(_componentes(blanco, 8, 20), esquina.shape[1])
+    texto = "".join(_clasificar(m) for *_, m in grupo)
+    return int(texto) if texto.isdigit() and int(texto) > 0 else 1
+
+
+def leer_oro(pantalla) -> int | None:
+    x1, y1, x2, y2 = ZONA_ORO
+    hsv = cv2.cvtColor(pantalla[y1:y2, x1:x2], cv2.COLOR_BGR2HSV)
+    brillante = hsv[..., 2] >= 150
+    texto = "".join(_clasificar(m) for *_, m in _componentes(brillante, 10, 22))  # la coma es baja: se ignora
+    return int(texto) if texto.isdigit() else None
+
+
+# ------------------------------------------------------------------ catalogo de objetos
+def icono(celda) -> np.ndarray:
+    """Parte de arriba del icono: sin el numero de cantidad ni el cartel 'Guaranteed Reward'."""
+    return celda[5:40, 5:LADO - 5].copy()
+
+
+def cargar_catalogo() -> dict[str, dict]:
+    with _lock:
+        if not CATALOGO.is_file():
+            return {}
+        with CATALOGO.open(encoding="utf-8") as f:
+            return yaml.safe_load(f) or {}
+
+
+def guardar_catalogo(catalogo: dict) -> None:
+    with _lock:
+        CARPETA.mkdir(parents=True, exist_ok=True)
+        CATALOGO.write_text(yaml.safe_dump(catalogo, allow_unicode=True, sort_keys=False), encoding="utf-8")
+
+
+def ruta_icono(oid: str) -> Path:
+    return CARPETA / f"{oid}.png"
+
+
+def identificar(img_icono, catalogo: dict) -> str:
+    """Id del objeto; si no se parece a ninguno conocido, se agrega al catalogo como 'sin nombre'."""
+    mejor, mejor_valor = None, UMBRAL_OBJETO
+    for oid in catalogo:
+        ref = leer_imagen(ruta_icono(oid))
+        if ref is None or ref.shape != img_icono.shape:
+            continue
+        valor = float(cv2.matchTemplate(img_icono, ref, cv2.TM_CCOEFF_NORMED).max())
+        dif_color = float(np.abs(img_icono.reshape(-1, 3).mean(0) - ref.reshape(-1, 3).mean(0)).max())
+        if valor >= mejor_valor and dif_color <= DIF_COLOR_MAX:
+            mejor, mejor_valor = oid, valor
+    if mejor:
+        return mejor
+    n = 1
+    while f"objeto_{n}" in catalogo:
+        n += 1
+    oid = f"objeto_{n}"
+    catalogo[oid] = {"nombre": ""}
+    guardar_imagen(ruta_icono(oid), img_icono)
+    return oid
+
+
+def analizar(pantalla) -> dict:
+    """{'objetos': {id: cantidad}, 'oro': int | None}. Agrega al catalogo los objetos nuevos."""
+    with _lock:
+        catalogo = cargar_catalogo()
+        objetos: dict[str, int] = {}
+        for x, y in casillas(pantalla):
+            celda = pantalla[y : y + LADO, x : x + LADO]
+            oid = identificar(icono(celda), catalogo)
+            objetos[oid] = objetos.get(oid, 0) + leer_cantidad(celda)
+        guardar_catalogo(catalogo)
+        return {"objetos": objetos, "oro": leer_oro(pantalla)}
+
+
+def nombre(oid: str, catalogo: dict | None = None) -> str:
+    catalogo = catalogo if catalogo is not None else cargar_catalogo()
+    return (catalogo.get(oid) or {}).get("nombre") or f"Sin nombre ({oid.split('_')[-1]})"

@@ -1,4 +1,4 @@
-TREFOT // FARM  -  PRIMEROS PASOS
+LUMEN // FARM  -  PRIMEROS PASOS
 ==============================================================
 
 Bot para The Seven Deadly Sins: Grand Cross (cliente de PC). Esta copia es para probarlo.
@@ -19,22 +19,22 @@ Ojo: usar bots va contra las reglas de Netmarble y puede costar un baneo. Prueba
 OPCION A - con Git (recomendada: recibes las actualizaciones solo)
   1. Instala Git para Windows: https://git-scm.com/download/win (opciones por defecto).
   2. En la carpeta Documentos: clic derecho -> "Open Git Bash here" y escribe:
-         git clone https://github.com/Trefot/TrefotFarm.git
-  3. Entra a la carpeta TrefotFarm y haz doble clic en "Instalar.bat". Tarda unos minutos y
-     al terminar deja un acceso directo "Trefot Farm" en el escritorio y en el menu Inicio.
+         git clone https://github.com/Trefot/TrefotFarm.git LumenFarm
+  3. Entra a la carpeta LumenFarm y haz doble clic en "Instalar.bat". Tarda unos minutos y
+     al terminar deja un acceso directo "Lumen Farm" en el escritorio y en el menu Inicio.
 
 OPCION B - con el .zip (no recibe actualizaciones)
-  1. Descomprime el .zip en un sitio fijo, por ejemplo Documentos\TrefotFarm.
+  1. Descomprime el .zip en un sitio fijo, por ejemplo Documentos\LumenFarm.
   2. Doble clic en "Instalar.bat". Tarda unos minutos y crea el acceso directo del escritorio.
 
 
 3. ABRIR
 --------
 1. Abre el juego y llega a la Tavern.
-2. Doble clic en el acceso directo "Trefot Farm" del escritorio (o en "TrefotFarm.bat")
+2. Doble clic en el acceso directo "Lumen Farm" del escritorio (o en "LumenFarm.bat")
    y ACEPTA el aviso de administrador de Windows
    (el juego corre como administrador y sin ese permiso el bot no puede hacerle clic).
-3. Si no abre, usa "TrefotFarm_con_consola.bat" para ver el error.
+3. Si no abre, usa "LumenFarm_con_consola.bat" para ver el error.
 
 
 4. ANTES DE FARMEAR

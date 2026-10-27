@@ -1,0 +1,118 @@
+# Catalogo base de personajes (viene con el programa y lo actualizan las actualizaciones).
+# Lo que edites o agregues desde la pagina Personajes se guarda aparte, en personajes/usuario.yaml,
+# y se mezcla encima de esto: las actualizaciones nunca lo pisan.
+#
+# color: rojo | verde | azul | claro | oscuro
+# roles: ver ROLES en lumen/personajes.py
+# cartas: id -> descripcion. "respaldo" = imagen de AutoFarming que se usa si aun no hay captura propia.
+#         "boton: true" = no es una carta de la mano sino un boton de la pantalla (p. ej. un talento).
+
+odin:
+  clave: "[Almighty] Supreme God Odin"  # nombre completo en el juego (lo usa la captura de heroes)
+  nombre: Odin
+  # Ficha: "[Almighty] Supreme God Odin" - Attribute Light, Race Unknown, Ragnarok / God
+  color: claro
+  raza: desconocida
+  roles: [dano_single, dano_area, quita_postura, talento]
+  cartas:
+    single: {descripcion: "Un objetivo (Spear of Wrath, quita posturas)"}
+    area: {descripcion: "Area (Heavenfall)"}
+    ulti: {descripcion: Ulti}
+    talento: {descripcion: Boton del talento, boton: true}
+
+gawain:
+  clave: "[Gold-Colored Magic] Knight of the Sun Gawain"  # nombre completo en el juego (lo usa la captura de heroes)
+  nombre: Gawain
+  # Ficha: "[Gold-Colored Magic] Knight of the Sun Gawain" - Attribute Light, Race Unknown, Four Knights
+  color: claro
+  raza: desconocida
+  roles: [dano_single, dano_area]
+  cartas:
+    single: {descripcion: "Un objetivo (Ruthless Violence)"}
+    area: {descripcion: "Area (Golden Cataclysm; con Brilliance quita posturas)"}
+    ulti: {descripcion: "Ulti (Sunshine Burst, area)"}
+
+freyja_roja:
+  clave: "[Spellbinding Queen] Goddess of Beauty Freyja"  # nombre completo en el juego (lo usa la captura de heroes)
+  nombre: Freyja roja
+  # Ficha: "[Spellbinding Queen] Goddess of Beauty Freyja" - Attribute Strength, Race Unknown, Ragnarok / God
+  color: rojo
+  raza: desconocida
+  roles: [dano_single, dano_area, ulti_remate]
+  cartas:
+    normal_1: {descripcion: "Un objetivo (Elegant Leopard)", respaldo: snake/freyja_st.png}
+    normal_2: {descripcion: "Area (Fascination Chain)", respaldo: snake/freyja_aoe.png}
+    ulti: {descripcion: "Ulti (Aesthetic Overflow)", respaldo: snake/freyja_ult.png}
+
+thonar_azul:
+  clave: "[Battle-Hardened Mercenary] Wanderer Thonar"  # nombre completo en el juego (lo usa la captura de heroes)
+  nombre: Thonar azul
+  # Ficha: "[Battle-Hardened Mercenary] Wanderer Thonar" - Attribute Speed, Race Human, Ragnarok
+  color: azul
+  raza: humano
+  roles: [quita_postura, dano_single, dano_area]
+  cartas:
+    postura: {descripcion: "Quita la postura (Light Barrage, un objetivo)", respaldo: dogs/b_thonar_stance.png}
+    otra: {descripcion: "Area (Heavenly Strike)", respaldo: dogs/b_thonar_gauge.png}
+    ulti: {descripcion: "Ulti (Realization of Justice, un objetivo)"}
+
+ludociel_lr:
+  clave: "[Advent of Flash] Covenant of Light Ludociel"  # nombre completo en el juego (lo usa la captura de heroes)
+  nombre: Ludociel LR
+  color: azul
+  raza: diosa
+  roles: []
+  cartas:
+    area: {descripcion: Area}
+    ulti: {descripcion: Ulti}
+    buffo: {descripcion: Buffo}
+
+# --- Personajes de otros equipos recomendados (sin capturas todavia) -------------------------
+escanor:
+  nombre: Escanor
+  color: sin definir
+  raza: humano
+  roles: []
+  cartas: {}
+
+meliodas_3000:
+  nombre: Meliodas (3000 years)
+  color: sin definir
+  raza: demonio
+  roles: []
+  cartas: {}
+
+gowther_azul:
+  nombre: Gowther (Speed)
+  color: azul
+  raza: sin definir
+  roles: []
+  cartas: {}
+
+nasiens:
+  nombre: Nasiens
+  color: sin definir
+  raza: humano
+  roles: []
+  cartas: {}
+
+roxy:
+  nombre: Roxy
+  color: sin definir
+  raza: sin definir
+  roles: []
+  cartas: {}
+
+lillia:
+  nombre: Lillia
+  color: sin definir
+  raza: sin definir
+  roles: []
+  cartas: {}
+
+cusack:
+  nombre: Cusack
+  color: sin definir
+  raza: sin definir
+  roles: []
+  cartas: {}
