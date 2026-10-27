@@ -172,6 +172,8 @@ class FilaHeroe(QFrame):
             chips.addWidget(QLabel(f"· {h['caracteristicas']}", objectName="tenue"))
         chips.addStretch()
         datos.addLayout(chips)
+        if h.get("en_cuenta") is False:
+            datos.addWidget(QLabel("No lo tienes (WANTED)", objectName="tenue"))
         avisos = avisos_de(h)
         if avisos:
             datos.addWidget(QLabel(f"<span style='color:{tema.AVISO}'>Revisar: {', '.join(avisos)}</span>"))
@@ -322,7 +324,8 @@ class PaginaHeroesCapturados(Pagina):
         revisar = sum(1 for h in self.catalogo.values() if avisos_de(h))
         r = QMessageBox.question(
             self, "Pasar a Personajes",
-            f"Paso {len(self.catalogo)} héroes a la página Personajes y los marco como tuyos."
+            f"Paso {len(self.catalogo)} héroes a la página Personajes y marco como tuyos los que tienes "
+            "(los WANTED quedan en gris)."
             + (f"\n\n{revisar} tienen algo para revisar; puedes corregirlos después y volver a pasarlos." if revisar else "")
             + "\n\nLos que el bot ya conocía (Odin, Gawain, Freyja, Thonar...) solo reciben su icono: sus cartas no "
               "se tocan. ¿Seguir?")

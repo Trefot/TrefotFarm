@@ -374,6 +374,16 @@ def buscar_fila(pantalla, fila) -> int | None:
     return y + ARRIBA_LISTA if valor >= 0.9 else None
 
 
+SEPIA_WANTED = 0.63  # parte sepia de la casilla: tus heroes <=0.57, carteles WANTED >=0.68 (medido en 377)
+
+
+def es_wanted(icono) -> bool:
+    """Al final de la lista el juego pone carteles "WANTED" en sepia: heroes que no tienes."""
+    hsv = cv2.cvtColor(icono, cv2.COLOR_BGR2HSV)
+    sepia = (hsv[..., 0] >= 10) & (hsv[..., 0] <= 28) & (hsv[..., 1] > 60)
+    return float(sepia.mean()) > SEPIA_WANTED
+
+
 def atributo_de_casilla(icono) -> str:
     x1, y1, x2, y2 = ICONO_CASILLA
     return atributo_por_color(icono[y1:y2, x1:x2], minimo=40)
@@ -470,11 +480,13 @@ def pasar_a_biblioteca(catalogo: dict) -> tuple[int, int]:
         origen = CARPETA / pid_captura
         destino = _existente(h, biblioteca, base, capturados)
         cara = origen / "icono.png" if (origen / "icono.png").is_file() else origen / "retrato_ficha.png"
+        tengo = h.get("en_cuenta", True)  # los WANTED de la lista no estan en tu cuenta
         if destino and biblioteca[destino].cartas:
-            if cara.is_file():
+            if cara.is_file() and tengo:  # el cartel WANTED no sustituye a la cara buena
                 (P.CARPETA / destino).mkdir(parents=True, exist_ok=True)
                 shutil.copyfile(cara, P.CARPETA / destino / f"{P.ICONO}.png")
-            P.marcar_tengo(destino, True)
+            if tengo:
+                P.marcar_tengo(destino, True)
             existentes += 1
             continue
         pid = destino or pid_captura
@@ -496,7 +508,7 @@ def pasar_a_biblioteca(catalogo: dict) -> tuple[int, int]:
             carpeta.mkdir(parents=True, exist_ok=True)
             shutil.copyfile(cara, carpeta / f"{P.ICONO}.png")
         P.guardar(P.Personaje(id=pid, nombre=h["nombre"], color=h.get("color", "sin definir"),
-                              raza=h.get("raza", "sin definir"), roles=roles_de(h), cartas=cartas, tengo=True,
+                              raza=h.get("raza", "sin definir"), roles=roles_de(h), cartas=cartas, tengo=tengo,
                               propio=pid not in base))
         if destino:
             existentes += 1
@@ -684,8 +696,9 @@ class CapturaHeroes(Modo):
         self.iconos = iconos
         if self.fase == "caras":
             guardar_caras(iconos)
-            self.log(f"Fase 1 terminada: {len(iconos)} caras guardadas en capturas\\heroes\\iconos "
-                     "(mira hoja.jpg). Ahora la fase 2: Capturar fichas.", "ok")
+            wanted = sum(1 for i in iconos if es_wanted(i))
+            self.log(f"Fase 1 terminada: {len(iconos)} caras ({len(iconos) - wanted} tuyas y {wanted} WANTED, que no "
+                     "tienes) en capturas\\heroes\\iconos (mira hoja.jpg). Ahora la fase 2: Capturar fichas.", "ok")
             raise TerminarModo()
         self.log(f"{len(iconos)} iconos recortados. Abro el primer héroe.", "ok")
         self._subir_lista(o)
@@ -845,7 +858,10 @@ class CapturaHeroes(Modo):
         indice = h.pop("_indice")
         if self.iconos is not None and indice < len(self.iconos):
             icono = self.iconos[indice]
-            del_icono = atributo_de_casilla(icono)
+            del_icono = "" if es_wanted(icono) else atributo_de_casilla(icono)  # el cartel no tiene color
+            if es_wanted(icono):
+                h["en_cuenta"] = False
+                self.log(f"{h['nombre']} es un WANTED: no lo tienes en tu cuenta.", "debug")
             if del_icono and del_icono != h["atributo"]:
                 # El orden no cuadra (p. ej. la lista cambio): mejor sin icono que con el de otro.
                 self.log(f"El icono nº {indice + 1} de la lista es {del_icono} y {h['nombre']} es {h['atributo']}: "
