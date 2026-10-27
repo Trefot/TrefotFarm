@@ -1,3 +1,7 @@
-"""TrefotFarm v2: autofarming propio para 7DS Grand Cross."""
+"""Puente de la version 2 (temporal). El programa ahora esta en lumen/.
 
-__version__ = "2.22.2"
+El actualizador de las versiones 2.x lee la version de este archivo: tiene que llevar la misma
+que lumen/__init__.py hasta que todos hayan actualizado. Despues se borra.
+"""
+
+__version__ = "3.0.0"

@@ -1,4 +1,4 @@
-TREFOT // FARM  -  v2
+LUMEN // FARM  -  v2
 =====================
 
 Autofarming propio para 7DS Grand Cross (cliente de PC, modo vertical).
@@ -14,9 +14,9 @@ Doble clic en Instalar.bat  (necesita Python 3.12, el mismo que usa AutoFarming)
 
 ARRANCAR
 --------
-Doble clic en TrefotFarm.bat.  Si no abre, TrefotFarm_con_consola.bat muestra el error.
+Doble clic en LumenFarm.bat.  Si no abre, LumenFarm_con_consola.bat muestra el error.
 Windows pedira permiso de administrador: acepta. El juego corre como administrador y, sin
-ese permiso, TrefotFarm no podria ajustar su ventana ni hacerle clic.
+ese permiso, LumenFarm no podria ajustar su ventana ni hacerle clic.
 
 
 PRIMERA VEZ: CAPTURAS DE TUS PERSONAJES
@@ -24,7 +24,7 @@ PRIMERA VEZ: CAPTURAS DE TUS PERSONAJES
 Lo mas rapido es sacarlas de la ficha de cada heroe (no hace falta pelear):
 1. Abre el juego y pulsa "Ajustar" (deja la ventana en 554x960, el tamano de las imagenes).
 2. En el juego: Heroes -> el personaje (su ficha, con la fila "Skills" abajo).
-3. En TrefotFarm: Personajes -> "Desde la ficha". Elige el personaje, revisa que carta es cada
+3. En LumenFarm: Personajes -> "Desde la ficha". Elige el personaje, revisa que carta es cada
    una (vienen en orden: normal 1, normal 2, ulti), copia color y raza de la ficha y Guardar.
 4. Repite con cada personaje. Para el equipo de Perros: Odin, Gawain, Freyja roja y Thonar azul.
 5. Retratos: en la pantalla del equipo (antes de Start), Personajes -> "Retratos".
@@ -37,9 +37,9 @@ Las capturas quedan en la biblioteca: personajes\<personaje>\ (sirven para todos
 
 LA INTERFAZ (menu de la izquierda)
 ----------------------------------
-Inicio            estado del juego, del bot y de la version (con los botones Buscar / Actualizar);
-                  avisos; arranque rapido; resumen de hoy.
-Farmear           modo, opciones, Iniciar / Pausar / Detener, registro y vista en vivo del juego.
+Inicio            4 iconos (Juego, Ventana, Equipo, Cartas: en verde = listo), la rueda para elegir
+                  que farmear y su piso, victorias y Empezar.
+Farmear           el modo en curso, Iniciar / Pausar / Detener, cifras, registro y opciones.
 Capturas          sacar y comprobar las imagenes de tus cartas (la insignia roja = las que faltan).
 Personajes        tu biblioteca: ficha de cada personaje (color, raza, roles, lo tengo), sus cartas y su
                   retrato. Una captura sirve para todos los modos. Los retratos se sacan aqui, en la
@@ -47,16 +47,16 @@ Personajes        tu biblioteca: ficha de cada personaje (color, raza, roles, lo
 Equipos           para cada contenido: que puestos pide, si tienes a los recomendados y con quien
                   podrias sustituirlos (segun los roles que marcaste en Personajes).
 Historial         todas las sesiones con victorias, derrotas, % de exito y victorias por hora.
-Recompensas       suma de todo lo conseguido (oro y cada objeto, por dia o por sesion) y la
+Botin             suma de todo lo conseguido (oro y cada objeto, por dia o por sesion) y la
                   foto de cada victoria. Doble clic en un objeto nuevo para ponerle nombre.
 Ajustes           ventana del juego, teclas rapidas, avisos al movil y repositorio de GitHub.
 
-Para farmear: juego abierto y visible, equipo puesto, Inicio -> "Iniciar ahora".
+Para farmear: juego abierto y visible, equipo puesto, Inicio -> gira la rueda -> "Empezar".
 F9 pausa / reanuda, F10 detiene (cambiables en Ajustes).
 Freno de emergencia: lleva el raton a una esquina de la pantalla.
 Mientras corre, el bot usa tu raton: no lo muevas.
 
-El guion de pelea esta explicado al principio de trefot\modos\perros_piso4.py.
+El guion de pelea esta explicado al principio de lumen\modos\perros_piso4.py.
 Si falta una carta clave o una fase dura mas de lo previsto, se rinde y reinicia la pelea.
 
 
@@ -70,13 +70,22 @@ Tus capturas (personajes\), config.yaml, el historial, las recompensas y los log
 Si habias editado a mano algun archivo del programa, se guarda una copia en logs\respaldo_<fecha>\.
 Sin internet o sin GitHub configurado, el programa funciona igual y lo vuelve a intentar despues.
 
-Ya esta conectado a https://github.com/Trefot/TrefotFarm (se cambia en Ajustes si hiciera falta).
+Ya viene conectado a su repositorio de GitHub (se cambia en Ajustes si hiciera falta).
 
 
 AVISOS AL MOVIL (opcional)
 --------------------------
 Instala la app ntfy, suscribete a un canal con un nombre dificil de adivinar y escribelo en
 Ajustes. Te avisa (con foto) si el bot se queda atascado.
+
+Ordenes desde el movil: marca "Aceptar ordenes desde el movil" en Ajustes y escribe en el canal
+desde la app ntfy. El bot contesta en el mismo canal:
+  estado     que esta haciendo, tiempo, victorias y derrotas
+  iniciar    empieza a farmear con el modo elegido en Farmear (el juego tiene que estar abierto)
+  pausar / reanudar / detener
+  captura    foto de la pantalla del juego
+  ayuda      la lista de ordenes
+Quien conozca el nombre del canal puede manejar el bot: usa un nombre largo y dificil de adivinar.
 
 
 CARPETAS
@@ -88,7 +97,7 @@ capturas\          fotos completas que guardes
 recompensas\       fotos de las pantallas de recompensas (indice.jsonl = lista)
 logs\              errores inesperados (errores.log)
 config.yaml        ajustes (se crea solo)
-trefot\            el codigo:
+lumen\            el codigo:
    ventana.py  captura y tamano de la ventana     entrada.py  clics
    vision.py   busqueda de imagenes               cartas.py   lectura de la mano
    equipo.py   reconocer tus cartas               juego.py    imagenes y coordenadas del juego
@@ -97,8 +106,10 @@ trefot\            el codigo:
 
 AGREGAR UN MODO NUEVO
 ---------------------
-Copia modos\perros_piso4.py como base, cambia id/nombre/opciones/estados y anadelo a
-MODOS en modos\__init__.py. Aparece solo en la interfaz.
+La lista de todo lo que el bot va a farmear esta en modos\catalogo.py (bestias por piso,
+demonios, oro y monedas SA). En Inicio sale en dorado lo que ya funciona y en gris lo demas.
+Para programar uno: copia modos\perros_piso4.py, usa el mismo id que tiene en el catalogo
+(p. ej. "pajaro_piso4" o "demonio_rojo") y anadelo a MODOS en modos\__init__.py.
 
 
 Ojo: usar bots va contra las reglas de Netmarble y puede costar un baneo.
