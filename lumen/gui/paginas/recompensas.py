@@ -15,6 +15,8 @@ from PyQt5.QtWidgets import (
     QListView,
     QListWidget,
     QListWidgetItem,
+    QMenu,
+    QMessageBox,
     QPushButton,
     QScrollArea,
     QTabWidget,
@@ -22,7 +24,7 @@ from PyQt5.QtWidgets import (
     QWidget,
 )
 
-from lumen import botin, recompensas
+from lumen import botin, historial, recompensas
 from lumen.gui import iconos, tema
 from lumen.gui.comun import Pagina, tarjeta
 
@@ -39,14 +41,17 @@ class CasillaObjeto(QFrame):
     """Un objeto del botin: su dibujo, cuanto llevas, el nombre y cada cuanto sale."""
 
     renombrar = pyqtSignal(str)
+    unir = pyqtSignal(str)
+    quitar = pyqtSignal(str)
 
-    def __init__(self, oid: str, nombre: str, total: int, por_victoria: str, veces: str, sin_nombre: bool):
+    def __init__(self, oid: str, nombre: str, total: int, por_victoria: str, veces: str, sin_nombre: bool,
+                 por_hora: str = ""):
         super().__init__(objectName="tarjeta_objeto")
         self.oid = oid
         self.setProperty("sin_nombre", sin_nombre)
         self.setCursor(Qt.PointingHandCursor)
-        self.setToolTip("Doble clic para ponerle nombre")
-        self.setFixedHeight(190)
+        self.setToolTip("Doble clic: ponerle nombre · Clic derecho: unirlo a otro o quitarlo")
+        self.setFixedHeight(208)
         capa = QVBoxLayout(self)
         capa.setContentsMargins(10, 12, 10, 10)
         capa.setSpacing(4)
@@ -61,16 +66,25 @@ class CasillaObjeto(QFrame):
         etiqueta.setStyleSheet(f"color: {tema.AVISO if sin_nombre else tema.TEXTO}; font-weight: 600;")
         capa.addWidget(etiqueta)
         capa.addWidget(QLabel(f"{por_victoria} por victoria", objectName="tenue", alignment=Qt.AlignCenter))
+        if por_hora:
+            capa.addWidget(QLabel(f"{por_hora} por hora", objectName="tenue", alignment=Qt.AlignCenter))
         capa.addWidget(QLabel(veces, objectName="tenue", alignment=Qt.AlignCenter))
 
     def mouseDoubleClickEvent(self, evento):
         self.renombrar.emit(self.oid)
         super().mouseDoubleClickEvent(evento)
 
+    def contextMenuEvent(self, evento):
+        menu = QMenu(self)
+        menu.addAction(iconos.icono("mdi6.pencil", tema.TEXTO), "Ponerle nombre", lambda: self.renombrar.emit(self.oid))
+        menu.addAction(iconos.icono("mdi6.call-merge", tema.TEXTO), "Es el mismo objeto que...", lambda: self.unir.emit(self.oid))
+        menu.addAction(iconos.icono("mdi6.delete-outline", tema.TEXTO), "No es un objeto (quitarlo)", lambda: self.quitar.emit(self.oid))
+        menu.exec_(evento.globalPos())
+
 
 class PaginaRecompensas(Pagina):
     titulo = "Botín"
-    subtitulo = "Doble clic en un objeto para ponerle nombre."
+    subtitulo = "Doble clic en un objeto para ponerle nombre; clic derecho para unirlo a otro o quitarlo."
 
     def __init__(self, app):
         super().__init__()
@@ -91,7 +105,7 @@ class PaginaRecompensas(Pagina):
         fila = QHBoxLayout()
         self.cifras = {}
         for clave, titulo, ic in (("victorias", "Victorias", "trofeo"), ("oro", "Oro", "oro"),
-                                  ("objetos", "Objetos conseguidos", "objetos"), ("distintos", "Objetos distintos", "distintos")):
+                                  ("objetos", "Objetos conseguidos", "objetos"), ("por_hora", "Victorias por hora", "rayo")):
             marco, cifra = tarjeta(titulo, icono=ic)
             self.cifras[clave] = cifra
             fila.addWidget(marco)
@@ -104,6 +118,9 @@ class PaginaRecompensas(Pagina):
         self.combo.setMinimumWidth(320)
         self.combo.currentIndexChanged.connect(self._pintar)
         filtro.addWidget(self.combo)
+        self.tiempo = QLabel(objectName="tenue")
+        filtro.addSpacing(14)
+        filtro.addWidget(self.tiempo)
         filtro.addStretch()
         self.cuerpo.addLayout(filtro)
 
@@ -200,7 +217,15 @@ class PaginaRecompensas(Pagina):
         self.cifras["victorias"].setText(str(len(filtrados)))
         self.cifras["oro"].setText(_miles(recompensas.total_oro(filtrados)))
         self.cifras["objetos"].setText(_miles(sum(totales.values())))
-        self.cifras["distintos"].setText(str(len(totales)))
+        horas = recompensas.horas_de(filtrados, historial.leer(limite=1_000_000))
+        self.cifras["por_hora"].setText(f"{len(filtrados) / horas:.1f}".replace(".", ",") if horas > 0.01 else "—")
+        if horas > 0.01:
+            minutos = round(horas * 60)
+            duracion = f"{minutos // 60} h {minutos % 60} min" if minutos >= 60 else f"{minutos} min"
+            oro_hora = _miles(round(recompensas.total_oro(filtrados) / horas))
+            self.tiempo.setText(f"Farmeando {duracion} · {oro_hora} de oro por hora")
+        else:
+            self.tiempo.setText("")
 
         sin_nombre = [oid for oid in totales if not (catalogo.get(oid) or {}).get("nombre")]
         self.aviso.setVisible(bool(sin_nombre))
@@ -214,10 +239,13 @@ class PaginaRecompensas(Pagina):
                 w.setParent(None)
         for i, (oid, total) in enumerate(totales.items()):
             veces = sum(1 for r in filtrados if oid in (r.get("objetos") or {}))
-            casilla = CasillaObjeto(oid, botin.nombre(oid, catalogo), total,
-                                    f"{total / len(filtrados):.1f}" if filtrados else "—",
-                                    f"en {veces} de {len(filtrados)} victorias", oid in sin_nombre)
+            por_victoria = f"{total / len(filtrados):.1f}".replace(".", ",") if filtrados else "—"
+            por_hora = _miles(round(total / horas)) if horas > 0.01 else ""
+            casilla = CasillaObjeto(oid, botin.nombre(oid, catalogo), total, por_victoria,
+                                    f"en {veces} de {len(filtrados)} victorias", oid in sin_nombre, por_hora)
             casilla.renombrar.connect(self._renombrar)
+            casilla.unir.connect(self._unir)
+            casilla.quitar.connect(self._quitar)
             self.rejilla_botin.addWidget(casilla, i // COLUMNAS_BOTIN, i % COLUMNAS_BOTIN)
         if not totales:
             vacio = QLabel("Todavía no hay recompensas: se guardan solas cada vez que el bot gana.",
@@ -233,6 +261,27 @@ class PaginaRecompensas(Pagina):
             catalogo.setdefault(oid, {})["nombre"] = nombre.strip()
             botin.guardar_catalogo(catalogo)
             self._pintar()
+
+    def _unir(self, oid: str):
+        catalogo = botin.cargar_catalogo()
+        otros = [o for o in botin.visibles(catalogo) if o != oid]
+        if not otros:
+            return
+        textos = [botin.nombre(o, catalogo) for o in otros]
+        texto, ok = QInputDialog.getItem(
+            self, "Es el mismo objeto", f"«{botin.nombre(oid, catalogo)}» es en realidad:", textos, 0, False)
+        if ok:
+            recompensas.unir_objeto(oid, otros[textos.index(texto)])
+            self.al_mostrar()
+
+    def _quitar(self, oid: str):
+        catalogo = botin.cargar_catalogo()
+        if QMessageBox.question(
+                self, "Quitar objeto",
+                f"¿«{botin.nombre(oid, catalogo)}» no es un objeto (p. ej. un cofre a medio abrir)?\n\n"
+                "Se quita de todas las victorias y no se volverá a contar.") == QMessageBox.Yes:
+            recompensas.descartar_objeto(oid)
+            self.al_mostrar()
 
     def _reanalizar(self):
         hechas = recompensas.reanalizar_pendientes(todas=True)

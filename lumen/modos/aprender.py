@@ -17,7 +17,7 @@ from collections import Counter
 
 import yaml
 
-from lumen import cartas, historial, juego
+from lumen import botin, cartas, historial, juego, recompensas
 from lumen import personajes as P
 from lumen.control import control
 from lumen.equipo import Equipo, Puesto
@@ -119,6 +119,7 @@ class Aprender(Modo):
         self.raton = Raton()
         self.indice: IndiceCartas | None = None
         self.peleas = 0
+        self.ultimo_resultado, self.foto_hecha, self.previa, self.ok_visto_desde = "", True, None, None
         self.sesion = self._sesion_nueva(())
         self._pelea_nueva()
 
@@ -184,6 +185,19 @@ class Aprender(Modo):
         return None
 
     def resultado(self, p, o):
+        # Tras ganar, foto de las recompensas cuando la pantalla con OK este quieta (como el bot).
+        if self.ultimo_resultado == "victoria" and not self.foto_hecha and juego.ok.esta(p):
+            self.ok_visto_desde = self.ok_visto_desde or time.time()
+            if botin.quieta(self.previa, p) or time.time() - self.ok_visto_desde > 6:
+                try:
+                    recompensas.guardar(p, modo=self.contenido, nombre_modo=f"{self.nombre_contenido} (a mano)",
+                                        sesion=self.sesion["inicio"], victoria=self.sesion["victorias"])
+                    self.log("Foto de recompensas guardada.", "debug")
+                except Exception as error:
+                    self.log(f"No pude guardar la foto de recompensas: {error}", "aviso")
+                self.foto_hecha = True
+            self.previa = p
+            return None
         # Esperar a que salga de la pantalla de resultado antes de buscar la siguiente pelea.
         if not (juego.victoria.esta(p, UMBRAL_RESULTADO) or juego.derrota.esta(p, UMBRAL_RESULTADO) or self._en_pelea(p)):
             return "esperar_pelea"
@@ -303,6 +317,7 @@ class Aprender(Modo):
         self.log(f"Pelea {self.peleas}: {resultado} en {minutos:.1f} min y {len(pelea['turnos'])} turnos. Guardada.",
                  "ok" if resultado == "victoria" else "aviso")
         self._contar(resultado)
+        self.ultimo_resultado, self.foto_hecha, self.previa, self.ok_visto_desde = resultado, False, None, None
         return "resultado"
 
     # ------------------------------------------- medicion del equipo (historial)

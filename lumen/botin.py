@@ -9,6 +9,11 @@
 - Cantidad: los digitos blancos de la esquina inferior derecha (si no hay, es 1).
 - Oro: los digitos amarillos junto a la moneda.
 Los digitos se comparan con assets/digitos (dibujados con fuentes con remate parecidas a la del juego).
+
+Catalogo de objetos en dos capas, como los personajes: la base (lumen/datos/objetos.yaml y
+assets/objetos/, la publica el administrador con los nombres puestos) y la local de cada jugador
+(recompensas/objetos/), que se mezcla encima. Un objeto puede estar "unido" a otro (era el mismo,
+leido raro: cuenta como el otro) o "descartado" (no era un objeto: p. ej. un cofre a medio abrir).
 """
 
 import threading
@@ -30,7 +35,24 @@ DIF_COLOR_MAX = 18.0  # y diferencia maxima de color medio (cubo azul y cubo gri
 
 CARPETA = RAIZ / "recompensas" / "objetos"
 CATALOGO = CARPETA / "catalogo.yaml"
+CARPETA_BASE = ASSETS / "objetos"
+CATALOGO_BASE = Path(__file__).resolve().parent / "datos" / "objetos.yaml"
 _lock = threading.RLock()
+
+# Pantalla quieta: entre dos capturas seguidas con el OK ya visible, la zona del botin cambia 1-4
+# (fondo animado) si esta quieta y 10-22 si aun se abren cofres o llegan casillas (medido en peleas reales).
+ZONA_BOTIN = (280, 600)
+DIF_QUIETA = 5.0
+
+
+def quieta(anterior, actual) -> bool:
+    """True si la pantalla de recompensas ya no se mueve (para no fotografiar cofres a medio abrir)."""
+    y1, y2 = ZONA_BOTIN
+    if anterior is None or anterior.shape != actual.shape:
+        return False
+    if float(cv2.absdiff(anterior[y1:y2], actual[y1:y2]).mean()) >= DIF_QUIETA:
+        return False
+    return len(casillas(anterior)) == len(casillas(actual))
 
 
 # ------------------------------------------------------------------ casillas
@@ -142,26 +164,62 @@ def icono(celda) -> np.ndarray:
     return celda[5:40, 5:LADO - 5].copy()
 
 
+def _leer_yaml(ruta: Path) -> dict:
+    if not ruta.is_file():
+        return {}
+    with ruta.open(encoding="utf-8") as f:
+        return yaml.safe_load(f) or {}
+
+
 def cargar_catalogo() -> dict[str, dict]:
+    """La base con lo local encima. Las entradas de la base llevan '_base' (no se guardan en local)."""
     with _lock:
-        if not CATALOGO.is_file():
-            return {}
-        with CATALOGO.open(encoding="utf-8") as f:
-            return yaml.safe_load(f) or {}
+        catalogo = {oid: {**(datos or {}), "_base": True} for oid, datos in _leer_yaml(CATALOGO_BASE).items()}
+        for oid, datos in _leer_yaml(CATALOGO).items():
+            catalogo[oid] = {**catalogo.get(oid, {}), **(datos or {})}
+        return catalogo
 
 
 def guardar_catalogo(catalogo: dict) -> None:
+    """Guarda en local solo lo que no esta igual en la base."""
     with _lock:
+        base = _leer_yaml(CATALOGO_BASE)
+        local = {}
+        for oid, datos in catalogo.items():
+            propio = {k: v for k, v in (datos or {}).items() if not k.startswith("_")}
+            if base.get(oid) != propio:
+                local[oid] = propio
         CARPETA.mkdir(parents=True, exist_ok=True)
-        CATALOGO.write_text(yaml.safe_dump(catalogo, allow_unicode=True, sort_keys=False), encoding="utf-8")
+        CATALOGO.write_text(yaml.safe_dump(local, allow_unicode=True, sort_keys=False), encoding="utf-8")
 
 
 def ruta_icono(oid: str) -> Path:
-    return CARPETA / f"{oid}.png"
+    local = CARPETA / f"{oid}.png"
+    return local if local.is_file() else CARPETA_BASE / f"{oid}.png"
 
 
-def identificar(img_icono, catalogo: dict) -> str:
-    """Id del objeto; si no se parece a ninguno conocido, se agrega al catalogo como 'sin nombre'."""
+def destino(oid: str, catalogo: dict) -> str | None:
+    """El objeto que cuenta de verdad: sigue las uniones; None si se descarto."""
+    vistos = set()
+    while oid and oid not in vistos:
+        vistos.add(oid)
+        datos = catalogo.get(oid) or {}
+        if datos.get("descartado"):
+            return None
+        if not datos.get("unido_a"):
+            return oid
+        oid = datos["unido_a"]
+    return oid
+
+
+def visibles(catalogo: dict) -> list[str]:
+    """Objetos que se muestran (sin los unidos a otro ni los descartados)."""
+    return [oid for oid, d in catalogo.items() if not (d or {}).get("unido_a") and not (d or {}).get("descartado")]
+
+
+def identificar(img_icono, catalogo: dict) -> str | None:
+    """Id del objeto; si no se parece a ninguno conocido, se agrega al catalogo como 'sin nombre'.
+    None si se parece a uno descartado (no es un objeto)."""
     mejor, mejor_valor = None, UMBRAL_OBJETO
     for oid in catalogo:
         ref = leer_imagen(ruta_icono(oid))
@@ -172,7 +230,7 @@ def identificar(img_icono, catalogo: dict) -> str:
         if valor >= mejor_valor and dif_color <= DIF_COLOR_MAX:
             mejor, mejor_valor = oid, valor
     if mejor:
-        return mejor
+        return destino(mejor, catalogo)
     n = 1
     while f"objeto_{n}" in catalogo:
         n += 1
@@ -190,6 +248,8 @@ def analizar(pantalla) -> dict:
         for x, y in casillas(pantalla):
             celda = pantalla[y : y + LADO, x : x + LADO]
             oid = identificar(icono(celda), catalogo)
+            if oid is None:  # descartado: no es un objeto
+                continue
             objetos[oid] = objetos.get(oid, 0) + leer_cantidad(celda)
         guardar_catalogo(catalogo)
         return {"objetos": objetos, "oro": leer_oro(pantalla)}
@@ -197,4 +257,5 @@ def analizar(pantalla) -> dict:
 
 def nombre(oid: str, catalogo: dict | None = None) -> str:
     catalogo = catalogo if catalogo is not None else cargar_catalogo()
+    oid = destino(oid, catalogo) or oid
     return (catalogo.get(oid) or {}).get("nombre") or f"Sin nombre ({oid.split('_')[-1]})"

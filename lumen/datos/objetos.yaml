@@ -1,0 +1,3 @@
+# Catalogo base de objetos del botin (lo publica el administrador con los nombres puestos).
+# id -> nombre; el icono esta en assets/objetos/<id>.png. Ver lumen/botin.py.
+{}
