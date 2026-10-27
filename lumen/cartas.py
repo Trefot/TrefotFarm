@@ -123,14 +123,15 @@ def rango_de(carta: np.ndarray, tipo: TipoCarta) -> Rango:
 
 
 # ---------------------------------------------------------------------- mano
-def leer_mano(pantalla: np.ndarray) -> list[Carta]:
-    """Las 8 cartas de la mano (4 unidades), de izquierda a derecha."""
-    x1, y1, _, _ = juego.REGION["mano_4"]
-    mano = recortar(pantalla, juego.REGION["mano_4"])
+def leer_mano(pantalla: np.ndarray, region: str = "mano_4", n: int = 8) -> list[Carta]:
+    """Las cartas de la mano, de izquierda a derecha (8 con 4 unidades; en demonios, region
+    "mano_demonio" y 7)."""
+    x1, y1, _, _ = juego.REGION[region]
+    mano = recortar(pantalla, juego.REGION[region])
     alto, ancho = mano.shape[:2]
-    col = ancho // 8
+    col = ancho // n
     cartas = []
-    for i in range(8):
+    for i in range(n):
         imagen = mano[:, i * col : (i + 1) * col].copy()
         tipo = tipo_de(imagen)
         rango = rango_de(imagen, tipo)
@@ -138,6 +139,15 @@ def leer_mano(pantalla: np.ndarray) -> list[Carta]:
             tipo = TipoCarta.ULTI
         cartas.append(Carta(posicion=i, rect=(x1 + i * col, y1, col, alto), imagen=imagen, tipo=tipo, rango=rango))
     return cartas
+
+
+def leer_mano_demonio(pantalla: np.ndarray) -> list[Carta]:
+    return leer_mano(pantalla, "mano_demonio", 7)
+
+
+def casillas_libres_demonio(pantalla: np.ndarray) -> int:
+    """Cartas que faltan por jugar en este turno de demonio (0 = turno del demonio o animacion)."""
+    return len(juego.casilla_vacia_demonio.buscar_todas(recortar(pantalla, juego.REGION["casillas_demonio"]), 0.8))
 
 
 def contar_huecos(pantalla: np.ndarray, umbral: float = 0.8) -> int:

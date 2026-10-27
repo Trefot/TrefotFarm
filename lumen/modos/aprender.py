@@ -23,7 +23,7 @@ from lumen.control import control
 from lumen.equipo import Equipo, Puesto
 from lumen.motor import Modo, TerminarModo
 from lumen.rutas import RAIZ
-from lumen.vision import guardar_imagen, recortar
+from lumen.vision import Plantilla, guardar_imagen, recortar
 
 CARPETA = RAIZ / "capturas" / "aprendizaje"
 ARRASTRE_PX = 25  # mas que esto entre pulsar y soltar = arrastrar (mover/fusionar), no jugar
@@ -32,6 +32,11 @@ SIN_PELEA_S = 20  # sin boton de pausa ni pantalla de resultado durante este tie
 # Medido en 2 peleas reales y menus: el boton de pausa da 0.99-1.00 en pelea y <=0.63 fuera; los
 # carteles de fase 0.96-1.00 en su fase pero hasta 0.82 por error en un menu; la victoria >=0.89.
 UMBRAL_PAUSA = 0.9
+# Demonios (Indura...): no hay boton de pausa; en pelea se ve AUTO (0.92-0.98, fuera <=0.48), la mano tiene
+# 7 cartas y el turno se juega en una fila de 6 casillas. Medido en una pelea real de Indura (Chaos).
+DEMONIOS = {"indura", "demonio_rojo", "demonio_gris", "demonio_carmesi", "bellmoth"}
+AUTO_DEMONIO = Plantilla("demons/auto.jpg")
+DESTRUIDO = Plantilla("demons/demons_destroyed.png")
 UMBRAL_FASE = 0.9
 UMBRAL_RESULTADO = 0.85
 
@@ -115,6 +120,7 @@ class Aprender(Modo):
     def __init__(self, valores: dict):
         super().__init__(valores)
         self.contenido = valores.get("contenido", "")
+        self.demonio = self.contenido in DEMONIOS
         self.nombre_contenido = valores.get("nombre_contenido", self.contenido)
         self.raton = Raton()
         self.indice: IndiceCartas | None = None
@@ -153,7 +159,8 @@ class Aprender(Modo):
         return None
 
     def pelea(self, p, o):
-        if juego.victoria.esta(p, UMBRAL_RESULTADO) or juego.criatura_destruida.esta(p, UMBRAL_RESULTADO):
+        if (juego.victoria.esta(p, UMBRAL_RESULTADO) or juego.criatura_destruida.esta(p, UMBRAL_RESULTADO)
+                or (self.demonio and DESTRUIDO.esta(p, 0.6))):
             return self._terminar_pelea("victoria", p)
         if juego.derrota.esta(p, UMBRAL_RESULTADO):
             return self._terminar_pelea("derrota", p)
@@ -166,12 +173,12 @@ class Aprender(Modo):
             return None
         self.ultima_vez_en_pelea = time.time()
         self._ver_fase(p)
-        huecos = cartas.contar_huecos(p)
-        mano = cartas.leer_mano(p)
+        huecos = cartas.casillas_libres_demonio(p) if self.demonio else cartas.contar_huecos(p)
+        mano = self._leer_mano(p)
         if self._mano_a_la_vista(p, mano) and huecos > 0:
             self._reconocer_equipo(mano)
             nombres = [c.nombre for c in mano]
-            if huecos == 4 and not self.turno_abierto:
+            if huecos == (6 if self.demonio else 4) and not self.turno_abierto:
                 self._abrir_turno(p, mano)
             if self.turno_abierto:
                 self.manos.append((time.time(), mano, o))
@@ -216,12 +223,16 @@ class Aprender(Modo):
         self.equipo: Equipo | None = None
         self.ultima_vez_en_pelea = time.time()
 
-    @staticmethod
-    def _en_pelea(p) -> bool:
+    def _en_pelea(self, p) -> bool:
+        if self.demonio:
+            return AUTO_DEMONIO.esta(p, UMBRAL_PAUSA)
         return juego.pausa.esta(p, UMBRAL_PAUSA)
 
+    def _leer_mano(self, p):
+        return cartas.leer_mano_demonio(p) if self.demonio else cartas.leer_mano(p)
+
     def _mano_a_la_vista(self, p, mano=None) -> bool:
-        mano = mano if mano is not None else cartas.leer_mano(p)
+        mano = mano if mano is not None else self._leer_mano(p)
         return sum(1 for c in mano if c.tipo in (cartas.TipoCarta.NORMAL, cartas.TipoCarta.ULTI)) >= 3
 
     def _ver_fase(self, p):
@@ -238,9 +249,12 @@ class Aprender(Modo):
             pid = self.indice.heroe_de(carta)
             if pid:
                 self.votos[pid] += 1
+        # Solo cuentan los heroes vistos varias veces: una carta suelta mal reconocida no entra al equipo.
+        # En Indura solo salen cartas de 3 heroes (el 4.o no reparte), asi que con 3 seguros tambien vale.
         seguros = [pid for pid, n in self.votos.most_common() if n >= VOTOS_EQUIPO]
-        if len(seguros) >= 4 or (len(self.pelea_actual["turnos"]) >= 3 and len(self.votos) >= 4):
-            ids = tuple(pid for pid, _ in self.votos.most_common(4))
+        turnos = len(self.pelea_actual["turnos"])
+        if len(seguros) >= 4 or (len(seguros) >= 3 and (self.demonio or turnos >= 3)):
+            ids = tuple(seguros[:4])
             self.equipo_ids = ids
             puestos = [Puesto("", (), pid) for pid in ids]
             self.equipo = Equipo("aprendido", "Equipo del jugador", puestos, obligatorias=set())
@@ -252,7 +266,7 @@ class Aprender(Modo):
         self.turno_abierto = True
         n = len(self.pelea_actual["turnos"]) + 1
         self.turno = {"turno": n, "fase": self.fase, "inicio": round(time.time() - self.pelea_actual["inicio"], 1),
-                      "mano": [str(c) for c in mano], "acciones": []}
+                      "mano": [str(c) for c in mano], "_mano": mano, "acciones": []}
         self.pelea_actual["turnos"].append(self.turno)
         self.pelea_actual.setdefault("_fotos", []).append(p.copy())
         self.log(f"Turno {n} (fase {self.fase or '?'}): " + " ".join(str(c) for c in mano), "debug")
@@ -301,6 +315,11 @@ class Aprender(Modo):
         fin = time.time()
         pelea = self.pelea_actual
         fotos = pelea.pop("_fotos", [])
+        for turno in pelea["turnos"]:  # las manos de antes de reconocer el equipo, ya con nombre
+            mano = turno.pop("_mano", None)
+            if mano is not None and self.equipo is not None:
+                self.equipo.etiquetar(mano)
+                turno["mano"] = [str(c) for c in mano]
         pelea.update(contenido=self.contenido, resultado=resultado, fin=fin,
                      duracion=round(fin - pelea["inicio"], 1), equipo=list(self.equipo_ids))
         nombre = time.strftime("%Y%m%d_%H%M%S", time.localtime(pelea["inicio"]))

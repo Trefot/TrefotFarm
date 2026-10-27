@@ -8,7 +8,9 @@ una captura propia):
    ese momento entra a la partida sin gastar entradas de tiempo real. Por eso se cuenta desde el primer
    instante en que se ve, se mira la pantalla muy seguido mientras se espera y, llegado el momento, se
    toca el Accept ya localizado sin volver a capturar.
-4. Preparacion: se pulsa "Preparation" y la pelea va en AUTO.
+4. Preparacion: se pulsa "Preparation". En la pelea el bot juega las cartas como el administrador
+   (lumen/datos/estrategias.yaml): reconoce el equipo por la mano y en cada casilla libre del turno juega
+   la carta de mas prioridad. Si no reconoce el equipo (uno sin estrategia), pone AUTO.
 5. Demonio destruido -> OK. Se cuenta la victoria y se vuelve a buscar.
 
 Indura tiene limite diario de peleas (el juego lo dice en la ventana de union): cuando ya no hay
@@ -17,7 +19,7 @@ partidas, el bot se queda esperando invitaciones que no llegan; se para con un t
 
 import time
 
-from lumen import entrada, juego
+from lumen import cartas, entrada, estrategias, juego
 from lumen.motor import Modo, Opcion, TerminarModo
 from lumen.vision import Plantilla
 
@@ -56,6 +58,8 @@ class Indura(Modo):
     }
     opciones = [
         Opcion("nivel", "Nivel", "lista", "Chaos", opciones=["Chaos", "Hell", "Extreme"]),
+        Opcion("jugar", "Cómo pelear", "lista", "Mis cartas", opciones=["Mis cartas", "AUTO"],
+               ayuda="Mis cartas: el bot juega como tú con la estrategia de tu equipo (si no la reconoce, AUTO)."),
         Opcion("espera", "Segundos antes de aceptar", "texto", "9.3",
                ayuda="Aceptar justo a los 9.3 s entra a la partida sin gastar entradas de tiempo real."),
         Opcion("victorias", "Victorias (0 = sin límite)", "entero", 0, maximo=999),
@@ -68,6 +72,11 @@ class Indura(Modo):
         self.victorias = self.derrotas = self.perdidas = 0
         self.buscando_desde = time.time()
         self.auto_puesto = False
+        self.estrategias = estrategias.cargar(self.id)
+        self.estrategia: estrategias.Estrategia | None = None
+        self.turnos_sin_equipo = 0
+        self.libres_antes = -1  # casillas libres cuando se toco la ultima carta
+        self.tocado_en = 0.0
 
     def estado_inicial(self):
         return "ir_a_indura"
@@ -159,6 +168,9 @@ class Indura(Modo):
         self.clic_si(PREPARACION, p, o, umbral=0.8, espera=1.0)
         if AUTO.esta(p, 0.8):
             self.auto_puesto = False
+            self.estrategia = None
+            self.turnos_sin_equipo = 0
+            self.libres_antes = -1
             self.log("¡Empieza la pelea!", "ok")
             return "pelea"
         if juego.menu_batalla.esta(p, 0.6) or TIEMPO_REAL.esta(p, 0.75):
@@ -167,10 +179,39 @@ class Indura(Modo):
         return None
 
     # ------------------------------------------------------------------ pelea
+    def _jugar_carta(self, p, o):
+        """Si es nuestro turno, juega la carta que toca segun la estrategia del equipo."""
+        libres = cartas.casillas_libres_demonio(p)
+        if libres == 0:
+            return
+        # Tras tocar una carta, esperar a que ocupe su casilla antes de elegir la siguiente.
+        if libres == self.libres_antes and time.time() - self.tocado_en < 2.0:
+            return
+        mano = cartas.leer_mano_demonio(p)
+        if self.estrategia is None:
+            self.estrategia = estrategias.reconocer(self.estrategias, mano)
+            if self.estrategia is None:
+                self.turnos_sin_equipo += 1
+                if self.turnos_sin_equipo >= 3:  # equipo sin estrategia: que juegue el juego
+                    self.log("No reconozco este equipo: lo dejo en AUTO.", "aviso")
+                    self.auto_puesto = self.clic_si(AUTO, p, o, umbral=0.8)
+                return
+            self.log(f"Equipo reconocido: {self.estrategia.nombre}. Juego como tú.", "ok")
+        self.estrategia.etiquetar(mano)
+        carta = self.estrategia.elegir(mano)
+        if carta is None:
+            return
+        entrada.clic(carta.rect, o, espera=0.3)
+        self.libres_antes, self.tocado_en = libres, time.time()
+        self.log(f"   juego {carta.nombre} ({carta.rango.name.lower()}, posición {carta.posicion + 1})", "debug")
+
     def pelea(self, p, o):
-        if not self.auto_puesto and self.clic_si(AUTO, p, o, umbral=0.8):
-            self.auto_puesto = True
-            self.log("AUTO puesto.", "debug")
+        if self.valores.get("jugar") == "AUTO" or self.auto_puesto:
+            if not self.auto_puesto and self.clic_si(AUTO, p, o, umbral=0.8):
+                self.auto_puesto = True
+                self.log("AUTO puesto.", "debug")
+        else:
+            self._jugar_carta(p, o)
         self.clic_si(juego.saltar, p, o)
         self.clic_si(DESTRUIDO, p, o, umbral=0.6)
         gano = juego.victoria.esta(p, 0.6) or DESTRUIDO.esta(p, 0.6)
