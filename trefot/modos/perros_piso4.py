@@ -6,7 +6,8 @@ Guion (si algo se sale de el, se rinde y reinicia, que es lo mas rapido con este
   postura se la quitan al de la burbuja igualmente.
   Fase 1 T1: postura de Thonar | otra de Thonar | 2 normales de Freyja.
   Fase 1 T2: talento de Odin | Freyja (si su ulti aun no esta) o Thonar (si ya esta; primero la otra,
-             la postura se guarda para la fase 2) | single de Odin | single de Gawain | relleno.
+             la postura se guarda para la fase 2) | single de Gawain | relleno (nunca Odin) |
+             single de Odin, SIEMPRE como cuarta y ultima carta.
   Fase 2 T1: quitar la postura (postura de Thonar, single de Odin o area de Gawain) | area de Gawain
              o de Odin | ulti de Freyja | area de Odin o cualquier carta de G/F/O.
   Fase 3 T1: no se lanza ninguna carta: solo se mueven cartas (el golpe
@@ -63,14 +64,14 @@ class Estrategia:
     ``decidir`` devuelve (indice_en_mano, objetivo, usar_talento). objetivo es "izq", "der" o None.
     """
 
-    def decidir(self, fase: int, turno: int, accion: int, mano: list[Carta]) -> tuple[int, str | None, bool]:
+    def decidir(self, fase: int, turno: int, accion: int, mano: list[Carta], total: int = 4) -> tuple[int, str | None, bool]:
         limite = TURNOS_MAXIMOS.get(fase)
         if limite is not None and turno > limite:
             raise Reiniciar(f"la fase {fase} va por el turno {turno} y debia acabar en {limite}")
         if fase == 1 and turno <= 1:
             return self._f1t1(mano, accion)
         if fase == 1:
-            return self._f1t2(mano, accion)
+            return self._f1t2(mano, accion, max(total, 4))
         if fase == 2:
             return self._f2(mano, accion)
         return self._f3(mano), None, False
@@ -82,7 +83,7 @@ class Estrategia:
             return self._o_reiniciar(mano, ("thonar_azul.otra",), "F1T1: falta la otra carta de Thonar"), "der", False
         return self._o_reiniciar(mano, FREYJA_NORMALES, "F1T1: faltan cartas normales de Freyja"), None, False
 
-    def _f1t2(self, mano, accion):
+    def _f1t2(self, mano, accion, total=4):
         if accion == 0:
             if self.mejor(mano, ("freyja_roja.ulti",)) is not None:
                 orden = (THONAR_OTRA, FREYJA_NORMALES, THONAR_POSTURA)  # la ulti se guarda para la fase 2
@@ -92,17 +93,19 @@ class Estrategia:
             if idx is None:
                 raise Reiniciar("F1T2: no hay cartas de Freyja ni de Thonar")
             return idx, "der", True
-        if accion == 1:
+        if accion >= total - 1:
+            # La single de Odin va SIEMPRE como ultima carta del turno (cuarta).
             return self._o_reiniciar(mano, ("odin.single",), "F1T2: falta la single de Odin"), None, False
-        if accion == 2:
+        if accion == 1:
             return self._o_reiniciar(mano, ("gawain.single",), "F1T2: falta la single de Gawain"), None, False
-        idx = self.primera(mano, (THONAR_OTRA, FREYJA_NORMALES, ("gawain.single",), ("odin.single",), THONAR_POSTURA))
+        # Relleno: nunca una carta de Odin (su single va al final) ni lo que se necesita en la fase 2.
+        idx = self.primera(mano, (THONAR_OTRA, FREYJA_NORMALES, ("gawain.single",), THONAR_POSTURA))
         if idx is not None:
             return idx, None, False
         for carta in reversed(mano):
-            if carta.jugable and carta.nombre not in PROTEGIDAS_FASE2:
+            if carta.jugable and carta.nombre not in PROTEGIDAS_FASE2 and not (carta.nombre or "").startswith("odin."):
                 return carta.posicion, None, False
-        raise Reiniciar("F1T2: solo quedan cartas que se necesitan en la fase 2")
+        raise Reiniciar("F1T2: solo quedan cartas de Odin o que se necesitan en la fase 2")
 
     def _f2(self, mano, accion):
         if accion == 0:
@@ -413,7 +416,7 @@ class PerrosPiso4(Modo):
             mano = EQUIPO.etiquetar(C.leer_mano(p))
             self.log("Mano: " + " ".join(str(c) for c in mano), "debug")
             try:
-                idx, objetivo, talento = self.estrategia.decidir(self.fase, self.turno_fase, accion, mano)
+                idx, objetivo, talento = self.estrategia.decidir(self.fase, self.turno_fase, accion, mano, self.huecos_turno)
             except Reiniciar as motivo:
                 self.log(f"Reinicio: {motivo}", "aviso")
                 self.turno_abierto = False
