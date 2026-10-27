@@ -77,7 +77,7 @@ RAZA_ES = {"human": "humano", "giant": "gigante", "fairy": "hada", "goddess": "d
 # ---------------------------------------------------------------- lectura (sin tocar el juego)
 def limpiar_titulo(linea: str) -> str:
     """'[Battle-Hardened Mercenaryl' -> 'Battle-Hardened Mercenary' (el OCR a veces lee ']' como l)."""
-    t = linea.strip().lstrip("[").strip()
+    t = linea.strip().lstrip("[(").strip()
     if t.endswith(("]", ")", "}")):
         t = t[:-1]
     elif t[-1:] in ("l", "I", "|", "1", "J") and "]" not in t:
@@ -90,13 +90,18 @@ def solo_texto_oscuro(imagen, umbral: int = OSCURO):
     return np.where(gris < umbral, 0, 255).astype(np.uint8)
 
 
+def quitar_brillo_ur(nombre: str) -> str:
+    """'SBlessing of the Earth Diane' / 's Thor' -> sin la S: es el brillo del sello UR junto al nombre."""
+    return re.sub(r"^(?:[sS$§]\s+|S(?=[A-Z][a-z]))", "", nombre)
+
+
 def _titulo_y_nombre(lineas) -> tuple[str, str]:
     """El nombre es la linea de abajo y el titulo la de arriba. El titulo suele ir entre corchetes,
     pero no siempre ("Waves of the Earth" / Queen Diane)."""
     lineas = [l for l in lineas if len(l.strip()) > 1]
     if not lineas:
         return "", ""
-    nombre = lineas[-1].strip()
+    nombre = quitar_brillo_ur(lineas[-1].strip())
     if nombre.startswith("["):  # solo se leyo el titulo
         return limpiar_titulo(nombre), ""
     titulo = limpiar_titulo(lineas[-2]) if len(lineas) >= 2 else ""
@@ -414,6 +419,15 @@ def cargar_caras() -> list:
     return [img for img in (leer_imagen(r) for r in sorted(CARAS.glob("[0-9][0-9][0-9].png"))) if img is not None]
 
 
+MISMAS_CARTAS = 10  # diferencia media entre las cartas: mismo heroe ~2, heroes distintos >=27 (medido)
+
+
+def mismas_cartas(a, b) -> bool:
+    if not a or not b or len(a) != len(b):
+        return False
+    return float(np.mean([np.mean(cv2.absdiff(x, y)) for x, y in zip(a, b)])) < MISMAS_CARTAS
+
+
 def recorte_carta(pantalla, i: int):
     x1, y1, x2, y2 = juego.FICHA_CARTAS[i]
     return pantalla[y1:y2, x1:x2].copy()
@@ -559,6 +573,7 @@ class CapturaHeroes(Modo):
         self.esperando_desde = time.time()
         self.intentos = 0
         self.ultima_clave = ""  # el heroe recien guardado (tras la flecha puede seguir en pantalla un momento)
+        self.ultimas_cartas: list = []  # y el dibujo de sus cartas, por si el OCR lee su nombre de otra forma
         self.repetida = 0
         self.quieta_desde = time.time()
         self.sin_ficha_desde: float | None = None
@@ -746,8 +761,11 @@ class CapturaHeroes(Modo):
             return None
         self.intentos = 0
         clave = f"[{titulo}] {nombre}" if titulo else nombre
-        if clave == self.ultima_clave:
-            # Sigue el heroe anterior: la flecha aun no cambio la ficha (o no funciono).
+        recortes = [recorte_carta(p, i) for i in range(len(juego.FICHA_CARTAS))]
+        if clave == self.ultima_clave or mismas_cartas(recortes, self.ultimas_cartas):
+            # Sigue el heroe anterior: la flecha aun no cambio la ficha (o no funciono). Se compara tambien
+            # el dibujo de las cartas: una lectura distinta del nombre lo contaba dos veces y desfasaba
+            # todas las caras siguientes ("SBlessing" / "Blessing of the Earth Diane").
             self.repetida += 1
             if self.repetida == 8:
                 entrada.clic(FLECHA_HEROE, o, espera=1.0)
@@ -765,7 +783,7 @@ class CapturaHeroes(Modo):
             "clave": clave, "titulo": titulo, "nombre": nombre, "atributo": atributo, "color": color,
             "raza_juego": raza, "raza": RAZA_ES.get(raza.lower().strip(), "sin definir"),
             "caracteristicas": caracteristicas,
-            "cartas": [], "_recortes": [recorte_carta(p, i) for i in range(len(juego.FICHA_CARTAS))],
+            "cartas": [], "_recortes": recortes,
             "_ficha": p.copy(), "_indice": self.fichas_vistas,
         }
         self.fichas_vistas += 1
@@ -850,7 +868,8 @@ class CapturaHeroes(Modo):
         self.actual = None
         pid = self._id_para(h["clave"], h["nombre"], h["color"])
         carpeta = CARPETA / pid
-        for i, recorte in enumerate(h.pop("_recortes"), start=1):
+        self.ultimas_cartas = h.pop("_recortes")
+        for i, recorte in enumerate(self.ultimas_cartas, start=1):
             guardar_imagen(carpeta / f"carta_{i}{P.SUFIJO_FICHA}.png", recorte)
         ficha = h.pop("_ficha")
         guardar_imagen(carpeta / "ficha.jpg", ficha)
