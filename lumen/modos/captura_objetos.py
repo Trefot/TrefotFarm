@@ -7,7 +7,9 @@ descripcion) y recorta su icono; luego la cierra con la X. Nunca toca "Sell", "L
 - Los objetos repetidos (varios montones del mismo) se saltan sin abrirlos: se compara el dibujo de la
   casilla con los ya vistos.
 - La estanteria baja de 2 en 2 filas; si al arrastrar no se mueve, la categoria termino. Tocar una
-  casilla vacia no abre nada: tambien es el final (el juego ordena los objetos sin huecos).
+  casilla vacia no abre nada; pero un toque mientras se cierra la ficha anterior tampoco (en la primera
+  captura real eso corto Ingredients en el 8.o objeto). Por eso se reintenta cada casilla y la categoria
+  solo termina tras 4 casillas seguidas sin ficha (una fila entera vacia).
 
 Guarda en capturas/objetos/galeria.yaml y capturas/objetos/<id>_ficha.png. Con esa galeria el botin
 de cada pelea se nombra solo (ver lumen/botin.py).
@@ -32,7 +34,9 @@ COLUMNAS = (85, 210, 337, 470)
 FILAS = (375, 505, 635, 765)
 PASO_FILA = 130
 PARECIDO_CASILLA = 0.93  # dibujo de casilla ya visto (mismo objeto en otro monton o tras bajar)
-ESPERA_FICHA = 3.0  # sin ficha tras tocar = casilla vacia
+ESPERA_FICHA = 3.0  # sin ficha tras tocar: se reintenta una vez; si sigue sin ficha, casilla vacia
+VACIAS_FIN = 4  # casillas seguidas sin ficha = fin de la categoria
+PAUSA_TRAS_CERRAR = 0.8  # la ficha tarda en desaparecer: un toque antes se pierde
 
 
 HOLGURA = 12  # px que se puede mover la estanteria al bajarla
@@ -103,6 +107,8 @@ class CapturaObjetos(Modo):
         self.tocada: tuple | None = None
         self.desde = time.time()
         self.nuevos = self.leidos = 0
+        self.reintentada = False
+        self.vacias_seguidas = 0
 
     def estado_inicial(self):
         return "empezar"
@@ -161,9 +167,23 @@ class CapturaObjetos(Modo):
         rect = CERRAR_FICHA.buscar(p, 0.85)
         if rect is None:
             if time.time() - self.desde > ESPERA_FICHA:
-                self.log("Casilla vacía: se acabaron los objetos de esta categoría.", "debug")
-                return self._siguiente_categoria()
+                if not self.reintentada:  # quiza el toque se perdio: otra vez
+                    self.reintentada = True
+                    entrada.clic(self.tocada, o, espera=0.8)
+                    self.desde = time.time()
+                    return None
+                self.reintentada = False
+                self.vacias_seguidas += 1
+                self.vistos.pop()  # si era un objeto, que se pueda leer al volver a verlo
+                guardar_imagen(botin.CARPETA_GALERIA / "sin_leer" / f"vacia_{time.strftime('%H%M%S')}.jpg", p)
+                if self.vacias_seguidas >= VACIAS_FIN:
+                    self.log("Una fila entera sin objetos: se acabó esta categoría.", "debug")
+                    return self._siguiente_categoria()
+                self.log("Casilla sin ficha: la salto y sigo.", "debug")
+                return "recorrer"
             return None
+        self.reintentada = False
+        self.vacias_seguidas = 0
         control.esperar(0.4)  # que termine de abrirse
         p = self.capturar()[0]
         rect = CERRAR_FICHA.buscar(p, 0.85)
@@ -210,10 +230,13 @@ class CapturaObjetos(Modo):
                 entrada.clic((int(rect[0] + rect[2] // 2), int(rect[1] + rect[3] // 2)), o, espera=0.8)
                 self.desde = time.time()
             return None
+        control.esperar(PAUSA_TRAS_CERRAR)
         return "recorrer"
 
     def _siguiente_categoria(self):
         self.categoria += 1
+        self.vacias_seguidas = 0
+        self.reintentada = False
         return "categoria"
 
     def al_terminar(self):
