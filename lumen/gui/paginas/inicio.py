@@ -270,6 +270,9 @@ class PaginaInicio(Pagina):
                                        f"Te falta: {', '.join(sin)}." if sin else "Tienes a todos.")
             self.pasos["cartas"].poner("falta" if faltan else "ok", f"Faltan {len(faltan)}" if faltan else "Listas",
                                        "\n".join(d.descripcion for d in faltan) if faltan else "Todas capturadas.")
+        elif self.listo:  # modo que juega con cualquier equipo
+            self.pasos["equipo"].poner("ok", "Cualquiera", "Sirve el equipo que tengas puesto en el juego.")
+            self.pasos["cartas"].poner("nada", "—", "Este modo no necesita capturas de cartas.")
         else:
             self.pasos["equipo"].poner("nada", "—", "Este modo aún no está listo.")
             self.pasos["cartas"].poner("nada", "—", "Este modo aún no está listo.")

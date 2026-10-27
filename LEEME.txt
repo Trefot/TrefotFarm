@@ -52,6 +52,8 @@ Botin             suma de todo lo conseguido (oro y cada objeto, por dia o por s
 Ajustes           ventana del juego, teclas rapidas, avisos al movil y repositorio de GitHub.
 
 Para farmear: juego abierto y visible, equipo puesto, Inicio -> gira la rueda -> "Empezar".
+Perros Floor 1, 2 y 3: sirve cualquier equipo fuerte (juega primero las ultis y luego las cartas
+de mas rango). El piso se busca leyendo el texto "Floor N" de la pantalla.
 F9 pausa / reanuda, F10 detiene (cambiables en Ajustes).
 Freno de emergencia: lleva el raton a una esquina de la pantalla.
 Mientras corre, el bot usa tu raton: no lo muevas.
