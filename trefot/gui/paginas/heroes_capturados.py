@@ -226,8 +226,9 @@ class PaginaHeroesCapturados(Pagina):
         self.app = app
         self.catalogo: dict = {}
         for texto, ic, funcion, primario in (
+            ("1. Capturar caras", "foto", lambda: self._capturar("caras"), False),
+            ("2. Capturar fichas", "jugar", lambda: self._capturar("fichas"), False),
             ("Pasar a Personajes", "personajes", self._pasar, True),
-            ("Capturar todos los héroes", "jugar", self._capturar, False),
             ("Abrir carpeta", "carpeta", self._abrir_carpeta, False),
             ("Recargar", "actualizar", self.al_mostrar, False),
         ):
@@ -238,7 +239,8 @@ class PaginaHeroesCapturados(Pagina):
 
         fila = QHBoxLayout()
         self.cifras = {}
-        for clave, titulo, ic in (("heroes", "Héroes capturados", "personajes"), ("cartas", "Cartas", "cartas"),
+        for clave, titulo, ic in (("caras", "Caras de la lista (fase 1)", "foto"),
+                                  ("heroes", "Héroes capturados (fase 2)", "personajes"), ("cartas", "Cartas", "cartas"),
                                   ("revisar", "Para revisar", "falta")):
             marco, cifra = tarjeta(titulo, icono=ic)
             self.cifras[clave] = cifra
@@ -282,6 +284,7 @@ class PaginaHeroesCapturados(Pagina):
                 item.widget().setParent(None)
         heroes = sorted(self.catalogo.items(), key=lambda kv: (kv[1].get("nombre") or "").lower())
         para_revisar = [pid for pid, h in heroes if avisos_de(h)]
+        self.cifras["caras"].setText(str(len(list(C.CARAS.glob("[0-9][0-9][0-9].png")))))
         self.cifras["heroes"].setText(str(len(heroes)))
         self.cifras["cartas"].setText(str(sum(len(h.get("cartas") or []) for _, h in heroes)))
         self.cifras["revisar"].setText(str(len(para_revisar)))
@@ -338,8 +341,27 @@ class PaginaHeroesCapturados(Pagina):
             "publico en la base del bot.")
         self.app.navegar("personajes")
 
-    def _capturar(self):
-        self.app.paginas["editor"].captura_en_serie()
+    def _capturar(self, fase: str):
+        from trefot import ocr
+
+        if fase == "fichas" and not ocr.disponible():
+            QMessageBox.warning(self, "Capturar fichas", "Falta el lector de texto de Windows (paquetes winrt).")
+            return
+        if fase == "caras":
+            texto = ("FASE 1 · Caras\n\nDeja el juego en la lista de Heroes y no toques el ratón. El bot sube la lista, "
+                     "recorta el icono de cada héroe en orden y la baja hasta el final.\n\nAl terminar verás cuántas "
+                     "caras guardó; revisa capturas\\heroes\\iconos\\hoja.jpg (botón Abrir carpeta).")
+        else:
+            caras = len(list(C.CARAS.glob("[0-9][0-9][0-9].png")))
+            if not caras and QMessageBox.question(
+                    self, "Capturar fichas", "Aún no hay caras guardadas (fase 1). ¿Capturar las fichas sin caras?"
+            ) != QMessageBox.Yes:
+                return
+            texto = (f"FASE 2 · Fichas ({caras} caras guardadas)\n\nDeja el juego en la lista de Heroes (o en una ficha: "
+                     "el bot vuelve a la lista). Abre el primer héroe y recorre todos con la flecha, leyendo datos y "
+                     "cartas. Termina solo al volver al primero. F10 para parar.")
+        if QMessageBox.question(self, "Captura de héroes", texto) == QMessageBox.Yes:
+            self.app.farmear.ejecutar_herramienta(C.CapturaHeroes({"fase": fase}))
 
     def _abrir_carpeta(self):
         C.CARPETA.mkdir(parents=True, exist_ok=True)

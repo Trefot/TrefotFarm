@@ -240,7 +240,7 @@ class PaginaEditorPersonajes(Pagina):
         self.actual: P.Personaje | None = None
 
         for texto, funcion, primario in (
-            ("Capturar todos los héroes", self.captura_en_serie, True),
+            ("Capturar todos los héroes", lambda: self.app.navegar("capturados"), True),
             ("Desde la ficha", self.ficha_desde_juego, False),
             ("Ficha (foto)...", self.ficha_desde_foto, False),
             ("Retratos", self.retratos_desde_juego, False),

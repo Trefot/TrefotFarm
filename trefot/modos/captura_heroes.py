@@ -30,6 +30,7 @@ from trefot.vision import Plantilla, guardar_imagen, leer_imagen
 
 CARPETA = RAIZ / "capturas" / "heroes"
 CATALOGO = CARPETA / "catalogo.yaml"
+CARAS = CARPETA / "iconos"  # fase 1: icono de cada heroe de la lista, numerado en orden (001.png...)
 
 FICHA = Plantilla("heroes/ficha_attribute.png")  # la palabra "Attribute" de la ficha del heroe
 SKILL_INFO = Plantilla("heroes/skill_info.png")  # titulo de la ventana Skill Info
@@ -376,6 +377,31 @@ def atributo_de_casilla(icono) -> str:
     return atributo_por_color(icono[y1:y2, x1:x2], minimo=40)
 
 
+def guardar_caras(iconos) -> None:
+    """Guarda las caras numeradas en orden y una hoja con todas para revisarlas de un vistazo."""
+    CARAS.mkdir(parents=True, exist_ok=True)
+    for vieja in CARAS.glob("*.*"):
+        vieja.unlink()
+    for i, icono in enumerate(iconos, start=1):
+        guardar_imagen(CARAS / f"{i:03d}.png", icono)
+    if iconos:
+        lado, columnas = 66, 10
+        celdas = []
+        for i, icono in enumerate(iconos, start=1):
+            celda = cv2.resize(icono, (lado, lado))
+            cv2.putText(celda, str(i), (3, lado - 5), cv2.FONT_HERSHEY_SIMPLEX, 0.45, (0, 0, 0), 3)
+            cv2.putText(celda, str(i), (3, lado - 5), cv2.FONT_HERSHEY_SIMPLEX, 0.45, (255, 255, 255), 1)
+            celdas.append(celda)
+        while len(celdas) % columnas:
+            celdas.append(np.zeros_like(celdas[0]))
+        filas = [np.hstack(celdas[i:i + columnas]) for i in range(0, len(celdas), columnas)]
+        guardar_imagen(CARAS / "hoja.jpg", np.vstack(filas))
+
+
+def cargar_caras() -> list:
+    return [img for img in (leer_imagen(r) for r in sorted(CARAS.glob("[0-9][0-9][0-9].png"))) if img is not None]
+
+
 def recorte_carta(pantalla, i: int):
     x1, y1, x2, y2 = juego.FICHA_CARTAS[i]
     return pantalla[y1:y2, x1:x2].copy()
@@ -509,6 +535,8 @@ class CapturaHeroes(Modo):
 
     def __init__(self, valores: dict):
         super().__init__(valores)
+        # "caras": solo la fase 1 (lista); "fichas": solo la fase 2, con las caras ya guardadas
+        self.fase = valores.get("fase", "fichas")
         self.catalogo = cargar_catalogo()
         self.vistos: set[str] = set()
         self.capturados = 0
@@ -525,6 +553,8 @@ class CapturaHeroes(Modo):
         self.fichas_vistas = 0  # posicion del heroe actual en la lista
         self.volvi_a_lista = False
         self.sin_leer = 0  # cartas seguidas que no se pudieron leer
+        if self.fase == "fichas":
+            self.iconos = cargar_caras()
 
     def estado_inicial(self):
         return "buscar_ficha"
@@ -571,18 +601,28 @@ class CapturaHeroes(Modo):
             raise TerminarModo()
         if SKILL_INFO.esta(p, 0.85):
             return "cerrar"
-        if self.iconos is None and LISTA.esta(p, 0.85):
-            return "lista"
+        if LISTA.esta(p, 0.85):
+            if self.fase == "caras":
+                return "lista"
+            # Fase 2: empezar siempre por el primer heroe de la lista (su cara es la 001)
+            self.log(f"Abro el primer héroe de la lista ({len(self.iconos)} caras guardadas).", "ok")
+            self._subir_lista(o)
+            entrada.clic((COLUMNAS_LISTA[0] + LADO_CASILLA // 2, PRIMERA_FILA + LADO_CASILLA // 2), o, espera=1.5)
+            self.esperando_desde = time.time()
+            return "abrir_primero"
         if FICHA.esta(p, 0.85):
-            if self.iconos is None and not self.volvi_a_lista:
+            if not self.volvi_a_lista:
                 # Para tener los iconos hay que empezar en la lista: volver a ella con la flecha.
                 self.volvi_a_lista = True
-                self.log("Estoy en una ficha: vuelvo a la lista de Heroes para recortar los iconos.")
+                self.log("Estoy en una ficha: vuelvo a la lista de Heroes para empezar desde el principio.")
                 entrada.clic(VOLVER, o, espera=2.0)
                 return None
+            if self.fase == "caras":
+                self.log("No reconocí la lista de Heroes. Deja el juego en la lista y vuelve a empezar.", "error")
+                raise TerminarModo()
             self.anterior = None
-            self.log("Ficha de héroe encontrada: empiezo." if self.iconos is not None else
-                     "No reconocí la lista de Heroes: sigo sin iconos.", "ok" if self.iconos is not None else "aviso")
+            self.log("No reconocí la lista de Heroes: empiezo desde esta ficha, así que las caras pueden no "
+                     "cuadrar (se comprueban con el atributo).", "aviso")
             return "leer_ficha"
         if time.time() - self.esperando_desde > 90:
             self.log("No veo la ficha de ningún héroe. Ábrela en el juego (Heroes -> un héroe) y vuelve a empezar.", "error")
@@ -607,9 +647,11 @@ class CapturaHeroes(Modo):
         filas = [PRIMERA_FILA + PASO_FILA * k for k in range(6)]
         iconos, fin = leer_filas(p, filas, LIMITE_LISTA)
         ultima = max(y for y in filas if y + LADO_CASILLA <= LIMITE_LISTA)
+        sin_moverse = 0
         while not fin and len(iconos) < 600:
             referencia = recorte_fila(p, ultima)
-            entrada.arrastrar((275, 650), (275, 650 - 3 * PASO_FILA), o, duracion=0.8)
+            inicio = (275, 650 - 50 * sin_moverse)  # si el juego ignora un arrastre, probar desde otra altura
+            entrada.arrastrar(inicio, (275, inicio[1] - 3 * PASO_FILA), o, duracion=0.8)
             control.esperar(1.2)  # que termine de deslizarse
             p = self.capturar()[0]
             guardar_imagen(fotos / f"lista_{len(iconos):03d}.jpg", p)
@@ -617,17 +659,28 @@ class CapturaHeroes(Modo):
             if y is None:
                 self.log(f"Perdí la cuenta al bajar la lista: me quedo con {len(iconos)} iconos.", "aviso")
                 break
-            if abs(y - ultima) < 4:  # no bajo mas: es el final; leer lo que queda (aunque lo cruce el cartel)
+            if abs(y - ultima) < 4:
+                sin_moverse += 1
+                if sin_moverse < 3:  # quiza el juego no hizo caso al arrastre: probar otra vez antes de rendirse
+                    self.log("La lista no se movió; lo intento otra vez.", "debug")
+                    continue
+                # No baja mas: es el final. Leer lo que queda (aunque lo cruce el cartel del juego).
                 abajo = [y + PASO_FILA * k for k in range(1, 4)]
                 restantes, _ = leer_filas(p, abajo, LIMITE_LISTA_FINAL)
                 iconos += restantes
                 break
+            sin_moverse = 0
             nuevas = [y + PASO_FILA * k for k in range(1, 8) if y + PASO_FILA * k + LADO_CASILLA <= LIMITE_LISTA]
             mas, fin = leer_filas(p, nuevas, LIMITE_LISTA)
             iconos += mas
             ultima = nuevas[-1] if nuevas else y
             control.actividad()
         self.iconos = iconos
+        if self.fase == "caras":
+            guardar_caras(iconos)
+            self.log(f"Fase 1 terminada: {len(iconos)} caras guardadas en capturas\\heroes\\iconos "
+                     "(mira hoja.jpg). Ahora la fase 2: Capturar fichas.", "ok")
+            raise TerminarModo()
         self.log(f"{len(iconos)} iconos recortados. Abro el primer héroe.", "ok")
         self._subir_lista(o)
         entrada.clic((COLUMNAS_LISTA[0] + LADO_CASILLA // 2, PRIMERA_FILA + LADO_CASILLA // 2), o, espera=1.5)
@@ -760,9 +813,9 @@ class CapturaHeroes(Modo):
         if SKILL_INFO.esta(p, 0.85):
             self.clic_si(CERRAR, p, o, umbral=0.8, espera=0.5)
             return None
-        if self.actual is None:  # Skill Info estaba abierto al empezar
+        if self.actual is None:  # Skill Info estaba abierto al empezar: cerrado, a empezar por el principio
             self.anterior = None
-            return "leer_ficha"
+            return "buscar_ficha"
         self._guardar_actual()
         return "siguiente"
 
