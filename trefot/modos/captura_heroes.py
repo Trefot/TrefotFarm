@@ -9,9 +9,11 @@ Todo se guarda aparte, en capturas/heroes (catalogo.yaml + imagenes), para revis
 publicarlo en la base del bot.
 """
 
+import difflib
 import re
 import time
 
+import cv2
 import numpy as np
 import yaml
 
@@ -34,7 +36,14 @@ CABECERA = (130, 125, 445, 195)  # [titulo] y nombre
 DATOS = (30, 300, 300, 388)  # Attribute, Race y Characteristics con sus valores
 ETIQUETAS = ("attribute", "race", "characteristics")
 PANEL_SKILL = (60, 440, 490, 720)  # nombre y descripcion de la carta en Skill Info
-ZONA_ESTABLE = (20, 120, 530, 720)
+# Antes de leer se espera a que la fila de cartas quede quieta. No sirve mirar mas: la figura del
+# heroe se mueve todo el rato y en algunos (las alas de Ludociel) tapa los datos y el nombre.
+ZONAS_ESTABLES = [(30, 595, 220, 700)]
+ICONO_ATRIBUTO = (114, 307, 142, 331)
+OSCURO = 80  # el texto de la ficha es oscuro; alas y brillos son claros y se borran por debajo de esto
+LECTURAS_DATOS = 3  # capturas para votar la raza (las alas se mueven y cada una tapa otras letras)
+ZONA_SKILL_INFO = (60, 440, 490, 720)
+ESPERA_MAXIMA_QUIETA = 4.0  # s; si no se queda quieta, se lee igual
 FLECHA_HEROE = (510, 158)  # siguiente heroe
 FLECHA_SKILL = (508, 463)  # siguiente carta dentro de Skill Info
 MAX_CARTAS = 8
@@ -49,18 +58,41 @@ RAZA_ES = {"human": "humano", "giant": "gigante", "fairy": "hada", "goddess": "d
 def limpiar_titulo(linea: str) -> str:
     """'[Battle-Hardened Mercenaryl' -> 'Battle-Hardened Mercenary' (el OCR a veces lee ']' como l)."""
     t = linea.strip().lstrip("[").strip()
-    if t.endswith("]"):
+    if t.endswith(("]", ")", "}")):
         t = t[:-1]
     elif t[-1:] in ("l", "I", "|", "1", "J") and "]" not in t:
         t = t[:-1]
     return t.strip()
 
 
-def leer_cabecera(pantalla) -> tuple[str, str]:
-    lineas = ocr.leer_region(pantalla, CABECERA)
+def solo_texto_oscuro(imagen, umbral: int = OSCURO):
+    gris = cv2.cvtColor(imagen, cv2.COLOR_BGR2GRAY)
+    return np.where(gris < umbral, 0, 255).astype(np.uint8)
+
+
+def _titulo_y_nombre(lineas) -> tuple[str, str]:
     titulo = next((limpiar_titulo(l) for l in lineas if l.startswith("[")), "")
     nombre = next((l for l in lineas if not l.startswith("[")), "")
     return titulo, nombre.strip()
+
+
+def leer_cabecera(pantalla) -> tuple[str, str]:
+    return leer_cabecera_varias([pantalla])
+
+
+def leer_cabecera_varias(pantallas) -> tuple[str, str]:
+    """[titulo] y nombre, votando entre varias lecturas: normal y solo con el texto oscuro (que borra
+    alas y brillos de la figura pero a veces confunde una letra). Gana la que mas se repite."""
+    x1, y1, x2, y2 = CABECERA
+    votos: dict[tuple[str, str], int] = {}
+    for pantalla in pantallas:
+        recorte = pantalla[y1:y2, x1:x2]
+        lecturas = [ocr.leer(recorte)] + [ocr.leer(solo_texto_oscuro(recorte, u), escala=3) for u in (OSCURO, 110)]
+        for lineas in lecturas:
+            titulo, nombre = _titulo_y_nombre(lineas)
+            if nombre:
+                votos[(titulo, nombre)] = votos.get((titulo, nombre), 0) + 1
+    return max(votos, key=votos.get) if votos else ("", "")
 
 
 def leer_datos(pantalla) -> tuple[str, str, str]:
@@ -79,9 +111,56 @@ def leer_datos(pantalla) -> tuple[str, str, str]:
             atributo = valor
         elif not raza and palabra in RAZA_ES:
             raza = valor
-        else:
+        elif not parecida(valor, COLOR, 0.75) and not parecida(valor, RAZA_ES, 0.75):  # atributo o raza mal leidos
+            valor = re.sub(r"^characteristics\s*", "", valor, flags=re.I)
             otros.append(valor.strip("[]. ").rstrip("."))
     return atributo, raza, " ".join(otros)
+
+
+def atributo_por_icono(pantalla) -> str:
+    """Attribute por el color de su icono (no lo tapan las figuras): Speed azul, Light amarillo..."""
+    x1, y1, x2, y2 = ICONO_ATRIBUTO
+    hsv = cv2.cvtColor(pantalla[y1:y2, x1:x2], cv2.COLOR_BGR2HSV)
+    tonos = hsv[..., 0][hsv[..., 1] > 90]
+    if tonos.size < 60:
+        return ""
+    tono = float(np.median(tonos))  # medido: Speed 100, Light 20
+    if tono < 8 or tono >= 165:
+        return "Strength"
+    if tono < 40:
+        return "Light"
+    if tono < 90:
+        return "HP"
+    if tono < 130:
+        return "Speed"
+    return "Dark"
+
+
+def parecida(texto: str, opciones, minimo: float = 0.5) -> str:
+    """La opcion mas parecida al texto leido (o '' si ninguna se parece lo suficiente)."""
+    limpio = re.sub(r"[^a-z]", "", texto.lower())
+    encontradas = difflib.get_close_matches(limpio, list(opciones), n=1, cutoff=minimo)
+    return encontradas[0] if encontradas else ""
+
+
+def leer_datos_varias(pantallas) -> tuple[str, str, str]:
+    """(atributo, raza, caracteristicas) votando entre varias capturas de la misma ficha."""
+    icono = atributo_por_icono(pantallas[-1])
+    votos_raza: dict[str, int] = {}
+    caracteristicas = ""
+    atributo_leido = ""
+    for pantalla in pantallas:
+        atributo, raza, otras = leer_datos(pantalla)
+        atributo_leido = atributo_leido or atributo
+        candidata = raza or next((parecida(l, RAZA_ES) for l in ocr.leer_region(pantalla, DATOS)
+                                  if parecida(l, RAZA_ES)), "")
+        if candidata:
+            clave = candidata.lower()
+            votos_raza[clave] = votos_raza.get(clave, 0) + 1
+        if len(otras) > len(caracteristicas):
+            caracteristicas = otras
+    raza = max(votos_raza, key=votos_raza.get).capitalize() if votos_raza else ""
+    return atributo_leido or icono, raza, caracteristicas
 
 
 def tipo_de_carta(texto: str) -> str:
@@ -157,6 +236,8 @@ class CapturaHeroes(Modo):
         self.intentos = 0
         self.ultima_clave = ""  # el heroe recien guardado (tras la flecha puede seguir en pantalla un momento)
         self.repetida = 0
+        self.quieta_desde = time.time()
+        self.sin_ficha_desde: float | None = None
 
     def estado_inicial(self):
         return "buscar_ficha"
@@ -171,14 +252,22 @@ class CapturaHeroes(Modo):
         }
 
     # ------------------------------------------------------------------ utilidades
-    def _quieta(self, pantalla) -> bool:
-        """True si la pantalla no cambio desde la captura anterior (terminaron las animaciones)."""
-        x1, y1, x2, y2 = ZONA_ESTABLE
-        zona = pantalla[y1:y2, x1:x2].astype(np.int16)
-        quieta = self.anterior is not None and self.anterior.shape == zona.shape and \
-            float(np.abs(zona - self.anterior).mean()) < DIFERENCIA_ESTABLE
-        self.anterior = zona
-        return quieta
+    def _quieta(self, pantalla, zonas) -> bool:
+        """True si esas zonas no cambiaron desde la captura anterior (terminaron las animaciones).
+
+        Si tras ESPERA_MAXIMA_QUIETA siguen moviendose, se da por buena igual (y se avisa)."""
+        actual = np.concatenate([pantalla[y1:y2, x1:x2].astype(np.int16).ravel() for x1, y1, x2, y2 in zonas])
+        if self.anterior is None or self.anterior.shape != actual.shape:
+            self.anterior, self.quieta_desde = actual, time.time()
+            return False
+        diferencia = float(np.abs(actual - self.anterior).mean())
+        self.anterior = actual
+        if diferencia < DIFERENCIA_ESTABLE:
+            return True
+        if time.time() - self.quieta_desde > ESPERA_MAXIMA_QUIETA:
+            self.log(f"La pantalla sigue moviéndose (diferencia {diferencia:.1f}); leo igual.", "debug")
+            return True
+        return False
 
     def _id_para(self, clave: str, nombre: str, color: str) -> str:
         for pid, datos in self.catalogo.items():
@@ -195,6 +284,7 @@ class CapturaHeroes(Modo):
             return "cerrar"
         if FICHA.esta(p, 0.85):
             self.anterior = None
+            self.log("Ficha de héroe encontrada: empiezo.", "ok")
             return "leer_ficha"
         if time.time() - self.esperando_desde > 90:
             self.log("No veo la ficha de ningún héroe. Ábrela en el juego (Heroes -> un héroe) y vuelve a empezar.", "error")
@@ -202,12 +292,27 @@ class CapturaHeroes(Modo):
         return None
 
     def leer_ficha(self, p, o):
-        if not FICHA.esta(p, 0.85) or not self._quieta(p):
+        if not FICHA.esta(p, 0.85):
+            # Sin ficha a la vista (cargando, otra ventana encima...). Si dura, volver a buscarla.
+            self.sin_ficha_desde = self.sin_ficha_desde or time.time()
+            if time.time() - self.sin_ficha_desde > 8:
+                self.log("Ya no veo la ficha del héroe. Vuelvo a buscarla.", "aviso")
+                self.sin_ficha_desde = None
+                self.esperando_desde = time.time()
+                return "buscar_ficha"
             return None
-        titulo, nombre = leer_cabecera(p)
-        atributo, raza, caracteristicas = leer_datos(p)
+        self.sin_ficha_desde = None
+        if not self._quieta(p, ZONAS_ESTABLES):
+            return None
+        pantallas = [p]
+        for _ in range(LECTURAS_DATOS - 1):
+            control.esperar(0.25)
+            pantallas.append(self.capturar()[0])
+        titulo, nombre = leer_cabecera_varias(pantallas)
+        atributo, raza, caracteristicas = leer_datos_varias(pantallas)
         if not nombre or not atributo:
             self.intentos += 1
+            self.log(f"Lectura incompleta (nombre: '{nombre}', atributo: '{atributo}'); reintento.", "debug")
             if self.intentos >= 4:
                 self.log("No pude leer el nombre de este héroe: lo salto.", "aviso")
                 self.intentos = 0
@@ -253,7 +358,7 @@ class CapturaHeroes(Modo):
                 self._guardar_actual()
                 return "siguiente"
             return None
-        if not self._quieta(p):
+        if not self._quieta(p, [ZONA_SKILL_INFO]):
             return None
         self.intentos = 0
         carta = leer_skill(p)
