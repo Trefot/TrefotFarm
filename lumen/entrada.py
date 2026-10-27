@@ -30,6 +30,20 @@ def _punto(objetivo, origen) -> tuple[int, int]:
     return int(x + origen[0]), int(y + origen[1])
 
 
+def apuntar(objetivo, origen) -> None:
+    """Deja el raton encima del objetivo sin pulsar (para pulsar luego en el instante justo)."""
+    control.revisar()
+    pyautogui.moveTo(*_punto(objetivo, origen))
+
+
+def pulsar() -> None:
+    """Pulsa donde este el raton, sin moverlo ni esperar antes (ver ``apuntar``)."""
+    win32api.mouse_event(win32con.MOUSEEVENTF_LEFTDOWN, 0, 0)
+    time.sleep(DURACION_CLIC)
+    win32api.mouse_event(win32con.MOUSEEVENTF_LEFTUP, 0, 0)
+    control.actividad()
+
+
 def clic(objetivo, origen, espera: float = 0.05, jitter: int = JITTER_PX):
     control.revisar()
     x, y = _punto(objetivo, origen)
