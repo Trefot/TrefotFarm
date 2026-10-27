@@ -90,10 +90,7 @@ def borrar_propio(clave: str, indice: int) -> None:
 
 def medidas(clave: str) -> dict[frozenset, dict]:
     """Lo que el bot midio con cada equipo en este contenido (de logs/historial.jsonl)."""
-    modo = MODOS.get(clave)
-    if modo is None:
-        return {}
-    equipo = getattr(modo, "equipo", None)  # el que jugaban las sesiones viejas, sin equipo guardado
+    equipo = getattr(MODOS.get(clave), "equipo", None)  # el que jugaban las sesiones viejas, sin equipo guardado
     return historial.por_equipo(historial.leer(limite=1_000_000), clave, equipo.orden if equipo else ())
 
 
@@ -239,7 +236,8 @@ class TarjetaEquipo(QFrame):
             cifras = QLabel(texto)
             cifras.setStyleSheet(f"color: {tema.ACENTO};")
             cifras.setToolTip("Victorias por hora = victorias entre el tiempo total farmeando (incluye "
-                              "menús, cargas y pociones). Junta lo que gana y lo rápido que es.")
+                              "menús, cargas y pociones). Junta lo que gana y lo rápido que es. Cuenta las "
+                              "peleas del bot y las que jugaste tú con «Aprender de mí».")
             capa.addWidget(cifras)
 
         fila = QHBoxLayout()
@@ -380,6 +378,11 @@ class PaginaEquipos(Pagina):
         self.b_agregar.setToolTip("Modo administrador: crea un equipo. El bot lo medirá cuando juegue con él.")
         self.b_agregar.clicked.connect(lambda: self._editar())
         self.acciones.addWidget(self.b_agregar)
+        self.b_aprender = QPushButton(" Aprender de mí", objectName="chico")
+        self.b_aprender.setIcon(iconos.icono("mdi6.school-outline", tema.TEXTO))
+        self.b_aprender.setToolTip("Modo administrador: juegas tú a mano y el bot mira y apunta tus jugadas.")
+        self.b_aprender.clicked.connect(self._aprender)
+        self.acciones.addWidget(self.b_aprender)
         self.selector = QGridLayout()  # en filas de 3: los nombres de las bestias son largos
         self.selector.setHorizontalSpacing(8)
         self.selector.setVerticalSpacing(6)
@@ -437,6 +440,27 @@ class PaginaEquipos(Pagina):
         self._construir_selector(clave)
         self.al_mostrar()
 
+    def _aprender(self):
+        from PyQt5.QtWidgets import QInputDialog
+
+        from lumen.modos.aprender import Aprender
+
+        opciones = opciones_contenido(cargar_equipos())
+        textos = [texto for _, texto in opciones]
+        actual = next((i for i, (c, _) in enumerate(opciones) if c == self._clave_actual()), 0)
+        texto, ok = QInputDialog.getItem(self, "Aprender de mí", "¿Qué vas a jugar?", textos, actual, False)
+        if not ok:
+            return
+        clave = opciones[textos.index(texto)][0]
+        aviso = (f"APRENDER DE MÍ · {texto}\n\n"
+                 "Juega tú las peleas a mano, como siempre. El bot no hace ningún clic: solo mira.\n\n"
+                 "• Reconoce tu equipo por las cartas de la mano.\n"
+                 "• En cada turno apunta tu mano, la fase y qué cartas juegas (clic) o mueves (arrastre).\n"
+                 "• Al acabar cada pelea la guarda en capturas\\aprendizaje y la cuenta para medir el equipo aquí.\n\n"
+                 "Deja la ventana del juego a la vista. F10 o Detener para terminar.")
+        if QMessageBox.question(self, "Aprender de mí", aviso) == QMessageBox.Yes:
+            self.app.farmear.ejecutar_herramienta(Aprender({"contenido": clave, "nombre_contenido": texto}))
+
     def _borrar(self, datos: dict):
         if QMessageBox.question(self, "Borrar equipo", f"¿Borrar el equipo «{datos.get('nombre', '')}»?") == QMessageBox.Yes:
             clave = self._clave_actual()
@@ -451,6 +475,7 @@ class PaginaEquipos(Pagina):
                 w.setParent(None)
         admin = bool(config.obtener("modo_admin"))
         self.b_agregar.setVisible(admin)
+        self.b_aprender.setVisible(admin)
         clave = self._clave_actual()
         contenido, juega = self.contenidos.get(clave, (None, False))
         if contenido:

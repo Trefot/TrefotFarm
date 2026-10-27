@@ -422,11 +422,13 @@ class PaginaFarmear(Pagina):
         self._botones(False)
         self.inicio = None
         self.estado_bot = ""
-        era_captura = getattr(self.modo_externo, "id", "") == "captura_heroes"
+        herramienta = getattr(self.modo_externo, "id", "")
         self.modo_externo = None
         self._pintar_estado()
-        if era_captura:  # al terminar, ensenar lo capturado
+        if herramienta == "captura_heroes":  # al terminar, ensenar lo capturado
             self.app.navegar("capturados")
+        elif herramienta == "aprender":  # y lo medido con las peleas que jugo el admin
+            self.app.navegar("equipos")
 
     def _botones(self, corriendo: bool):
         self.b_iniciar.setEnabled(not corriendo)
