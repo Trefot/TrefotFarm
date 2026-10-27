@@ -163,8 +163,7 @@ def _primera_vez():
     en la pagina Personajes). Tambien mueve capturas de la version anterior (assets/equipo/perros_trefot)."""
     CARPETA.mkdir(parents=True, exist_ok=True)
     if not USUARIO.is_file():
-        USUARIO.write_text("{}
-", encoding="utf-8")
+        USUARIO.write_text("{}\n", encoding="utf-8")
     viejo = EQUIPO / "perros_trefot"
     nombres_viejos = {
         "odin_single": ("odin", "single"), "odin_area": ("odin", "area"), "odin_ulti": ("odin", "ulti"),
