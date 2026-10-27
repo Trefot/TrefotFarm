@@ -44,6 +44,8 @@ PASO_FILA = 95
 PRIMERA_FILA = 221  # con la lista arriba del todo
 LIMITE_LISTA = 700  # mas abajo pasa el cartel de avisos del juego por encima de las casillas
 LIMITE_LISTA_FINAL = 745  # al final de la lista se acepta la ultima fila aunque el cartel la cruce
+ARRIBA_LISTA = 100  # la lista se ve desde aqui (al deslizar, una fila puede quedar en y~140)
+FILAS_POR_ARRASTRE = 2  # el juego sigue deslizando al soltar (3 filas de arrastre bajaban mas de 4)
 ICONO_CASILLA = (64, 0, 88, 18)  # atributo, arriba a la derecha de la casilla
 BORDE_CASILLA = 130  # punto mas claro del marco de arriba: LR plateado ~230, UR rojo 172-202; hueco vacio <=80
 
@@ -365,11 +367,11 @@ def recorte_fila(pantalla, y: int):
 def buscar_fila(pantalla, fila) -> int | None:
     """Altura de esa fila en la pantalla (tras bajar la lista), o None si no esta."""
     x0 = COLUMNAS_LISTA[0] - 5
-    zona = pantalla[150:LIMITE_LISTA_FINAL, x0:x0 + fila.shape[1]]
+    zona = pantalla[ARRIBA_LISTA:LIMITE_LISTA_FINAL, x0:x0 + fila.shape[1]]
     if zona.shape[0] < fila.shape[0]:
         return None
     _, valor, _, (_, y) = cv2.minMaxLoc(cv2.matchTemplate(zona, fila, cv2.TM_CCOEFF_NORMED))
-    return y + 150 if valor >= 0.9 else None
+    return y + ARRIBA_LISTA if valor >= 0.9 else None
 
 
 def atributo_de_casilla(icono) -> str:
@@ -650,12 +652,16 @@ class CapturaHeroes(Modo):
         sin_moverse = 0
         while not fin and len(iconos) < 600:
             referencia = recorte_fila(p, ultima)
+            anterior = recorte_fila(p, ultima - PASO_FILA)  # por si la ultima queda tapada al deslizar
             inicio = (275, 650 - 50 * sin_moverse)  # si el juego ignora un arrastre, probar desde otra altura
-            entrada.arrastrar(inicio, (275, inicio[1] - 3 * PASO_FILA), o, duracion=0.8)
-            control.esperar(1.2)  # que termine de deslizarse
+            entrada.arrastrar(inicio, (275, inicio[1] - FILAS_POR_ARRASTRE * PASO_FILA), o, duracion=0.8)
+            control.esperar(1.5)  # que termine de deslizarse
             p = self.capturar()[0]
             guardar_imagen(fotos / f"lista_{len(iconos):03d}.jpg", p)
             y = buscar_fila(p, referencia)
+            if y is None:
+                y_anterior = buscar_fila(p, anterior)
+                y = y_anterior + PASO_FILA if y_anterior is not None else None
             if y is None:
                 self.log(f"Perdí la cuenta al bajar la lista: me quedo con {len(iconos)} iconos.", "aviso")
                 break
