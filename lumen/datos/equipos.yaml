@@ -6,7 +6,8 @@
 # nivel: recomendado | bueno | alternativa
 # personajes: ids de lumen/datos/personajes.yaml, de izquierda a derecha como en el juego
 # bot: true si el bot sabe jugar ese equipo
-# alternativas: personaje -> otros que pueden ocupar su lugar
+# alternativas: personaje -> otros que pueden ocupar su lugar (mejor no usarlo: cada opcion va como
+#   un equipo aparte, asi se ve de un vistazo cual puedes armar)
 #
 # Los equipos que no son de Lumen vienen de AutoFarming (BOTS_README). Cada heroe se identifico
 # comparando las cartas de AutoFarming con las de los 361 heroes capturados (2026-10-27).
@@ -46,55 +47,101 @@ perros_piso4:
   - nombre: Escalin y Roxy
     nivel: alternativa
     personajes: [merlin_escanor_verde, roxy_of_madness_azul, herbalist_nasiens_verde, wanderer_thonar_rojo]
-    alternativas:
-      roxy_of_madness_azul: [roxy_of_madness_rojo, lillia_of_desire_rojo, dual_swordsman_cusack_azul]
-      wanderer_thonar_rojo: [thonar_azul]
     notas: >-
       Equipo de AutoFarming para la mayoría de jugadores. Pasa el Floor 4, pero falla más por suerte
-      y pide jugar con cuidado. Roxy (mejor la azul) se puede cambiar por Lillia o Cusack, y Thonar rojo
-      por el azul. El bot todavía no sabe jugarlo.
+      y pide jugar con cuidado. Roxy azul es la mejor opción. El bot todavía no sabe jugarlo.
+
+  - nombre: Escalin y Roxy (con Thonar azul)
+    nivel: alternativa
+    personajes: [merlin_escanor_verde, roxy_of_madness_azul, herbalist_nasiens_verde, thonar_azul]
+    notas: >-
+      El mismo equipo con Thonar azul en lugar del rojo. El bot todavía no sabe jugarlo.
+
+  - nombre: Escalin y Roxy roja
+    nivel: alternativa
+    personajes: [merlin_escanor_verde, roxy_of_madness_rojo, herbalist_nasiens_verde, wanderer_thonar_rojo]
+    notas: >-
+      El mismo equipo con la Roxy roja en lugar de la azul. El bot todavía no sabe jugarlo.
+
+  - nombre: Escalin y Lillia
+    nivel: alternativa
+    personajes: [merlin_escanor_verde, lillia_of_desire_rojo, herbalist_nasiens_verde, wanderer_thonar_rojo]
+    notas: >-
+      El mismo equipo con Lillia en lugar de Roxy. El bot todavía no sabe jugarlo.
+
+  - nombre: Escalin y Cusack
+    nivel: alternativa
+    personajes: [merlin_escanor_verde, dual_swordsman_cusack_azul, herbalist_nasiens_verde, wanderer_thonar_rojo]
+    notas: >-
+      El mismo equipo con Cusack en lugar de Roxy. El bot todavía no sabe jugarlo.
 
 perros:
   - nombre: Escanor UR y Lostvayne
     nivel: recomendado
     personajes: [escanor_the_indomitable_verde, lostvayne_meliodas_rojo, sun_god_freyr_rojo, thonar_azul]
-    alternativas:
-      thonar_azul: [wanderer_thonar_rojo, wanderer_thonar_verde]
     notas: >-
       Floors 1 a 3 (de AutoFarming). Sirve casi cualquier equipo; este es el recomendado.
       Lostvayne con reliquia; Thonar con reliquia y equipo de Resistencia a críticos (mejor con True
       Awakening).
 
+  - nombre: Escanor UR y Lostvayne (con Thonar rojo)
+    nivel: alternativa
+    personajes: [escanor_the_indomitable_verde, lostvayne_meliodas_rojo, sun_god_freyr_rojo, wanderer_thonar_rojo]
+    notas: >-
+      El mismo equipo con Thonar rojo en lugar del azul.
+
+  - nombre: Escanor UR y Lostvayne (con Thonar verde)
+    nivel: alternativa
+    personajes: [escanor_the_indomitable_verde, lostvayne_meliodas_rojo, sun_god_freyr_rojo, wanderer_thonar_verde]
+    notas: >-
+      El mismo equipo con Thonar verde en lugar del azul.
+
 pajaro_piso4:
   - nombre: Meliodas Traidor y Thor
     nivel: recomendado
     personajes: [traitor_meliodas_oscuro, thor_the_god_of_thunder_azul, valkyrie_megellda_azul, shion_verde]
-    alternativas:
-      traitor_meliodas_oscuro: [god_of_war_tyr_verde]
     notas: >-
-      Floor 4 de AutoFarming. Sirve cualquier equipo, pero este es el mejor. Meliodas Traidor se puede
-      cambiar por Tyr verde. Si usas a Diane, ponla siempre en el puesto de la derecha.
+      Floor 4 de AutoFarming. Sirve cualquier equipo, pero este es el mejor. Si usas a Diane, ponla
+      siempre en el puesto de la derecha.
+
+  - nombre: Tyr y Thor
+    nivel: alternativa
+    personajes: [god_of_war_tyr_verde, thor_the_god_of_thunder_azul, valkyrie_megellda_azul, shion_verde]
+    notas: >-
+      El mismo equipo con Tyr verde en lugar de Meliodas Traidor.
 
 ciervo_piso4:
   - nombre: Thor, Jormungand y Freyr
     nivel: recomendado
     personajes: [thor_the_god_of_thunder_azul, world_serpent_jormungand_verde, sun_god_freyr_rojo, god_of_war_tyr_verde]
-    alternativas:
-      god_of_war_tyr_verde: [repose_of_souls_hel_verde]
     notas: >-
       Floor 4 de AutoFarming. Todos con equipo de Ataque/Daño crítico, menos Jormungand (Ataque/Defensa).
-      Tyr verde se puede cambiar por Hel verde. Hay que poder terminar la fase 1 en 3 turnos.
-      Sin Skuld.
+      Hay que poder terminar la fase 1 en 3 turnos. Sin Skuld.
+
+  - nombre: Thor, Jormungand y Freyr (con Hel)
+    nivel: alternativa
+    personajes: [thor_the_god_of_thunder_azul, world_serpent_jormungand_verde, sun_god_freyr_rojo, repose_of_souls_hel_verde]
+    notas: >-
+      El mismo equipo con Hel verde en lugar de Tyr verde. Sin Skuld.
 
 ciervo:
   - nombre: Jormungand, Freyr y Thor
     nivel: recomendado
     personajes: [world_serpent_jormungand_verde, sun_god_freyr_rojo, thor_the_god_of_thunder_azul, repose_of_souls_hel_verde]
-    alternativas:
-      repose_of_souls_hel_verde: [valkyrie_megellda_rojo, god_of_war_tyr_verde]
     notas: >-
-      Floors 1 a 3 (de AutoFarming). Hel verde (recomendada) se puede cambiar por Megellda roja o Tyr
-      verde. Sin Skuld.
+      Floors 1 a 3 (de AutoFarming). Con Hel verde, la recomendada. Sin Skuld.
+
+  - nombre: Jormungand, Freyr y Thor (con Megellda)
+    nivel: alternativa
+    personajes: [world_serpent_jormungand_verde, sun_god_freyr_rojo, thor_the_god_of_thunder_azul, valkyrie_megellda_rojo]
+    notas: >-
+      El mismo equipo con Megellda roja en lugar de Hel verde. Sin Skuld.
+
+  - nombre: Jormungand, Freyr y Thor (con Tyr)
+    nivel: alternativa
+    personajes: [world_serpent_jormungand_verde, sun_god_freyr_rojo, thor_the_god_of_thunder_azul, god_of_war_tyr_verde]
+    notas: >-
+      El mismo equipo con Tyr verde en lugar de Hel verde. Sin Skuld.
 
 serpiente:
   - nombre: Mael y Freyja
@@ -118,8 +165,11 @@ rata:
   - nombre: Liz, Valenti y Jormungand
     nivel: recomendado
     personajes: [princess_elizabeth_rojo, valenti_of_obsession_azul, world_serpent_jormungand_rojo, king_diane_azul]
-    alternativas:
-      king_diane_azul: [merlin_escanor_verde]
     notas: >-
-      Floors 1 y 2 (de AutoFarming). King & Diane se puede cambiar por Escalin; si usas a King & Diane,
-      ponlos en el puesto de la derecha.
+      Floors 1 y 2 (de AutoFarming). King & Diane van siempre en el puesto de la derecha.
+
+  - nombre: Liz, Valenti y Jormungand (con Escalin)
+    nivel: alternativa
+    personajes: [princess_elizabeth_rojo, valenti_of_obsession_azul, world_serpent_jormungand_rojo, merlin_escanor_verde]
+    notas: >-
+      El mismo equipo con Escalin en lugar de King & Diane.
