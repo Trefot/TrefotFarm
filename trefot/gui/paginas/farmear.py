@@ -5,6 +5,7 @@ import time
 from PyQt5.QtCore import Qt, QTimer
 from PyQt5.QtGui import QTextCursor
 from PyQt5.QtWidgets import (
+    QApplication,
     QCheckBox,
     QComboBox,
     QFormLayout,
@@ -20,7 +21,7 @@ from PyQt5.QtWidgets import (
     QVBoxLayout,
 )
 
-from trefot import config, ventana
+from trefot import actualizador, config, ventana
 from trefot.control import control
 from trefot.gui import tema
 from trefot.gui.comun import Pagina, a_pixmap, dibujar_regiones, formatear_tiempo, tarjeta
@@ -190,6 +191,17 @@ class PaginaFarmear(Pagina):
 
     # ------------------------------------------------------------------ control
     def iniciar(self):
+        # Antes de farmear, mirar si salio una version nueva (las revisiones automaticas son cada
+        # 30 min y podria estar jugando con un guion viejo). Si no hay internet, sigue igual.
+        est = self.app.estado_update
+        if not self.app.update_bloqueante and (est is None or time.time() - est.revisado > 120):
+            self.escribir("Buscando actualizaciones antes de empezar...", "debug")
+            QApplication.setOverrideCursor(Qt.WaitCursor)
+            try:
+                estado = actualizador.revisar()
+            finally:
+                QApplication.restoreOverrideCursor()
+            self.app._resultado_revision(estado)
         if self.app.update_bloqueante:
             self.app.mostrar_bloqueo()
             return
