@@ -68,34 +68,6 @@ ludociel_lr:
     buffo: {descripcion: Buffo}
 
 # --- Personajes de otros equipos recomendados (sin capturas todavia) -------------------------
-escanor:
-  nombre: Escanor
-  color: sin definir
-  raza: humano
-  roles: []
-  cartas: {}
-
-roxy:
-  nombre: Roxy
-  color: sin definir
-  raza: sin definir
-  roles: []
-  cartas: {}
-
-lillia:
-  nombre: Lillia
-  color: sin definir
-  raza: sin definir
-  roles: []
-  cartas: {}
-
-cusack:
-  nombre: Cusack
-  color: sin definir
-  raza: sin definir
-  roles: []
-  cartas: {}
-
 # ---------------------------------------------------------------------------------------------
 # Heroes capturados del juego (Heroes -> ficha de cada uno), en el orden de la lista del juego.
 # Cartas sacadas de la ficha: skill_1, skill_2 y ulti.
@@ -2442,8 +2414,8 @@ predator_beru_azul:
     ulti:
       descripcion: Un objetivo (Abyssal Chase)
 the_dancer_cha_hae_ln_azul:
-  clave: '[S-Rank Hunter] The Dancer Cha Hae-ln'
-  nombre: The Dancer Cha Hae-ln
+  clave: '[S-Rank Hunter] The Dancer Cha Hae-In'
+  nombre: The Dancer Cha Hae-In
   color: azul
   raza: humano
   roles:
