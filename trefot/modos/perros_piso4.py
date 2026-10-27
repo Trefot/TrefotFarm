@@ -194,18 +194,28 @@ class PerrosPiso4(Modo):
     nombre = "Skollandhati & Hati · Floor 4"
     descripcion = (
         "Demonic Beast de los perros, Floor 4, con Odin, Gawain, Freyja (Strength) y Thonar (Speed). "
-        "Puede empezar desde la Tavern, el menu Battle o la pantalla de Floors."
+        "Puede empezar desde la Tavern, el menú Battle o la pantalla de Floors."
     )
     titulo_juego = "Skollandhati & Hati"
     subtitulo_juego = "Demonic Beast · Floor 4"
     imagen = "demonic_beasts/skollandhati.png"
     duracion = "~2,5 min por pelea"
+    fases = 3
+    nombres_estados = {
+        "ir_a_perros": "Entrando a Demonic Beasts",
+        "elegir_piso": "Eligiendo el Floor 4",
+        "preparar": "Revisando el equipo",
+        "pelea": "Peleando",
+        "victoria": "¡Victoria! Guardando el botín",
+        "derrota": "Derrota: volviendo a intentar",
+        "rendirse": "Rindiéndose para repetir la pelea",
+    }
     equipo = EQUIPO
     opciones = [
-        Opcion("victorias", "Victorias (0 = sin limite)", "entero", 0, maximo=9999),
-        Opcion("extra", "Usar 'extra' en las primeras N", "entero", 0, maximo=99),
-        Opcion("pociones", "Usar pociones de estamina", "si_no", True),
-        Opcion("max_pociones", "Maximo de pociones (0 = sin limite)", "entero", 0, maximo=999),
+        Opcion("victorias", "Victorias (0 = sin límite)", "entero", 0, maximo=9999),
+        Opcion("extra", "Marcar 'Extra' al abrir el piso (primeras N)", "entero", 0, maximo=99),
+        Opcion("pociones", "Usar pociones de stamina", "si_no", True),
+        Opcion("max_pociones", "Máximo de pociones (0 = sin límite)", "entero", 0, maximo=999),
     ]
     pausa_entre_pasos = 0.45
 

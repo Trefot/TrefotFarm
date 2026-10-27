@@ -6,7 +6,6 @@ from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QImage, QPixmap
 from PyQt5.QtWidgets import QFrame, QHBoxLayout, QLabel, QVBoxLayout, QWidget
 
-from trefot import juego
 
 
 def a_pixmap(imagen: np.ndarray, ancho: int | None = None) -> QPixmap:
@@ -17,23 +16,26 @@ def a_pixmap(imagen: np.ndarray, ancho: int | None = None) -> QPixmap:
     return pix.scaledToWidth(ancho, Qt.SmoothTransformation) if ancho else pix
 
 
-def dibujar_regiones(pantalla: np.ndarray) -> np.ndarray:
-    img = pantalla.copy()
-    for region in juego.REGION.values():
-        cv2.rectangle(img, region[:2], region[2:], (38, 165, 224), 2)
-    for punto in juego.COORD.values():
-        cv2.circle(img, punto, 6, (97, 100, 239), 2)
-    return img
+def tarjeta(titulo: str, valor: str = "0", icono: str | None = None) -> tuple[QFrame, QLabel]:
+    """Recuadro con una cifra grande y su titulo (y un icono a la izquierda, si se da)."""
+    from trefot.gui import iconos, tema
 
-
-def tarjeta(titulo: str, valor: str = "0") -> tuple[QFrame, QLabel]:
-    """Recuadro con una cifra grande y su titulo."""
     marco = QFrame(objectName="tarjeta")
-    capa = QVBoxLayout(marco)
-    capa.setContentsMargins(12, 8, 12, 8)
+    fila = QHBoxLayout(marco)
+    fila.setContentsMargins(14, 10, 14, 10)
+    fila.setSpacing(12)
+    if icono:
+        dibujo = QLabel(objectName="icono_tarjeta")
+        dibujo.setPixmap(iconos.pixmap(icono, 26, tema.ACENTO))
+        dibujo.setFixedSize(44, 44)
+        dibujo.setAlignment(Qt.AlignCenter)
+        fila.addWidget(dibujo)
+    capa = QVBoxLayout()
+    capa.setSpacing(0)
     cifra = QLabel(valor, objectName="cifra")
     capa.addWidget(cifra)
     capa.addWidget(QLabel(titulo, objectName="tenue"))
+    fila.addLayout(capa, 1)
     return marco, cifra
 
 

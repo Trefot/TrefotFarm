@@ -12,7 +12,6 @@ POR_DEFECTO = {
     "minutos_atasco": 8,  # minutos sin cambios antes de avisar que el bot esta trabado
     "tecla_pausa": "f9",
     "tecla_detener": "f10",
-    "fps_vista_previa": 3,
     "ultimo_modo": "perros_piso4",
     "modo_admin": False,  # muestra Capturas y el Editor de personajes
     "skin": "auto",  # "auto" = segun la fecha; o el id de una skin de gui/tema.py

@@ -1,10 +1,12 @@
-"""Pagina Ajustes: ventana del juego, avisos al movil, teclas, vista previa y repositorio de actualizaciones."""
+"""Pagina Ajustes: juego, aspecto, teclas, avisos al movil, modo administrador y repositorio de actualizaciones."""
 
+from PyQt5.QtCore import QSize
 from PyQt5.QtWidgets import (
     QCheckBox,
     QComboBox,
     QFormLayout,
-    QGroupBox,
+    QFrame,
+    QGridLayout,
     QHBoxLayout,
     QLabel,
     QLineEdit,
@@ -15,8 +17,27 @@ from PyQt5.QtWidgets import (
 )
 
 from trefot import actualizador, avisos, config
-from trefot.gui import tema
+from trefot.gui import iconos, tema
 from trefot.gui.comun import Pagina
+
+
+def seccion(titulo: str, icono: str) -> tuple[QFrame, QVBoxLayout]:
+    """Recuadro con un icono y un titulo arriba; el contenido va en el layout devuelto."""
+    marco = QFrame(objectName="seccion")
+    capa = QVBoxLayout(marco)
+    capa.setContentsMargins(16, 12, 16, 14)
+    capa.setSpacing(8)
+    cabecera = QHBoxLayout()
+    dibujo = QLabel()
+    dibujo.setPixmap(iconos.pixmap(icono, 20, tema.ACENTO))
+    cabecera.addWidget(dibujo)
+    cabecera.addWidget(QLabel(titulo, objectName="titulo_seccion"), 1)
+    capa.addLayout(cabecera)
+    return marco, capa
+
+
+def nota(texto: str) -> QLabel:
+    return QLabel(texto, objectName="tenue", wordWrap=True)
 
 
 class PaginaAjustes(Pagina):
@@ -26,75 +47,86 @@ class PaginaAjustes(Pagina):
     def __init__(self, app):
         super().__init__()
         self.app = app
-        fila = QHBoxLayout()
+        rejilla = QGridLayout()
+        rejilla.setSpacing(14)
 
-        juego = QGroupBox("Juego")
-        f1 = QFormLayout(juego)
+        juego, c = seccion("Juego", "juego")
+        f = QFormLayout()
         self.titulo_ventana = QLineEdit(config.obtener("titulo_ventana"))
-        f1.addRow("Titulo de la ventana", self.titulo_ventana)
-        f1.addRow(QLabel("Global: 7DS · Japon: グラクロ", objectName="tenue"))
-        self.fps = QSpinBox(minimum=1, maximum=10, value=int(config.obtener("fps_vista_previa")))
-        f1.addRow("Vista previa (fotos/seg)", self.fps)
-        fila.addWidget(juego)
+        f.addRow("Título de la ventana", self.titulo_ventana)
+        c.addLayout(f)
+        c.addWidget(nota("Global: 7DS · Japón: グラクロ. Solo cámbialo si juegas en otro cliente."))
+        rejilla.addWidget(juego, 0, 0)
 
-        controles = QGroupBox("Teclas rapidas")
-        f2 = QFormLayout(controles)
-        self.tecla_pausa = QLineEdit(config.obtener("tecla_pausa"))
-        self.tecla_detener = QLineEdit(config.obtener("tecla_detener"))
-        f2.addRow("Pausar / reanudar", self.tecla_pausa)
-        f2.addRow("Detener", self.tecla_detener)
-        f2.addRow(QLabel("Nombres como f9, f10, pause, end...", objectName="tenue"))
-        fila.addWidget(controles)
-        self.cuerpo.addLayout(fila)
-
-        aspecto = QGroupBox("Aspecto")
-        fs = QFormLayout(aspecto)
+        aspecto, c = seccion("Aspecto", "aspecto")
         self.skin = QComboBox()
         self.skin.addItem(f"Automática según la fecha (hoy: {tema.skin_de_fecha().nombre})", "auto")
         for skin in tema.SKINS.values():
             self.skin.addItem(skin.nombre, skin.id)
         self.skin.setCurrentIndex(max(0, self.skin.findData(config.obtener("skin"))))
-        fs.addRow("Skin", self.skin)
-        fs.addRow(QLabel("En automática, la interfaz se viste para Halloween, Navidad, Año Nuevo, San Valentín "
-                         "y el aniversario del juego.", objectName="tenue", wordWrap=True))
-        self.cuerpo.addWidget(aspecto)
+        f = QFormLayout()
+        f.addRow("Skin", self.skin)
+        c.addLayout(f)
+        c.addWidget(nota("En automática, la interfaz se viste para Halloween, Navidad, Año Nuevo, San Valentín "
+                         "y el aniversario del juego."))
+        rejilla.addWidget(aspecto, 0, 1)
 
-        movil = QGroupBox("Avisos al movil (ntfy)")
-        f3 = QFormLayout(movil)
-        self.ntfy = QLineEdit(config.obtener("ntfy_canal"))
-        self.ntfy.setPlaceholderText("vacio = sin avisos")
+        teclas, c = seccion("Teclas rápidas", "teclado")
+        f = QFormLayout()
+        self.tecla_pausa = QLineEdit(config.obtener("tecla_pausa"))
+        self.tecla_detener = QLineEdit(config.obtener("tecla_detener"))
+        f.addRow("Pausar / reanudar", self.tecla_pausa)
+        f.addRow("Detener", self.tecla_detener)
+        c.addLayout(f)
+        c.addWidget(nota("Funcionan aunque el juego esté al frente. Nombres como f9, f10, pause, end..."))
+        rejilla.addWidget(teclas, 1, 0)
+
+        movil, c = seccion("Avisos al móvil", "movil")
+        f = QFormLayout()
+        self.ntfy = QLineEdit()
+        self.ntfy.setText(config.obtener("ntfy_canal"))
+        self.ntfy.setPlaceholderText("vacío = sin avisos")
         self.atasco = QSpinBox(minimum=0, maximum=120, value=int(config.obtener("minutos_atasco")))
-        f3.addRow("Canal", self.ntfy)
-        f3.addRow("Avisar si se atasca (min, 0 = no)", self.atasco)
-        f3.addRow(QLabel("Instala la app gratuita ntfy y suscribete a un canal con un nombre dificil de adivinar.",
-                         objectName="tenue", wordWrap=True))
-        self.cuerpo.addWidget(movil)
+        self.atasco.setSuffix(" min")
+        f.addRow("Canal de ntfy", self.ntfy)
+        f.addRow("Avisar si se atasca (0 = no)", self.atasco)
+        c.addLayout(f)
+        fila = QHBoxLayout()
+        fila.addWidget(nota("Instala la app gratuita ntfy y suscríbete a un canal con un nombre difícil de adivinar."), 1)
+        b_probar = QPushButton(" Probar", objectName="chico")
+        b_probar.setIcon(iconos.icono("movil", tema.TEXTO))
+        b_probar.clicked.connect(self.probar)
+        fila.addWidget(b_probar)
+        c.addLayout(fila)
+        rejilla.addWidget(movil, 1, 1)
 
-        admin = QGroupBox("Administrador")
-        fa = QVBoxLayout(admin)
-        self.modo_admin = QCheckBox("Modo administrador: mostrar Capturas y el Editor de personajes")
-        self.modo_admin.setChecked(bool(config.obtener("modo_admin")))
-        fa.addWidget(self.modo_admin)
-        fa.addWidget(QLabel("Solo para quien mantiene la base del bot (cartas, retratos y equipos). "
-                            "Los jugadores normales no lo necesitan.", objectName="tenue", wordWrap=True))
-        self.cuerpo.addWidget(admin)
-
-        repo = QGroupBox("Actualizaciones (GitHub)")
-        f4 = QFormLayout(repo)
+        repo, c = seccion("Actualizaciones", "actualizar")
+        f = QFormLayout()
         self.url_repo = QLineEdit(placeholderText="https://github.com/usuario/TrefotFarm.git")
         self.url_repo.setText(actualizador.url_remota())
-        f4.addRow("Repositorio", self.url_repo)
-        f4.addRow(QLabel("De aqui se bajan las actualizaciones obligatorias. Solo cambialo si mueves el repositorio.",
-                         objectName="tenue", wordWrap=True))
-        self.cuerpo.addWidget(repo)
+        f.addRow("Repositorio", self.url_repo)
+        c.addLayout(f)
+        c.addWidget(nota("De aquí se bajan las actualizaciones obligatorias. Solo cámbialo si mueves el repositorio."))
+        rejilla.addWidget(repo, 2, 0)
+
+        admin, c = seccion("Administrador", "admin")
+        self.modo_admin = QCheckBox("Modo administrador: mostrar Capturas y el Editor de personajes")
+        self.modo_admin.setChecked(bool(config.obtener("modo_admin")))
+        c.addWidget(self.modo_admin)
+        c.addWidget(nota("Solo para quien mantiene la base del bot (cartas, retratos y equipos). "
+                         "Los jugadores normales no lo necesitan."))
+        rejilla.addWidget(admin, 2, 1)
+        rejilla.setColumnStretch(0, 1)
+        rejilla.setColumnStretch(1, 1)
+        self.cuerpo.addLayout(rejilla)
 
         botones = QHBoxLayout()
-        b_guardar = QPushButton("Guardar", objectName="primario")
+        b_guardar = QPushButton(" Guardar cambios", objectName="primario")
+        b_guardar.setIcon(iconos.icono("guardar", tema.SOBRE_ACENTO))
+        b_guardar.setIconSize(QSize(18, 18))
+        b_guardar.setMinimumHeight(40)
         b_guardar.clicked.connect(self.guardar)
-        b_probar = QPushButton("Probar aviso al movil")
-        b_probar.clicked.connect(self.probar)
         botones.addWidget(b_guardar)
-        botones.addWidget(b_probar)
         botones.addStretch()
         self.cuerpo.addLayout(botones)
         self.cuerpo.addStretch()
@@ -108,7 +140,6 @@ class PaginaAjustes(Pagina):
             "minutos_atasco": self.atasco.value(),
             "tecla_pausa": self.tecla_pausa.text().strip().lower() or "f9",
             "tecla_detener": self.tecla_detener.text().strip().lower() or "f10",
-            "fps_vista_previa": self.fps.value(),
             "modo_admin": self.modo_admin.isChecked(),
         })
         url = self.url_repo.text().strip()
@@ -134,4 +165,4 @@ class PaginaAjustes(Pagina):
             QMessageBox.information(self, "Avisos", "Escribe primero un canal.")
             return
         avisos.enviar("TrefotFarm: aviso de prueba")
-        QMessageBox.information(self, "Avisos", "Enviado. Deberia llegarte en unos segundos.")
+        QMessageBox.information(self, "Avisos", "Enviado. Debería llegarte en unos segundos.")

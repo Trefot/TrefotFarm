@@ -3,38 +3,69 @@
 import os
 import time
 
-from PyQt5.QtCore import QSize, Qt
-from PyQt5.QtGui import QColor, QIcon, QPixmap
+from PyQt5.QtCore import QSize, Qt, pyqtSignal
+from PyQt5.QtGui import QIcon, QPixmap
 from PyQt5.QtWidgets import (
-    QAbstractItemView,
     QComboBox,
     QFrame,
+    QGridLayout,
     QHBoxLayout,
-    QHeaderView,
     QInputDialog,
     QLabel,
     QListView,
     QListWidget,
     QListWidgetItem,
     QPushButton,
-    QTableWidget,
-    QTableWidgetItem,
+    QScrollArea,
     QTabWidget,
     QVBoxLayout,
     QWidget,
 )
 
 from trefot import botin, recompensas
-from trefot.gui import tema
+from trefot.gui import iconos, tema
 from trefot.gui.comun import Pagina, tarjeta
 
 MAXIMO_EN_GALERIA = 400
 ANCHO_MINIATURA = 110
-COLUMNAS = ["", "Objeto", "Total", "Por victoria", "Salio en"]
+COLUMNAS_BOTIN = 5
 
 
 def _miles(n: int) -> str:
     return f"{n:,}".replace(",", ".")
+
+
+class CasillaObjeto(QFrame):
+    """Un objeto del botin: su dibujo, cuanto llevas, el nombre y cada cuanto sale."""
+
+    renombrar = pyqtSignal(str)
+
+    def __init__(self, oid: str, nombre: str, total: int, por_victoria: str, veces: str, sin_nombre: bool):
+        super().__init__(objectName="tarjeta_objeto")
+        self.oid = oid
+        self.setProperty("sin_nombre", sin_nombre)
+        self.setCursor(Qt.PointingHandCursor)
+        self.setToolTip("Doble clic para ponerle nombre")
+        self.setFixedHeight(190)
+        capa = QVBoxLayout(self)
+        capa.setContentsMargins(10, 12, 10, 10)
+        capa.setSpacing(4)
+        foto = QLabel(objectName="foto_objeto", alignment=Qt.AlignCenter)
+        foto.setFixedSize(76, 64)
+        pix = QPixmap(str(botin.ruta_icono(oid)))
+        if not pix.isNull():
+            foto.setPixmap(pix.scaled(68, 56, Qt.KeepAspectRatio, Qt.SmoothTransformation))
+        capa.addWidget(foto, 0, Qt.AlignHCenter)
+        capa.addWidget(QLabel(f"×{_miles(total)}", objectName="cantidad_objeto", alignment=Qt.AlignCenter))
+        etiqueta = QLabel(nombre, alignment=Qt.AlignCenter, wordWrap=True)
+        etiqueta.setStyleSheet(f"color: {tema.AVISO if sin_nombre else tema.TEXTO}; font-weight: 600;")
+        capa.addWidget(etiqueta)
+        capa.addWidget(QLabel(f"{por_victoria} por victoria", objectName="tenue", alignment=Qt.AlignCenter))
+        capa.addWidget(QLabel(veces, objectName="tenue", alignment=Qt.AlignCenter))
+
+    def mouseDoubleClickEvent(self, evento):
+        self.renombrar.emit(self.oid)
+        super().mouseDoubleClickEvent(evento)
 
 
 class PaginaRecompensas(Pagina):
@@ -48,18 +79,20 @@ class PaginaRecompensas(Pagina):
         self.seleccion: dict | None = None
         self._miniaturas: dict[str, QIcon] = {}
 
-        for texto, funcion in (("Volver a analizar", self._reanalizar), ("Abrir carpeta", self._abrir_carpeta),
-                               ("Actualizar", self.al_mostrar)):
-            b = QPushButton(texto)
+        for texto, ic, funcion in (("Volver a analizar", "buscar", self._reanalizar),
+                                   ("Abrir carpeta", "carpeta", self._abrir_carpeta),
+                                   ("Actualizar", "actualizar", self.al_mostrar)):
+            b = QPushButton(" " + texto, objectName="chico")
+            b.setIcon(iconos.icono(ic, tema.TEXTO))
             b.clicked.connect(funcion)
             self.acciones.addWidget(b)
 
         # ---- cifras
         fila = QHBoxLayout()
         self.cifras = {}
-        for clave, titulo in (("victorias", "Victorias"), ("oro", "Oro"), ("objetos", "Objetos conseguidos"),
-                              ("distintos", "Objetos distintos")):
-            marco, cifra = tarjeta(titulo)
+        for clave, titulo, ic in (("victorias", "Victorias", "trofeo"), ("oro", "Oro", "oro"),
+                                  ("objetos", "Objetos conseguidos", "objetos"), ("distintos", "Objetos distintos", "distintos")):
+            marco, cifra = tarjeta(titulo, icono=ic)
             self.cifras[clave] = cifra
             fila.addWidget(marco)
         self.cuerpo.addLayout(fila)
@@ -83,8 +116,8 @@ class PaginaRecompensas(Pagina):
 
         # ---- pestanas: Botin / Fotos
         self.pestanas = QTabWidget()
-        self.pestanas.addTab(self._crear_botin(), "Botin")
-        self.pestanas.addTab(self._crear_fotos(), "Fotos")
+        self.pestanas.addTab(self._crear_botin(), iconos.icono("recompensas", tema.TENUE), "Botín")
+        self.pestanas.addTab(self._crear_fotos(), iconos.icono("foto", tema.TENUE), "Fotos")
         self.cuerpo.addWidget(self.pestanas, 1)
 
         app.puente.stats.connect(self._quizas_nueva_foto)
@@ -93,24 +126,14 @@ class PaginaRecompensas(Pagina):
 
     # ------------------------------------------------------------------ construccion
     def _crear_botin(self) -> QWidget:
-        w = QWidget()
-        capa = QVBoxLayout(w)
-        self.tabla = QTableWidget(0, len(COLUMNAS))
-        self.tabla.setHorizontalHeaderLabels(COLUMNAS)
-        self.tabla.verticalHeader().setVisible(False)
-        self.tabla.verticalHeader().setDefaultSectionSize(52)
-        self.tabla.setIconSize(QSize(54, 40))
-        self.tabla.setEditTriggers(QAbstractItemView.NoEditTriggers)
-        self.tabla.setSelectionBehavior(QAbstractItemView.SelectRows)
-        cab = self.tabla.horizontalHeader()
-        cab.setSectionResizeMode(0, QHeaderView.Fixed)
-        self.tabla.setColumnWidth(0, 70)
-        cab.setSectionResizeMode(1, QHeaderView.Stretch)
-        for col in (2, 3, 4):
-            cab.setSectionResizeMode(col, QHeaderView.ResizeToContents)
-        self.tabla.cellDoubleClicked.connect(self._renombrar)
-        capa.addWidget(self.tabla)
-        return w
+        desplazable = QScrollArea(widgetResizable=True)
+        contenido = QWidget()
+        self.rejilla_botin = QGridLayout(contenido)
+        self.rejilla_botin.setContentsMargins(10, 10, 10, 10)
+        self.rejilla_botin.setSpacing(10)
+        self.rejilla_botin.setAlignment(Qt.AlignTop)
+        desplazable.setWidget(contenido)
+        return desplazable
 
     def _crear_fotos(self) -> QWidget:
         w = QWidget()
@@ -182,39 +205,27 @@ class PaginaRecompensas(Pagina):
         sin_nombre = [oid for oid in totales if not (catalogo.get(oid) or {}).get("nombre")]
         self.aviso.setVisible(bool(sin_nombre))
         self.aviso_txt.setText(
-            f"<b>{len(sin_nombre)} objeto(s) sin nombre.</b> Haz doble clic en ellos (pestana Botin) para "
-            "ponerles nombre; despues se reconocen solos.")
+            f"<b>{len(sin_nombre)} objeto(s) sin nombre</b> (borde punteado). Haz doble clic en ellos para "
+            "ponerles nombre; después se reconocen solos.")
 
-        self.tabla.setRowCount(len(totales))
-        for fila, (oid, total) in enumerate(totales.items()):
+        while self.rejilla_botin.count():
+            w = self.rejilla_botin.takeAt(0).widget()
+            if w:
+                w.setParent(None)
+        for i, (oid, total) in enumerate(totales.items()):
             veces = sum(1 for r in filtrados if oid in (r.get("objetos") or {}))
-            item_icono = QTableWidgetItem()
-            item_icono.setIcon(QIcon(QPixmap(str(botin.ruta_icono(oid)))))
-            item_icono.setData(Qt.UserRole, oid)
-            nombre = botin.nombre(oid, catalogo)
-            item_nombre = QTableWidgetItem(nombre)
-            if oid in sin_nombre:
-                item_nombre.setForeground(QColor(tema.AVISO))
-            celdas = [item_icono, item_nombre, QTableWidgetItem(_miles(total)),
-                      QTableWidgetItem(f"{total / len(filtrados):.1f}" if filtrados else "—"),
-                      QTableWidgetItem(f"{veces} de {len(filtrados)} victorias")]
-            for col, item in enumerate(celdas):
-                if col >= 2:
-                    item.setTextAlignment(Qt.AlignCenter)
-                item.setData(Qt.UserRole, oid)
-                self.tabla.setItem(fila, col, item)
+            casilla = CasillaObjeto(oid, botin.nombre(oid, catalogo), total,
+                                    f"{total / len(filtrados):.1f}" if filtrados else "—",
+                                    f"en {veces} de {len(filtrados)} victorias", oid in sin_nombre)
+            casilla.renombrar.connect(self._renombrar)
+            self.rejilla_botin.addWidget(casilla, i // COLUMNAS_BOTIN, i % COLUMNAS_BOTIN)
         if not totales:
-            self.tabla.setRowCount(1)
-            vacio = QTableWidgetItem("Todavia no hay recompensas: se guardan solas al ganar.")
-            vacio.setForeground(QColor(tema.TENUE))
-            self.tabla.setItem(0, 1, vacio)
+            vacio = QLabel("Todavía no hay recompensas: se guardan solas cada vez que el bot gana.",
+                           objectName="tenue", alignment=Qt.AlignCenter)
+            self.rejilla_botin.addWidget(vacio, 0, 0, 1, COLUMNAS_BOTIN)
         self._pintar_galeria(filtrados)
 
-    def _renombrar(self, fila: int, _col: int):
-        item = self.tabla.item(fila, 0)
-        oid = item.data(Qt.UserRole) if item else None
-        if not oid:
-            return
+    def _renombrar(self, oid: str):
         catalogo = botin.cargar_catalogo()
         actual = (catalogo.get(oid) or {}).get("nombre", "")
         nombre, ok = QInputDialog.getText(self, "Nombre del objeto", "¿Que objeto es? (p. ej. 'Cubo de mejora gris'):", text=actual)

@@ -44,6 +44,8 @@ class Modo:
     subtitulo_juego = ""  # p. ej. "Demonic Beast · Floor 4"
     imagen = ""  # emblema, relativo a assets/imagenes
     duracion = ""  # duracion aproximada de una pelea, p. ej. "~2,5 min"
+    fases = 0  # fases de la pelea (para marcarlas en la pagina Farmear); 0 = no se muestran
+    nombres_estados: dict[str, str] = {}  # estado -> texto para el jugador ("pelea" -> "Peleando")
     opciones: list[Opcion] = []
     pausa_entre_pasos = 0.5
 

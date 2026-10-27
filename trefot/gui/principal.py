@@ -210,7 +210,6 @@ class VentanaPrincipal(QMainWindow):
     def ajustes_guardados(self):
         self.aplicar_modo_admin()
         self.farmear.actualizar_ayuda_teclas()
-        self.farmear.ajustar_fps()
         self._barra()
 
     def _barra(self):

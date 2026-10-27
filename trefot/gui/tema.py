@@ -168,6 +168,17 @@ QLabel#titulo_pagina {{ font-family: {_TITULOS}; font-size: 19pt; font-weight: 7
 QLabel#cifra {{ font-family: {_TITULOS}; font-size: 20pt; font-weight: 700; }}
 QLabel#cifra_grande {{ font-family: {_TITULOS}; font-size: 30pt; font-weight: 800; color: {_s.acento}; }}
 QLabel#tenue {{ color: {_s.tenue}; }}
+QLabel#icono_tarjeta {{ background: {_s.hundido}; border: 1px solid {_s.borde_oro}; border-radius: 22px; }}
+QLabel#estado_grande {{ font-family: {_TITULOS}; font-size: 17pt; font-weight: 700; color: {_s.acento}; }}
+QLabel#fase {{ background: {_s.hundido}; color: {_s.tenue}; border: 1px solid {_s.borde}; border-radius: 13px;
+               padding: 4px 14px; font-weight: 600; }}
+QLabel#fase[estado="actual"] {{ background: {_ORO}; color: {_s.sobre_acento}; border-color: {_s.borde_oro}; }}
+QLabel#fase[estado="hecha"] {{ color: {OK}; border-color: #2c5f45; }}
+QFrame#tarjeta_objeto {{ background: {_PANEL}; border: 1px solid {_s.borde}; border-radius: 12px; }}
+QFrame#tarjeta_objeto:hover {{ border-color: {_s.borde_oro}; }}
+QFrame#tarjeta_objeto[sin_nombre="true"] {{ border: 1px dashed {AVISO}; }}
+QLabel#cantidad_objeto {{ font-family: {_TITULOS}; font-size: 15pt; font-weight: 700; color: {_s.acento}; }}
+QLabel#foto_objeto {{ background: {_s.profundo}; border: 1px solid {_s.borde_oro}; border-radius: 10px; }}
 QLabel#vista {{ background: {_s.profundo}; border: 1px solid {_s.borde}; border-radius: 6px; }}
 QFrame#tarjeta {{ background: {_PANEL}; border: 1px solid {_s.borde}; border-radius: 10px; }}
 QFrame#aviso {{ background: #3a2f17; border: 1px solid {AVISO}; border-radius: 10px; }}
@@ -196,7 +207,7 @@ QLineEdit:focus, QSpinBox:focus, QComboBox:focus {{ border-color: {_s.borde_oro}
 QComboBox QAbstractItemView {{ background: {_s.panel}; border: 1px solid {_s.borde_oro}; }}
 QTextEdit#registro {{ font-family: 'Cascadia Mono', 'Consolas'; font-size: 9pt; }}
 QHeaderView::section {{ background: {_s.panel}; color: {_s.tenue}; border: none; border-bottom: 1px solid {_s.borde_oro}; padding: 6px; }}
-QTableWidget {{ gridline-color: {_s.borde}; }}
+QTableWidget {{ gridline-color: {_s.borde}; alternate-background-color: {_s.panel}; }}
 QScrollArea {{ border: none; }}
 QScrollBar:vertical {{ background: transparent; width: 10px; margin: 2px; }}
 QScrollBar::handle:vertical {{ background: {_s.borde}; border-radius: 4px; min-height: 30px; }}

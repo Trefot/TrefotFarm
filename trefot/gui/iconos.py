@@ -44,6 +44,22 @@ NOMBRES = {
     "actualizar": "mdi6.update",
     "buscar": "mdi6.magnify",
     "flecha": "mdi6.arrow-right",
+    "derrota": "mdi6.skull-outline",
+    "reinicio": "mdi6.restart",
+    "tasa": "mdi6.bullseye-arrow",
+    "objetos": "mdi6.package-variant-closed",
+    "distintos": "mdi6.diamond-stone",
+    "sesiones": "mdi6.calendar-check",
+    "rayo": "mdi6.lightning-bolt",
+    "registro": "mdi6.script-text-outline",
+    "carpeta": "mdi6.folder-open-outline",
+    "foto": "mdi6.image-outline",
+    "aspecto": "mdi6.palette-outline",
+    "movil": "mdi6.cellphone-message",
+    "teclado": "mdi6.keyboard-outline",
+    "admin": "mdi6.shield-crown-outline",
+    "github": "mdi6.github",
+    "guardar": "mdi6.content-save-outline",
 }
 
 
