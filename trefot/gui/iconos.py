@@ -60,6 +60,7 @@ NOMBRES = {
     "admin": "mdi6.shield-crown-outline",
     "github": "mdi6.github",
     "guardar": "mdi6.content-save-outline",
+    "capturados": "mdi6.account-search",
 }
 
 

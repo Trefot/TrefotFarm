@@ -71,9 +71,16 @@ def solo_texto_oscuro(imagen, umbral: int = OSCURO):
 
 
 def _titulo_y_nombre(lineas) -> tuple[str, str]:
-    titulo = next((limpiar_titulo(l) for l in lineas if l.startswith("[")), "")
-    nombre = next((l for l in lineas if not l.startswith("[")), "")
-    return titulo, nombre.strip()
+    """El nombre es la linea de abajo y el titulo la de arriba. El titulo suele ir entre corchetes,
+    pero no siempre ("Waves of the Earth" / Queen Diane)."""
+    lineas = [l for l in lineas if len(l.strip()) > 1]
+    if not lineas:
+        return "", ""
+    nombre = lineas[-1].strip()
+    if nombre.startswith("["):  # solo se leyo el titulo
+        return limpiar_titulo(nombre), ""
+    titulo = limpiar_titulo(lineas[-2]) if len(lineas) >= 2 else ""
+    return titulo, nombre
 
 
 def leer_cabecera(pantalla) -> tuple[str, str]:
@@ -84,15 +91,20 @@ def leer_cabecera_varias(pantallas) -> tuple[str, str]:
     """[titulo] y nombre, votando entre varias lecturas: normal y solo con el texto oscuro (que borra
     alas y brillos de la figura pero a veces confunde una letra). Gana la que mas se repite."""
     x1, y1, x2, y2 = CABECERA
-    votos: dict[tuple[str, str], int] = {}
+    votos_titulo: dict[str, int] = {}
+    votos_nombre: dict[str, int] = {}
     for pantalla in pantallas:
         recorte = pantalla[y1:y2, x1:x2]
         lecturas = [ocr.leer(recorte)] + [ocr.leer(solo_texto_oscuro(recorte, u), escala=3) for u in (OSCURO, 110)]
         for lineas in lecturas:
             titulo, nombre = _titulo_y_nombre(lineas)
             if nombre:
-                votos[(titulo, nombre)] = votos.get((titulo, nombre), 0) + 1
-    return max(votos, key=votos.get) if votos else ("", "")
+                votos_nombre[nombre] = votos_nombre.get(nombre, 0) + 1
+            if titulo:  # un titulo claro puede no salir en la lectura de texto oscuro: se vota aparte
+                votos_titulo[titulo] = votos_titulo.get(titulo, 0) + 1
+    titulo = max(votos_titulo, key=votos_titulo.get) if votos_titulo else ""
+    nombre = max(votos_nombre, key=votos_nombre.get) if votos_nombre else ""
+    return titulo, nombre
 
 
 def leer_datos(pantalla) -> tuple[str, str, str]:
@@ -104,7 +116,7 @@ def leer_datos(pantalla) -> tuple[str, str, str]:
             continue
         # el icono de al lado a veces sale como una letra suelta: "O Light", "o"
         valor = re.sub(r"^[^A-Za-z\[]*(?:[A-Za-z]\s+)?(?=[A-Z\[])", "", linea).strip()
-        if len(valor) <= 2:
+        if len(valor) <= 2 or re.search(r"\d", valor) or re.search(r"combat|class|attack|defense", valor, re.I):
             continue
         palabra = valor.lower()
         if not atributo and palabra in COLOR:
@@ -165,6 +177,13 @@ def leer_datos_varias(pantallas) -> tuple[str, str, str]:
 
 def tipo_de_carta(texto: str) -> str:
     t = texto.lower()
+    dano = t.find("damage equal")
+    if dano >= 0:  # a quien pega el dano ("... damage equal to 200% of Attack on one enemy")
+        uno, todos = t.find("one enemy", dano), t.find("all enemies", dano)
+        if uno >= 0 and (todos < 0 or uno < todos):
+            return "single"
+        if todos >= 0:
+            return "area"
     if "all enemies" in t:
         return "area"
     if "one enemy" in t or "an enemy" in t or "single enemy" in t:
@@ -190,6 +209,19 @@ def leer_skill(pantalla) -> dict | None:
         return {"nombre": nombre.group(1).strip(), "ulti": linea.lower().startswith(("lv", "iv")),
                 "texto": texto, "tipo": tipo_de_carta(texto)}
     return None
+
+
+# Fila "Unique" de la ficha: su icono (marco morado) muestra la cara del heroe. Si la fila es
+# "Grace / Unique", "Commandment / Unique"... el de Unique es el segundo.
+ETIQUETA_UNIQUE = (30, 715, 300, 740)
+ICONOS_UNIQUE = [(40, 750, 105, 830), (120, 750, 185, 830)]
+
+
+def recorte_retrato(pantalla):
+    """Cara del heroe, del icono de su habilidad Unique."""
+    etiqueta = " ".join(ocr.leer_region(pantalla, ETIQUETA_UNIQUE)).lower()
+    x1, y1, x2, y2 = ICONOS_UNIQUE[1 if "/" in etiqueta else 0]
+    return pantalla[y1:y2, x1:x2].copy()
 
 
 def recorte_carta(pantalla, i: int):
@@ -238,6 +270,7 @@ class CapturaHeroes(Modo):
         self.repetida = 0
         self.quieta_desde = time.time()
         self.sin_ficha_desde: float | None = None
+        self.misma_carta = 0
 
     def estado_inicial(self):
         return "buscar_ficha"
@@ -363,17 +396,35 @@ class CapturaHeroes(Modo):
         self.intentos = 0
         carta = leer_skill(p)
         cartas = self.actual["cartas"]
+        if carta is not None and cartas and carta["nombre"] == cartas[-1]["nombre"]:
+            # La misma que acabo de leer: el popup aun no cambio. Esperar y, si sigue, pulsar otra vez.
+            self.misma_carta += 1
+            if self.misma_carta in (4, 8):
+                entrada.clic(FLECHA_SKILL, o, espera=0.5)
+            if self.misma_carta < 12:
+                return None
+            self.log("Skill Info no pasa a la siguiente carta: sigo con el héroe.", "aviso")
+            return self._cartas_listas()
+        self.misma_carta = 0
         if carta is None:
             self.log("No pude leer esta carta; paso a la siguiente.", "aviso")
-        elif any(c["nombre"] == carta["nombre"] for c in cartas) or len(cartas) >= MAX_CARTAS:
-            return "cerrar"
+        elif (cartas and carta["nombre"] == cartas[0]["nombre"]) or len(cartas) >= MAX_CARTAS:
+            return self._cartas_listas()  # di la vuelta: ya estan todas
         else:
             cartas.append(carta)
-            tipo = "Ultimate" if carta["ulti"] else carta["tipo"]
-            self.log(f"   Carta {len(cartas)}: {carta['nombre']} ({tipo})", "debug")
+            self.log(f"   Carta {len(cartas)}: {carta['nombre']} ({carta['tipo']})", "debug")
         entrada.clic(FLECHA_SKILL, o, espera=0.5)
         self.anterior = None
         return None
+
+    def _cartas_listas(self) -> str:
+        """Las cartas van en orden: normales y la ultima es la Ultimate (si tiene 3 o mas)."""
+        cartas = self.actual["cartas"]
+        for i, carta in enumerate(cartas):
+            carta["ulti"] = carta["ulti"] or (len(cartas) >= 3 and i == len(cartas) - 1)
+        if len(cartas) < 3:
+            self.log(f"Solo leí {len(cartas)} cartas de {self.actual['nombre']}: revísalo.", "aviso")
+        return "cerrar"
 
     def cerrar(self, p, o):
         if SKILL_INFO.esta(p, 0.85):
@@ -399,7 +450,9 @@ class CapturaHeroes(Modo):
         carpeta = CARPETA / pid
         for i, recorte in enumerate(h.pop("_recortes"), start=1):
             guardar_imagen(carpeta / f"carta_{i}{P.SUFIJO_FICHA}.png", recorte)
-        guardar_imagen(carpeta / "ficha.jpg", h.pop("_ficha"))
+        ficha = h.pop("_ficha")
+        guardar_imagen(carpeta / "ficha.jpg", ficha)
+        guardar_imagen(carpeta / "retrato_ficha.png", recorte_retrato(ficha))
         h["capturado"] = time.strftime("%Y-%m-%d %H:%M")
         self.catalogo[pid] = h
         guardar_catalogo(self.catalogo)

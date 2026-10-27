@@ -28,6 +28,7 @@ from trefot.gui.paginas.ayuda import PaginaAyuda
 from trefot.gui.paginas.capturas import PaginaCapturas
 from trefot.gui.paginas.editor_personajes import PaginaEditorPersonajes
 from trefot.gui.paginas.farmear import PaginaFarmear
+from trefot.gui.paginas.heroes_capturados import PaginaHeroesCapturados
 from trefot.gui.paginas.historial import PaginaHistorial
 from trefot.gui.paginas.equipos import PaginaEquipos
 from trefot.gui.paginas.inicio import PaginaInicio
@@ -51,8 +52,9 @@ MENU = [
     # Solo con el modo administrador (Ajustes): herramientas para mantener la base del bot.
     ("capturas", "Capturas"),
     ("editor", "Editor de personajes"),
+    ("capturados", "Héroes capturados"),
 ]
-SOLO_ADMIN = {"capturas", "editor"}
+SOLO_ADMIN = {"capturas", "editor", "capturados"}
 
 
 class _Senales(QObject):
@@ -134,6 +136,7 @@ class VentanaPrincipal(QMainWindow):
             "capturas": PaginaCapturas(self),
             "personajes": PaginaPersonajes(self),
             "editor": PaginaEditorPersonajes(self),
+            "capturados": PaginaHeroesCapturados(self),
             "equipos": PaginaEquipos(self),
             "historial": PaginaHistorial(self),
             "recompensas": PaginaRecompensas(self),
