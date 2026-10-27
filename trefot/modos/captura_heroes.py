@@ -44,7 +44,7 @@ PRIMERA_FILA = 221  # con la lista arriba del todo
 LIMITE_LISTA = 700  # mas abajo pasa el cartel de avisos del juego por encima de las casillas
 LIMITE_LISTA_FINAL = 745  # al final de la lista se acepta la ultima fila aunque el cartel la cruce
 ICONO_CASILLA = (64, 0, 88, 18)  # atributo, arriba a la derecha de la casilla
-BORDE_CASILLA = 120  # brillo del borde de una casilla con heroe (medido ~160; hueco vacio ~45)
+BORDE_CASILLA = 200  # punto mas claro del marco de arriba: con heroe 234-241 (aun corrida 4 px); madera <=160
 
 # Medido en capturas reales de 550x940 (Wanderer Thonar, Gawain).
 CABECERA = (130, 125, 445, 195)  # [titulo] y nombre
@@ -242,10 +242,37 @@ def reclasificar(catalogo: dict) -> bool:
     return cambio
 
 
+COMILLAS = "\"“”‘’'*`´�"
+ULTIMATE = re.compile(r"^\s*(?:max\s*)?l[vi1](?:\.|\s+\d)\s*\d*\s*", re.I)  # "Lv. 1 ..." / "MAX Lv. ..." (no "Lightning")
+
+
+def nombre_de_carta(linea: str) -> tuple[str, bool] | None:
+    """(nombre, es_ultimate) si la linea es la del nombre de la carta.
+
+    Va entre comillas, pero el OCR a veces lee las comillas como ' o *. Las Ultimates empiezan por
+    "Lv. 1" o "MAX Lv."; algunas tienen formas: 'MAX Lv. Spirit Spear Basquias, First Form: "Basquias"'."""
+    es_ulti = bool(ULTIMATE.match(linea))
+    entre = re.search(f"[{re.escape(COMILLAS)}](.+)[{re.escape(COMILLAS)}]", linea)  # de la primera a la ultima
+    if not entre and not es_ulti:
+        return None
+    if es_ulti:
+        resto = ULTIMATE.sub("", linea)
+        forma = re.search(r",\s*\w+\s+form\b", resto, re.I)
+        nombre = resto[:forma.start()] if forma else (entre.group(1) if entre else resto)
+    elif linea.strip()[:1] in COMILLAS:  # la linea del nombre empieza por la comilla
+        nombre = entre.group(1)
+    else:  # comillas o apostrofes dentro de la descripcion ("enemies' ... hero's")
+        return None
+    nombre = nombre.strip(" " + COMILLAS)
+    return (nombre, es_ulti) if len(nombre) >= 3 else None
+
+
 def _leer_skill(lineas) -> dict | None:
     for i, linea in enumerate(lineas):
-        nombre = re.search(r'["“”](.+?)["“”]', linea)
-        if not nombre:
+        if linea.lower().startswith("two adjacent"):
+            continue
+        leido = nombre_de_carta(linea)
+        if not leido:
             continue
         descripcion = []
         for resto in lineas[i + 1:]:
@@ -253,8 +280,7 @@ def _leer_skill(lineas) -> dict | None:
                 continue
             descripcion.append(resto)
         texto = " ".join(descripcion)
-        return {"nombre": nombre.group(1).strip(), "ulti": linea.lower().startswith(("lv", "iv")),
-                "texto": texto, "tipo": tipo_de_carta(texto)}
+        return {"nombre": leido[0], "ulti": leido[1], "texto": texto, "tipo": tipo_de_carta(texto)}
     return None
 
 
@@ -273,8 +299,11 @@ def recorte_retrato(pantalla):
 
 # ------------------------------------------------------------- lista de Heroes (iconos)
 def casilla_vacia(pantalla, x: int, y: int) -> bool:
-    borde = cv2.cvtColor(pantalla[y + 1:y + 3, x + 10:x + 78], cv2.COLOR_BGR2GRAY)
-    return float(borde.mean()) < BORDE_CASILLA
+    """Una casilla con heroe tiene un marco claro arriba. Se busca el punto mas claro de cada columna en
+    una franja de 10 px: asi da igual si al bajar la lista la fila quedo unos pixeles corrida (antes se
+    miraba una linea de 2 px, caia en el hueco oscuro entre filas y la lista se cortaba a los 33)."""
+    franja = cv2.cvtColor(pantalla[max(0, y - 4):y + 6, x + 10:x + 78], cv2.COLOR_BGR2GRAY)
+    return float(franja.max(axis=0).mean()) < BORDE_CASILLA
 
 
 def leer_filas(pantalla, filas, limite: int) -> tuple[list, bool]:
@@ -437,6 +466,10 @@ class CapturaHeroes(Modo):
         self.log("Lista de Heroes: recorto el icono de cada héroe en orden...", "ok")
         self._subir_lista(o)
         p = self.capturar()[0]
+        fotos = CARPETA / "lista"
+        for vieja in fotos.glob("*.jpg"):
+            vieja.unlink()
+        guardar_imagen(fotos / "lista_00.jpg", p)
         filas = [PRIMERA_FILA + PASO_FILA * k for k in range(6)]
         iconos, fin = leer_filas(p, filas, LIMITE_LISTA)
         ultima = max(y for y in filas if y + LADO_CASILLA <= LIMITE_LISTA)
@@ -445,6 +478,7 @@ class CapturaHeroes(Modo):
             entrada.arrastrar((275, 650), (275, 650 - 3 * PASO_FILA), o, duracion=0.8)
             control.esperar(1.2)  # que termine de deslizarse
             p = self.capturar()[0]
+            guardar_imagen(fotos / f"lista_{len(iconos):03d}.jpg", p)
             y = buscar_fila(p, referencia)
             if y is None:
                 self.log(f"Perdí la cuenta al bajar la lista: me quedo con {len(iconos)} iconos.", "aviso")
