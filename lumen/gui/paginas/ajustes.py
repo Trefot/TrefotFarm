@@ -42,7 +42,6 @@ def nota(texto: str) -> QLabel:
 
 class PaginaAjustes(Pagina):
     titulo = "Ajustes"
-    subtitulo = "Se guardan en config.yaml y las actualizaciones no los tocan."
 
     def __init__(self, app):
         super().__init__()

@@ -4,6 +4,7 @@ import sys
 import threading
 
 from PyQt5.QtCore import QObject, QProcess, QSize, Qt, QTimer, pyqtSignal
+from PyQt5.QtGui import QPixmap
 from PyQt5.QtWidgets import (
     QApplication,
     QButtonGroup,
@@ -14,6 +15,7 @@ from PyQt5.QtWidgets import (
     QMessageBox,
     QPushButton,
     QStackedWidget,
+    QToolButton,
     QVBoxLayout,
     QWidget,
 )
@@ -22,6 +24,7 @@ import lumen
 from lumen import accesos, actualizador, config, ventana
 from lumen.control import control
 from lumen.gui import iconos, tema
+from lumen.gui.arranque import EMBLEMA
 from lumen.gui.paginas.actualizaciones import PantallaBloqueo
 from lumen.gui.paginas.ajustes import PaginaAjustes
 from lumen.gui.paginas.ayuda import PaginaAyuda
@@ -45,14 +48,14 @@ MENU = [
     ("farmear", "Farmear"),
     ("personajes", "Personajes"),
     ("equipos", "Equipos"),
-    ("recompensas", "Recompensas"),
+    ("recompensas", "Botín"),
     ("historial", "Historial"),
     ("ayuda", "Ayuda"),
     ("ajustes", "Ajustes"),
     # Solo con el modo administrador (Ajustes): herramientas para mantener la base del bot.
     ("capturas", "Capturas"),
-    ("editor", "Editor de personajes"),
-    ("capturados", "Héroes capturados"),
+    ("editor", "Editor"),
+    ("capturados", "Héroes"),
 ]
 SOLO_ADMIN = {"capturas", "editor", "capturados"}
 
@@ -86,45 +89,41 @@ class VentanaPrincipal(QMainWindow):
 
         # ---- menu lateral
         lateral = QFrame(objectName="lateral")
-        lateral.setFixedWidth(210)
+        lateral.setFixedWidth(96)
         capa_lat = QVBoxLayout(lateral)
-        capa_lat.setContentsMargins(10, 14, 10, 12)
-        capa_lat.addWidget(QLabel("Lumen Farm", objectName="marca"))
-        capa_lat.addWidget(QLabel("AUTOFARMING · 7DS", objectName="lema"))
-        capa_lat.addSpacing(8)
-        capa_lat.addWidget(QFrame(objectName="separador_oro"))
+        capa_lat.setContentsMargins(8, 14, 8, 12)
+        capa_lat.setSpacing(4)
+        emblema = QLabel(alignment=Qt.AlignCenter)
+        emblema.setPixmap(QPixmap(str(EMBLEMA)).scaled(58, 58, Qt.KeepAspectRatio, Qt.SmoothTransformation))
+        emblema.setToolTip(f"Lumen Farm v{self.version_cargada}")
+        capa_lat.addWidget(emblema)
+        capa_lat.addWidget(QLabel("LUMEN", objectName="marca", alignment=Qt.AlignCenter))
         if tema.SKIN.saludo:
-            saludo = QFrame(objectName="saludo")
-            fila_s = QHBoxLayout(saludo)
-            fila_s.setContentsMargins(8, 6, 8, 6)
-            adorno = QLabel()
+            adorno = QLabel(alignment=Qt.AlignCenter)
             adorno.setPixmap(iconos.pixmap(tema.SKIN.icono, 22, tema.ACENTO))
-            fila_s.addWidget(adorno)
-            fila_s.addWidget(QLabel(tema.SKIN.saludo, wordWrap=True), 1)
-            capa_lat.addSpacing(8)
-            capa_lat.addWidget(saludo)
-        capa_lat.addSpacing(12)
+            adorno.setToolTip(tema.SKIN.saludo)
+            capa_lat.addWidget(adorno)
+        capa_lat.addSpacing(6)
+        capa_lat.addWidget(QFrame(objectName="separador_oro"))
+        capa_lat.addSpacing(6)
         self.grupo = QButtonGroup(self, exclusive=True)
-        self.botones: dict[str, QPushButton] = {}
+        self.botones: dict[str, QToolButton] = {}
         self.insignias: dict[str, QLabel] = {}
         for clave, texto in MENU:
-            fila_b = QHBoxLayout()
-            b = QPushButton("  " + texto, objectName="menu", checkable=True)
+            b = QToolButton(objectName="menu", checkable=True, text=texto)
+            b.setToolButtonStyle(Qt.ToolButtonTextUnderIcon)
             b.setIcon(iconos.icono("mdi6.database-edit" if clave == "editor" else clave, tema.TENUE, tema.ACENTO))
-            b.setIconSize(QSize(20, 20))
+            b.setIconSize(QSize(24, 24))
             b.setCursor(Qt.PointingHandCursor)
             b.clicked.connect(lambda _, c=clave: self.navegar(c))
             self.grupo.addButton(b)
             self.botones[clave] = b
-            insignia = QLabel(objectName="insignia")
+            insignia = QLabel(b, objectName="insignia")  # punto rojo en la esquina del boton
+            insignia.move(52, 2)
             insignia.hide()
             self.insignias[clave] = insignia
-            fila_b.addWidget(b, 1)
-            fila_b.addWidget(insignia)
-            capa_lat.addLayout(fila_b)
+            capa_lat.addWidget(b)
         capa_lat.addStretch()
-        self.lbl_version = QLabel(objectName="tenue")
-        capa_lat.addWidget(self.lbl_version)
         fila.addWidget(lateral)
 
         # ---- paginas
@@ -240,7 +239,6 @@ class VentanaPrincipal(QMainWindow):
             self.barra_bot.setText("Bot detenido")
         est = self.estado_update
         version = self.version_cargada
-        self.lbl_version.setText(f"v{version}")
         if self.reinicio_pendiente:
             self.barra_update.setText(
                 f"<span style='color:{tema.AVISO}'>v{actualizador.version_local()} instalada · reinicia para usarla</span>")

@@ -37,9 +37,9 @@ Las capturas quedan en la biblioteca: personajes\<personaje>\ (sirven para todos
 
 LA INTERFAZ (menu de la izquierda)
 ----------------------------------
-Inicio            estado del juego, del bot y de la version (con los botones Buscar / Actualizar);
-                  avisos; arranque rapido; resumen de hoy.
-Farmear           modo, opciones, Iniciar / Pausar / Detener, registro y vista en vivo del juego.
+Inicio            4 iconos (Juego, Ventana, Equipo, Cartas: en verde = listo), la rueda para elegir
+                  que farmear y su piso, victorias y Empezar.
+Farmear           el modo en curso, Iniciar / Pausar / Detener, cifras, registro y opciones.
 Capturas          sacar y comprobar las imagenes de tus cartas (la insignia roja = las que faltan).
 Personajes        tu biblioteca: ficha de cada personaje (color, raza, roles, lo tengo), sus cartas y su
                   retrato. Una captura sirve para todos los modos. Los retratos se sacan aqui, en la
@@ -47,11 +47,11 @@ Personajes        tu biblioteca: ficha de cada personaje (color, raza, roles, lo
 Equipos           para cada contenido: que puestos pide, si tienes a los recomendados y con quien
                   podrias sustituirlos (segun los roles que marcaste en Personajes).
 Historial         todas las sesiones con victorias, derrotas, % de exito y victorias por hora.
-Recompensas       suma de todo lo conseguido (oro y cada objeto, por dia o por sesion) y la
+Botin             suma de todo lo conseguido (oro y cada objeto, por dia o por sesion) y la
                   foto de cada victoria. Doble clic en un objeto nuevo para ponerle nombre.
 Ajustes           ventana del juego, teclas rapidas, avisos al movil y repositorio de GitHub.
 
-Para farmear: juego abierto y visible, equipo puesto, Inicio -> "Iniciar ahora".
+Para farmear: juego abierto y visible, equipo puesto, Inicio -> gira la rueda -> "Empezar".
 F9 pausa / reanuda, F10 detiene (cambiables en Ajustes).
 Freno de emergencia: lleva el raton a una esquina de la pantalla.
 Mientras corre, el bot usa tu raton: no lo muevas.

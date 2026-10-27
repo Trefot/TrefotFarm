@@ -48,9 +48,9 @@ OPCION B - con el .zip (no recibe actualizaciones)
 
 5. PROBARLO
 -----------
-1. Pagina "Inicio": revisa que los 4 puntos de "Antes de empezar" esten en verde
-   (cada uno tiene un boton para arreglarlo).
-2. Victorias: elige 1 para la primera prueba.
+1. Pagina "Inicio": revisa que los 4 iconos de arriba (Juego, Ventana, Equipo, Cartas)
+   esten en verde (toca uno para arreglarlo).
+2. Gira la rueda hasta Skollandhati & Hati, Floor 4. Victorias: elige 1 para la primera prueba.
 3. Pulsa "Empezar" y NO muevas el raton mientras juega.
    - F9 = pausa, F10 = detener.
    - Para frenarlo de golpe: lleva el raton a una esquina de la pantalla.

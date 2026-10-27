@@ -69,8 +69,8 @@ class CasillaObjeto(QFrame):
 
 
 class PaginaRecompensas(Pagina):
-    titulo = "Recompensas"
-    subtitulo = "Todo lo que has conseguido farmeando. Doble clic en un objeto para ponerle nombre."
+    titulo = "Botín"
+    subtitulo = "Doble clic en un objeto para ponerle nombre."
 
     def __init__(self, app):
         super().__init__()

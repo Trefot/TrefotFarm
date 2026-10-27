@@ -132,7 +132,7 @@ class TarjetaEquipo(QFrame):
 
 class PaginaEquipos(Pagina):
     titulo = "Equipos"
-    subtitulo = "Equipos recomendados para cada contenido, del mejor al que pasa con más dificultad."
+    subtitulo = "Del mejor al más difícil."
 
     def __init__(self, app):
         super().__init__()

@@ -85,7 +85,6 @@ class GraficoBarras(QWidget):
 
 class PaginaHistorial(Pagina):
     titulo = "Historial"
-    subtitulo = "Cada sesión de farmeo queda guardada aquí, con sus victorias y su tiempo."
 
     def __init__(self, app):
         super().__init__()

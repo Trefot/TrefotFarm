@@ -29,7 +29,7 @@ guia:
     imagen: victoria.jpg
     texto: >-
       Al ganar, el bot guarda una foto de la pantalla, lee los objetos y el oro y los suma en
-      <b>Recompensas</b>. Luego pulsa OK y repite.
+      <b>Botín</b>. Luego pulsa OK y repite.
   - titulo: "Si algo sale distinto"
     texto: >-
       Si falta una carta clave o una fase dura más de lo previsto, el bot se rinde (<b>Forfeit</b>) y repite
@@ -58,11 +58,11 @@ problemas:
     respuesta: >-
       Pulsa <b>F10</b> para detenerlo (o lleva el ratón a una esquina). Comprueba que nada tape el juego y
       vuelve a empezar. Si activas los avisos al móvil en Ajustes, te escribe cuando se atasca.
-  - pregunta: "Hay objetos sin nombre en Recompensas"
+  - pregunta: "Hay objetos sin nombre en Botín"
     imagen: victoria.jpg
     respuesta: >-
       La primera vez que sale un objeto, el bot no sabe cómo se llama. Haz doble clic en su casilla en
-      Recompensas y escríbele el nombre: a partir de ahí lo reconoce solo.
+      Botín y escríbele el nombre: a partir de ahí lo reconoce solo.
   - pregunta: "No me deja usarlo hasta que actualice"
     respuesta: >-
       Las actualizaciones son obligatorias para que todos jueguen con el guion más reciente. Pulsa

@@ -90,7 +90,6 @@ class Desplegable(QFrame):
 
 class PaginaAyuda(Pagina):
     titulo = "Ayuda"
-    subtitulo = "Cómo juega el bot, qué hacer si algo falla y qué significa cada palabra."
 
     def __init__(self, app):
         super().__init__()

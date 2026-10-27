@@ -92,7 +92,7 @@ class TarjetaPersonaje(QFrame):
 
 class PaginaPersonajes(Pagina):
     titulo = "Personajes"
-    subtitulo = "Marca los personajes que tienes en el juego: haz clic en su tarjeta. A color = lo tienes."
+    subtitulo = "Toca los que tienes. A color = lo tienes."
 
     def __init__(self, app):
         super().__init__()

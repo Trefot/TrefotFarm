@@ -6,26 +6,27 @@ from PyQt5.QtCore import QSize, Qt, QTimer
 from PyQt5.QtGui import QTextCursor
 from PyQt5.QtWidgets import (
     QApplication,
+    QButtonGroup,
     QCheckBox,
     QComboBox,
     QFormLayout,
     QFrame,
-    QGridLayout,
-    QGroupBox,
     QHBoxLayout,
     QLabel,
     QLineEdit,
     QMessageBox,
     QPushButton,
     QSpinBox,
+    QStackedWidget,
     QTextEdit,
+    QToolButton,
     QVBoxLayout,
 )
 
 from lumen import actualizador, avisos, config, ordenes, ventana
 from lumen.control import control
 from lumen.gui import iconos, tema
-from lumen.gui.comun import Pagina, formatear_tiempo, tarjeta
+from lumen.gui.comun import Pagina, formatear_tiempo
 from lumen.modos import MODOS
 from lumen.rutas import IMAGENES
 
@@ -41,7 +42,6 @@ def _repintar(widget, propiedad: str, valor):
 
 class PaginaFarmear(Pagina):
     titulo = "Farmear"
-    subtitulo = "Elige el modo y pulsa Iniciar. El juego debe estar abierto y visible."
 
     def __init__(self, app):
         super().__init__()
@@ -54,101 +54,116 @@ class PaginaFarmear(Pagina):
         self.fases: list[QLabel] = []
         self.modo_externo = None  # una herramienta (p. ej. la captura de heroes) en vez del modo elegido
 
-        fila = QHBoxLayout()
-        fila.setSpacing(16)
-
-        # ---- columna izquierda: modo, opciones y controles
-        izq = QVBoxLayout()
-        izq.setSpacing(12)
-        grupo_modo = QGroupBox("Misión")
-        capa_modo = QVBoxLayout(grupo_modo)
-        capa_modo.setSpacing(8)
-        cabecera_modo = QHBoxLayout()
+        # ---- arriba: el modo con su foto, el estado en grande y las fases
+        ahora = QFrame(objectName="seccion")
+        capa_ahora = QHBoxLayout(ahora)
+        capa_ahora.setContentsMargins(18, 14, 18, 14)
+        capa_ahora.setSpacing(16)
         self.emblema = QLabel()
-        self.emblema.setFixedSize(68, 68)
-        cabecera_modo.addWidget(self.emblema)
+        self.emblema.setFixedSize(96, 96)
+        capa_ahora.addWidget(self.emblema)
         textos = QVBoxLayout()
-        textos.setSpacing(0)
-        self.nombre_modo = QLabel(objectName="titulo_tarjeta", wordWrap=True)
+        textos.setSpacing(2)
+        self.nombre_modo = QLabel(objectName="titulo_tarjeta")
         self.sub_modo = QLabel(objectName="tenue")
+        textos.addStretch()
         textos.addWidget(self.nombre_modo)
         textos.addWidget(self.sub_modo)
-        cabecera_modo.addLayout(textos, 1)
-        capa_modo.addLayout(cabecera_modo)
         self.combo = QComboBox()
         for modo in MODOS.values():
             self.combo.addItem(modo.nombre, modo.id)
         self.combo.setCurrentIndex(max(0, self.combo.findData(config.obtener("ultimo_modo"))))
         self.combo.setVisible(len(MODOS) > 1)
-        capa_modo.addWidget(self.combo)
-        self.descripcion = QLabel(wordWrap=True, objectName="tenue")
-        capa_modo.addWidget(self.descripcion)
-        self.form = QFormLayout()
-        capa_modo.addLayout(self.form)
-        izq.addWidget(grupo_modo)
-
-        botones = QHBoxLayout()
-        self.b_iniciar = QPushButton(" Iniciar", objectName="iniciar")
-        self.b_pausar = QPushButton(" Pausar", objectName="pausar")
-        self.b_detener = QPushButton(" Detener", objectName="detener")
-        for b, ic in ((self.b_iniciar, "jugar"), (self.b_pausar, "pausa"), (self.b_detener, "detener")):
-            b.setIcon(iconos.icono(ic, tema.TEXTO))
-            b.setIconSize(QSize(18, 18))
-            b.setMinimumHeight(42)
-            b.setCursor(Qt.PointingHandCursor)
-            botones.addWidget(b)
-        izq.addLayout(botones)
-        self.ayuda_teclas = QLabel(objectName="tenue", wordWrap=True)
-        izq.addWidget(self.ayuda_teclas)
-        izq.addStretch()
-
-        # ---- columna derecha: que esta pasando, cifras y registro
-        der = QVBoxLayout()
-        der.setSpacing(12)
-        ahora = QFrame(objectName="seccion")
-        capa_ahora = QHBoxLayout(ahora)
-        capa_ahora.setContentsMargins(18, 14, 18, 14)
-        textos_ahora = QVBoxLayout()
-        textos_ahora.setSpacing(2)
-        textos_ahora.addWidget(QLabel("AHORA MISMO", objectName="lema"))
-        self.lbl_estado = QLabel("Detenido", objectName="estado_grande")
-        textos_ahora.addWidget(self.lbl_estado)
-        self.lbl_detalle = QLabel(objectName="tenue")
-        textos_ahora.addWidget(self.lbl_detalle)
-        capa_ahora.addLayout(textos_ahora, 1)
+        textos.addWidget(self.combo)
+        textos.addStretch()
+        capa_ahora.addLayout(textos, 1)
+        estado = QVBoxLayout()
+        estado.setSpacing(6)
+        estado.addStretch()
+        self.lbl_estado = QLabel("Detenido", objectName="estado_grande", alignment=Qt.AlignRight)
+        estado.addWidget(self.lbl_estado)
+        self.lbl_detalle = QLabel(objectName="tenue", alignment=Qt.AlignRight)
+        estado.addWidget(self.lbl_detalle)
         self.fila_fases = QHBoxLayout()
         self.fila_fases.setSpacing(6)
-        capa_ahora.addLayout(self.fila_fases)
-        der.addWidget(ahora)
+        estado.addLayout(self.fila_fases)
+        estado.addStretch()
+        capa_ahora.addLayout(estado)
+        self.cuerpo.addWidget(ahora)
 
-        rejilla = QGridLayout()
-        rejilla.setSpacing(10)
+        # ---- controles: tres botones grandes
+        botones = QHBoxLayout()
+        botones.setSpacing(14)
+        botones.addStretch()
+        self.b_iniciar = QToolButton(objectName="iniciar", text="Iniciar")
+        self.b_pausar = QToolButton(objectName="pausar", text="Pausar")
+        self.b_detener = QToolButton(objectName="detener", text="Detener")
+        for b, ic in ((self.b_iniciar, "jugar"), (self.b_pausar, "pausa"), (self.b_detener, "detener")):
+            b.setToolButtonStyle(Qt.ToolButtonTextUnderIcon)
+            b.setIcon(iconos.icono(ic, tema.TEXTO))
+            b.setIconSize(QSize(30, 30))
+            b.setFixedSize(108, 80)
+            b.setCursor(Qt.PointingHandCursor)
+            botones.addWidget(b)
+        botones.addStretch()
+        self.cuerpo.addLayout(botones)
+        self.ayuda_teclas = QLabel(objectName="tenue", alignment=Qt.AlignCenter)
+        self.cuerpo.addWidget(self.ayuda_teclas)
+
+        # ---- cifras en una fila
+        fila_cifras = QHBoxLayout()
+        fila_cifras.setSpacing(10)
         self.cifras = {}
-        for i, (clave, titulo, ic) in enumerate(CIFRAS):
-            marco, cifra = tarjeta(titulo, icono=ic)
+        for clave, titulo, ic in CIFRAS:
+            marco = QFrame(objectName="cifra_mini")
+            marco.setToolTip(titulo)
+            capa = QVBoxLayout(marco)
+            capa.setContentsMargins(8, 8, 8, 6)
+            capa.setSpacing(0)
+            arriba = QHBoxLayout()
+            arriba.addStretch()
+            dibujo = QLabel()
+            dibujo.setPixmap(iconos.pixmap(ic, 20, tema.ACENTO))
+            arriba.addWidget(dibujo)
+            cifra = QLabel("0", objectName="cifra")
+            arriba.addWidget(cifra)
+            arriba.addStretch()
+            capa.addLayout(arriba)
+            capa.addWidget(QLabel(titulo, objectName="tenue", alignment=Qt.AlignCenter))
             self.cifras[clave] = cifra
-            rejilla.addWidget(marco, i // 3, i % 3)
+            fila_cifras.addWidget(marco)
         self.cifras["tiempo"].setText("0:00:00")
-        der.addLayout(rejilla)
+        self.cuerpo.addLayout(fila_cifras)
 
+        # ---- abajo: registro u opciones, una cosa a la vez
         cabecera = QHBoxLayout()
-        icono_reg = QLabel()
-        icono_reg.setPixmap(iconos.pixmap("registro", 18, tema.ACENTO))
-        cabecera.addWidget(icono_reg)
-        cabecera.addWidget(QLabel("Registro", objectName="titulo_seccion"))
+        self.grupo_vista = QButtonGroup(self, exclusive=True)
+        self.pila_vista = QStackedWidget()
+        self.registro = QTextEdit(readOnly=True, objectName="registro")
+        panel_opciones = QFrame(objectName="seccion")
+        capa_op = QVBoxLayout(panel_opciones)
+        self.descripcion = QLabel(wordWrap=True, objectName="tenue")
+        capa_op.addWidget(self.descripcion)
+        self.form = QFormLayout()
+        capa_op.addLayout(self.form)
+        capa_op.addStretch()
+        for i, (texto, ic, vista) in enumerate((("Registro", "registro", self.registro), ("Opciones", "ajustes", panel_opciones))):
+            b = QPushButton(" " + texto, objectName="chip", checkable=True, checked=i == 0)
+            b.setIcon(iconos.icono(ic, tema.TENUE, tema.SOBRE_ACENTO))
+            b.clicked.connect(lambda _, n=i: self.pila_vista.setCurrentIndex(n))
+            self.grupo_vista.addButton(b)
+            cabecera.addWidget(b)
+            self.pila_vista.addWidget(vista)
         cabecera.addStretch()
-        self.chk_debug = QCheckBox("Ver detalle técnico")
+        self.chk_debug = QCheckBox("Detalle técnico")
         cabecera.addWidget(self.chk_debug)
-        b_limpiar = QPushButton("Limpiar", objectName="chico")
+        b_limpiar = QPushButton(objectName="chico")
+        b_limpiar.setIcon(iconos.icono("mdi6.broom", tema.TEXTO))
+        b_limpiar.setToolTip("Limpiar el registro")
         b_limpiar.clicked.connect(lambda: self.registro.clear())
         cabecera.addWidget(b_limpiar)
-        der.addLayout(cabecera)
-        self.registro = QTextEdit(readOnly=True, objectName="registro")
-        der.addWidget(self.registro, 1)
-
-        fila.addLayout(izq, 4)
-        fila.addLayout(der, 7)
-        self.cuerpo.addLayout(fila, 1)
+        self.cuerpo.addLayout(cabecera)
+        self.cuerpo.addWidget(self.pila_vista, 1)
 
         self.combo.currentIndexChanged.connect(self._mostrar_opciones)
         self.b_iniciar.clicked.connect(self.iniciar)
@@ -179,7 +194,8 @@ class PaginaFarmear(Pagina):
         cls = self.modo_cls
         self.nombre_modo.setText(cls.titulo_juego or cls.nombre)
         self.sub_modo.setText(" · ".join(x for x in (cls.subtitulo_juego, cls.duracion) if x))
-        pix = iconos.redondo(IMAGENES / cls.imagen, 64, tema.ACENTO) if cls.imagen else None
+        self.nombre_modo.setToolTip(cls.descripcion)
+        pix = iconos.redondo(IMAGENES / cls.imagen, 96, tema.ACENTO) if cls.imagen else None
         if pix:
             self.emblema.setPixmap(pix)
         else:
@@ -206,7 +222,8 @@ class PaginaFarmear(Pagina):
             w = self.fila_fases.takeAt(0).widget()
             if w:
                 w.setParent(None)
-        self.fases = [QLabel(f"Fase {n}", objectName="fase") for n in range(1, cls.fases + 1)]
+        self.fases = [QLabel(str(n), objectName="fase", alignment=Qt.AlignCenter, toolTip=f"Fase {n}")
+                      for n in range(1, cls.fases + 1)]
         for etiqueta in self.fases:
             self.fila_fases.addWidget(etiqueta)
         self._pintar_estado()
@@ -341,7 +358,7 @@ class PaginaFarmear(Pagina):
         self._pintar_estado()
 
     def _texto_pausa(self, en_pausa: bool):
-        self.b_pausar.setText(" Reanudar" if en_pausa else " Pausar")
+        self.b_pausar.setText("Reanudar" if en_pausa else "Pausar")
         self.b_pausar.setIcon(iconos.icono("jugar" if en_pausa else "pausa", tema.TEXTO))
 
     def detener(self):
@@ -422,8 +439,8 @@ class PaginaFarmear(Pagina):
     def actualizar_ayuda_teclas(self):
         self.ayuda_teclas.setText(
             f"{str(config.obtener('tecla_pausa')).upper()} pausa · {str(config.obtener('tecla_detener')).upper()} detener · "
-            "ratón a una esquina = freno de emergencia. Mientras farmea, no muevas el ratón."
-        )
+            "ratón a una esquina = freno")
+        self.ayuda_teclas.setToolTip("Mientras farmea, el bot usa tu ratón: no lo muevas.")
 
     # ------------------------------------------------------------ que esta haciendo
     def _estado(self, estado: str):
@@ -435,9 +452,9 @@ class PaginaFarmear(Pagina):
         corriendo = self.puente.corriendo
         cls = self.modo_externo if corriendo and self.modo_externo else self.modo_cls
         if not corriendo:
-            texto, detalle = "Detenido", "Pulsa Iniciar (o Empezar en Inicio) para farmear."
+            texto, detalle = "Detenido", ""
         elif control.en_pausa:
-            texto, detalle = "En pausa", "Pulsa Reanudar para seguir."
+            texto, detalle = "En pausa", ""
         else:
             texto = cls.nombres_estados.get(self.estado_bot) or self.estado_bot.replace("_", " ").capitalize() or "Arrancando"
             detalle = cls.titulo_juego or cls.nombre

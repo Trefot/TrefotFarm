@@ -166,7 +166,7 @@ class Asistente(QDialog):
         capa.addWidget(_punto("farmear", "Farmeo solo",
                               "Entro a la pelea, juego las cartas con un guion probado, cobro el botín y repito."))
         capa.addWidget(_punto("recompensas", "Cuento lo que ganas",
-                              "Cada victoria guarda su botín: oro y objetos, sumados en la página Recompensas."))
+                              "Cada victoria guarda su botín: oro y objetos, sumados en la página Botín."))
         capa.addWidget(_punto("movil", "Te aviso al móvil",
                               "Si quieres, te mando un aviso si algo se atasca o si el juego pide reiniciarse."))
         aviso = QFrame(objectName="aviso")
@@ -353,8 +353,8 @@ class Asistente(QDialog):
     def _listo(self) -> QWidget:
         w, capa = self._pagina("¡Todo listo!",
                                "Ya sabes lo básico. Para farmear, ve a <b>Inicio</b>:")
-        capa.addWidget(_punto("ok", "1. Revisa \"Antes de empezar\"", "Te dice si falta algo y cómo arreglarlo."))
-        capa.addWidget(_punto("farmear", "2. Elige qué farmear", "Haz clic en la Demonic Beast que quieras."))
+        capa.addWidget(_punto("ok", "1. Mira los 4 iconos de arriba", "En verde = listo. Toca uno para arreglarlo."))
+        capa.addWidget(_punto("farmear", "2. Gira la rueda", "Elige qué farmear y su piso."))
         capa.addWidget(_punto("trofeo", "3. Elige cuántas victorias", "Un número fijo, o sin límite."))
         capa.addWidget(_punto("jugar", "4. Pulsa Empezar", "Y déjame el ratón. En Farmear ves qué estoy haciendo."))
         self.crear_acceso = QCheckBox("Crear un acceso directo en el escritorio y en el menú Inicio")

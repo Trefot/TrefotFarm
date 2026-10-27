@@ -148,20 +148,18 @@ QToolTip {{ background: {_s.panel_alto}; color: {_s.texto}; border: 1px solid {_
 /* ---- menu lateral */
 QFrame#lateral {{ background: qlineargradient(x1:0, y1:0, x2:1, y2:0, stop:0 {_s.lateral}, stop:1 {_s.fondo});
                   border-right: 1px solid {_s.borde_oro}; }}
-QLabel#marca {{ font-family: '{FUENTE_MARCA}', {_TITULOS}; font-size: 15pt; font-weight: 700; color: {_s.acento};
-               padding: 6px 4px 0 4px; }}
+QLabel#marca {{ font-family: {_TITULOS}; font-size: 10pt; font-weight: 700; color: {_s.acento}; letter-spacing: 3px; }}
 QLabel#lema {{ font-family: {_TITULOS}; color: {_s.tenue}; font-size: 8.5pt; letter-spacing: 2px; padding-left: 5px; }}
 QFrame#saludo {{ background: {_SEL}; border: 1px solid {_s.borde_oro}; border-radius: 8px; }}
 QFrame#saludo QLabel {{ color: {_s.acento_claro}; font-family: {_TITULOS}; font-weight: 700; font-size: 9pt; }}
 QFrame#separador_oro {{ background: qlineargradient(x1:0, y1:0, x2:1, y2:0, stop:0 transparent, stop:0.5 {_s.borde_oro},
                         stop:1 transparent); min-height: 1px; max-height: 1px; border: none; }}
-QPushButton#menu {{ text-align: left; padding: 10px 14px; border: 1px solid transparent; border-radius: 8px;
-                    color: {_s.tenue}; font-size: 10.5pt; background: transparent; }}
-QPushButton#menu:hover {{ background: {_s.panel}; color: {_s.texto}; }}
-QPushButton#menu:checked {{ background: {_SEL}; color: {_s.acento}; font-weight: 600; border: 1px solid {_s.borde_oro};
-                            border-left: 3px solid {_s.acento}; }}
-QPushButton#menu:disabled {{ color: {_s.borde}; }}
-QFrame#lateral QLabel#insignia {{ background: {ERROR}; color: white; border-radius: 8px; padding: 1px 7px; font-size: 8pt; font-weight: 700; }}
+QToolButton#menu {{ padding: 7px 2px 5px 2px; border: 1px solid transparent; border-radius: 12px; min-width: 76px;
+                    color: {_s.tenue}; font-size: 8.5pt; background: transparent; }}
+QToolButton#menu:hover {{ background: {_s.panel}; color: {_s.texto}; }}
+QToolButton#menu:checked {{ background: {_SEL}; color: {_s.acento}; font-weight: 700; border: 1px solid {_s.borde_oro}; }}
+QToolButton#menu:disabled {{ color: {_s.borde}; }}
+QLabel#insignia {{ background: {ERROR}; color: white; border-radius: 8px; padding: 0 5px; font-size: 7.5pt; font-weight: 700; }}
 
 /* ---- paginas */
 QLabel#titulo_pagina {{ font-family: {_TITULOS}; font-size: 19pt; font-weight: 700; color: {_s.acento}; }}
@@ -170,8 +168,8 @@ QLabel#cifra_grande {{ font-family: {_TITULOS}; font-size: 30pt; font-weight: 80
 QLabel#tenue {{ color: {_s.tenue}; }}
 QLabel#icono_tarjeta {{ background: {_s.hundido}; border: 1px solid {_s.borde_oro}; border-radius: 22px; }}
 QLabel#estado_grande {{ font-family: {_TITULOS}; font-size: 17pt; font-weight: 700; color: {_s.acento}; }}
-QLabel#fase {{ background: {_s.hundido}; color: {_s.tenue}; border: 1px solid {_s.borde}; border-radius: 13px;
-               padding: 4px 14px; font-weight: 600; }}
+QLabel#fase {{ background: {_s.hundido}; color: {_s.tenue}; border: 1px solid {_s.borde}; border-radius: 15px;
+               min-width: 30px; max-width: 30px; min-height: 30px; max-height: 30px; font-weight: 700; }}
 QLabel#fase[estado="actual"] {{ background: {_ORO}; color: {_s.sobre_acento}; border-color: {_s.borde_oro}; }}
 QLabel#fase[estado="hecha"] {{ color: {OK}; border-color: #2c5f45; }}
 QFrame#tarjeta_objeto {{ background: {_PANEL}; border: 1px solid {_s.borde}; border-radius: 12px; }}
@@ -197,9 +195,15 @@ QPushButton:disabled {{ color: {DEBUG}; border-color: {_s.panel}; }}
 QPushButton#primario {{ background: {_ORO}; color: {_s.sobre_acento}; border: 1px solid {_s.borde_oro}; font-weight: 700; }}
 QPushButton#primario:hover {{ background: {_ORO_HOVER}; color: {_s.sobre_acento}; }}
 QPushButton#primario:disabled {{ background: {_s.seleccion}; color: {_s.tenue}; }}
-QPushButton#iniciar {{ background: #2c5f45; border-color: {OK}; font-weight: 700; }}
-QPushButton#detener {{ background: #5f2c2c; border-color: {ERROR}; font-weight: 700; }}
-QPushButton#pausar {{ background: #5f4f2c; border-color: {AVISO}; font-weight: 700; }}
+QPushButton#iniciar, QToolButton#iniciar {{ background: #2c5f45; border: 1px solid {OK}; font-weight: 700; }}
+QPushButton#detener, QToolButton#detener {{ background: #5f2c2c; border: 1px solid {ERROR}; font-weight: 700; }}
+QPushButton#pausar, QToolButton#pausar {{ background: #5f4f2c; border: 1px solid {AVISO}; font-weight: 700; }}
+QToolButton#iniciar, QToolButton#detener, QToolButton#pausar {{ border-radius: 16px; padding: 8px 4px 6px 4px; }}
+QToolButton#iniciar:hover, QToolButton#detener:hover, QToolButton#pausar:hover {{ border-width: 2px; }}
+QToolButton#iniciar:disabled, QToolButton#detener:disabled, QToolButton#pausar:disabled {{
+    background: {_s.panel}; border-color: {_s.borde}; color: {DEBUG}; }}
+QFrame#cifra_mini {{ background: {_PANEL}; border: 1px solid {_s.borde}; border-radius: 12px; }}
+QFrame#cifra_mini QLabel#cifra {{ font-size: 16pt; padding-left: 4px; }}
 QLineEdit, QSpinBox, QComboBox, QTextEdit, QListWidget, QTableWidget {{
     background: {_s.hundido}; border: 1px solid {_s.borde}; border-radius: 6px; padding: 4px;
     selection-background-color: {_s.acento}; selection-color: {_s.sobre_acento}; }}
@@ -224,9 +228,14 @@ QProgressBar::chunk {{ background: {_ORO}; border-radius: 6px; }}
 QFrame#seccion {{ background: {_PANEL}; border: 1px solid {_s.borde}; border-top: 1px solid {_s.borde_oro}; border-radius: 12px; }}
 QLabel#titulo_seccion {{ font-family: {_TITULOS}; font-size: 12.5pt; font-weight: 700; }}
 QLabel#titulo_tarjeta {{ font-family: {_TITULOS}; font-size: 14pt; font-weight: 700; }}
-QFrame#paso {{ background: {_s.hundido}; border: 1px solid {_s.borde}; border-radius: 10px; }}
-QFrame#paso[estado="ok"] {{ border-color: #2c5f45; }}
-QFrame#paso[estado="falta"] {{ border-color: #6b5420; }}
+QToolButton#paso {{ background: {_PANEL}; border: 1px solid {_s.borde}; border-radius: 14px; padding: 8px 6px 6px 6px;
+                    color: {_s.tenue}; font-size: 9pt; }}
+QToolButton#paso:hover {{ border-color: {_s.borde_oro}; color: {_s.texto}; }}
+QToolButton#paso[estado="ok"] {{ border-color: #2c5f45; }}
+QToolButton#paso[estado="falta"] {{ border-color: #8a6a2c; color: {_s.texto}; }}
+QLabel#nombre_rueda {{ font-family: {_TITULOS}; font-size: 20pt; font-weight: 700; color: {_s.acento}; }}
+QPushButton#flecha_rueda {{ background: {_s.hundido}; border: 1px solid {_s.borde_oro}; border-radius: 23px; padding: 0; }}
+QPushButton#flecha_rueda:hover {{ background: {_SEL}; border-color: {_s.acento}; }}
 QFrame#tarjeta_modo {{ background: {_PANEL}; border: 1px solid {_s.borde}; border-radius: 14px; }}
 QFrame#tarjeta_modo:hover {{ border-color: {_s.borde_oro}; }}
 QFrame#tarjeta_modo[seleccionada="true"] {{ border: 2px solid {_s.acento}; background: {_SEL}; }}
@@ -245,6 +254,7 @@ QPushButton#chip:checked {{ background: {_ORO}; color: {_s.sobre_acento}; border
 QPushButton#empezar {{ background: {_ORO}; color: {_s.sobre_acento}; border: 2px solid {_s.borde_oro}; border-radius: 12px;
                        font-family: {_TITULOS}; font-size: 15pt; font-weight: 800; letter-spacing: 1px; }}
 QPushButton#empezar:hover {{ background: {_ORO_HOVER}; color: {_s.sobre_acento}; }}
+QPushButton#empezar:disabled {{ background: {_s.seleccion}; color: {_s.tenue}; border-color: {_s.borde}; }}
 QPushButton#empezar[corriendo="true"] {{ background: #5f2c2c; color: {_s.texto}; border: 2px solid {ERROR}; }}
 QProgressBar {{ background: {_s.hundido}; border: none; border-radius: 3px; }}
 QProgressBar::chunk {{ background: {OK}; border-radius: 3px; }}
