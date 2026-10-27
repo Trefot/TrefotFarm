@@ -293,6 +293,7 @@ class PaginaRecompensas(Pagina):
     def al_mostrar(self):
         self.b_capturar.setVisible(bool(config.obtener("modo_admin")))
         botin.vincular_galeria()  # los objetos del botin que ya estan en la galeria toman su nombre
+        recompensas.unir_repetidos_de_galeria()
         self.registros = recompensas.leer()
         if any(not r.get("analizado") for r in self.registros):
             recompensas.reanalizar_pendientes()  # fotos de antes de que existiera la lectura

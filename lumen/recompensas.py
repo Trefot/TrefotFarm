@@ -122,6 +122,24 @@ def descartar_objeto(oid: str) -> None:
     _reescribir_objetos(lambda objetos: {k: v for k, v in objetos.items() if k != oid})
 
 
+def unir_repetidos_de_galeria() -> int:
+    """Objetos del botin vinculados al mismo objeto de la galeria (p. ej. uno leido de una foto movida):
+    se unen al primero. Devuelve cuantos unio."""
+    catalogo = botin.cargar_catalogo()
+    primero: dict[str, str] = {}
+    unidos = 0
+    for oid in botin.visibles(catalogo):
+        gid = (catalogo.get(oid) or {}).get("galeria")
+        if not gid:
+            continue
+        if gid in primero:
+            unir_objeto(oid, primero[gid])
+            unidos += 1
+        else:
+            primero[gid] = oid
+    return unidos
+
+
 def horas_de(registros: list[dict], sesiones_historial: list[dict]) -> float:
     """Horas farmeando en las sesiones de esos registros (del historial; si falta, de la primera
     a la ultima foto)."""

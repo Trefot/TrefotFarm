@@ -35,9 +35,23 @@ PARECIDO_CASILLA = 0.93  # dibujo de casilla ya visto (mismo objeto en otro mont
 ESPERA_FICHA = 3.0  # sin ficha tras tocar = casilla vacia
 
 
+HOLGURA = 12  # px que se puede mover la estanteria al bajarla
+
+
 def recorte_casilla(pantalla, cx: int, cy: int):
     """El dibujo del objeto en la estanteria, sin el numero de la cantidad (abajo a la derecha)."""
     return pantalla[cy - 45 : cy + 12, cx - 42 : cx + 42].copy()
+
+
+def ya_visto(pantalla, cx: int, cy: int, vistos: list) -> bool:
+    """Si el objeto de esa casilla es uno ya leido (buscando su dibujo con holgura: la primera captura
+    real releyo 33 de 127 porque tras bajar la estanteria quedaba unos pixeles corrida)."""
+    zona = pantalla[max(0, cy - 45 - HOLGURA) : cy + 12 + HOLGURA, max(0, cx - 42 - HOLGURA) : cx + 42 + HOLGURA]
+    for v in vistos:
+        if zona.shape[0] >= v.shape[0] and zona.shape[1] >= v.shape[1]:
+            if float(cv2.matchTemplate(zona, v, cv2.TM_CCOEFF_NORMED).max()) >= PARECIDO_CASILLA:
+                return True
+    return False
 
 
 def leer_ficha(pantalla, x_cerrar: int, y_cerrar: int) -> dict:
@@ -126,7 +140,7 @@ class CapturaObjetos(Modo):
             cx, cy = COLUMNAS[columna], FILAS[fila]
             recorte = recorte_casilla(p, cx, cy)
             self.casilla += 1
-            if any(float(cv2.matchTemplate(recorte, v, cv2.TM_CCOEFF_NORMED).max()) >= PARECIDO_CASILLA for v in self.vistos):
+            if ya_visto(p, cx, cy, self.vistos):
                 continue  # mismo objeto que otro ya leido
             self.vistos.append(recorte)
             self.tocada = (cx, cy)
@@ -163,9 +177,17 @@ class CapturaObjetos(Modo):
         if ficha.get("nombre"):
             gid = id_de(ficha["nombre"])
             nuevo = gid not in self.galeria
+            categoria = CATEGORIAS[self.categoria][0]
+            if categoria == "Equipment":  # debajo del nombre van sus estadisticas, no un tipo
+                ficha["descripcion"] = " ".join(x for x in (ficha["tipo"], ficha["descripcion"]) if x)
+                ficha["tipo"] = "Equipment"
+            anterior = self.galeria.get(gid) or {}
             self.galeria[gid] = {
-                "nombre": ficha["nombre"], "tipo": ficha["tipo"], "descripcion": ficha["descripcion"],
-                "categoria": CATEGORIAS[self.categoria][0], "cantidad": ficha["cantidad"],
+                "nombre": ficha["nombre"],
+                # Si ya se leyo, la lectura mas larga (una animacion puede cortar el texto: "Enha...").
+                "tipo": max((ficha["tipo"], anterior.get("tipo", "")), key=len),
+                "descripcion": max((ficha["descripcion"], anterior.get("descripcion", "")), key=len),
+                "categoria": categoria, "cantidad": ficha["cantidad"],
                 "capturado": time.strftime("%Y-%m-%d %H:%M"),
             }
             botin.guardar_ficha(gid, ficha["icono"])

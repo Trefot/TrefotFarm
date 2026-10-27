@@ -1,3 +1,503 @@
-# Galeria de objetos del inventario (la publica el administrador tras "Capturar objetos").
+# Galeria de objetos del inventario del juego (la publica el administrador tras "Capturar objetos").
 # id -> nombre, tipo, descripcion, categoria; icono en assets/objetos/<id>_ficha.png. Ver lumen/botin.py.
-{}
+skoll_and_hati_s_claw:
+  nombre: Skoll and Hati's Claw
+  tipo: Enhancement Material
+  descripcion: One of Skoll and Hatis claws. Used to enhance Holy Relics.
+  categoria: Ingredients
+skoll_and_hati_s_orb:
+  nombre: Skoll and Hati's Orb
+  tipo: Enhancement Material
+  descripcion: An orb containing Skoll and Hati's power. Used to enhance Holy Relics.
+  categoria: Ingredients
+eikthyrnir_s_broken_antler:
+  nombre: Eikthyrnir's Broken Antler
+  tipo: Enhancement Material
+  descripcion: One of Eikthyrnir's many antlers. Used to enhance Holy Relics.
+  categoria: Ingredients
+eikthyrnir_s_orb:
+  nombre: Eikthyrnir's Orb
+  tipo: Enhancement Material
+  descripcion: An orb containing Eikthyrnir's power. Used to enhance Holy Relics.
+  categoria: Ingredients
+hraesvelgr_s_feather:
+  nombre: Hraesvelgr's Feather
+  tipo: Enhancement Material
+  descripcion: A splendid feather from Hraesvelgr. Used to enhance Holy Relics.
+  categoria: Ingredients
+hraesvelgr_s_orb:
+  nombre: Hraesvelgr's Orb
+  tipo: Enhancement Material
+  descripcion: An orb containing Hraesvelgr's power. Used to enhance Holy Relics.
+  categoria: Ingredients
+nidhoggr_token:
+  nombre: Nidhoggr Token
+  tipo: Holy Relic Crafting
+  descripcion: 'A mystical token imbued with Nidhoggr''s power. Can be used to craft Holy Relics from Demonic Beast
+    Battle: Nidhoggr without using any Other materials.'
+  categoria: Ingredients
+skoll_and_hati_token:
+  nombre: Skoll and Hati Token
+  tipo: Holy Relic Crafting
+  descripcion: 'A mystical token imbued with Skoll and Hatis power. Can be used to craft Holy Relics from Demonic
+    Beast Battle: Skoll and Hati without using any Other materials. ''4146cationr'
+  categoria: Ingredients
+taste_of_defeat:
+  nombre: Taste of Defeat
+  tipo: Cooking
+  descripcion: 'A drink to ease the agony of defeat. It cannot be used in Placement Matches and Promotion Matches.
+    Battle: No Festival Points Iost upon losing in the Fight Festival'
+  categoria: Cooking
+toast_of_victory:
+  nombre: Toast of Victory
+  tipo: Cooking
+  descripcion: 'A drink that pairs well with victory. It cannot be used in Placement Matches and Promotion Matches.
+    Battle: Festival Point Gain increased by 300% upon winning in the Fight Festival'
+  categoria: Cooking
+vanya_ale:
+  nombre: Vanya Ale
+  tipo: Beverage
+  descripcion: A special ale from Vanya. Can be acquired from the tavern. AffinitY+300 4iLocation
+  categoria: Cooking
+2024_fried_tofu_miso_soup:
+  nombre: 2024 Fried Tofu Miso Soup
+  tipo: Cooking
+  descripcion: 'Dish exclusive to the 7DS x TenSura Collab: The Demon Lord Returns. Increases Fire Essence gain
+    by100%. Battle: Fire Essence gain amount +100%'
+  categoria: Cooking
+2024_tofu_miso_soup:
+  nombre: 2024 Tofu Miso Soup
+  tipo: Cooking
+  descripcion: 'Dish exclusive to the 7DS x TenSura Collab: The Demon Lord Returns. Nullifies Ifrits Burn effect
+    in the Collab Death Match. Battle: The hero becomes imrnune to Ifrit''s Burn effect.'
+  categoria: Cooking
+mango_parfait:
+  nombre: Mango Parfait
+  tipo: Cooking
+  descripcion: 'A special parfait which is cold and sweet, but makes one turn a red color. Increases the gain amount
+    of Demonic Beast Howlefs Ear by 100%. Battle: Demonic Beast Howleks Ear gain amount +100%'
+  categoria: Cooking
+chocolate_parfait:
+  nombre: Chocolate Parfait
+  tipo: Cooking
+  descripcion: 'A special parfait which is cold and sweet, but makes one go pale. Increases the gain amount of Gray
+    Demon''s Wing by 100%. Battle: Gray Demon''s Wing gain amount +100%'
+  categoria: Cooking
+cookies_cream_parfait:
+  nombre: Cookies & Cream Parfait
+  tipo: Cooking
+  descripcion: 'A special parfait which is cold and sweet, but makes one''s tongue go numb. Increases the gain amount
+    of Original Demon''s Energy by 100%. Battle: Original Demon''s Energy +100%'
+  categoria: Cooking
+green_tea_parfait:
+  nombre: Green Tea Parfait
+  tipo: Cooking
+  descripcion: 'A special parfait that tastes mild and delicious. Eating too fast may cause brain freeze. Increases
+    Demonic Beast Bellmoth''s Core gain by 100%. Battle: Demonic Beast Bellmoth''s Core Gain +100% ''AL6$''ati0VE,
+    d,'
+  categoria: Cooking
+strawberry_parfait:
+  nombre: Strawberry Parfait
+  tipo: Cooking
+  descripcion: 'A special parfait which is cold and sweet, but makes one gain weight. Increases the gain amount
+    of Red Demon''s Horn by 100%. Battle: Red Demon''s Horn gain amount +100%'
+  categoria: Cooking
+caviar_honey_canape:
+  nombre: Caviar Honey Canape
+  tipo: Cooking
+  descripcion: 'Canape made with smoked meats and sweet honey. Gift:AffinitY+100 Vivian,Galland Battle: Lifesteal
+    +20% Title Effect: Lifesteal +4%'
+  categoria: Cooking
+caviar_sugar_canape:
+  nombre: Caviar Sugar Canape
+  tipo: Cooking
+  descripcion: 'Canape made with smoked meats and sweet sugar. Gift: GustavMelascula,Salos Battle: Lifesteal +20%
+    Title Effect: Lifesteal +4%'
+  categoria: Cooking
+caviar_milk_canape:
+  nombre: Caviar Milk Canape
+  tipo: Cooking
+  descripcion: 'Canape made with smoked meats and fresh milk. Gift: Arthurpscanoryerlin & Escanor Battle: Lifesteal
+    +20% Title Effect: Lifesteal +4%'
+  categoria: Cooking
+dragon_skewer_with_butter:
+  nombre: Dragon Skewer with Butter
+  tipo: Cooking
+  descripcion: 'Dragon meat grilled on a skewer with butter. Gift:AffinitY+100 DreyfusFraudrinMono,Wild Battle:
+    Recovery Rate +20% Title Effect: Recovery Rate +696'
+  categoria: Cooking
+dragon_skewer_with_pepper:
+  nombre: Dragon Skewer with Pepper
+  tipo: Cooking
+  descripcion: 'Dragon meat grilled on a skewer with pepper. Gift:AffinitY+100 Battle: Recovery Rate +20% Title
+    Effect: Recovery Rate +696'
+  categoria: Cooking
+dragon_skewer_with_salt:
+  nombre: Dragon Skewer with Salt
+  tipo: Cooking
+  descripcion: 'Dragon meat grilled on a skewer with salt Gift:AffinitY+100 Freesiaprolepstarossa Battle: Recovery
+    Rate +20% Title Effect: Recovery Rate +696'
+  categoria: Cooking
+fish_and_chips:
+  nombre: Fish and Chips
+  tipo: Cooking
+  descripcion: 'A dish consisting of grilled fish and vegetables. Gift: Sirnonpratras Battle: Evades an Attack or
+    Debuff Skill (Limit once) Ingredients'
+  categoria: Cooking
+egg_and_chips:
+  nombre: Egg and Chips
+  tipo: Cooking
+  descripcion: 'A dish consisting of sausages and fried egg. Gift: Battle: Evades an Attack or Debuff Skill (Limit
+    once) Ingredients'
+  categoria: Cooking
+seafood_hot_pot:
+  nombre: Seafood Hot Pot
+  tipo: Cooking
+  descripcion: 'A hot pot seasoned with salt Gift: HendricksonBoxy,TyrPemon King Battle: Crit Defense +30% Title
+    Effect: Crit Defense +4%'
+  categoria: Cooking
+seafood_pasta:
+  nombre: Seafood Pasta
+  tipo: Cooking
+  descripcion: 'Pasta with added butter. Gift: JillianNanashi Battle: Crit Defense +30% Title Effect: Crit Defense
+    +4%'
+  categoria: Cooking
+seafood_stew:
+  nombre: Seafood Stew
+  tipo: Cooking
+  descripcion: 'A Stew made with a milk base. Gift: Ban Battle: Crit Defense +30% Title Effect: Crit Defense +4%'
+  categoria: Cooking
+egg_sandwich:
+  nombre: Egg Sandwich
+  tipo: Cooking
+  descripcion: 'A sandwich with mashed hard boiled eggs Gift: Howzer,Valenti Battle: Crit Resistance +30% Title
+    Effect: Crit Resistance'
+  categoria: Cooking
+bread_with_pepper:
+  nombre: Bread with Pepper
+  tipo: Cooking
+  descripcion: 'A light bread toasted with black pepper. A litde spicy. Gift:AffinitY+100 Vivian,GallandHeimdallr
+    Battle: Crit Resistance +30% Title Effect: Crit Resistance'
+  categoria: Cooking
+herb_ciabatta:
+  nombre: Herb Ciabatta
+  tipo: Cooking
+  descripcion: 'A light bread toasted with herbs. Gift: Battle: Crit Resistance +30% Title Effect: Crit Resistance'
+  categoria: Cooking
+honey_apple_pie:
+  nombre: Honey Apple Pie
+  tipo: Cooking
+  descripcion: 'A pie baked with honey. Gift: GriamoreAennaMegellda Battle: Starts battle with the Ultimate Move
+    Gauge at 1. Ingredients'
+  categoria: Cooking
+sweet_apple_pie:
+  nombre: Sweet Apple Pie
+  tipo: Cooking
+  descripcion: 'A pie baked with sugar. Gift: FreesiaMelasculaAnghalhad Battle: Starts battle with the Ultimate
+    Move Gauge at 1. Ingredients'
+  categoria: Cooking
+veggie_apple_pie:
+  nombre: Veggie Apple Pie
+  tipo: Cooking
+  descripcion: 'A pie baked with vegetables. Gift: King,Gerharde,JormungandFreyrFreyja Battle: Starts battle with
+    the Ultimate Move Gauge at 1. Ingredients'
+  categoria: Cooking
+spooky_masquerade_card_pack_ii:
+  nombre: Spooky Masquerade Card Pack II
+  tipo: Artifact Card Pack
+  descripcion: 'Guaranteed to acquire the card: Halloween Gray Demon.'
+  categoria: 1-Use
+spooky_masquerade_card_pack_i:
+  nombre: Spooky Masquerade Card Pack I
+  tipo: Artifact Card Pack
+  descripcion: 'Guaranteed to acquire the card: Halloween Red Demon.'
+  categoria: 1-Use
+starter_pack_ii:
+  nombre: Starter Pack II
+  tipo: Artifact Card Pack
+  descripcion: Acquire I Artifact Card according to set rates.
+  categoria: 1-Use
+starter_pack_i:
+  nombre: Starter Pack I
+  tipo: Artifact Card Pack
+  descripcion: Acquire I Artifact Card according to set rates. Min. MAX )
+  categoria: 1-Use
+story_card_pack_i:
+  nombre: Story Card Pack I
+  tipo: Artifact Card Pack
+  descripcion: Acquire I story card according to set rates. Min. MAX )
+  categoria: 1-Use
+monster_card_pack_ii:
+  nombre: Monster Card Pack II
+  tipo: Artifact Card Pack
+  descripcion: Acquire I monster card according to set rates. Min. MAX )
+  categoria: 1-Use
+monster_card_pack_i:
+  nombre: Monster Card Pack I
+  tipo: Artifact Card Pack
+  descripcion: Acquire I monster card according to set rates. Min. MAX )
+  categoria: 1-Use
+character_card_pack_ii:
+  nombre: Character Card Pack II
+  tipo: Artifact Card Pack
+  descripcion: Acquire I character card according to set rates. Min. MAX )
+  categoria: 1-Use
+character_card_pack_i:
+  nombre: Character Card Pack I
+  tipo: Artifact Card Pack
+  descripcion: Acquire I character card according to set rates. Min. MAX )
+  categoria: 1-Use
+patrol_reward_box:
+  nombre: Patrol Reward Box
+  tipo: Item Box
+  descripcion: A box obtained as a bonus reward when sending Season Heroes on patrol. Receive I of the various items
+    inside according to set rates. MAX
+  categoria: 1-Use
+hawk_special_equipment_selection_ticket:
+  nombre: Hawk Special Equipment Selection Ticket
+  tipo: Equipment Selection Ticket
+  descripcion: A ticket which can be used to select and acquire upgraded SSR Equipment. Maximum enhancement, fully
+    Awakened, 13% bonus effects. al-Jsevs.
+  categoria: 1-Use
+tier_5_awakened_ssr_equipment_selection_ticket:
+  nombre: Tier 5 Awakened SSR Equipment Selection Ticket
+  tipo: Equipment Selection Ticket
+  descripcion: A ticket which can be used to select and acquire Tier 5 Awakened SSR Equipment.
+  categoria: 1-Use
+tier_3_awakened_ssr_equipment_selection_ticket:
+  nombre: Tier 3 Awakened SSR Equipment Selection Ticket
+  tipo: Equipment Selection Ticket
+  descripcion: A ticket which can be used to select and acquire Tier 3 Awakened SSR Equipment.
+  categoria: 1-Use
+primordial_will_box_ii:
+  nombre: Primordial Will Box II
+  tipo: Item Box
+  descripcion: Randomly obtain I of 5 types of Primordial Will. < Min. Open
+  categoria: 1-Use
+primordial_will_box_i:
+  nombre: Primordial Will Box I
+  tipo: Item Box
+  descripcion: Randomly obtain I of 5 types of Primordial Will. < Min. Open
+  categoria: 1-Use
+memory_crystal_selection_box_i:
+  nombre: Memory Crystal Selection Box I
+  tipo: Item Box
+  descripcion: Use to select and obtain I of 6 types of Memory Crystals. Min. MAX
+  categoria: 1-Use
+memory_crystal_box_ii:
+  nombre: Memory Crystal Box II
+  tipo: Item Box
+  descripcion: Use to obtain I of 6 types of Memory Crystals. < Min. Open
+  categoria: 1-Use
+treasure_chest:
+  nombre: Treasure Chest
+  tipo: Normal Item
+  descripcion: Sell at the Shop to acquire Gold. 37500 Gold
+  categoria: Misc.
+light_essence_hp_related_stats:
+  nombre: Light Essence (HP-related stats)
+  tipo: Knighthood Competition Defense Team Item
+  descripcion: Light essence infused with powerful magic. Light attribute-ally HP-related stats +5%.
+  categoria: Misc.
+light_essence_defense_related_stats:
+  nombre: Light Essence (Defense-related stats)
+  tipo: Knighthood Competition Defense Team Item
+  descripcion: Light essence infused with powerful magic. Light attribute-ally Defense-related stats +1004.
+  categoria: Misc.
+light_essence_attack_related_stats:
+  nombre: Light Essence (Attack-related stats)
+  tipo: Knighthood Competition Defense Team Item
+  descripcion: Light essence infused with powerful magic. Light attribute-ally Attack-related stats +36.
+  categoria: Misc.
+darkness_essence_hp_related_stats:
+  nombre: Darkness Essence (HP-related stats)
+  tipo: Knighthood Competition Defense Team Item
+  descripcion: Darkness Essence infused with powerful magic. Darlmess-attribute ally HP-related stats +596.
+  categoria: Misc.
+speed_essence_hp_related_stats:
+  nombre: Speed Essence (HP-related stats)
+  tipo: Knighthood Competition Defense Team Item
+  descripcion: Speed Essence infused with the magic of swiftness. Speed-attribute ally HP-related stats +596.
+  categoria: Misc.
+speed_essence_defense_related_stats:
+  nombre: Speed Essence (Defense-related stats)
+  tipo: Knighthood Competition Defense Team Item
+  descripcion: Speed Essence infused with the magic of swiftness. Speed-attribute ally Defense-related stats +100/0.
+  categoria: Misc.
+speed_essence_attack_related_stats:
+  nombre: Speed Essence (Attack-related stats)
+  tipo: Knighthood
+  descripcion: Speed Essence infu fense Team Item e magic of swiftness. Speed-attribute ally Attack-related stats
+    +50&
+  categoria: Misc.
+hp_essence_hp_related_stats:
+  nombre: HP Essence (HP-related stats)
+  tipo: Knighthood Competition Defense Team Item
+  descripcion: HP Essence infused with the magic of vitality. HP-attribute ally HP-related stats +504.
+  categoria: Misc.
+hp_essence_defense_related_stats:
+  nombre: HP Essence (Defense-related stats)
+  tipo: Knighthood Competition Defense Team Item
+  descripcion: HP Essence infused with the magic of vitality. HP-attribute ally Defense-related stats +10%
+  categoria: Misc.
+hp_essence_attack_related_stats:
+  nombre: HP Essence (Attack-related stats)
+  tipo: Knighthood Competition Defense Team Item
+  descripcion: HP Essence infused with the magic of vitality. HP-attribute ally Attack-related stats +596.
+  categoria: Misc.
+strength_essence_hp_related_stats:
+  nombre: Strength Essence (HP-related stats)
+  tipo: Knighthood Competition Defense Team Item
+  descripcion: Strength Essence infused with powerful magic. Strength-attribute ally HP-related stats +50&
+  categoria: Misc.
+add_assault_team_squad:
+  nombre: Add Assault Team Squad
+  tipo: Add Elite Knighthood Competition Assault Team
+  descripcion: An item which adds an Elite Knighthood Competition Assault Team slot. The effect is applied to only
+    one war.
+  categoria: Misc.
+king_s_onslaught_bracelet:
+  nombre: King's Onslaught - Bracelet
+  tipo: Equipment
+  descripcion: 'Attack 1,240 Attack +15% Attack +400 upon equipping King 4 Set: Attack +20%'
+  categoria: Equipment
+cha_hae_ln_s_onslaught_bracelet:
+  nombre: Cha Hae-ln's Onslaught - Bracelet
+  tipo: Equipment
+  descripcion: 'Attack 1,240 Attack +15% Attack +400 upon equipping Cha Hae-ln 4 Set: Attack +20%'
+  categoria: Equipment
+sh_kusakabe_s_onslaught_bracelet:
+  nombre: Shõ Kusakabe's Onslaught - Bracelet
+  tipo: Equipment
+  descripcion: 'Attack 1,240 Attack +15% Attack +400 upon equipping Shó Kusakabe 4 Set: Attack +20%'
+  categoria: Equipment
+odin_s_onslaught_bracelet:
+  nombre: Odin's Onslaught - Bracelet
+  tipo: Equipment
+  descripcion: 'Attack 1,240 Attack +15% Attack +400 upon equipping Odin 4 Set: Attack +20%'
+  categoria: Equipment
+riyo_s_life_bracelet:
+  nombre: Riyo's Life - Bracelet
+  tipo: Equipment
+  descripcion: 'Attack 1,240 Attack +15% Attack +400 upon equipping Riyo 4 Set: HP +20%'
+  categoria: Equipment
+meliodas_s_life_bracelet:
+  nombre: Meliodas's Life - Bracelet
+  tipo: Equipment
+  descripcion: 'Attack 1,237 Attack +15% Attack +399 upon equipping Meliodas 4 Set: HP +20%'
+  categoria: Equipment
+merlin_escanor_s_onslaught_bracelet:
+  nombre: Merlin & Escanor's Onslaught - Bracelet
+  tipo: Equipment
+  descripcion: 'Attack 1,239 Attack +15% Attack +400 upon equipping Merlin & Escanor 4 Set: Attack +20%'
+  categoria: Equipment
+escanor_s_onslaught_bracelet:
+  nombre: Escanor's Onslaught - Bracelet
+  tipo: Equipment
+  descripcion: 'Attack 1,239 Attack +15% Attack +400 upon equipping Escanor 4 Set: Attack +20%'
+  categoria: Equipment
+sung_jinwoo_s_life_bracelet:
+  nombre: Sung Jinwoo's Life - Bracelet
+  tipo: Equipment
+  descripcion: 'Attack 1,239 Attack +15% Attack +400 upon equipping Sung Jinwoo 4 Set: HP +20%'
+  categoria: Equipment
+gawain_s_life_bracelet:
+  nombre: Gawain's Life - Bracelet
+  tipo: Equipment
+  descripcion: 'Attack 1,239 Attack +13% Attack +400 upon equipping Gawain 4 Set: HP +20%'
+  categoria: Equipment
+merlin_escanor_s_life_bracelet:
+  nombre: Merlin & Escanor's Life - Bracelet
+  tipo: Equipment
+  descripcion: 'Attack 1,239 Attack +15% Attack +400 upon equipping Merlin & Escanor 4 Set: HP +20%'
+  categoria: Equipment
+narberal_gamma_s_life_bracelet:
+  nombre: Narberal Gamma's Life - Bracelet
+  tipo: Equipment
+  descripcion: 'Attack 1,239 Attack +15% Attack +400 upon equipping Narberal Gamma 4 Set: HP +20%'
+  categoria: Equipment
+skuld_s_onslaught_bracelet:
+  nombre: Skuld's Onslaught - Bracelet
+  tipo: Equipment
+  descripcion: 'Attack 1,238 Attack +15% Attack +399 upon equipping Skuld 4 Set: Attack +20%'
+  categoria: Equipment
+lancelot_s_life_bracelet:
+  nombre: Lancelot's Life - Bracelet
+  tipo: Equipment
+  descripcion: 'Attack 1,238 Attack +15% Attack +399 upon equipping Lancelot 4 Set: HP +20%'
+  categoria: Equipment
+escanor_s_life_bracelet:
+  nombre: Escanor's Life - Bracelet
+  tipo: Equipment
+  descripcion: 'Attack 1,238 Attack +15% Attack +399 upon equipping Escanor 4 Set: HP +20%'
+  categoria: Equipment
+tristan_s_life_bracelet:
+  nombre: Tristan's Life - Bracelet
+  tipo: Equipment
+  descripcion: 'Attack 1,238 Attack +15% Attack +399 upon equipping Tristan 4 Set: HP +20%'
+  categoria: Equipment
+king_s_life_bracelet:
+  nombre: King's Life - Bracelet
+  tipo: Equipment
+  descripcion: 'Attack 1,238 Attack +12.4% Attack +399 upon equipping King 4 Set: HP +20%'
+  categoria: Equipment
+gowther_s_life_bracelet:
+  nombre: Gowther's Life - Bracelet
+  tipo: Equipment
+  descripcion: 'Attack 1,238 Attack +15% Attack +399 upon equipping Gowther 4 Set: HP +20%'
+  categoria: Equipment
+lillia_s_life_bracelet:
+  nombre: Lillia's Life - Bracelet
+  tipo: Equipment
+  descripcion: 'Attack 1,238 Attack +13.5% Attack +399 upon equipping Lillia 4 Set: HP +20%'
+  categoria: Equipment
+sabunaks_onslaught_bracelet:
+  nombre: Sabunaks Onslaught - Bracelet
+  tipo: Equipment
+  descripcion: 'Attack 1,237 Attack +15% Attack +399 upon equipping Sabunak 4 Set: Attack +20%'
+  categoria: Equipment
+ludociel_s_onslaught_bracelet:
+  nombre: Ludociel's Onslaught - Bracelet
+  tipo: Equipment
+  descripcion: 'Attack 1,237 Attack +14.4% Attack +399 upon equipping Ludociel 4 Set: Attack +20%'
+  categoria: Equipment
+helbram_s_life_bracelet:
+  nombre: Helbram's Life - Bracelet
+  tipo: Equipment
+  descripcion: 'Attack 1,237 Attack +13% Attack +399 upon equipping Helbram 4 Set: HP +20%'
+  categoria: Equipment
+camila_s_life_bracelet:
+  nombre: Camila's Life - Bracelet
+  tipo: Equipment
+  descripcion: 'Attack 1,237 Attack +15% Attack +399 upon equipping Camila 4 Set: HP +20%'
+  categoria: Equipment
+percival_s_life_bracelet:
+  nombre: Percival's Life - Bracelet
+  tipo: Equipment
+  descripcion: 'Attack 1,237 Attack +15% Attack +399 upon equipping Percival 4 Set: HP +20%'
+  categoria: Equipment
+reinhard_s_life_bracelet:
+  nombre: Reinhard's Life - Bracelet
+  tipo: Equipment
+  descripcion: 'Attack 1,237 Pierce Rate +2$.8% Attack +399 upon equipping Reinhard 4 Set: HP +20%'
+  categoria: Equipment
+tioreh_s_life_bracelet:
+  nombre: Tioreh's Life - Bracelet
+  tipo: Equipment
+  descripcion: 'Attack 1,237 Attack +14.2% Attack +399 upon equipping Tioreh 4 Set: HP +20%'
+  categoria: Equipment
+tamaki_kotatsu_s_life_bracelet:
+  nombre: Tamaki Kotatsu's Life - Bracelet
+  tipo: Equipment
+  descripcion: 'Attack 1,237 Attack +13% Attack +399 upon equipping Tamaki Kotatsu 4 Set: HP +20%'
+  categoria: Equipment
+ban_s_onslaught_bracelet:
+  nombre: Ban's Onslaught - Bracelet
+  tipo: Equipment
+  descripcion: 'Attack 1,236 Attack +15% Attack +399 upon equipping Ban 4 Set: Attack +20%'
+  categoria: Equipment
+tyr_s_onslaught_bracelet:
+  nombre: Tyr's Onslaught - Bracelet
+  tipo: Equipment
+  descripcion: 'Attack 1,236 Attack +15% Attack +399 upon equipping Tyr 4 Set: Attack +20%'
+  categoria: Equipment

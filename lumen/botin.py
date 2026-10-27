@@ -241,8 +241,14 @@ def guardar_galeria_local(galeria: dict) -> None:
 
 
 def cargar_galeria() -> dict[str, dict]:
-    """La galeria publicada con la capturada en esta PC encima."""
-    return {**_leer_yaml(GALERIA_BASE), **cargar_galeria_local()}
+    """La galeria publicada con la capturada en esta PC encima (de cada texto, la lectura mas completa)."""
+    galeria = {gid: dict(g or {}) for gid, g in _leer_yaml(GALERIA_BASE).items()}
+    for gid, g in cargar_galeria_local().items():
+        previo = galeria.get(gid, {})
+        galeria[gid] = {**previo, **(g or {})}
+        for campo in ("tipo", "descripcion"):
+            galeria[gid][campo] = max((previo.get(campo) or "", (g or {}).get(campo) or ""), key=len)
+    return galeria
 
 
 def ruta_ficha(gid: str) -> Path:
