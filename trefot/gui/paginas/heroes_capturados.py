@@ -34,8 +34,8 @@ from trefot.vision import guardar_imagen, leer_imagen
 COLOR_ATRIBUTO = {"rojo": "#e05a4f", "verde": "#4cc38a", "azul": "#4f8fe0", "claro": "#e6c84c", "oscuro": "#a06ad8"}
 ATRIBUTOS = ["Strength", "Speed", "HP", "Light", "Dark"]
 RAZAS = ["Human", "Giant", "Fairy", "Goddess", "Demon", "Unknown"]
-TIPOS = {"single": "Un objetivo", "area": "Área", "apoyo": "Apoyo", "otro": "Otro"}
-COLOR_TIPO = {"single": "#4f8fe0", "area": "#e05a4f", "apoyo": "#4cc38a", "otro": "#8b90a3"}
+TIPOS = {"single": "Un objetivo", "area": "Área", "defensa": "Defensa", "apoyo": "Apoyo", "otro": "Otro"}
+COLOR_TIPO = {"single": "#4f8fe0", "area": "#e05a4f", "defensa": "#a06ad8", "apoyo": "#4cc38a", "otro": "#8b90a3"}
 
 
 def avisos_de(h: dict) -> list[str]:
@@ -270,6 +270,8 @@ class PaginaHeroesCapturados(Pagina):
 
     def al_mostrar(self):
         self.catalogo = C.cargar_catalogo()
+        if C.reclasificar(self.catalogo):  # capturas de antes de mejorar la clasificacion de cartas
+            C.guardar_catalogo(self.catalogo)
         self._pintar()
 
     def _pintar(self):

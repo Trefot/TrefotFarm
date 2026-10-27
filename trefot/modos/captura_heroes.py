@@ -50,7 +50,7 @@ BORDE_CASILLA = 120  # brillo del borde de una casilla con heroe (medido ~160; h
 CABECERA = (130, 125, 445, 195)  # [titulo] y nombre
 DATOS = (30, 300, 300, 388)  # Attribute, Race y Characteristics con sus valores
 ETIQUETAS = ("attribute", "race", "characteristics")
-PANEL_SKILL = (60, 440, 490, 720)  # nombre y descripcion de la carta en Skill Info
+PANEL_SKILL = (60, 380, 490, 740)  # nombre y descripcion de la carta en Skill Info (sube si es larga)
 # Antes de leer se espera a que la fila de cartas quede quieta. No sirve mirar mas: la figura del
 # heroe se mueve todo el rato y en algunos (las alas de Ludociel) tapa los datos y el nombre.
 ZONAS_ESTABLES = [(30, 595, 220, 700)]
@@ -60,6 +60,8 @@ LECTURAS_DATOS = 3  # capturas para votar la raza (las alas se mueven y cada una
 ZONA_SKILL_INFO = (60, 440, 490, 720)
 ESPERA_MAXIMA_QUIETA = 4.0  # s; si no se queda quieta, se lee igual
 FLECHA_HEROE = (510, 158)  # siguiente heroe
+VOLVER = (38, 62)  # flecha amarilla de arriba a la izquierda: de la ficha a la lista
+MAX_CARTAS_SIN_LEER = 4  # seguidas; despues se pasa al siguiente heroe
 FLECHA_SKILL = (508, 463)  # siguiente carta dentro de Skill Info
 MAX_CARTAS = 8
 DIFERENCIA_ESTABLE = 3.0  # media de diferencia entre dos capturas para dar la pantalla por quieta
@@ -196,14 +198,18 @@ def leer_datos_varias(pantallas) -> tuple[str, str, str]:
 
 
 def tipo_de_carta(texto: str) -> str:
+    """single / area / defensa / apoyo / otro. El OCR a veces desordena palabras ("on one Inflicts Pierce
+    enemy"), asi que se busca "on one" / "on all" ademas de "one enemy" / "all enemies"."""
     t = texto.lower()
+    if re.search(r"assumes a stance|\btaunt|\breflect", t):
+        return "defensa"
     dano = t.find("damage equal")
     if dano >= 0:  # a quien pega el dano ("... damage equal to 200% of Attack on one enemy")
-        uno, todos = t.find("one enemy", dano), t.find("all enemies", dano)
-        if uno >= 0 and (todos < 0 or uno < todos):
-            return "single"
-        if todos >= 0:
-            return "area"
+        objetivo = re.search(r"\b(?:on|to)\s+(one|all)\b|\b(one) enem|\b(all) enem", t[dano:])
+        if objetivo:
+            return "single" if "one" in objetivo.groups() else "area"
+    if re.search(r"\bone enem", t):
+        return "single"
     if "all enemies" in t:
         return "area"
     if "one enemy" in t or "an enemy" in t or "single enemy" in t:
@@ -214,8 +220,29 @@ def tipo_de_carta(texto: str) -> str:
 
 
 def leer_skill(pantalla) -> dict | None:
-    """Nombre, descripcion y tipo de la carta abierta en Skill Info (None si no se lee el nombre)."""
-    lineas = ocr.leer_region(pantalla, PANEL_SKILL, invertir=True)
+    """Nombre, descripcion y tipo de la carta abierta en Skill Info (None si no se lee el nombre).
+    El texto es claro sobre fondo oscuro; si asi no sale el nombre, se prueba sin invertir."""
+    for invertir in (True, False):
+        carta = _leer_skill(ocr.leer_region(pantalla, PANEL_SKILL, invertir=invertir))
+        if carta:
+            return carta
+    return None
+
+
+def reclasificar(catalogo: dict) -> bool:
+    """Vuelve a clasificar las cartas con la regla actual (menos las que se corrigieron a mano)."""
+    cambio = False
+    for h in catalogo.values():
+        if h.get("revisado"):
+            continue
+        for c in h.get("cartas") or []:
+            tipo = tipo_de_carta(c.get("texto", ""))
+            if tipo != c.get("tipo"):
+                c["tipo"], cambio = tipo, True
+    return cambio
+
+
+def _leer_skill(lineas) -> dict | None:
     for i, linea in enumerate(lineas):
         nombre = re.search(r'["“”](.+?)["“”]', linea)
         if not nombre:
@@ -333,6 +360,8 @@ class CapturaHeroes(Modo):
         self.misma_carta = 0
         self.iconos: list | None = None  # iconos de la lista, en orden (None = se empezo en una ficha)
         self.fichas_vistas = 0  # posicion del heroe actual en la lista
+        self.volvi_a_lista = False
+        self.sin_leer = 0  # cartas seguidas que no se pudieron leer
 
     def estado_inicial(self):
         return "buscar_ficha"
@@ -382,9 +411,15 @@ class CapturaHeroes(Modo):
         if self.iconos is None and LISTA.esta(p, 0.85):
             return "lista"
         if FICHA.esta(p, 0.85):
+            if self.iconos is None and not self.volvi_a_lista:
+                # Para tener los iconos hay que empezar en la lista: volver a ella con la flecha.
+                self.volvi_a_lista = True
+                self.log("Estoy en una ficha: vuelvo a la lista de Heroes para recortar los iconos.")
+                entrada.clic(VOLVER, o, espera=2.0)
+                return None
             self.anterior = None
             self.log("Ficha de héroe encontrada: empiezo." if self.iconos is not None else
-                     "Ficha de héroe encontrada: empiezo (sin iconos: para tenerlos, empieza en la lista de Heroes).", "ok")
+                     "No reconocí la lista de Heroes: sigo sin iconos.", "ok" if self.iconos is not None else "aviso")
             return "leer_ficha"
         if time.time() - self.esperando_desde > 90:
             self.log("No veo la ficha de ningún héroe. Ábrela en el juego (Heroes -> un héroe) y vuelve a empezar.", "error")
@@ -525,10 +560,19 @@ class CapturaHeroes(Modo):
             return self._cartas_listas()
         self.misma_carta = 0
         if carta is None:
-            self.log("No pude leer esta carta; paso a la siguiente.", "aviso")
+            self.sin_leer += 1
+            nombre = re.sub(r"\W+", "_", self.actual["nombre"])[:30]
+            guardar_imagen(CARPETA / "sin_leer" / f"carta_{nombre}_{len(cartas) + self.sin_leer}.jpg", p)
+            self.log("No pude leer esta carta (guardo una foto en capturas\\heroes\\sin_leer); paso a la siguiente.",
+                     "aviso")
+            if self.sin_leer >= MAX_CARTAS_SIN_LEER:
+                self.log(f"No consigo leer las cartas de {self.actual['nombre']}: sigo con el siguiente héroe.", "aviso")
+                self.sin_leer = 0
+                return self._cartas_listas()
         elif (cartas and carta["nombre"] == cartas[0]["nombre"]) or len(cartas) >= MAX_CARTAS:
             return self._cartas_listas()  # di la vuelta: ya estan todas
         else:
+            self.sin_leer = 0
             cartas.append(carta)
             self.log(f"   Carta {len(cartas)}: {carta['nombre']} ({carta['tipo']})", "debug")
         entrada.clic(FLECHA_SKILL, o, espera=0.5)
