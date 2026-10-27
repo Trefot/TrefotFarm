@@ -1,4 +1,4 @@
-"""Perros pisos 1, 2 y 3: los faciles. Sirve cualquier equipo fuerte.
+"""Perros pisos 1, 2 y 3 seguidos (1 -> 2 -> 3 -> 1...): los faciles. Sirve cualquier equipo fuerte.
 
 Reutiliza todo el modo del piso 4 (llegar a los pisos, pelear, botin, derrotas) y cambia dos cosas:
   - El piso se busca leyendo el texto "Floor N" de la pantalla (OCR de Windows), porque no hay
@@ -30,15 +30,19 @@ class EstrategiaSimple(Estrategia):
         raise Reiniciar("no hay cartas que jugar ni mover")
 
 
-class PerrosPisoBajo(PerrosPiso4):
-    piso = 0
-    descripcion = "Piso fácil de los Perros. Sirve cualquier equipo fuerte: juega primero las ultis y luego las cartas de más rango."
+class PerrosPisos1a3(PerrosPiso4):
+    id = "perros_pisos1a3"
+    nombre = "Skollandhati & Hati · Floor 1-3"
+    subtitulo_juego = "Demonic Beast · Floor 1-3"
+    descripcion = "Floor 1, 2 y 3 seguidos, y vuelta a empezar. Sirve cualquier equipo fuerte."
     duracion = ""
     fases = 0  # no se sabe aun cuantas fases tienen estos pisos
     equipo = None  # cualquier equipo: el que tengas puesto en el juego
     rendirse_si_bloqueada = False
+    nombres_estados = {**PerrosPiso4.nombres_estados, "elegir_piso": "Eligiendo el piso"}
     opciones = [
         Opcion("victorias", "Victorias (0 = sin límite)", "entero", 0, maximo=9999),
+        Opcion("primer_piso", "Empezar en el Floor", "lista", "1", opciones=["1", "2", "3"]),
         Opcion("pociones", "Usar pociones de stamina", "si_no", True),
         Opcion("max_pociones", "Máximo de pociones (0 = sin límite)", "entero", 0, maximo=999),
     ]
@@ -47,6 +51,26 @@ class PerrosPisoBajo(PerrosPiso4):
         super().__init__(valores)
         self.estrategia = EstrategiaSimple()
         self.textos_vistos = False
+        self.piso = int(self.valores.get("primer_piso") or 1)
+
+    def victoria(self, p, o):
+        siguiente = super().victoria(p, o)  # cuenta la victoria al volver a los pisos
+        if siguiente == "elegir_piso":
+            self.piso = self.piso % 3 + 1
+            self.log(f"Siguiente: Floor {self.piso}.", "ok")
+        return siguiente
+
+    # La pantalla de pisos se reconoce por "Floor 3 Cleared", que no sale si aun no se ha pasado el
+    # piso 3 en esta vuelta: aqui tambien vale ver el texto del piso que toca.
+    def ir_a_perros(self, p, o):
+        siguiente = super().ir_a_perros(p, o)
+        if siguiente is None and not juego.pantalla_bestias.esta(p) and self._buscar_piso(p) is not None:
+            self.log("En la pantalla de pisos de los Perros.", "ok")
+            return "elegir_piso"
+        return siguiente
+
+    def _volvio_a_pisos(self, p) -> bool:
+        return super()._volvio_a_pisos(p) or self._buscar_piso(p) is not None
 
     def _verificar_equipo(self, p):
         self.equipo_verificado = True  # cualquier equipo vale
@@ -58,7 +82,7 @@ class PerrosPisoBajo(PerrosPiso4):
             return None
         rect = self._buscar_piso(p)
         if rect is not None:
-            self.log(f"Abro el Floor {self.piso}.", "debug")
+            self.log(f"Abro el Floor {self.piso}.")
             entrada.clic(rect, o, espera=1.0)
         return None
 
@@ -76,31 +100,3 @@ class PerrosPisoBajo(PerrosPiso4):
             if limpio.startswith(f"floor{self.piso}") and "clear" not in limpio:
                 return rect
         return None
-
-
-def _estados(piso: int) -> dict:
-    return {**PerrosPiso4.nombres_estados, "elegir_piso": f"Eligiendo el Floor {piso}"}
-
-
-class PerrosPiso1(PerrosPisoBajo):
-    id = "perros_piso1"
-    piso = 1
-    nombre = "Skollandhati & Hati · Floor 1"
-    subtitulo_juego = "Demonic Beast · Floor 1"
-    nombres_estados = _estados(1)
-
-
-class PerrosPiso2(PerrosPisoBajo):
-    id = "perros_piso2"
-    piso = 2
-    nombre = "Skollandhati & Hati · Floor 2"
-    subtitulo_juego = "Demonic Beast · Floor 2"
-    nombres_estados = _estados(2)
-
-
-class PerrosPiso3(PerrosPisoBajo):
-    id = "perros_piso3"
-    piso = 3
-    nombre = "Skollandhati & Hati · Floor 3"
-    subtitulo_juego = "Demonic Beast · Floor 3"
-    nombres_estados = _estados(3)
