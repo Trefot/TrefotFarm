@@ -15,7 +15,8 @@ POR_DEFECTO = {
     "ultimo_modo": "perros_piso4",
     "modo_admin": False,  # muestra Capturas y el Editor de personajes
     "skin": "auto",
-    "asistente_visto": False,  # el asistente de primera vez ya salio  # "auto" = segun la fecha; o el id de una skin de gui/tema.py
+    "asistente_visto": False,  # el asistente de primera vez ya salio
+    "acceso_ofrecido": False,  # ya se pregunto si crear los accesos directos  # "auto" = segun la fecha; o el id de una skin de gui/tema.py
     "opciones_modos": {},
 }
 

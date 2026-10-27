@@ -39,10 +39,10 @@ if reabrir_como_admin():
 
 import trefot.entrada  # noqa: E402,F401  (pyautogui activa el modo DPI-aware antes que Qt)
 from PyQt5.QtCore import Qt  # noqa: E402
+from PyQt5.QtGui import QIcon  # noqa: E402
 from PyQt5.QtWidgets import QApplication, QMessageBox  # noqa: E402
 
 from trefot.gui import tema  # noqa: E402
-from trefot.gui.principal import VentanaPrincipal  # noqa: E402
 from trefot.rutas import LOGS  # noqa: E402
 
 
@@ -58,16 +58,38 @@ def error_inesperado(tipo, valor, tb):
         QMessageBox.critical(None, "TrefotFarm - error", f"{valor}\n\nDetalle guardado en logs\\errores.log")
 
 
+def identidad_windows():
+    """Para que la barra de tareas muestre el icono de TrefotFarm y no el de Python."""
+    try:
+        ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID("Trefot.TrefotFarm")
+    except Exception:
+        pass
+
+
 def main():
     sys.excepthook = error_inesperado
+    identidad_windows()
     QApplication.setAttribute(Qt.AA_EnableHighDpiScaling, True)
     QApplication.setAttribute(Qt.AA_UseHighDpiPixmaps, True)
     app = QApplication(sys.argv)
     app.setApplicationName("TrefotFarm")
     tema.cargar_fuentes()
     app.setStyleSheet(tema.HOJA)
+
+    from trefot.gui.arranque import ICONO, PantallaCarga
+
+    app.setWindowIcon(QIcon(str(ICONO)))
+    carga = PantallaCarga()
+    carga.show()
+    carga.paso("Cargando la interfaz...", 0.2)
+    from trefot.gui.principal import VentanaPrincipal
+
+    carga.paso("Preparando personajes, equipos y recompensas...", 0.55)
     principal = VentanaPrincipal()
+    carga.paso("¡Listo!", 1.0)
+    time.sleep(0.25)
     principal.show()
+    carga.finish(principal)
     sys.exit(app.exec_())
 
 

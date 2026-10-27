@@ -18,7 +18,7 @@ from PyQt5.QtWidgets import (
     QWidget,
 )
 
-from trefot import config, ventana
+from trefot import accesos, config, ventana
 from trefot import personajes as P
 from trefot.gui import iconos, tema
 from trefot.gui.paginas.personajes import TarjetaPersonaje
@@ -357,6 +357,10 @@ class Asistente(QDialog):
         capa.addWidget(_punto("farmear", "2. Elige qué farmear", "Haz clic en la Demonic Beast que quieras."))
         capa.addWidget(_punto("trofeo", "3. Elige cuántas victorias", "Un número fijo, o sin límite."))
         capa.addWidget(_punto("jugar", "4. Pulsa Empezar", "Y déjame el ratón. En Farmear ves qué estoy haciendo."))
+        self.crear_acceso = QCheckBox("Crear un acceso directo en el escritorio y en el menú Inicio")
+        self.crear_acceso.setChecked(True)
+        self.crear_acceso.setVisible(not accesos.existen())
+        capa.addWidget(self.crear_acceso)
         capa.addWidget(_texto("¿Dudas? En <b>Ayuda</b> tienes una guía con capturas del juego, soluciones a los problemas "
                               "más comunes y un glosario. Desde ahí también puedes volver a abrir este asistente.", "tenue"))
         capa.addStretch()

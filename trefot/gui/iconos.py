@@ -70,7 +70,10 @@ def icono(nombre: str, color: str | None = None, color_activo: str | None = None
     opciones = {"color": color}
     if color_activo:
         opciones.update(color_on=color_activo, color_active=color_activo)
-    return qta.icon(NOMBRES.get(nombre, nombre), **opciones)
+    try:
+        return qta.icon(NOMBRES.get(nombre, nombre), **opciones)
+    except Exception:  # un nombre de icono que no existe no debe tumbar la interfaz
+        return QIcon()
 
 
 def pixmap(nombre: str, tam: int = 20, color: str | None = None) -> QPixmap:

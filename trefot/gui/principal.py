@@ -19,7 +19,7 @@ from PyQt5.QtWidgets import (
 )
 
 import trefot
-from trefot import actualizador, config, ventana
+from trefot import accesos, actualizador, config, ventana
 from trefot.control import control
 from trefot.gui import iconos, tema
 from trefot.gui.paginas.actualizaciones import PantallaBloqueo
@@ -180,6 +180,8 @@ class VentanaPrincipal(QMainWindow):
         QTimer.singleShot(300, self.buscar_updates)
         if not config.obtener("asistente_visto"):
             QTimer.singleShot(700, self.abrir_asistente)
+        elif not config.obtener("acceso_ofrecido"):
+            QTimer.singleShot(900, self.ofrecer_acceso)
 
     # ---------------------------------------------------------------- navegacion
     def navegar(self, clave: str):
@@ -336,9 +338,34 @@ class VentanaPrincipal(QMainWindow):
             return  # primero la actualizacion obligatoria; el asistente sale al volver a abrir
         from trefot.gui.asistente import Asistente
 
-        Asistente(self).exec_()
+        asistente = Asistente(self)
+        asistente.exec_()
+        if asistente.crear_acceso.isVisible() and asistente.crear_acceso.isChecked():
+            self.crear_acceso(silencioso=True)
+        config.guardar({"acceso_ofrecido": True})
         self.paginas["personajes"].al_mostrar()
         self.navegar("inicio")
+
+    def ofrecer_acceso(self):
+        """Una sola vez, a quien ya tenia el bot antes de que existieran los accesos directos."""
+        config.guardar({"acceso_ofrecido": True})
+        if self.update_bloqueante or accesos.existen():
+            return
+        r = QMessageBox.question(self, "Acceso directo",
+                                 "¿Creo un acceso directo a Trefot Farm en el escritorio y en el menú Inicio?\n\n"
+                                 "Así lo abres con doble clic, con su icono, sin buscar la carpeta.")
+        if r == QMessageBox.Yes:
+            self.crear_acceso()
+
+    def crear_acceso(self, silencioso: bool = False):
+        try:
+            accesos.crear()
+        except Exception as error:
+            QMessageBox.warning(self, "Acceso directo", f"No pude crear el acceso directo: {error}")
+            return
+        if not silencioso:
+            QMessageBox.information(self, "Acceso directo",
+                                    "Listo: tienes \"Trefot Farm\" en el escritorio y en el menú Inicio.")
 
     def _reiniciar(self):
         QProcess.startDetached(sys.executable, [str(RAIZ / "TrefotFarm.pyw")], str(RAIZ))
