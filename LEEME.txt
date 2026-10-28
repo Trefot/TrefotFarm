@@ -38,7 +38,7 @@ Las capturas quedan en la biblioteca: personajes\<personaje>\ (sirven para todos
 LA INTERFAZ (menu de la izquierda)
 ----------------------------------
 Inicio            4 iconos (Juego, Ventana, Equipo, Cartas: en verde = listo), la rueda para elegir
-                  que farmear y su piso, victorias y Empezar.
+                  que farmear y su piso, el equipo mas rapido medido, victorias y Empezar.
 Farmear           todo en una pantalla: arriba el modo (en Floor 1-3, el piso y la vuelta) con
                   Iniciar / Pausar / Detener; las cifras; el botin que lleva (esta sesion; parado, el
                   de hoy en ese modo); y abajo el Registro (u Opciones) junto a los 5 mejores equipos.
@@ -47,9 +47,13 @@ Personajes        tu biblioteca: ficha de cada personaje (color, raza, roles, lo
                   retrato. Una captura sirve para todos los modos. Los retratos se sacan aqui, en la
                   pantalla del equipo, y sirven para que el bot compruebe tu equipo antes de empezar.
 Equipos (admin)   todos los equipos de cada contenido; crear, editar y medir equipos.
+                  Medir: "Aprender de mi" (o farmear con el bot) cuenta las victorias por hora de cada
+                  equipo; con 5 peleas o mas, el mas rapido sale en Inicio y primero en Farmear. Para
+                  que todos lo vean, el numero se publica en lumen/datos/equipos.yaml (campo minutos).
 Botin (admin)     suma de todo lo conseguido (oro y cada objeto, por dia o por sesion), la
                   foto de cada victoria y la galeria. Doble clic en un objeto nuevo para ponerle nombre.
-Ajustes           ventana del juego, teclas rapidas, avisos al movil y repositorio de GitHub.
+Ajustes           ventana del juego, teclas rapidas, avisos al movil y modo administrador (con el
+                  repositorio de GitHub).
 
 Para farmear: juego abierto y visible, equipo puesto, Inicio -> gira la rueda -> "Empezar".
 Floor 1-3 (las 5 Demonic Beasts): juega Floor 1, 2 y 3 seguidos y vuelve a empezar. Sirve cualquier

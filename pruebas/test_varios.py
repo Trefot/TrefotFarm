@@ -112,6 +112,40 @@ class Premios(unittest.TestCase):
         self.assertEqual((garra.texto_cantidad, garra.texto_prob), ("×1–4", "49 %"))
 
 
+class EquipoMasRapido(unittest.TestCase):
+    def setUp(self):
+        entorno.app_qt()
+        from lumen.gui.paginas import equipos as E
+
+        self.E = E
+        self.base = {"perros_piso4": [
+            {"nombre": "Lento", "bot": True, "minutos": 4, "personajes": ["a", "b"]},
+            {"nombre": "Rapido", "bot": True, "minutos": 2.5, "personajes": ["c", "d"]},
+            {"nombre": "Sin bot", "minutos": 1, "personajes": ["e", "f"]},
+            {"nombre": "Sin medir", "bot": True, "personajes": ["g", "h"]},
+        ]}
+        self.medido = {}
+        for nombre, valor in (("cargar_equipos", lambda: self.base), ("medidas", lambda clave: self.medido)):
+            parche = mock.patch.object(E, nombre, valor)
+            parche.start()
+            self.addCleanup(parche.stop)
+
+    def test_el_de_menos_minutos_que_el_bot_juega(self):
+        r = self.E.mas_rapido("perros_piso4")
+        self.assertEqual((r["datos"]["nombre"], r["minutos"], r["fuente"]), ("Rapido", 2.5, "pruebas"))
+
+    def test_lo_medido_en_esta_pc_manda(self):
+        self.medido[frozenset(["a", "b"])] = {"victorias": 10, "derrotas": 0, "reinicios": 0, "por_hora": 30.0}
+        r = self.E.mas_rapido("perros_piso4")
+        self.assertEqual((r["datos"]["nombre"], r["minutos"], r["fuente"]), ("Lento", 2.0, "tuyo"))
+        self.medido[frozenset(["a", "b"])]["victorias"] = 2  # pocas peleas: no cuenta
+        self.assertEqual(self.E.mas_rapido("perros_piso4")["datos"]["nombre"], "Rapido")
+
+    def test_texto(self):
+        self.assertEqual(self.E.texto_minutos(2.5), "2,5 min por victoria")
+        self.assertEqual(self.E.texto_minutos(3), "3 min por victoria")
+
+
 class Aprender(unittest.TestCase):
     def test_reconoce_igual_que_comparar_todo(self):
         from lumen.modos.aprender import IndiceCartas

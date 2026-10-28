@@ -210,7 +210,7 @@ class PaginaFarmear(Pagina):
                                                ("Opciones", "ajustes", panel_opciones))):
             b = QPushButton(" " + texto, objectName="chip", checkable=True, checked=i == 0)
             b.setIcon(iconos.icono(ic, tema.TENUE, tema.SOBRE_ACENTO))
-            b.clicked.connect(lambda _, n=i: self.pila_vista.setCurrentIndex(n))
+            b.clicked.connect(lambda _, n=i: self._ver_vista(n))
             self.grupo_vista.addButton(b)
             cabecera.addWidget(b)
             self.pila_vista.addWidget(vista)
@@ -222,6 +222,7 @@ class PaginaFarmear(Pagina):
         b_limpiar.setToolTip("Limpiar el registro")
         b_limpiar.clicked.connect(lambda: self.registro.clear())
         cabecera.addWidget(b_limpiar)
+        self.solo_registro = (self.chk_debug, b_limpiar)  # solo sirven con el registro a la vista
         izquierda = QVBoxLayout()
         izquierda.addLayout(cabecera)
         izquierda.addWidget(self.pila_vista, 1)
@@ -236,8 +237,8 @@ class PaginaFarmear(Pagina):
         derecha.addWidget(panel_equipos, 1)
         abajo = QHBoxLayout()
         abajo.setSpacing(14)
-        abajo.addLayout(izquierda, 5)
-        abajo.addLayout(derecha, 4)
+        abajo.addLayout(izquierda, 4)
+        abajo.addLayout(derecha, 5)
         self.cuerpo.addLayout(abajo, 1)
 
         self.combo.currentIndexChanged.connect(self._mostrar_opciones)
@@ -256,6 +257,12 @@ class PaginaFarmear(Pagina):
         self._mostrar_opciones()
         self._botones(False)
         self.actualizar_ayuda_teclas()
+
+    def _ver_vista(self, n: int):
+        """Registro (0), Plan (1) u Opciones (2) abajo a la izquierda."""
+        self.pila_vista.setCurrentIndex(n)
+        for w in self.solo_registro:
+            w.setVisible(n == 0)
 
     # ------------------------------------------------------------------ opciones
     @property

@@ -1,4 +1,4 @@
-"""Pagina Ajustes: juego, aspecto, teclas, avisos al movil, modo administrador y repositorio de actualizaciones."""
+"""Pagina Ajustes: juego, aspecto, teclas, avisos al movil y modo administrador (con el repositorio de actualizaciones)."""
 
 from PyQt5.QtCore import QSize
 from PyQt5.QtWidgets import (
@@ -114,22 +114,24 @@ class PaginaAjustes(Pagina):
         c.addLayout(fila)
         rejilla.addWidget(movil, 1, 1)
 
-        repo, c = seccion("Actualizaciones", "actualizar")
-        f = QFormLayout()
-        self.url_repo = QLineEdit(placeholderText="https://github.com/usuario/LumenFarm.git")
-        self.url_repo.setText(actualizador.url_remota())
-        f.addRow("Repositorio", self.url_repo)
-        c.addLayout(f)
-        c.addWidget(nota("De aquí se bajan las actualizaciones obligatorias. Solo cámbialo si mueves el repositorio."))
-        rejilla.addWidget(repo, 2, 0)
-
         admin, c = seccion("Administrador", "admin")
         self.modo_admin = QCheckBox("Modo administrador: mostrar Capturas y el Editor de personajes")
         self.modo_admin.setChecked(bool(config.obtener("modo_admin")))
         c.addWidget(self.modo_admin)
         c.addWidget(nota("Solo para quien mantiene la base del bot (cartas, retratos y equipos). "
                          "Los jugadores normales no lo necesitan."))
-        rejilla.addWidget(admin, 2, 1)
+        # El repositorio de las actualizaciones: solo lo toca quien mantiene el bot
+        self.caja_repo = QFrame()
+        f = QFormLayout(self.caja_repo)
+        f.setContentsMargins(0, 6, 0, 0)
+        self.url_repo = QLineEdit(placeholderText="https://github.com/usuario/LumenFarm.git")
+        self.url_repo.setText(actualizador.url_remota())
+        f.addRow("Repositorio", self.url_repo)
+        f.addRow("", nota("De aquí se bajan las actualizaciones obligatorias. Solo cámbialo si mueves el repositorio."))
+        c.addWidget(self.caja_repo)
+        self.caja_repo.setVisible(self.modo_admin.isChecked())
+        self.modo_admin.toggled.connect(self.caja_repo.setVisible)
+        rejilla.addWidget(admin, 2, 0, 1, 2)
         rejilla.setColumnStretch(0, 1)
         rejilla.setColumnStretch(1, 1)
         self.cuerpo.addLayout(rejilla)

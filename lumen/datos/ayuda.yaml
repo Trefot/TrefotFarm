@@ -8,7 +8,7 @@ uso:
     texto: >-
       Arriba, 4 iconos (Juego, Ventana, Equipo, Cartas): en <b>verde</b> = listo; toca uno para arreglarlo.
       Elige la sección (<b>Bestias, Demonios, Fuerte Solgres</b>), gira la <b>rueda</b> y elige el piso.
-      Lo que tiene candado aún no lo sabe farmear el bot.
+      Debajo, el <b>equipo más rápido</b> medido. Lo que tiene candado aún no lo sabe farmear el bot.
   - icono: mdi6.treasure-chest
     titulo: "Puedes conseguir"
     texto: >-

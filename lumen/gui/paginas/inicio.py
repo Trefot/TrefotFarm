@@ -367,34 +367,74 @@ class PaginaInicio(Pagina):
         self._refrescar_vivo()
 
     def _pintar_equipo(self, equipo, biblioteca: dict):
-        """Caras del equipo bajo la rueda y una linea de estado."""
+        """Bajo la rueda: el equipo mas rapido medido para este destino y si esta todo listo."""
+        from lumen.gui.paginas.equipos import mas_rapido, texto_minutos
+        from lumen.gui.paginas.personajes import _en_gris
+
         while self.fila_equipo.count():
             w = self.fila_equipo.takeAt(0).widget()
             if w:
                 w.setParent(None)
         self.fila_equipo.addStretch()
+        self.lbl_estado.show()
         if not self.listo:
             self.lbl_estado.setText(f"<span style='color:{tema.TENUE}'>Próximamente</span>")
-        elif equipo:
-            for pid in equipo.orden:
-                pj = biblioteca.get(pid)
-                foto = QLabel()
-                foto.setFixedSize(40, 40)
-                foto.setToolTip(pj.nombre if pj else pid)
-                pix = iconos.redondo(pj.ruta_cara(), 40, tema.BORDE) if pj else None
-                if pix:
-                    foto.setPixmap(pix)
-                else:
-                    foto.setText((pj.nombre if pj else pid)[:2])
-                    foto.setAlignment(Qt.AlignCenter)
-                    foto.setObjectName("iniciales")
-                self.fila_equipo.addWidget(foto)
-            listo = all(p.listo for k, p in self.pasos.items() if k in ("equipo", "cartas"))
-            self.lbl_estado.setText(f"<span style='color:{tema.OK}'>Listo</span>" if listo
-                                    else f"<span style='color:{tema.AVISO}'>Falta preparar el equipo</span>")
+            self.fila_equipo.addStretch()
+            return
+        rapido = mas_rapido(self.modo_id)
+        if rapido:
+            self.fila_equipo.addWidget(self._tarjeta_rapido(rapido, biblioteca, _en_gris, texto_minutos))
+            self.lbl_estado.hide()  # la tarjeta ya dice si tienes el equipo (y el icono Equipo de arriba)
         else:
-            self.lbl_estado.setText(f"<span style='color:{tema.OK}'>Listo</span>")
+            self.fila_equipo.addWidget(QLabel("⚡ Equipo más rápido: aún sin medir"
+                                              + (" · sirve cualquiera" if not equipo else ""), objectName="tenue"))
         self.fila_equipo.addStretch()
+        listo = all(p.listo for k, p in self.pasos.items() if k in ("equipo", "cartas"))
+        self.lbl_estado.setText(f"<span style='color:{tema.OK}'>Listo</span>" if listo
+                                else f"<span style='color:{tema.AVISO}'>Falta preparar el equipo</span>")
+
+    def _tarjeta_rapido(self, rapido: dict, biblioteca: dict, en_gris, texto_minutos) -> QFrame:
+        """Rayo, nombre y tiempo, y las 4 caras (en gris las que no tienes). Clic = ver los equipos."""
+        datos = rapido["datos"]
+        tarjeta = QFrame(objectName="seccion")
+        tarjeta.setCursor(Qt.PointingHandCursor)
+        tarjeta.mousePressEvent = lambda _e: self.app.farmear.ver_equipos()
+        tarjeta.setToolTip("El equipo que menos tarda en ganar de los medidos. Clic para ver todos.")
+        fila = QHBoxLayout(tarjeta)
+        fila.setContentsMargins(12, 6, 12, 6)
+        fila.setSpacing(8)
+        rayo = QLabel()
+        rayo.setPixmap(iconos.pixmap("rayo", 22, tema.ACENTO))
+        fila.addWidget(rayo)
+        textos = QVBoxLayout()
+        textos.setSpacing(0)
+        titulo = QLabel(f"Más rápido · <b>{datos.get('nombre', '')}</b>")
+        textos.addWidget(titulo)
+        fuente = "medido por ti" if rapido["fuente"] == "tuyo" else "medido en pruebas"
+        textos.addWidget(QLabel(f"{texto_minutos(rapido['minutos'])} · {fuente}", objectName="tenue"))
+        fila.addLayout(textos)
+        fila.addSpacing(6)
+        faltan = 0
+        for pid in datos.get("personajes") or []:
+            pj = biblioteca.get(pid)
+            tengo = bool(pj and pj.tengo)
+            faltan += not tengo
+            foto = QLabel()
+            foto.setFixedSize(40, 40)
+            foto.setToolTip((pj.nombre if pj else pid) + ("" if tengo else " (no lo tienes)"))
+            pix = iconos.redondo(pj.ruta_cara(), 40, tema.ACENTO if tengo else tema.BORDE) if pj else None
+            if pix:
+                foto.setPixmap(pix if tengo else en_gris(pix))
+            else:
+                foto.setText((pj.nombre if pj else pid)[:2])
+                foto.setAlignment(Qt.AlignCenter)
+                foto.setObjectName("iniciales")
+            fila.addWidget(foto)
+        estado = QLabel("Lo tienes" if not faltan else f"Te faltan {faltan}")
+        estado.setStyleSheet(f"color: {tema.OK if not faltan else tema.AVISO}; font-weight: 700;")
+        fila.addSpacing(4)
+        fila.addWidget(estado)
+        return tarjeta
 
     def _refrescar_version(self):
         est = self.app.estado_update

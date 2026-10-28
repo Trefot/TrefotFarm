@@ -25,7 +25,8 @@ from lumen.gui import iconos, tema
 from lumen.gui.comun import Pagina
 from lumen.modos import MODOS
 
-COLUMNAS = 6
+ANCHO_TARJETA = 138
+HUECO = 12
 COLOR_ATRIBUTO = {"rojo": "#e05a4f", "verde": "#4cc38a", "azul": "#4f8fe0", "claro": "#e6c84c", "oscuro": "#a06ad8",
                   "sin definir": tema.TENUE}
 
@@ -44,16 +45,16 @@ class TarjetaPersonaje(QFrame):
         super().__init__(objectName="tarjeta_pj")
         self.pj = pj
         self.setCursor(Qt.PointingHandCursor)
-        self.setFixedSize(138, 222)
-        self.setToolTip(("Lo tienes. " if pj.tengo else "No lo tienes. ") + "Clic para cambiar."
-                        + (f"\nSe usa en: {', '.join(usado_en)}" if usado_en else ""))
+        self.setFixedSize(ANCHO_TARJETA, 222)
+        self.usado_en = usado_en
         capa = QVBoxLayout(self)
         capa.setContentsMargins(8, 8, 8, 8)
         capa.setSpacing(4)
 
-        foto = QLabel(alignment=Qt.AlignCenter)
-        foto.setFixedSize(120, 140)
-        foto.setObjectName("foto_pj")
+        self.foto = QLabel(alignment=Qt.AlignCenter)
+        self.foto.setFixedSize(120, 140)
+        self.foto.setObjectName("foto_pj")
+        self.pix = None
         ruta = pj.ruta_cara()
         if ruta.is_file():
             pix = QPixmap(str(ruta))
@@ -62,10 +63,10 @@ class TarjetaPersonaje(QFrame):
             else:  # retrato alargado de la pantalla del equipo: recortado al centro
                 pix = pix.scaled(120, 140, Qt.KeepAspectRatioByExpanding, Qt.SmoothTransformation)
                 pix = pix.copy((pix.width() - 120) // 2, 0, 120, 140)
-            foto.setPixmap(pix if pj.tengo else _en_gris(pix))
+            self.pix = pix
         else:
-            foto.setPixmap(iconos.pixmap("mdi6.account-question", 56, tema.TENUE))
-        capa.addWidget(foto, 0, Qt.AlignHCenter)
+            self.foto.setPixmap(iconos.pixmap("mdi6.account-question", 56, tema.TENUE))
+        capa.addWidget(self.foto, 0, Qt.AlignHCenter)
 
         nombre = QLabel(pj.nombre, alignment=Qt.AlignCenter, wordWrap=True)
         nombre.setObjectName("nombre_pj")
@@ -81,8 +82,18 @@ class TarjetaPersonaje(QFrame):
         capa.addLayout(fila)
         if not pj.tiene_datos:
             capa.addWidget(QLabel("Sin datos aún", objectName="tenue", alignment=Qt.AlignCenter))
+        self.poner_tengo(pj.tengo)
 
-        self.setProperty("tengo", pj.tengo)
+    def poner_tengo(self, tengo: bool):
+        """A color si lo tienes, en gris si no (sin rehacer la tarjeta)."""
+        self.pj.tengo = tengo
+        if self.pix is not None:
+            self.foto.setPixmap(self.pix if tengo else _en_gris(self.pix))
+        self.setToolTip(("Lo tienes. " if tengo else "No lo tienes. ") + "Clic para cambiar."
+                        + (f"\nSe usa en: {', '.join(self.usado_en)}" if self.usado_en else ""))
+        self.setProperty("tengo", tengo)
+        self.style().unpolish(self)
+        self.style().polish(self)
 
     def mousePressEvent(self, evento):
         if evento.button() == Qt.LeftButton:
@@ -109,12 +120,26 @@ class PaginaPersonajes(Pagina):
         self.buscar.textChanged.connect(self._pintar)
         barra.addWidget(self.buscar)
         self.filtro = QButtonGroup(self, exclusive=True)
-        for i, texto in enumerate(("Todos", "Los tengo", "Me faltan")):
+        for i, (texto, ayuda) in enumerate((("Todos", ""), ("Los tengo", ""), ("Me faltan", ""),
+                                            ("En equipos", "Los que salen en algún equipo recomendado"))):
             b = QPushButton(texto, objectName="chip", checkable=True)
             b.setChecked(i == 0)
+            b.setToolTip(ayuda)
             self.filtro.addButton(b, i)
             barra.addWidget(b)
         self.filtro.buttonClicked.connect(lambda _: self._pintar())
+        barra.addSpacing(10)
+        # Atributo: un punto de color por cada uno (se pueden quitar todos = sin filtro)
+        self.atributos = QButtonGroup(self, exclusive=False)
+        for color in ("rojo", "verde", "azul", "claro", "oscuro"):
+            b = QPushButton("●", objectName="chip", checkable=True)
+            b.setFixedWidth(34)
+            b.setToolTip(P.NOMBRE_COLOR[color])
+            b.setStyleSheet(f"QPushButton {{ color: {COLOR_ATRIBUTO[color]}; font-size: 13pt; padding: 0; }}")
+            b.setProperty("color", color)
+            self.atributos.addButton(b)
+            barra.addWidget(b)
+        self.atributos.buttonClicked.connect(lambda _: self._pintar())
         barra.addStretch()
         self.contador = QLabel(objectName="titulo_seccion")
         barra.addWidget(self.contador)
@@ -122,37 +147,65 @@ class PaginaPersonajes(Pagina):
 
         self.zona = QWidget()
         self.rejilla = QGridLayout(self.zona)
-        self.rejilla.setSpacing(12)
-        self.rejilla.setAlignment(Qt.AlignTop | Qt.AlignLeft)
-        desplazar = QScrollArea(widgetResizable=True)
-        desplazar.setWidget(self.zona)
-        self.cuerpo.addWidget(desplazar, 1)
+        self.rejilla.setSpacing(HUECO)
+        self.rejilla.setAlignment(Qt.AlignTop | Qt.AlignHCenter)
+        self.desplazar = QScrollArea(widgetResizable=True)
+        self.desplazar.setWidget(self.zona)
+        self.cuerpo.addWidget(self.desplazar, 1)
+        self.tarjetas: dict[str, TarjetaPersonaje] = {}
+        self.columnas = 0
         self.al_mostrar()
 
     def al_mostrar(self):
         self.b_editar.setVisible(bool(config.obtener("modo_admin")))
         self.biblioteca = P.cargar()
+        self._construir()
         self._pintar()
 
-    def _pintar(self):
-        while self.rejilla.count():
-            w = self.rejilla.takeAt(0).widget()
-            if w:
-                w.setParent(None)
-        texto = self.buscar.text().strip().lower()
-        filtro = self.filtro.checkedId()
-        lista = sorted(self.biblioteca.values(), key=lambda p: (not p.tengo, not p.tiene_datos, p.nombre.lower()))
-        n = 0
-        for pj in lista:
-            if texto and texto not in pj.nombre.lower():
-                continue
-            if (filtro == 1 and not pj.tengo) or (filtro == 2 and pj.tengo):
-                continue
+    def _construir(self):
+        """Una tarjeta por personaje (se hacen una vez; filtrar solo las coloca o las esconde)."""
+        for t in self.tarjetas.values():
+            t.setParent(None)
+        from lumen.gui.paginas.equipos import cargar_equipos
+
+        self.en_equipos = {pid for clave, lista in cargar_equipos().items() if not clave.startswith("_")
+                           for datos in lista or [] for pid in (datos.get("personajes") or [])}
+        self.tarjetas = {}
+        for pj in self.biblioteca.values():
             usado = [m.titulo_juego or m.nombre for m in MODOS.values() if getattr(m, "equipo", None) and pj.id in m.equipo.orden]
             t = TarjetaPersonaje(pj, usado)
             t.cambiado.connect(self._cambiar)
-            self.rejilla.addWidget(t, n // COLUMNAS, n % COLUMNAS)
-            n += 1
+            t.hide()
+            self.tarjetas[pj.id] = t
+        self.orden = sorted(self.biblioteca.values(), key=lambda p: (not p.tengo, not p.tiene_datos, p.nombre.lower()))
+
+    def _columnas_que_caben(self) -> int:
+        ancho = self.desplazar.viewport().width() - 2 * HUECO
+        return max(1, (ancho + HUECO) // (ANCHO_TARJETA + HUECO))
+
+    def resizeEvent(self, evento):
+        super().resizeEvent(evento)
+        if self.tarjetas and self._columnas_que_caben() != self.columnas:
+            self._pintar()
+
+    def _pintar(self):
+        while self.rejilla.count():
+            self.rejilla.takeAt(0)
+        texto = self.buscar.text().strip().lower()
+        filtro = self.filtro.checkedId()
+        colores = {b.property("color") for b in self.atributos.buttons() if b.isChecked()}
+        self.columnas = self._columnas_que_caben()
+        n = 0
+        for pj in self.orden:
+            t = self.tarjetas[pj.id]
+            visible = (not texto or texto in pj.nombre.lower()) \
+                and not (filtro == 1 and not pj.tengo) and not (filtro == 2 and pj.tengo) \
+                and not (filtro == 3 and pj.id not in self.en_equipos) \
+                and (not colores or pj.color in colores)
+            t.setVisible(visible)
+            if visible:
+                self.rejilla.addWidget(t, n // self.columnas, n % self.columnas)
+                n += 1
         tengo = sum(1 for p in self.biblioteca.values() if p.tengo)
         self.contador.setText(f"Tienes {tengo} de {len(self.biblioteca)}")
 
@@ -161,5 +214,10 @@ class PaginaPersonajes(Pagina):
         for modo in MODOS.values():
             if getattr(modo, "equipo", None):
                 modo.equipo.recargar()
-        self.al_mostrar()
+        self.tarjetas[pid].poner_tengo(tengo)  # se queda en su sitio: el orden cambia al volver a la pagina
+        filtro = self.filtro.checkedId()
+        if filtro in (1, 2):  # con "Los tengo" / "Me faltan" ya no le toca estar
+            self._pintar()
+        tengo_total = sum(1 for p in self.biblioteca.values() if p.tengo)
+        self.contador.setText(f"Tienes {tengo_total} de {len(self.biblioteca)}")
         self.app.refrescar_insignias()

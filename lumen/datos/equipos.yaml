@@ -6,6 +6,8 @@
 # nivel: recomendado | bueno | alternativa
 # personajes: ids de lumen/datos/personajes.yaml, de izquierda a derecha como en el juego
 # bot: true si el bot sabe jugar ese equipo
+# minutos: minutos por victoria medidos en las pruebas (con menus y cargas). El mas rapido sale en Inicio
+#   y primero en Farmear. Lo que mida el bot en cada PC (5 peleas o mas) manda sobre este numero.
 # alternativas: personaje -> otros que pueden ocupar su lugar (mejor no usarlo: cada opcion va como
 #   un equipo aparte, asi se ve de un vistazo cual puedes armar)
 #
@@ -26,6 +28,7 @@ perros_piso4:
   - nombre: Equipo Lumen
     nivel: recomendado
     bot: true
+    minutos: 2.5  # la pelea sola (de las notas); falta medirlo con menus y cargas
     personajes: [odin, gawain, freyja_roja, thonar_azul]
     notas: >-
       El que juega el bot. Gana en unos 2,5 minutos y casi siempre en 4 turnos.
