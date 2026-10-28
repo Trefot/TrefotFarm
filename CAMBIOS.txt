@@ -29,6 +29,17 @@ Etapas previstas:
 
 CAMBIOS
 -------
+0.3.0-alpha
+  - Botin: cada objeto se une con su objeto de las tablas de premios del juego, buscando su icono solo
+    entre lo que puede salir en el contenido donde aparecio. Asi toman nombre y descripcion en espanol,
+    el cubo gris es por fin "Esencia magica negra" y la caja de regalo de Indura "Caja aleatoria de
+    materiales de mejora de atuendos". Corrige "Eitri's Meticulousness" de los perros Floor 1-3: era
+    "Fuerza de Brok" (gema roja; la galeria se confundia).
+  - Botin, pestana Objetos: los que aun no han salido dicen donde pueden salir segun las tablas.
+  - Botin: las fotos sin boton OK no son la pantalla de premios y no cuentan objetos (las de Indura de
+    antes de la 0.2.3, en "HEART DESTROYED", metian 14 trozos del fondo de lava como objetos).
+  - Las fotos leidas con la lectura de antes se vuelven a leer solas al abrir Botin.
+
 0.2.7-alpha
   - Botin: las cantidades se leen con los digitos reales del juego (sacados de las fotos de
     recompensas). Antes leia "5" como 1, "2" como 1 o 7, "10" como 1 y "30" como 15; con las fotos

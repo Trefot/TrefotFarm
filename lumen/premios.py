@@ -71,3 +71,25 @@ def de(id_destino: str) -> list[Premio]:
         if linea.get("caja") and linea["caja"] not in p.cajas:
             p.cajas.append(linea["caja"])
     return list(juntos.values())
+
+
+def info(objeto: str) -> dict:
+    """nombre, descripcion y galeria (id en la galeria del inventario, si esta) de un objeto de las tablas."""
+    return dict((_datos().get("objetos") or {}).get(objeto) or {})
+
+
+def objetos_de(id_destino: str) -> set[str]:
+    """Todo lo que puede salir en un destino: primera vez, garantizados, lider y la tabla."""
+    destino = _datos().get(id_destino) or {}
+    return {linea["objeto"] for parte in ("primera_vez", "garantizados", "lider", "premios")
+            for linea in destino.get(parte) or []}
+
+
+def donde_sale(objeto: str) -> list[str]:
+    """Ids de los destinos en cuya tabla sale el objeto, en el orden del archivo."""
+    return [d for d in _datos() if d != "objetos" and objeto in objetos_de(d)]
+
+
+def todos() -> list[str]:
+    """Ids de todos los objetos de las tablas."""
+    return list(_datos().get("objetos") or {})

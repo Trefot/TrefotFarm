@@ -24,7 +24,7 @@ from PyQt5.QtWidgets import (
     QWidget,
 )
 
-from lumen import botin, config, historial, recompensas
+from lumen import botin, config, historial, premios, recompensas
 from lumen.gui import iconos, tema
 from lumen.gui.comun import Pagina, tarjeta
 
@@ -62,6 +62,13 @@ def donde_se_consigue(oids, registros: list[dict]) -> str:
     return ", ".join(f"{lugar} ({n})" for lugar, n in sorted(cuenta.items(), key=lambda kv: -kv[1]))
 
 
+def puede_salir_en(objeto_premio: str | None) -> str:
+    """'Indura, Gray Demon' segun las tablas de premios del juego (aunque aun no haya salido en el botin)."""
+    if not objeto_premio:
+        return ""
+    return ", ".join(_lugar({"modo": d}) for d in premios.donde_sale(objeto_premio))
+
+
 def detalle_objeto(oid: str, catalogo: dict, registros: list[dict]) -> str:
     datos = catalogo.get(oid) or {}
     partes = []
@@ -72,6 +79,9 @@ def detalle_objeto(oid: str, catalogo: dict, registros: list[dict]) -> str:
     donde = donde_se_consigue([oid], registros)
     if donde:
         partes.append(f"Se consigue en: {donde}")
+    tabla = puede_salir_en(datos.get("premio"))
+    if tabla:
+        partes.append(f"Según las tablas del juego sale en: {tabla}")
     return "\n".join(partes)
 
 
@@ -221,6 +231,7 @@ class PaginaRecompensas(Pagina):
         for oid, datos in catalogo.items():
             if (datos or {}).get("galeria"):
                 del_botin.setdefault(datos["galeria"], []).append(oid)
+        de_tabla = {premios.info(o).get("galeria"): o for o in premios.todos()}
         por_categoria: dict[str, list[str]] = {}
         for gid, g in galeria.items():
             por_categoria.setdefault(g.get("categoria") or "Otros", []).append(gid)
@@ -242,7 +253,9 @@ class PaginaRecompensas(Pagina):
                 textos.setSpacing(0)
                 textos.addWidget(QLabel(f"<b>{g.get('nombre', gid)}</b>"))
                 donde = donde_se_consigue(del_botin.get(gid, []), self.registros)
-                sub = QLabel(f"Sale en: {donde}" if donde else (g.get("tipo") or ""), objectName="tenue", wordWrap=True)
+                tabla = puede_salir_en(de_tabla.get(gid))
+                texto = f"Sale en: {donde}" if donde else (f"Puede salir en: {tabla}" if tabla else (g.get("tipo") or ""))
+                sub = QLabel(texto, objectName="tenue", wordWrap=True)
                 if donde:
                     sub.setStyleSheet(f"color: {tema.ACENTO};")
                 textos.addWidget(sub)
@@ -300,9 +313,10 @@ class PaginaRecompensas(Pagina):
         recompensas.deshacer_uniones_malas()
         recompensas.unir_repetidos_de_galeria()
         self.registros = recompensas.leer()
-        if any(not r.get("analizado") for r in self.registros):
-            recompensas.reanalizar_pendientes()  # fotos de antes de que existiera la lectura
+        if any(recompensas.pendiente(r) for r in self.registros):
+            recompensas.reanalizar_pendientes()  # fotos sin leer o leidas con una lectura de antes
             self.registros = recompensas.leer()
+        recompensas.vincular_premios()  # cada objeto con su linea de la tabla de premios de donde salio
         inicio_hoy = time.mktime(time.localtime()[:3] + (0, 0, 0, 0, 0, -1))
         sesiones: dict[float, list[dict]] = {}
         for r in self.registros:

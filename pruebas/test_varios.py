@@ -86,6 +86,23 @@ class Botin(unittest.TestCase):
         self.assertEqual(botin.leer_cantidad(casilla("1", "0")), 10)
         self.assertEqual(botin.leer_cantidad(casilla()), 1)  # sin numero: una unidad
 
+    def test_sin_boton_ok_no_hay_premios(self):
+        # Las fotos de Indura en "HEART DESTROYED" daban trozos del fondo como objetos.
+        pantalla = np.full((960, 554, 3), 40, np.uint8)
+        with mock.patch.object(botin, "analizar") as analizar:
+            self.assertTrue(recompensas._analizar(pantalla).get("sin_premios"))
+            analizar.assert_not_called()
+
+    def test_objeto_de_la_tabla_de_premios(self):
+        self.assertIn("perros_pisos1a3", premios.donde_sale("fuerza_brok"))
+        self.assertIn("fuerza_brok", premios.objetos_de("perros_pisos1a3"))
+        self.assertEqual(premios.info("fuerza_brok").get("galeria"), "brokkr_s_strength")
+        casilla = cv2.resize(vision.leer_imagen(premios.ICONOS / "fuerza_brok.png"), (botin.LADO, botin.LADO),
+                             interpolation=cv2.INTER_AREA)
+        icono = botin.icono(casilla)
+        self.assertEqual(botin.en_premios(icono, premios.objetos_de("perros_pisos1a3")), "fuerza_brok")
+        self.assertIsNone(botin.en_premios(icono, premios.objetos_de("indura")))  # no sale ahi
+
 
 class Idiomas(unittest.TestCase):
     def test_busca_la_imagen_en_ingles_y_en_espanol(self):
