@@ -29,6 +29,12 @@ Etapas previstas:
 
 CAMBIOS
 -------
+0.2.7-alpha
+  - Botin: las cantidades se leen con los digitos reales del juego (sacados de las fotos de
+    recompensas). Antes leia "5" como 1, "2" como 1 o 7, "10" como 1 y "30" como 15; con las fotos
+    del 28-10 acierta 70 de 71. Los digitos 6-9 aun no han salido: para ellos sigue el metodo viejo y
+    la casilla se guarda en recompensas/digitos_nuevos para aprenderlos.
+
 0.2.6-alpha
   - Sesion del juego: "Duplicate connection" / "Simultaneous log ins" se cierran y avisan al movil;
     "Connection confirmation expired" o la pantalla de contrasena paran el bot y avisan al movil (la
