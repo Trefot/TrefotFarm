@@ -11,7 +11,7 @@ Reutiliza todo el modo de Perros piso 4 (llegar a los pisos, pelear, botin, derr
 import re
 import time
 
-from lumen import entrada, juego, ocr
+from lumen import entrada, inteligencia, juego, ocr
 from lumen.cartas import Carta, Rango, TipoCarta
 from lumen.motor import Opcion, TerminarModo
 from lumen.modos.perros_piso4 import Estrategia, PerrosPiso4, Reiniciar
@@ -32,6 +32,22 @@ class EstrategiaSimple(Estrategia):
         raise Reiniciar("no hay cartas que jugar ni mover")
 
 
+class EstrategiaInteligente(EstrategiaSimple):
+    """Piensa el turno entero (lumen/inteligencia.py): que jugar ahora y que dejar para el siguiente,
+    contando las fusiones. Funciona con cualquier equipo: las cartas iguales se reconocen por su dibujo."""
+
+    def decidir(self, fase: int, turno: int, accion: int, mano: list[Carta], total: int = 4):
+        inteligencia.agrupar_por_dibujo(mano)
+        _, plan = inteligencia.planear(mano, total - accion)
+        if not plan:  # nada que jugar ni fusionar: lo de siempre (mover una carta para gastar el hueco)
+            return super().decidir(fase, turno, accion, mano, total)
+        reales = inteligencia.posiciones_reales(mano)
+        paso = plan[0]
+        if paso[0] == "jugar":
+            return reales[paso[1]], None, False
+        return (reales[paso[1]], reales[paso[2]]), None, False
+
+
 SALTAR_PISO_S = 25  # sin encontrar el piso que toca en la pantalla de pisos: pasar al siguiente
 
 
@@ -50,13 +66,17 @@ class BestiaPisos1a3(PerrosPiso4):
     opciones = [
         Opcion("victorias", "Victorias (0 = sin límite)", "entero", 0, maximo=9999),
         Opcion("primer_piso", "Empezar en el Floor", "lista", "1", opciones=["1", "2", "3"]),
+        Opcion("jugar", "Cómo jugar", "lista", "Inteligente", opciones=["Inteligente", "Simple"],
+               ayuda="Inteligente: piensa el turno entero y las fusiones. Simple: ulti y luego la de más rango."),
         Opcion("pociones", "Usar pociones de stamina", "si_no", True),
         Opcion("max_pociones", "Máximo de pociones (0 = sin límite)", "entero", 0, maximo=999),
     ]
 
     def __init__(self, valores: dict):
         super().__init__(valores)
-        self.estrategia = EstrategiaSimple()
+        inteligente = self.valores.get("jugar", "Inteligente") != "Simple"
+        self.estrategia = EstrategiaInteligente() if inteligente else EstrategiaSimple()
+        self.stats["estrategia"] = "Inteligente" if inteligente else "Simple"  # queda en el historial
         self.textos_vistos = False
         self.piso = int(self.valores.get("primer_piso") or 1)
         self.buscando_piso_desde: float | None = None
