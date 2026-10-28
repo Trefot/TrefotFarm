@@ -25,10 +25,10 @@ from PyQt5.QtWidgets import (
     QVBoxLayout,
 )
 
-from lumen import actualizador, avisos, botin, config, ordenes, recompensas, ventana
+from lumen import actualizador, avisos, botin, config, ordenes, premios, recompensas, ventana
 from lumen.control import control
 from lumen.gui import iconos, tema
-from lumen.gui.comun import Pagina, formatear_tiempo
+from lumen.gui.comun import Pagina, formatear_tiempo, icono_premio
 from lumen.gui.paginas.equipos import clave_de_equipos, tarjetas_equipos
 from lumen.modos import MODOS
 from lumen.modos.catalogo import contenido_de, foto_de
@@ -166,6 +166,16 @@ class PaginaFarmear(Pagina):
         desliza.setWidget(contenedor)
         desliza.setFixedHeight(78)
         capa_botin.addWidget(desliza, 1)
+        # A la derecha: lo que se puede conseguir en este modo (lumen/datos/premios.yaml)
+        self.raya_premios = QFrame(frameShape=QFrame.VLine, objectName="raya")
+        capa_botin.addWidget(self.raya_premios)
+        self.caja_premios = QVBoxLayout()
+        self.caja_premios.setSpacing(2)
+        self.caja_premios.addWidget(QLabel("Puedes conseguir", objectName="tenue"))
+        self.fila_premios = QHBoxLayout()
+        self.fila_premios.setSpacing(4)
+        self.caja_premios.addLayout(self.fila_premios)
+        capa_botin.addLayout(self.caja_premios)
         self.cuerpo.addWidget(caja_botin)
         self._fotos_vistas = None
 
@@ -294,6 +304,7 @@ class PaginaFarmear(Pagina):
         self.fila_pisos.addStretch()
         self._pintar_equipos()
         self._pintar_botin()
+        self._pintar_premios()
         while self.fila_fases.count():
             w = self.fila_fases.takeAt(0).widget()
             if w:
@@ -585,6 +596,30 @@ class PaginaFarmear(Pagina):
         if not tarjetas:
             self.lista_equipos.addWidget(QLabel("Todavía no hay equipos recomendados para este modo.", objectName="tenue"))
         self.lista_equipos.addStretch(1)
+
+    def _pintar_premios(self):
+        while self.fila_premios.count():
+            w = self.fila_premios.takeAt(0).widget()
+            if w:
+                w.setParent(None)
+        lista = premios.de(self.modo_cls.id)
+        for p in lista:
+            casilla = QFrame(objectName="premio_mini")
+            capa = QVBoxLayout(casilla)
+            capa.setContentsMargins(2, 2, 2, 0)
+            capa.setSpacing(0)
+            dibujo = QLabel(alignment=Qt.AlignCenter)
+            dibujo.setPixmap(icono_premio(p, 34))
+            capa.addWidget(dibujo)
+            prob = QLabel(p.texto_prob, objectName="prob_premio", alignment=Qt.AlignCenter)
+            prob.setProperty("raro", p.prob < 1)
+            prob.setProperty("siempre", p.siempre)
+            capa.addWidget(prob)
+            casilla.setToolTip(f"<b>{p.nombre}</b> {p.texto_cantidad}<br>{p.descripcion}<br><i>"
+                               + ("En cada victoria" if p.siempre else f"{p.texto_prob} por pelea") + "</i>")
+            self.fila_premios.addWidget(casilla)
+        for w in (self.raya_premios, self.caja_premios.itemAt(0).widget()):
+            w.setVisible(bool(lista))
 
     def _pintar_botin(self):
         """Los objetos y el oro de la sesion en curso (o de hoy en este modo, con el bot parado)."""

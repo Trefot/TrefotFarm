@@ -3,7 +3,7 @@
 import time
 
 from PyQt5.QtCore import QSize, Qt, QTimer
-from PyQt5.QtGui import QColor, QFontMetrics, QPainter, QPixmap
+from PyQt5.QtGui import QFontMetrics
 from PyQt5.QtWidgets import (
     QButtonGroup,
     QCheckBox,
@@ -21,7 +21,7 @@ from lumen import personajes as P
 from lumen.actualizador import version_local
 from lumen.control import control
 from lumen.gui import iconos, tema
-from lumen.gui.comun import Pagina, formatear_tiempo
+from lumen.gui.comun import Pagina, formatear_tiempo, icono_premio
 from lumen.gui.rueda import Rueda
 from lumen.modos import MODOS
 from lumen.modos.catalogo import CATALOGO, GRUPOS, contenido_de, foto_de
@@ -56,29 +56,6 @@ class Paso(QToolButton):
         self.setProperty("estado", estado)
         self.style().unpolish(self)
         self.style().polish(self)
-
-
-def _icono_premio(p, tam: int) -> QPixmap:
-    """El icono del objeto con su cantidad (×5, ×2–5) en la esquina, como en el juego."""
-    pix = QPixmap(str(p.icono))
-    if pix.isNull():
-        pix = iconos.pixmap("mdi6.help-box", tam, tema.TENUE)
-    pix = pix.scaled(tam, tam, Qt.KeepAspectRatio, Qt.SmoothTransformation)
-    if p.texto_cantidad:
-        pintor = QPainter(pix)
-        pintor.setRenderHint(QPainter.Antialiasing)
-        fuente = pintor.font()
-        fuente.setBold(True)
-        fuente.setPointSizeF(7.5)
-        pintor.setFont(fuente)
-        caja = pix.rect().adjusted(0, 0, -3, -1)
-        pintor.setPen(QColor(0, 0, 0, 220))
-        for dx, dy in ((-1, 0), (1, 0), (0, -1), (0, 1)):
-            pintor.drawText(caja.translated(dx, dy), Qt.AlignRight | Qt.AlignBottom, p.texto_cantidad)
-        pintor.setPen(QColor("white"))
-        pintor.drawText(caja, Qt.AlignRight | Qt.AlignBottom, p.texto_cantidad)
-        pintor.end()
-    return pix
 
 
 class PaginaInicio(Pagina):
@@ -274,7 +251,7 @@ class PaginaInicio(Pagina):
             capa.setContentsMargins(4, 4, 4, 2)
             capa.setSpacing(1)
             dibujo = QLabel(alignment=Qt.AlignCenter)
-            dibujo.setPixmap(_icono_premio(p, 46))
+            dibujo.setPixmap(icono_premio(p, 46))
             capa.addWidget(dibujo)
             prob = QLabel(p.texto_prob, objectName="prob_premio", alignment=Qt.AlignCenter)
             prob.setProperty("raro", p.prob < 1)

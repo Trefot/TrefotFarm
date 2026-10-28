@@ -176,6 +176,8 @@ QLabel#piso {{ background: {_s.hundido}; color: {_s.tenue}; border: 1px solid {_
                padding: 3px 12px; font-weight: 600; font-size: 9pt; }}
 QLabel#piso[estado="actual"] {{ background: {_ORO}; color: {_s.sobre_acento}; border-color: {_s.borde_oro}; }}
 QLabel#piso[estado="hecha"] {{ color: {OK}; border-color: #2c5f45; }}
+QFrame#premio_mini {{ background: {_s.hundido}; border: 1px solid {_s.borde}; border-radius: 7px; min-width: 42px; }}
+QFrame#raya {{ color: {_s.borde}; }}
 QFrame#premio {{ background: {_s.hundido}; border: 1px solid {_s.borde}; border-radius: 9px; min-width: 54px; }}
 QFrame#premio:hover {{ border-color: {_s.borde_oro}; }}
 QLabel#prob_premio {{ color: {_s.tenue}; font-size: 8.5pt; font-weight: 600; }}
