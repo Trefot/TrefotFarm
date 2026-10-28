@@ -218,6 +218,7 @@ class PerrosPiso4(Modo):
         Opcion("max_pociones", "Máximo de pociones (0 = sin límite)", "entero", 0, maximo=999),
     ]
     pausa_entre_pasos = 0.45
+    rendirse_si_bloqueada = True  # mano bloqueada al empezar un turno: rendirse y repetir
 
     def __init__(self, valores: dict):
         super().__init__(valores)
@@ -395,7 +396,7 @@ class PerrosPiso4(Modo):
         self.talento_usado = False
         self._stats()
         self.log(f"Fase {self.fase}, turno {self.turno_fase}: {huecos} cartas por jugar.")
-        if self.fase != 3 and juego.mano_bloqueada.esta(p, 0.6):
+        if self.rendirse_si_bloqueada and self.fase != 3 and juego.mano_bloqueada.esta(p, 0.6):
             self.log("Mano bloqueada desde el inicio: reinicio.", "aviso")
             return "rendirse"
         return self._jugar_turno()

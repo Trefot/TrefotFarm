@@ -3,6 +3,7 @@
 import time
 
 from PyQt5.QtCore import QSize, Qt, QTimer
+from PyQt5.QtGui import QFontMetrics
 from PyQt5.QtWidgets import (
     QButtonGroup,
     QCheckBox,
@@ -105,6 +106,9 @@ class PaginaInicio(Pagina):
             listos = sum(1 for c in CATALOGO if c.grupo == grupo and any(d.id in MODOS for d in c.destinos))
             b = QPushButton(f"{grupo}  ·  {listos}" if listos else grupo, objectName="chip", checkable=True)
             b.setCursor(Qt.PointingHandCursor)
+            negrita = b.font()
+            negrita.setBold(True)  # el elegido va en negrita: que quepa sin cortarse
+            b.setMinimumWidth(QFontMetrics(negrita).horizontalAdvance(b.text()) + 40)
             b.setToolTip(f"{listos} listo(s) para farmear" if listos else "Todavía nada listo para farmear")
             b.setProperty("grupo", grupo)
             b.setChecked(grupo == self.contenido.grupo)
@@ -253,6 +257,8 @@ class PaginaInicio(Pagina):
         if not self.grupo_victorias.checkedButton():
             self.grupo_victorias.buttons()[-1].setChecked(True)
         self.chk_pociones.setChecked(bool(guardadas.get("pociones", False)))
+        modo = MODOS.get(self.modo_id)  # Indura, p. ej., no usa pociones
+        self.chk_pociones.setVisible(modo is None or any(op.clave == "pociones" for op in modo.opciones))
 
     def _empezar_o_detener(self):
         if self.app.puente.corriendo:
@@ -308,6 +314,9 @@ class PaginaInicio(Pagina):
                                        f"Te falta: {', '.join(sin)}." if sin else "Tienes a todos.")
             self.pasos["cartas"].poner("falta" if faltan else "ok", f"Faltan {len(faltan)}" if faltan else "Listas",
                                        "\n".join(d.descripcion for d in faltan) if faltan else "Todas capturadas.")
+        elif self.listo:  # modo que juega con cualquier equipo
+            self.pasos["equipo"].poner("ok", "Cualquiera", "Sirve el equipo que tengas puesto en el juego.")
+            self.pasos["cartas"].poner("nada", "—", "Este modo no necesita capturas de cartas.")
         else:
             self.pasos["equipo"].poner("nada", "—", "Este modo aún no está listo.")
             self.pasos["cartas"].poner("nada", "—", "Este modo aún no está listo.")

@@ -46,7 +46,8 @@ GRUPOS = [BESTIAS, DEMONIOS, FUERTE]
 
 
 def _bestia(id_base: str, nombre: str, imagen: str) -> Contenido:
-    pisos = tuple(Destino(f"{id_base}_piso{n}", f"Floor {n}") for n in range(1, 5))
+    """Dos destinos: los pisos 1-3 seguidos en una sesion, y el piso 4."""
+    pisos = (Destino(f"{id_base}_pisos1a3", "Floor 1-3"), Destino(f"{id_base}_piso4", "Floor 4"))
     return Contenido(id_base, nombre, "Bestia demoníaca", "mdi6.paw", imagen, pisos, BESTIAS)
 
 

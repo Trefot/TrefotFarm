@@ -20,6 +20,7 @@ partidas, el bot se queda esperando invitaciones que no llegan; se para con un t
 import time
 
 from lumen import cartas, entrada, estrategias, juego
+from lumen.control import Detenido, control
 from lumen.motor import Modo, Opcion, TerminarModo
 from lumen.vision import Plantilla
 
@@ -137,11 +138,16 @@ class Indura(Modo):
             entrada.apuntar(rect, o)  # el raton ya encima de Accept: a los 9.3 s solo falta pulsar
             self.log(f"¡Invitación! La acepto a los {espera:.1f} s.")
             while (falta := espera - (time.perf_counter() - visto)) > 0:
-                time.sleep(min(falta, 0.05))  # en trozos cortos: F10 sigue respondiendo
+                time.sleep(min(falta, 0.05))  # en trozos cortos: F10 y la pausa siguen respondiendo
+                if control.detenido:
+                    raise Detenido()
+                if control.en_pausa:
+                    self.log("En pausa: dejo pasar esta invitación.", "aviso")
+                    return None
             # Sin volver a capturar ni mover el raton: pulsar ya (cada centesima cuenta).
             entrada.pulsar()
             self.log(f"Aceptada a los {time.perf_counter() - visto:.2f} s.", "debug")
-            time.sleep(3.0)
+            control.esperar(3.0)
             p, _ = self.capturar()
             if ACEPTAR.esta(p, 0.7):
                 self.perdidas += 1
@@ -198,7 +204,7 @@ class Indura(Modo):
                 return
             self.log(f"Equipo reconocido: {self.estrategia.nombre}. Juego como tú.", "ok")
         self.estrategia.etiquetar(mano)
-        carta = self.estrategia.elegir(mano)
+        carta = self.estrategia.elegir(mano) or estrategias.la_de_mas_rango(mano)
         if carta is None:
             return
         entrada.clic(carta.rect, o, espera=0.3)

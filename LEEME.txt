@@ -52,6 +52,9 @@ Botin             suma de todo lo conseguido (oro y cada objeto, por dia o por s
 Ajustes           ventana del juego, teclas rapidas, avisos al movil y repositorio de GitHub.
 
 Para farmear: juego abierto y visible, equipo puesto, Inicio -> gira la rueda -> "Empezar".
+Perros Floor 1-3: juega Floor 1, 2 y 3 seguidos y vuelve a empezar. Sirve cualquier equipo fuerte
+(juega primero las ultis y luego las cartas de mas rango). El piso se busca leyendo el texto
+"Floor N" de la pantalla.
 F9 pausa / reanuda, F10 detiene (cambiables en Ajustes).
 Freno de emergencia: lleva el raton a una esquina de la pantalla.
 Mientras corre, el bot usa tu raton: no lo muevas.
@@ -106,10 +109,10 @@ lumen\            el codigo:
 
 AGREGAR UN MODO NUEVO
 ---------------------
-La lista de todo lo que el bot va a farmear esta en modos\catalogo.py (bestias por piso,
+La lista de todo lo que el bot va a farmear esta en modos\catalogo.py (bestias: Floor 1-3 y Floor 4,
 demonios, oro y monedas SA). En Inicio sale en dorado lo que ya funciona y en gris lo demas.
 Para programar uno: copia modos\perros_piso4.py, usa el mismo id que tiene en el catalogo
-(p. ej. "pajaro_piso4" o "demonio_rojo") y anadelo a MODOS en modos\__init__.py.
+(p. ej. "pajaro_pisos1a3", "pajaro_piso4" o "demonio_rojo") y anadelo a MODOS en modos\__init__.py.
 
 
 Ojo: usar bots va contra las reglas de Netmarble y puede costar un baneo.

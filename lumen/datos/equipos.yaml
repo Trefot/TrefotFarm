@@ -1,8 +1,8 @@
 # Equipos recomendados por contenido (lo mantiene el administrador; viaja con las actualizaciones).
 # Se muestran en la pagina Equipos en este orden: del mejor al que "pasa" con mas dificultad.
 #
-# Clave: el id de un destino del catalogo (lumen/modos/catalogo.py, p. ej. "perros_piso4") o el de un
-# contenido entero ("perros" = sus otros pisos; "rata" = todos).
+# Clave: el id de un destino del catalogo (lumen/modos/catalogo.py: "perros_pisos1a3" = Floor 1-3,
+# "perros_piso4" = Floor 4) o el de un contenido entero ("rata" = todos sus pisos).
 # nivel: recomendado | bueno | alternativa
 # personajes: ids de lumen/datos/personajes.yaml, de izquierda a derecha como en el juego
 # bot: true si el bot sabe jugar ese equipo
@@ -75,7 +75,7 @@ perros_piso4:
     notas: >-
       El mismo equipo con Cusack en lugar de Roxy. El bot todavía no sabe jugarlo.
 
-perros:
+perros_pisos1a3:
   - nombre: Escanor UR y Lostvayne
     nivel: recomendado
     personajes: [escanor_the_indomitable_verde, lostvayne_meliodas_rojo, sun_god_freyr_rojo, thonar_azul]
@@ -124,7 +124,7 @@ ciervo_piso4:
     notas: >-
       El mismo equipo con Hel verde en lugar de Tyr verde. Sin Skuld.
 
-ciervo:
+ciervo_pisos1a3:
   - nombre: Jormungand, Freyr y Thor
     nivel: recomendado
     personajes: [world_serpent_jormungand_verde, sun_god_freyr_rojo, thor_the_god_of_thunder_azul, repose_of_souls_hel_verde]

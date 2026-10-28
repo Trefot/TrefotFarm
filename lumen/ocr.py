@@ -1,6 +1,7 @@
 """Leer texto de la pantalla con el OCR que trae Windows (paquetes winrt).
 
-Se usa para la captura de heroes (nombres, atributos, descripciones de cartas), no al farmear.
+Se usa en la captura de heroes (nombres, atributos, descripciones de cartas) y para encontrar
+los botones de los pisos de las bestias.
 Si los paquetes no estan instalados, ``disponible()`` devuelve False y nada mas falla.
 """
 
@@ -44,6 +45,10 @@ def preparar(imagen: np.ndarray, escala: float = 2.0, invertir: bool = False) ->
 
 def leer(imagen: np.ndarray, escala: float = 2.0, invertir: bool = False) -> list[str]:
     """Lineas de texto de la imagen (BGR o gris)."""
+    return [linea.text.strip() for linea in _reconocer(imagen, escala, invertir).lines if linea.text.strip()]
+
+
+def _reconocer(imagen: np.ndarray, escala: float, invertir: bool):
     motor = _obtener_motor()
     if motor is None:
         raise RuntimeError("El OCR de Windows no esta disponible (faltan los paquetes winrt).")
@@ -58,8 +63,22 @@ def leer(imagen: np.ndarray, escala: float = 2.0, invertir: bool = False) -> lis
     async def reconocer():
         return await motor.recognize_async(mapa)
 
-    resultado = asyncio.run(reconocer())
-    return [linea.text.strip() for linea in resultado.lines if linea.text.strip()]
+    return asyncio.run(reconocer())
+
+
+def lineas_con_posicion(imagen: np.ndarray, escala: float = 2.0, invertir: bool = False) -> list[tuple[str, tuple[int, int, int, int]]]:
+    """Cada linea de texto con su rectangulo (x, y, w, h) en la imagen original."""
+    salida = []
+    for linea in _reconocer(imagen, escala, invertir).lines:
+        cajas = [p.bounding_rect for p in linea.words]
+        if not cajas or not linea.text.strip():
+            continue
+        x1 = min(c.x for c in cajas)
+        y1 = min(c.y for c in cajas)
+        x2 = max(c.x + c.width for c in cajas)
+        y2 = max(c.y + c.height for c in cajas)
+        salida.append((linea.text.strip(), tuple(int(v / escala) for v in (x1, y1, x2 - x1, y2 - y1))))
+    return salida
 
 
 def leer_region(pantalla: np.ndarray, region: tuple[int, int, int, int], **opciones) -> list[str]:
