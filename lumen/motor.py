@@ -112,6 +112,20 @@ class Modo:
             self.log("El juego pide reiniciar. Detengo el bot para que lo revises.", "error")
             avisos.enviar("LumenFarm: el juego pide reiniciar, bot detenido.", pantalla)
             raise TerminarModo()
+        if juego.conexion_duplicada.esta(pantalla, 0.8):
+            # "Duplicate connection" / "Simultaneous log ins": se entro a la cuenta desde otro sitio.
+            self.log("El juego cerró la sesión (la cuenta se abrió en otro sitio). Cierro el aviso.", "aviso")
+            avisos.enviar("LumenFarm: el juego cerró la sesión (la cuenta se abrió en otro sitio).", pantalla)
+            self.clic_si(juego.ok, pantalla, origen, espera=2.0)
+            return True
+        if juego.conexion_caducada.esta(pantalla, 0.8) or juego.contrasena.esta(pantalla, 0.8):
+            # Para volver hay que entrar con la contrasena: eso lo hace el jugador, no el bot.
+            self.log("El juego cerró la sesión y pide entrar de nuevo. Detengo el bot.", "error")
+            avisos.enviar("LumenFarm: el juego cerró la sesión y pide entrar de nuevo. Bot detenido.", pantalla)
+            raise TerminarModo()
+        if self.clic_si(juego.servidor_global, pantalla, origen, umbral=0.8, punto=juego.COORD["centro"], espera=3.0):
+            self.log("Pantalla de inicio del juego: toco para entrar.", "aviso")
+            return True
         return False
 
     def al_terminar(self):

@@ -24,6 +24,12 @@ rendirse = P("forfeit.png")
 mano_bloqueada = P("skill_locked.png")
 carga_taberna = P("tavern_loading_screen.png")
 info_mision = P("dailies/quest_info.png")
+# Sesion del juego (imagenes de AutoFarming, MIT): avisos de conexion, la pantalla de contrasena y la de
+# servidor. En una prueba de Indura el juego cerro la sesion y el bot se quedo 6 min sin reconocer nada.
+conexion_duplicada = P("duplicate_connection.png", "simultaneous_logins.png", nombre="conexion_duplicada")
+conexion_caducada = P("connection_confirmation_expired.png")
+contrasena = P("password.png")
+servidor_global = P("global_server.png")
 ok = P(
     "ok_buttons/ok_button.jpg",
     "ok_buttons/OK_save_party.png",

@@ -22,7 +22,9 @@ partidas, el bot se queda esperando invitaciones que no llegan; se para con un t
 
 import time
 
-from lumen import botin, cartas, entrada, estrategias, inteligencia, juego
+import cv2
+
+from lumen import avisos, botin, cartas, entrada, estrategias, inteligencia, juego
 from lumen.control import Detenido, control
 from lumen.motor import Modo, Opcion, TerminarModo
 from lumen.vision import Plantilla
@@ -82,6 +84,10 @@ class Indura(Modo):
         self.jugador = inteligencia.Jugador(enemigos=1, arrastrar=False)
         self.turnos_sin_equipo = 0
         self.libres_antes = -1  # casillas libres cuando se toco la ultima carta
+        self.ultima_tocada = None  # la ultima carta tocada (por si no entra en su casilla)
+        self.rechazadas: list = []  # dibujos de cartas que no entraron este turno
+        self.desconocida_desde: float | None = None  # pantalla sin nada conocido desde...
+        self.avisado_desconocida = False
         self.tocado_en = 0.0
 
     def estado_inicial(self):
@@ -111,10 +117,20 @@ class Indura(Modo):
             return "buscar"
         if VENTANA_UNION.esta(p, 0.85):
             return "elegir"
-        self.clic_si(juego.ok, p, o)  # avisos que tapan el menu
-        self.clic_si(juego.menu_batalla, p, o, umbral=0.6, espera=1.0)
-        self.clic_si(BOSS_BATTLE, p, o, umbral=0.75, espera=1.0)
-        self.clic_si(TIEMPO_REAL, p, o, umbral=0.75, espera=1.0)
+        conocida = (self.clic_si(juego.ok, p, o)  # avisos que tapan el menu
+                    | self.clic_si(juego.menu_batalla, p, o, umbral=0.6, espera=1.0)
+                    | self.clic_si(BOSS_BATTLE, p, o, umbral=0.75, espera=1.0)
+                    | self.clic_si(TIEMPO_REAL, p, o, umbral=0.75, espera=1.0))
+        if conocida:
+            self.desconocida_desde, self.avisado_desconocida = None, False
+            return None
+        # Nada conocido en pantalla: en una prueba el bot se quedo asi 6 min sin decir nada. A los 3 min,
+        # aviso al movil con la foto (una vez) para que el jugador mire que paso.
+        self.desconocida_desde = self.desconocida_desde or time.time()
+        if not self.avisado_desconocida and time.time() - self.desconocida_desde > 180:
+            self.avisado_desconocida = True
+            self.log("Llevo 3 min sin reconocer la pantalla. Te mando una foto al móvil.", "aviso")
+            avisos.enviar("LumenFarm (Indura): llevo 3 min sin reconocer la pantalla del juego.", p)
         return None
 
     def elegir(self, p, o):
@@ -206,7 +222,19 @@ class Indura(Modo):
         # Tras tocar una carta, esperar a que ocupe su casilla antes de elegir la siguiente.
         if libres == self.libres_antes and time.time() - self.tocado_en < 2.0:
             return
+        if libres > self.libres_antes:  # turno nuevo: se olvidan las cartas rechazadas
+            self.rechazadas = []
+        elif libres == self.libres_antes and self.ultima_tocada is not None:
+            # La carta no entro en su casilla (bloqueada aunque no se vea oscura): en una prueba el bot toco
+            # la misma 7 veces seguidas, perdio el turno y la pelea. Se aparta el resto del turno.
+            self.rechazadas.append(self.ultima_tocada.imagen)
+            self.log(f"   {self.ultima_tocada.nombre} no entra: la aparto este turno.", "aviso")
+        self.ultima_tocada = None
         mano = cartas.leer_mano_demonio(p)
+        for c in mano:
+            if c.imagen is not None and any(c.imagen.shape == r.shape and float(cv2.absdiff(c.imagen, r).mean()) < 12
+                                            for r in self.rechazadas):
+                c.tipo = cartas.TipoCarta.BLOQUEADA
         if self.valores.get("jugar") == "Inteligente":
             self._jugar_inteligente(mano, libres, o)
             return
@@ -224,7 +252,7 @@ class Indura(Modo):
         if carta is None:
             return
         entrada.clic(carta.rect, o, espera=0.3)
-        self.libres_antes, self.tocado_en = libres, time.time()
+        self.libres_antes, self.tocado_en, self.ultima_tocada = libres, time.time(), carta
         self.log(f"   juego {carta.nombre} ({carta.rango.name.lower()}, posición {carta.posicion + 1})", "debug")
 
     def _jugar_inteligente(self, mano, libres: int, o):
@@ -235,7 +263,7 @@ class Indura(Modo):
             return
         carta = mano[paso[1]]
         entrada.clic(carta.rect, o, espera=0.3)
-        self.libres_antes, self.tocado_en = libres, time.time()
+        self.libres_antes, self.tocado_en, self.ultima_tocada = libres, time.time(), carta
         self.log(f"   juego {carta.nombre} ({carta.rango.name.lower()}, posición {carta.posicion + 1})", "debug")
 
     def pelea(self, p, o):
