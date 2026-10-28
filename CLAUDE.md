@@ -28,5 +28,9 @@ Reglas completas en CAMBIOS.txt. Resumen:
   la 0.2.1 (Perros Floor 1-3) el bot creía estar en los pisos sin haber entrado a la bestia (contaba
   "Obtain Floor N First Clear Reward") y no veía el Floor 1 (el OCR lee "Floor I"): arreglado en 0.2.2
   con capturas reales; con la 0.2.2 ganó Floor 1, 2 y 3 seguidos. 0.2.3: objetivo de los lobos por
-  fase, pantallas sin imagen tras ganar, Indura acepta como AutoFarming y foto del botín: sin probar. El juego no acepta clics de un proceso sin
+  fase, pantallas sin imagen tras ganar, Indura acepta como AutoFarming y foto del botín. 0.2.4 abre el
+  piso por su círculo: ganó F1-F3 en ~2,5 min. 0.2.5 (sin probar): fase 3 solo áreas/ultis, Reset tras el F3,
+  cartas que no entran = bloqueadas. PENDIENTE: las cantidades del botín se leen mal (botin.leer_cantidad:
+  "5"->1, "2"->1 o 7, "10"->1, "30"->15); hace falta referencias de dígitos reales del juego (hay 0-5 en las
+  fotos de recompensas del 28-10; faltan 6-9). Y el perro claro (der) nunca se confirma al apuntar. El juego no acepta clics de un proceso sin
   permisos de administrador: las pruebas en vivo las lanza el usuario desde Lumen.

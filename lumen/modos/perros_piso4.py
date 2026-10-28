@@ -189,6 +189,13 @@ class Estrategia:
 
 
 # ----------------------------------------------------------------------- el modo
+def _misma_imagen(a, b) -> bool:
+    """La misma carta de la mano (para recordar una que el juego no acepto)."""
+    import cv2
+
+    return a.shape == b.shape and float(cv2.absdiff(a, b).mean()) < 12
+
+
 class PerrosPiso4(Modo):
     id = "perros_piso4"
     nombre = "Skollandhati & Hati · Floor 4"
@@ -413,6 +420,9 @@ class PerrosPiso4(Modo):
     def _jugar_turno(self):
         """Juega cartas hasta llenar los huecos. Se puede retomar si se corta a medias."""
         ultima_accion, repeticiones = None, 0
+        # Cartas que se jugaron y no entraron en su hueco: el juego no las acepta (bloqueadas aunque no se vean
+        # oscuras). Se tratan como bloqueadas el resto del turno en vez de repetirlas (prueba de la 0.2.4).
+        ultima_carta, rechazadas = None, []
         limite = time.time() + 45
         while time.time() < limite:
             p, o = self.capturar()
@@ -432,10 +442,17 @@ class PerrosPiso4(Modo):
                 if repeticiones < 8:
                     self.esperar_corto(0.25)
                     continue
-                self.log("El hueco no se lleno; repito la accion.", "aviso")
+                if ultima_carta is not None and ultima_carta.imagen is not None:
+                    rechazadas.append(ultima_carta.imagen)
+                    self.log(f"{ultima_carta} no entra en su hueco: la trato como bloqueada este turno.", "aviso")
+                else:
+                    self.log("El hueco no se lleno; repito la accion.", "aviso")
             repeticiones = 0
 
             mano = EQUIPO.etiquetar(C.leer_mano(p))
+            for c in mano:
+                if c.imagen is not None and any(_misma_imagen(c.imagen, r) for r in rechazadas):
+                    c.tipo = TipoCarta.BLOQUEADA
             self.log("Mano: " + " ".join(str(c) for c in mano), "debug")
             try:
                 idx, objetivo, talento = self.estrategia.decidir(self.fase, self.turno_fase, accion, mano, self.huecos_turno)
@@ -456,6 +473,7 @@ class PerrosPiso4(Modo):
                 carta = mano[idx]
                 self.log(f"Accion {accion + 1}: juego {carta}")
                 entrada.clic(carta.rect, o, espera=0)
+                ultima_carta = carta
             if self._esperar_hueco(huecos):
                 self.log("Carta colocada.", "debug")
             else:
