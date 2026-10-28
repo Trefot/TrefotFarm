@@ -1,0 +1,42 @@
+LUMEN FARM - VERSIONES Y CAMBIOS
+================================
+
+COMO SE NUMERAN LAS VERSIONES
+-----------------------------
+  0 . 1 . 0 - alpha
+  |   |   |     |
+  |   |   |     +-- etapa: alpha (falta probarlo en el juego), beta (funciona en el juego y lo
+  |   |   |         prueban otros), nada a partir de la 1.0 (estable)
+  |   |   +-- ARREGLO: fallos, textos, retoques visuales, datos (equipos, premios, medidas)
+  |   +------ NOVEDAD: algo nuevo que se nota al usarlo (un modo, una funcion, una pagina)
+  +---------- GRANDE: 1.0.0 = el lanzamiento. Despues, solo un cambio enorme (rediseno total o
+              algo que obliga a configurar de nuevo) sube a 2.0.0
+
+Reglas:
+- Una version por actualizacion (cada PR que se aprueba), no por cada cambio pequeno.
+- Se sube segun lo MAS grande que traiga: si trae una novedad y tres arreglos, es novedad.
+- Al subir un numero, los de su derecha vuelven a 0 (0.3.2 + novedad = 0.4.0).
+- Ejemplos: un modo nuevo o el plan del dia -> novedad. Casillas que no se veian, un texto
+  cortado, el tiempo medido de un equipo -> arreglo.
+
+Etapas previstas:
+  0.x-alpha  ahora: todo esta hecho pero casi nada se ha probado con el juego
+  0.x-beta   cuando funcione en el juego y lo prueben otras personas
+  1.0.0      el lanzamiento, cuando la beta vaya bien un tiempo sin fallos graves
+
+(Las versiones 2.x y 3.x eran de TrefotFarm, el nombre anterior. Lumen Farm empieza de cero.)
+
+
+CAMBIOS
+-------
+0.1.0-alpha
+  Primera version con el nombre Lumen Farm. Lo que trae:
+  - Inicio: rueda con fotos para elegir que farmear (bestias Floor 1-3 y Floor 4, demonios),
+    lo que se puede conseguir y el equipo mas rapido medido.
+  - Farmear: todo en una pantalla (cifras, botin, registro, plan del dia, opciones y los
+    mejores equipos). Resumen al terminar, tambien al movil.
+  - Plan del dia: tareas seguidas sin nadie; saltar tarea; sin estamina salta las que la usan.
+  - Juego inteligente en Floor 1-3 e Indura (fusiones, cartas de area).
+  - Ordenes desde el movil (ntfy); boton Generar para un canal secreto.
+  - Juego en ingles o en espanol (faltan las imagenes de los botones en espanol).
+  - Personajes, Ayuda con tarjetas, Ajustes y pruebas automaticas (Probar.bat).

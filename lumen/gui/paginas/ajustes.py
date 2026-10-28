@@ -1,5 +1,8 @@
 """Pagina Ajustes: juego, aspecto, teclas, avisos al movil y modo administrador (con el repositorio de actualizaciones)."""
 
+import secrets
+import string
+
 from PyQt5.QtCore import QSize
 from PyQt5.QtWidgets import (
     QCheckBox,
@@ -38,6 +41,14 @@ def seccion(titulo: str, icono: str) -> tuple[QFrame, QVBoxLayout]:
 
 def nota(texto: str) -> QLabel:
     return QLabel(texto, objectName="tenue", wordWrap=True)
+
+
+MINIMO_CANAL = 12  # con menos letras, el nombre del canal de ntfy se puede adivinar
+
+
+def canal_secreto() -> str:
+    """Un nombre de canal imposible de adivinar (16 letras y numeros al azar)."""
+    return "lumen-" + "".join(secrets.choice(string.ascii_lowercase + string.digits) for _ in range(16))
 
 
 class PaginaAjustes(Pagina):
@@ -96,23 +107,36 @@ class PaginaAjustes(Pagina):
         self.ntfy = QLineEdit()
         self.ntfy.setText(config.obtener("ntfy_canal"))
         self.ntfy.setPlaceholderText("vacío = sin avisos")
+        self.ntfy.textChanged.connect(self._revisar_canal)
         self.atasco = QSpinBox(minimum=0, maximum=120, value=int(config.obtener("minutos_atasco")))
         self.atasco.setSuffix(" min")
-        f.addRow("Canal de ntfy", self.ntfy)
+        fila_canal = QHBoxLayout()
+        fila_canal.addWidget(self.ntfy, 1)
+        b_generar = QPushButton(" Generar", objectName="chico")
+        b_generar.setIcon(iconos.icono("mdi6.dice-5", tema.TEXTO))
+        b_generar.setToolTip("Crea un nombre de canal secreto, imposible de adivinar")
+        b_generar.clicked.connect(lambda: self.ntfy.setText(canal_secreto()))
+        fila_canal.addWidget(b_generar)
+        f.addRow("Canal de ntfy", fila_canal)
         f.addRow("Avisar si se atasca (0 = no)", self.atasco)
         c.addLayout(f)
+        self.aviso_canal = QLabel(wordWrap=True)
+        self.aviso_canal.setStyleSheet(f"color: {tema.AVISO};")
+        c.addWidget(self.aviso_canal)
         self.ordenes = QCheckBox("Aceptar órdenes desde el móvil (escribe 'ayuda' en el canal)")
         self.ordenes.setChecked(bool(config.obtener("ntfy_ordenes")))
         c.addWidget(self.ordenes)
         fila = QHBoxLayout()
-        fila.addWidget(nota("Instala la app gratuita ntfy y suscríbete a un canal con un nombre difícil de adivinar: "
-                            "quien sepa el nombre puede leer los avisos y, con las órdenes activas, manejar el bot."), 1)
+        fila.addWidget(nota("Instala la app gratuita ntfy, pulsa Generar y suscríbete a ese canal en el móvil. "
+                            "Quien sepa el nombre puede leer los avisos y, con las órdenes activas, manejar el bot: "
+                            "no lo compartas."), 1)
         b_probar = QPushButton(" Probar", objectName="chico")
         b_probar.setIcon(iconos.icono("movil", tema.TEXTO))
         b_probar.clicked.connect(self.probar)
         fila.addWidget(b_probar)
         c.addLayout(fila)
         rejilla.addWidget(movil, 1, 1)
+        self._revisar_canal()
 
         admin, c = seccion("Administrador", "admin")
         self.modo_admin = QCheckBox("Modo administrador: mostrar Capturas y el Editor de personajes")
@@ -147,7 +171,20 @@ class PaginaAjustes(Pagina):
         self.cuerpo.addLayout(botones)
         self.cuerpo.addStretch()
 
+    def _revisar_canal(self):
+        canal = self.ntfy.text().strip()
+        corto = 0 < len(canal) < MINIMO_CANAL
+        self.aviso_canal.setText("Nombre corto: alguien podría adivinarlo y manejar tu bot. Pulsa Generar." if corto else "")
+        self.aviso_canal.setVisible(corto)
+
     def guardar(self, silencioso=False):
+        canal = self.ntfy.text().strip()
+        if self.ordenes.isChecked() and 0 < len(canal) < MINIMO_CANAL and not silencioso:
+            r = QMessageBox.question(self, "Canal de ntfy",
+                                     "Con las órdenes activas, un canal de nombre corto deja que otros manejen tu bot.\n\n"
+                                     "¿Guardar igualmente? (Mejor: No, y pulsa Generar.)")
+            if r != QMessageBox.Yes:
+                return
         skin_cambiada = self.skin.currentData() != config.obtener("skin")
         config.guardar({
             "skin": self.skin.currentData(),
