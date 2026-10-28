@@ -60,7 +60,11 @@ Como juega (Farmear -> Opciones -> "Como jugar"):
                              fusiones (jugar la carta del medio para juntar dos iguales, o arrastrar
                              una sobre su gemela) y lo que deja para el turno siguiente. Reconoce las
                              cartas iguales por su dibujo, asi que sirve con cualquier equipo.
-                             Codigo: lumen\inteligencia.py.
+                             Cada carta se busca en la base de heroes para saber su tipo (un
+                             objetivo, area, apoyo...): contra los dos Perros prefiere las de area.
+                             Si esta PC hizo la captura de heroes (capturas\heroes\catalogo.yaml),
+                             usa tambien el % de ataque real de cada carta.
+                             Codigo: lumen\inteligencia.py y lumen\valor_cartas.py.
   Simple                     la ulti y luego la carta de mas rango.
 El Historial guarda con cual se jugo cada sesion, para comparar cual gana mas por hora.
 F9 pausa / reanuda, F10 detiene (cambiables en Ajustes).

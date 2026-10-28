@@ -105,15 +105,20 @@ class IndiceCartas:
                 if plantilla is not None and plantilla.disponible:
                     self.plantillas.append((pj.id, c.id, plantilla, umbral))
         self.mitades = [_mitad(p.imagenes[0]) for _, _, p, _ in self.plantillas]
-        self._memoria: list[tuple[np.ndarray, str | None]] = []  # (huella, heroe) de cartas ya vistas
+        self._memoria: list[tuple[np.ndarray, str | None]] = []  # (huella, "heroe.carta") de cartas ya vistas
 
     def heroe_de(self, carta: cartas.Carta) -> str | None:
+        nombre = self.carta_de(carta)
+        return nombre.split(".")[0] if nombre else None
+
+    def carta_de(self, carta: cartas.Carta) -> str | None:
+        """Que carta es: "heroe.carta" (p. ej. "cleaner_enjin_claro.skill_2"), o None si no se parece a ninguna."""
         if carta.imagen is None or carta.tipo in (cartas.TipoCarta.SUELO, cartas.TipoCarta.NINGUNA):
             return None
         huella = _huella(carta.imagen)
-        for vista, pid in self._memoria:
+        for vista, nombre in self._memoria:
             if float(np.abs(vista - huella).mean()) < PARECIDO_HUELLA:
-                return pid
+                return nombre
         pequena = _mitad(carta.imagen)
         parecidos = []
         for i, ref in enumerate(self.mitades):
@@ -121,10 +126,10 @@ class IndiceCartas:
                 parecidos.append((float(cv2.matchTemplate(pequena, ref, cv2.TM_CCOEFF_NORMED).max()), i))
         mejor, valor_mejor = None, 0.0
         for _, i in sorted(parecidos, reverse=True)[: self.CANDIDATAS]:
-            pid, _, plantilla, umbral = self.plantillas[i]
+            pid, cid, plantilla, umbral = self.plantillas[i]
             valor, _ = plantilla.confianza(carta.imagen)
             if valor >= umbral and valor > valor_mejor:
-                mejor, valor_mejor = pid, valor
+                mejor, valor_mejor = f"{pid}.{cid}", valor
         self._memoria = self._memoria[-300:] + [(huella, mejor)]
         return mejor
 

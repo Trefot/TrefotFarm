@@ -11,7 +11,7 @@ Reutiliza todo el modo de Perros piso 4 (llegar a los pisos, pelear, botin, derr
 import re
 import time
 
-from lumen import entrada, inteligencia, juego, ocr
+from lumen import entrada, inteligencia, juego, ocr, valor_cartas
 from lumen.cartas import Carta, Rango, TipoCarta
 from lumen.motor import Opcion, TerminarModo
 from lumen.modos.perros_piso4 import Estrategia, PerrosPiso4, Reiniciar
@@ -34,11 +34,25 @@ class EstrategiaSimple(Estrategia):
 
 class EstrategiaInteligente(EstrategiaSimple):
     """Piensa el turno entero (lumen/inteligencia.py): que jugar ahora y que dejar para el siguiente,
-    contando las fusiones. Funciona con cualquier equipo: las cartas iguales se reconocen por su dibujo."""
+    contando las fusiones. Funciona con cualquier equipo: las cartas iguales se reconocen por su dibujo,
+    y cada carta se busca en la base de heroes para saber cuanto vale (lumen/valor_cartas.py)."""
+
+    def __init__(self, enemigos: int = 1):
+        self.enemigos = enemigos
+        self._indice = self._tasador = None  # se cargan en la primera jugada (tardan ~1 s)
+
+    def _identificar(self, carta: Carta) -> str | None:
+        if self._indice is None:
+            from lumen.modos.aprender import IndiceCartas  # aqui para no cargarlo si no se juega
+
+            self._indice = IndiceCartas()
+            self._tasador = valor_cartas.Tasador(self.enemigos)
+        return self._indice.carta_de(carta)
 
     def decidir(self, fase: int, turno: int, accion: int, mano: list[Carta], total: int = 4):
-        inteligencia.agrupar_por_dibujo(mano)
-        _, plan = inteligencia.planear(mano, total - accion)
+        inteligencia.agrupar_por_dibujo(mano, self._identificar)
+        valores = self._tasador.valores(c.nombre for c in mano) if self._tasador else {}
+        _, plan = inteligencia.planear(mano, total - accion, valores)
         if not plan:  # nada que jugar ni fusionar: lo de siempre (mover una carta para gastar el hueco)
             return super().decidir(fase, turno, accion, mano, total)
         reales = inteligencia.posiciones_reales(mano)
@@ -55,6 +69,7 @@ class BestiaPisos1a3(PerrosPiso4):
     """Base: las subclases ponen id, nombres y ``bestia`` (su imagen del carrusel de bestias)."""
 
     bestia = None  # Plantilla de la bestia en el carrusel
+    enemigos = 1  # enemigos en la pelea (las cartas de area valen mas con varios)
     piso3_superado = None  # Plantilla de "Floor 3 Cleared" de esta bestia, si la hay
     descripcion = "Floor 1, 2 y 3 seguidos, y vuelta a empezar. Sirve cualquier equipo fuerte."
     duracion = ""
@@ -75,7 +90,7 @@ class BestiaPisos1a3(PerrosPiso4):
     def __init__(self, valores: dict):
         super().__init__(valores)
         inteligente = self.valores.get("jugar", "Inteligente") != "Simple"
-        self.estrategia = EstrategiaInteligente() if inteligente else EstrategiaSimple()
+        self.estrategia = EstrategiaInteligente(self.enemigos) if inteligente else EstrategiaSimple()
         self.stats["estrategia"] = "Inteligente" if inteligente else "Simple"  # queda en el historial
         self.textos_vistos = False
         self.piso = int(self.valores.get("primer_piso") or 1)
@@ -167,17 +182,17 @@ class BestiaPisos1a3(PerrosPiso4):
         return None
 
 
-def _bestia(id_base: str, titulo: str, plantilla, imagen: str, piso3=None):
+def _bestia(id_base: str, titulo: str, plantilla, imagen: str, piso3=None, enemigos: int = 1):
     """Crea el modo Floor 1-3 de una bestia."""
     return type(f"Pisos1a3_{id_base}", (BestiaPisos1a3,), {
         "id": f"{id_base}_pisos1a3", "nombre": f"{titulo} · Floor 1-3", "titulo_juego": titulo,
         "subtitulo_juego": "Demonic Beast · Floor 1-3", "imagen": imagen, "bestia": plantilla,
-        "piso3_superado": piso3,
+        "piso3_superado": piso3, "enemigos": enemigos,
     })
 
 
 PerrosPisos1a3 = _bestia("perros", "Skollandhati & Hati", juego.perros, "demonic_beasts/skollandhati.png",
-                         juego.piso3_superado)
+                         juego.piso3_superado, enemigos=2)  # los dos perros
 PajaroPisos1a3 = _bestia("pajaro", "Hraesvelgr", juego.pajaro, "demonic_beasts/hraesvelgr.png")
 CiervoPisos1a3 = _bestia("ciervo", "Eikthyrnir", juego.ciervo, "deer/Eikthyrnir.png")
 SerpientePisos1a3 = _bestia("serpiente", "Nidhoggr", juego.serpiente, "snake/nidhoggr.png")

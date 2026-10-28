@@ -162,8 +162,10 @@ def _dibujo(imagen: np.ndarray) -> np.ndarray:
     return v / (np.linalg.norm(v) + 1e-6)
 
 
-def agrupar_por_dibujo(mano: list[Carta]) -> None:
-    """Pone un nombre ("dibujo_N") a las cartas sin nombre, igual para las que tienen el mismo dibujo.
+def agrupar_por_dibujo(mano: list[Carta], identificar=None) -> None:
+    """Pone un nombre a las cartas sin nombre, igual para las que tienen el mismo dibujo: "dibujo_N" o,
+    si ``identificar(carta)`` dice que carta es, "heroe.carta@N" (el @N evita que dos dibujos distintos
+    tomados por la misma carta parezcan gemelos y el plan intente fusionarlos).
     Medido con las 1083 cartas de la base: la misma carta con otro brillo da < 0.5 y dos cartas
     distintas >= 26 (salvo versiones de color de un mismo heroe, que comparten dibujo)."""
     vistos: list[tuple[np.ndarray, str]] = []
@@ -176,5 +178,7 @@ def agrupar_por_dibujo(mano: list[Carta]) -> None:
                 c.nombre = nombre
                 break
         else:
-            c.nombre = f"dibujo_{len(vistos) + 1}"
+            n = len(vistos) + 1
+            cual = identificar(c) if identificar else None
+            c.nombre = f"{cual}@{n}" if cual else f"dibujo_{n}"
             vistos.append((d, c.nombre))
