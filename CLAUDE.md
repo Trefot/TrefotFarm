@@ -24,5 +24,8 @@ Reglas completas en CAMBIOS.txt. Resumen:
   chip "Meta" en la barra de Empezar (parar al cumplirla; en el plan, saltar a la siguiente tarea),
   quitar la línea "Hoy", y pruebas. 36 materiales tienen ficha de galería en premios.yaml y se cuentan
   solos; esencia negra, piedra del despertar, cartas y escenas no (se ajustan a mano).
-- **Probar con el juego**: la prueba rápida (Farmear → Plan) aún no ha pasado entera. En la primera
-  prueba el Pájaro Floor 1-3 se quedaba en la pantalla de la bestia (arreglado en 0.2.1, sin probar).
+- **Probar con el juego**: la prueba rápida (Farmear → Plan) aún no ha pasado entera. En la prueba de
+  la 0.2.1 (Perros Floor 1-3) el bot creía estar en los pisos sin haber entrado a la bestia (contaba
+  "Obtain Floor N First Clear Reward") y no veía el Floor 1 (el OCR lee "Floor I"): arreglado en 0.2.2
+  con capturas reales, sin probar aún una pelea entera. El juego no acepta clics de un proceso sin
+  permisos de administrador: las pruebas en vivo las lanza el usuario desde Lumen.
