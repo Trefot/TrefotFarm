@@ -1,7 +1,8 @@
 # Lo que se puede conseguir en cada contenido, sacado de la ventana "Recompensa" del juego.
 # Lo muestra Inicio bajo la rueda ("Puedes conseguir"). Los iconos estan en assets/premios/<objeto>.png.
 #
-# objetos: id -> nombre y descripcion (tal como salen en el juego)
+# objetos: id -> nombre y descripcion (tal como salen en el juego) y su id en la galeria del inventario
+#   (lumen/datos/galeria_objetos.yaml), si esta: une el botin con estas tablas (recompensas.vincular_premios)
 # <id del destino del catalogo>:
 #   primera_vez: lo que da la primera vez que se supera (una sola vez)
 #   garantizados: lo que da siempre, en cada victoria
@@ -10,21 +11,26 @@
 
 objetos:
   magnificencia_valhalla:
+    galeria: magnificence_of_valhalla
     nombre: Magnificencia del Valhalla
     descripcion: Una gema brillante que recuerda al Valhalla. Obtenida de Hraesvelgr en batalla de bestia demoníaca.
   origen_vientos:
+    galeria: wind_source
     nombre: Origen de los vientos
     descripcion: Un objeto necesario para fabricar reliquias sagradas. Obtenido de Hraesvelgr en batalla de bestia demoníaca.
   carta_hraesvelgr:
     nombre: Hraesvelgr
     descripcion: Carta de artefacto de Hraesvelgr.
   esencia_desconocida:
+    galeria: unknown_magic_essence
     nombre: Esencia mágica desconocida
     descripcion: Esencia mágica usada para fabricar reliquias sagradas para hadas, gigantes y razas desconocidas.
   pluma_hraesvelgr:
+    galeria: hraesvelgr_s_feather
     nombre: Pluma de Hraesvelgr
     descripcion: Una pluma espléndida de Hraesvelgr. Sirve para mejorar reliquias sagradas.
   orbe_hraesvelgr:
+    galeria: hraesvelgr_s_orb
     nombre: Orbe de Hraesvelgr
     descripcion: Un orbe que contiene el poder de Hraesvelgr. Sirve para mejorar reliquias sagradas.
   mural_antiguo:
@@ -34,33 +40,41 @@ objetos:
     nombre: Campo de batalla de Hraesvelgr
     descripcion: Carta de escena del campo de batalla de Hraesvelgr.
   sublimidad_valquirias:
+    galeria: sublimity_of_valkyries
     nombre: Sublimidad de las valquirias
     descripcion: Una gema de gran calidad que simboliza nobles intenciones. Obtenida de Eikthyrnir en batalla de bestia demoníaca.
   origen_rios:
+    galeria: river_source
     nombre: Origen de los ríos
     descripcion: Un objeto necesario para fabricar reliquias sagradas. Obtenido de Eikthyrnir en batalla de bestia demoníaca.
   carta_eikthyrnir:
     nombre: Eikthyrnir
     descripcion: Carta de artefacto de Eikthyrnir.
   meticulosidad_eitri:
+    galeria: eitri_s_meticulousness
     nombre: Meticulosidad de Eitri
     descripcion: Pizarra que contiene la meticulosidad de Eitri. Obtenida en la tienda de intercambio de la Torre del Árbol del Mundo.
   esencia_dorada:
+    galeria: golden_magic_essence
     nombre: Esencia mágica dorada
     descripcion: Esencia mágica usada para fabricar reliquias sagradas para diosas.
   asta_eikthyrnir:
+    galeria: eikthyrnir_s_broken_antler
     nombre: Asta rota de Eikthyrnir
     descripcion: Una de las numerosas astas de Eikthyrnir. Sirve para mejorar reliquias sagradas.
   orbe_eikthyrnir:
+    galeria: eikthyrnir_s_orb
     nombre: Orbe de Eikthyrnir
     descripcion: Un orbe que contiene el poder de Eikthyrnir. Sirve para mejorar reliquias sagradas.
   campamento_aliadas:
     nombre: Campamento de las fuerzas aliadas
     descripcion: Carta de escena del campamento de las fuerzas aliadas.
   honor_einheriar:
+    galeria: honor_of_the_einherjar
     nombre: Honor del Einheriar
     descripcion: Una gema rara concedida solo a los más honorables de los guerreros. Se obtiene de Skoll y Hati en batalla de bestia demoníaca.
   fuente_ocaso:
+    galeria: twilight_source
     nombre: Fuente del ocaso
     descripcion: Objeto necesario para fabricar reliquias sagradas. Se obtiene de Skoll y Hati en batalla de bestia demoníaca.
   carta_hati:
@@ -70,81 +84,101 @@ objetos:
     nombre: Skoll
     descripcion: Carta de artefacto de Skoll.
   fuerza_brok:
+    galeria: brokkr_s_strength
     nombre: Fuerza de Brok
     descripcion: Una pizarra que contiene la fuerza de Brok.
   esencia_negra:
     nombre: Esencia mágica negra
     descripcion: Esencia mágica usada para fabricar reliquias sagradas para demonios.
   garra_skoll_hati:
+    galeria: skoll_and_hati_s_claw
     nombre: Garra de Skoll y Hati
     descripcion: Una de las garras de Skoll y Hati. Sirve para mejorar reliquias sagradas.
   orbe_skoll_hati:
+    galeria: skoll_and_hati_s_orb
     nombre: Orbe de Skoll y Hati
     descripcion: Orbe que contiene el poder de Skoll y Hati. Sirve para mejorar reliquias sagradas.
   cristal_rojo_oscuro:
+    galeria: dark_red_crystal
     nombre: Cristal rojo oscuro
     descripcion: Un mineral precioso que simboliza la inmensidad infinita de la tierra de la oscuridad. Se consigue en la batalla de bestia demoníaca contra Nidhoggr.
   origen_raices:
+    galeria: source_of_the_roots_corruption
     nombre: Origen de la corrupción de las raíces
     descripcion: Un objeto necesario para fabricar reliquias sagradas. Obtenido de Nidhoggr en batalla de bestia demoníaca.
   carta_nidhoggr:
     nombre: Nidhoggr
     descripcion: Carta de artefacto de Nidhoggr.
   tenacidad_volundr:
+    galeria: volundr_s_tenacity
     nombre: Tenacidad de Volundr
     descripcion: Pizarra que contiene la tenacidad de Volundr. Obtenida en la tienda de intercambio de la Torre del Árbol del Mundo.
   fruto_yggdrasil:
+    galeria: fruit_of_yggdrasil
     nombre: Fruto del Yggdrasil
     descripcion: Fruto místico que atesora Ratatoskr. Ratatoskr lo proporciona en Batalla de bestia demoníaca.
   origen_ciclo:
+    galeria: source_of_the_cycle
     nombre: Origen del ciclo
     descripcion: Objeto necesario para fabricar reliquias sagradas. Ratatoskr lo proporciona en Batalla de bestia demoníaca.
   runa_magica:
+    galeria: magic_rune
     nombre: Runa mágica
     descripcion: Runa hallada en el Salón del Génesis. Se puede obtener en la batalla de bestia demoníaca de Surtr y la llama primordial.
   origen_fuego:
+    galeria: source_of_fire
     nombre: Origen del fuego
     descripcion: Objeto necesario para fabricar reliquias sagradas. Se puede obtener en la batalla de bestia demoníaca de Surtr y la llama primordial.
   cuerno_demonio_rojo:
+    galeria: red_demon_s_horn
     nombre: Cuerno de demonio rojo
     descripcion: Material que sirve para superar el límite de los héroes. Se obtiene del cadáver de un demonio rojo.
   perfume_embriagador:
+    galeria: alluring_perfume
     nombre: Perfume embriagador
     descripcion: Sirve para mejorar complementos.
   carta_demonio_rojo:
     nombre: Demonio rojo
     descripcion: Carta de artefacto del demonio rojo.
   cofre_tesoro:
+    galeria: treasure_chest
     nombre: Cofre del tesoro
     descripcion: Véndelo en la tienda para adquirir oro.
   piedra_despertar:
+    galeria: awakening_stone
     nombre: Piedra del despertar
     descripcion: Una piedra misteriosa que se usa como ingrediente para despertar equipo de grado SSR.
   ala_demonio_gris:
+    galeria: gray_demon_s_wing
     nombre: 'Ala de demonio gris'
     descripcion: Material que sirve para superar el límite de los héroes. Se obtiene del cadáver de un demonio gris.
   tela_magnifica:
+    galeria: splendid_fabric
     nombre: 'Tela magnífica'
     descripcion: Sirve para mejorar atuendos de conjunto.
   carta_demonio_gris:
     nombre: 'Demonio gris'
     descripcion: Carta de artefacto del demonio gris.
   oreja_howlex:
+    galeria: demonic_beast_howlex_s_ear
     nombre: 'Oreja de bestia demoníaca Howlex'
     descripcion: Material que sirve para superar el límite de los héroes. Se obtiene del cadáver de la bestia demoníaca Howlex.
   componente_brillante:
+    galeria: brilliant_component
     nombre: 'Componente brillante'
     descripcion: Sirve para mejorar atuendos de armas.
   carta_howlex:
     nombre: 'Bestia demoníaca Howlex'
     descripcion: Carta de artefacto de la bestia demoníaca Howlex.
   nucleo_bellmoth:
+    galeria: demonic_beast_bellmoth_s_core
     nombre: 'Núcleo de la bestia demoníaca Bellmoth'
     descripcion: Material que sirve para superar el límite de los héroes. Se obtiene del cadáver de la bestia demoníaca Bellmoth.
   carta_bellmoth:
     nombre: 'Bestia demoníaca Bellmoth'
     descripcion: Carta de artefacto de la bestia demoníaca Bellmoth.
   energia_original:
+    galeria: original_demon_s_energy
     nombre: 'Energía del demonio original'
     descripcion: Material que sirve para superar el límite de los héroes.
   carta_demonio_original:
@@ -160,15 +194,19 @@ objetos:
     nombre: 'Indura del Castigo'
     descripcion: Carta de artefacto de Indura del Castigo.
   fragmento_moneda_sa:
+    galeria: super_awakening_coin_fragment
     nombre: 'Fragmento de moneda de superdespertar'
     descripcion: Se intercambian por monedas de superdespertar en el intercambio de materiales.
   fragmento_caos:
+    galeria: chaos_fragment
     nombre: 'Fragmento del caos'
     descripcion: Material necesario para usar [Caos de constelaciones].
   yunque:
+    galeria: anvil
     nombre: 'Yunque'
     descripcion: Un yunque mágico que cambia los efectos de bonificación de un equipo según probabilidades determinadas.
   esencia_azul:
+    galeria: blue_magic_essence
     nombre: Esencia mágica azul
     descripcion: Esencia mágica usada para fabricar reliquias sagradas para héroes [humanos y hadas], [humanos] y de [raza desconocida].
 

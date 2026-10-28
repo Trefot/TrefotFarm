@@ -52,6 +52,7 @@ GALERIA_BASE = Path(__file__).resolve().parent / "datos" / "galeria_objetos.yaml
 # forma 0.89, color 53): tambien se exige color parecido (DIF_COLOR_MAX; mismo objeto: 0.8-3.5).
 LADO_FICHA = LADO
 UMBRAL_GALERIA = 0.85
+UMBRAL_PREMIO = 0.8  # icono del botin frente a la casilla de la tabla de premios (mismo objeto: 0.84-0.99)
 
 # Pantalla quieta: entre dos capturas seguidas con el OK ya visible, la zona del botin cambia 1-4
 # (fondo animado) si esta quieta y 10-22 si aun se abren cofres o llegan casillas (medido en peleas reales).
@@ -364,6 +365,30 @@ def en_galeria(img_icono, galeria: dict) -> str | None:
         dif_color = float(np.abs(img_icono.reshape(-1, 3).mean(0) - ref.reshape(-1, 3).mean(0)).max())
         if valor >= mejor_valor and dif_color <= DIF_COLOR_MAX:
             mejor, mejor_valor = gid, valor
+    return mejor
+
+
+_cache_premios: dict[str, np.ndarray | None] = {}
+
+
+def en_premios(img_icono, candidatos) -> str | None:
+    """El objeto de las tablas de premios (assets/premios/<id>.png, la casilla entera de la ventana
+    "Recompensa") con ese icono, entre ``candidatos``. Reducida a la casilla del botin (63 px), el mismo
+    objeto da 0.84-0.99 y el siguiente mejor <=0.94 (Brokkr/Eitri, solo cambia el color de la gema): por eso
+    se busca solo entre lo que puede salir en ese contenido."""
+    from lumen import premios
+
+    mejor, mejor_valor = None, UMBRAL_PREMIO
+    for objeto in candidatos:
+        if objeto not in _cache_premios:
+            ref = leer_imagen(premios.ICONOS / f"{objeto}.png")
+            _cache_premios[objeto] = None if ref is None else cv2.resize(ref, (LADO, LADO), interpolation=cv2.INTER_AREA)
+        ref = _cache_premios[objeto]
+        if ref is None:
+            continue
+        valor = float(cv2.matchTemplate(ref, img_icono, cv2.TM_CCOEFF_NORMED).max())
+        if valor >= mejor_valor:
+            mejor, mejor_valor = objeto, valor
     return mejor
 
 

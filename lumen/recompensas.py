@@ -12,17 +12,24 @@ from pathlib import Path
 
 import numpy as np
 
-from lumen import botin
+from lumen import botin, juego, premios
 from lumen.rutas import RAIZ
 from lumen.vision import guardar_imagen, leer_imagen
 
 CARPETA = RAIZ / "recompensas"
 INDICE = CARPETA / "indice.jsonl"
 _lock = threading.Lock()
+# Version de la lectura del botin: al subirla, las fotos leidas con una anterior se vuelven a leer solas
+# (2: cantidades con los digitos del juego y fotos sin boton OK fuera, 0.3.0).
+LECTURA = 2
 
 
 def _analizar(pantalla) -> dict:
     try:
+        if not juego.ok.esta(pantalla):
+            # Sin el boton OK no es la pantalla de premios: las fotos de Indura de antes de la 0.2.3 se
+            # hicieron en "HEART DESTROYED" y el bot guardo como objetos 14 trozos del fondo de lava.
+            return {"objetos": {}, "oro": None, "sin_premios": True}
         return botin.analizar(pantalla)
     except Exception:  # una lectura fallida nunca debe parar el bot
         return {"objetos": {}, "oro": None, "error_lectura": True}
@@ -42,6 +49,7 @@ def guardar(pantalla: np.ndarray, *, modo: str, nombre_modo: str, sesion: float,
         "victoria": victoria,
         **_analizar(pantalla),
         "analizado": True,
+        "lectura": LECTURA,
     }
     with _lock:
         CARPETA.mkdir(parents=True, exist_ok=True)
@@ -72,19 +80,25 @@ def leer() -> list[dict]:
     return registros[::-1]
 
 
+def pendiente(registro: dict) -> bool:
+    """Foto sin leer, o leida con una version anterior de la lectura."""
+    return not registro.get("analizado") or registro.get("lectura", 1) < LECTURA
+
+
 def reanalizar_pendientes(todas: bool = False) -> int:
     """Lee el botin de las fotos que aun no se analizaron (o de todas). Devuelve cuantas analizo."""
     with _lock:
         registros = _leer_indice()
         hechas = 0
         for r in registros:
-            if r.get("analizado") and not todas:
+            if not pendiente(r) and not todas:
                 continue
             pantalla = leer_imagen(CARPETA / r["ruta"])
             if pantalla is None:
                 continue
+            r.pop("sin_premios", None)
             r.update(_analizar(pantalla))
-            r["analizado"] = True
+            r["analizado"], r["lectura"] = True, LECTURA
             hechas += 1
         if hechas:
             INDICE.write_text("".join(json.dumps(r, ensure_ascii=False) + "\n" for r in registros), encoding="utf-8")
@@ -189,3 +203,52 @@ def totales_objetos(registros: list[dict]) -> dict[str, int]:
 
 def total_oro(registros: list[dict]) -> int:
     return sum(int(r.get("oro") or 0) for r in registros)
+
+
+def vincular_premios() -> int:
+    """Une cada objeto del botin con su objeto de las tablas de premios (lumen/datos/premios.yaml), buscando
+    su icono solo entre lo que puede salir en los contenidos donde aparecio. Asi se corrigen los vinculos
+    de la galeria que se confunden de color (el botin de los perros de Floor 1-3 tomo "Brokkr's Strength",
+    gema roja, por "Eitri's Meticulousness", gema amarilla) y toman nombre los que no estan en la galeria
+    (el cubo gris = Esencia magica negra; la caja de regalo de Indura). Devuelve cuantos cambio."""
+    catalogo = botin.cargar_catalogo()
+    contenidos: dict[str, set[str]] = {}
+    for r in _leer_indice():
+        for oid in r.get("objetos") or {}:
+            contenidos.setdefault(botin.destino(oid, catalogo) or oid, set()).add(r.get("modo", ""))
+    galeria = botin.cargar_galeria()
+    de_galeria = {premios.info(o).get("galeria"): o for o in premios.todos()}
+    de_galeria.pop(None, None)
+    cambios = 0
+    for oid in botin.visibles(catalogo):
+        candidatos = set().union(*(premios.objetos_de(m) for m in contenidos.get(oid, ())))
+        img = leer_imagen(botin.ruta_icono(oid)) if candidatos else None
+        objeto = botin.en_premios(img, candidatos) if img is not None else None
+        datos = catalogo[oid]
+        # Si no sale en la tabla de donde aparecio (la tela de Indura viene de su caja de materiales), vale
+        # su vinculo con la galeria para saber cual es.
+        objeto = objeto or de_galeria.get(datos.get("galeria"))
+        if not objeto:
+            continue
+        antes = dict(datos)
+        datos["premio"] = objeto
+        info = premios.info(objeto)
+        gid = info.get("galeria")
+        if gid and gid != datos.get("galeria") and gid in galeria:
+            viejo = galeria.get(datos.get("galeria")) or {}
+            for campo in ("tipo", "descripcion"):  # lo de la galeria mala fuera; lo escrito a mano se queda
+                if not datos.get(campo) or datos.get(campo) == viejo.get(campo):
+                    datos[campo] = galeria[gid].get(campo) or ""
+            if datos.get("nombre") == viejo.get("nombre"):
+                datos["nombre"] = ""
+            datos["galeria"] = gid
+        # Nombre y descripcion en espanol de la tabla, salvo lo que escribio el jugador (distinto del ingles
+        # de la galeria).
+        ingles = galeria.get(datos.get("galeria")) or {}
+        for campo in ("nombre", "descripcion"):
+            if info.get(campo) and (not datos.get(campo) or datos[campo] == ingles.get(campo)):
+                datos[campo] = info[campo]
+        cambios += datos != antes
+    if cambios:
+        botin.guardar_catalogo(catalogo)
+    return cambios
