@@ -56,6 +56,24 @@ objetos:
   campamento_aliadas:
     nombre: Campamento de las fuerzas aliadas
     descripcion: Carta de escena del campamento de las fuerzas aliadas.
+  honor_einheriar:
+    nombre: Honor del Einheriar
+    descripcion: Una gema rara concedida solo a los más honorables de los guerreros. Se obtiene de Skoll y Hati en batalla de bestia demoníaca.
+  fuente_ocaso:
+    nombre: Fuente del ocaso
+    descripcion: Objeto necesario para fabricar reliquias sagradas. Se obtiene de Skoll y Hati en batalla de bestia demoníaca.
+  carta_hati:
+    nombre: Hati
+    descripcion: Carta de artefacto de Hati.
+  carta_skoll:
+    nombre: Skoll
+    descripcion: Carta de artefacto de Skoll.
+  fuerza_brok:
+    nombre: Fuerza de Brok
+    descripcion: Una pizarra que contiene la fuerza de Brok.
+  esencia_negra:
+    nombre: Esencia mágica negra
+    descripcion: Esencia mágica usada para fabricar reliquias sagradas para demonios.
   esencia_azul:
     nombre: Esencia mágica azul
     descripcion: Esencia mágica usada para fabricar reliquias sagradas para héroes [humanos y hadas], [humanos] y de [raza desconocida].
@@ -112,3 +130,17 @@ ciervo_piso4:  # captura del juego, 2026-10-28 (la cantidad del asta de la caja 
     - {caja: bronce, objeto: asta_eikthyrnir, prob: 15}
     - {caja: bronce, objeto: esencia_desconocida, cantidad: 15, prob: 23.5}
     - {caja: bronce, objeto: esencia_dorada, cantidad: 15, prob: 23.5}
+
+perros_pisos1a3:  # captura del juego, 2026-10-28
+  primera_vez:
+    - {objeto: honor_einheriar, cantidad: 2}
+    - {objeto: fuente_ocaso}
+  premios:
+    - {caja: oro, objeto: carta_hati, prob: 0.2}
+    - {caja: oro, objeto: carta_skoll, prob: 0.2}
+    - {caja: oro, objeto: honor_einheriar, prob: 10}
+    - {caja: plata, objeto: esencia_negra, cantidad: 5, prob: 15}
+    - {caja: plata, objeto: esencia_azul, cantidad: 5, prob: 15}
+    - {caja: bronce, objeto: fuerza_brok, cantidad: 3, prob: 19.6}
+    - {caja: bronce, objeto: esencia_negra, cantidad: 2, prob: 20}
+    - {caja: bronce, objeto: esencia_azul, cantidad: 2, prob: 20}
