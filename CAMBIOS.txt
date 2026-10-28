@@ -29,6 +29,10 @@ Etapas previstas:
 
 CAMBIOS
 -------
+0.2.4-alpha
+  - Bestias Floor 1-3: abren el piso tocando su circulo (la imagen de la bestia), no su titulo. En la
+    prueba de la 0.2.3 tocaba "Twilight Temple Floor 1" una y otra vez sin abrir nada.
+
 0.2.3-alpha
   - Indura: acepta la invitacion igual que AutoFarming (vuelve a mirar y toca hacia los 9.5 s, con un
     clic rapido). Pulsando justo a los 9.3 s con el raton ya encima se perdian ~la mitad.
