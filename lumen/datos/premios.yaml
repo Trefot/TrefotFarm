@@ -4,6 +4,7 @@
 # objetos: id -> nombre y descripcion (tal como salen en el juego)
 # <id del destino del catalogo>:
 #   primera_vez: lo que da la primera vez que se supera (una sola vez)
+#   garantizados: lo que da siempre, en cada victoria
 #   premios: cada linea de la tabla del juego; prob = % que pone el juego (ya es sobre el total)
 
 objetos:
@@ -19,6 +20,18 @@ objetos:
   esencia_desconocida:
     nombre: Esencia mágica desconocida
     descripcion: Esencia mágica usada para fabricar reliquias sagradas para hadas, gigantes y razas desconocidas.
+  pluma_hraesvelgr:
+    nombre: Pluma de Hraesvelgr
+    descripcion: Una pluma espléndida de Hraesvelgr. Sirve para mejorar reliquias sagradas.
+  orbe_hraesvelgr:
+    nombre: Orbe de Hraesvelgr
+    descripcion: Un orbe que contiene el poder de Hraesvelgr. Sirve para mejorar reliquias sagradas.
+  mural_antiguo:
+    nombre: Mural antiguo
+    descripcion: Carta especial Mural antiguo.
+  campo_hraesvelgr:
+    nombre: Campo de batalla de Hraesvelgr
+    descripcion: Carta de escena del campo de batalla de Hraesvelgr.
   esencia_azul:
     nombre: Esencia mágica azul
     descripcion: Esencia mágica usada para fabricar reliquias sagradas para héroes [humanos y hadas], [humanos] y de [raza desconocida].
@@ -34,3 +47,17 @@ pajaro_pisos1a3:  # captura del juego, 2026-10-28
     - {caja: plata, objeto: esencia_azul, cantidad: 5, prob: 20}
     - {caja: bronce, objeto: esencia_desconocida, cantidad: 2, prob: 24.9}
     - {caja: bronce, objeto: esencia_azul, cantidad: 2, prob: 24.9}
+
+pajaro_piso4:  # captura del juego, 2026-10-28 (la cantidad de la pluma de la caja de oro no se veia)
+  garantizados:
+    - {objeto: pluma_hraesvelgr}
+    - {objeto: orbe_hraesvelgr}
+  premios:
+    - {caja: oro, objeto: mural_antiguo, prob: 0.1}
+    - {caja: oro, objeto: carta_hraesvelgr, prob: 1.4}
+    - {caja: oro, objeto: pluma_hraesvelgr, prob: 9}
+    - {caja: plata, objeto: campo_hraesvelgr, prob: 2.5}
+    - {caja: plata, objeto: pluma_hraesvelgr, cantidad: 2, prob: 25}
+    - {caja: bronce, objeto: pluma_hraesvelgr, prob: 15}
+    - {caja: bronce, objeto: esencia_desconocida, cantidad: 15, prob: 23.5}
+    - {caja: bronce, objeto: esencia_azul, cantidad: 15, prob: 23.5}

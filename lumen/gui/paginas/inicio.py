@@ -278,9 +278,11 @@ class PaginaInicio(Pagina):
             capa.addWidget(dibujo)
             prob = QLabel(p.texto_prob, objectName="prob_premio", alignment=Qt.AlignCenter)
             prob.setProperty("raro", p.prob < 1)
+            prob.setProperty("siempre", p.siempre)
             capa.addWidget(prob)
             cajas = ", ".join(f"caja de {c}" for c in p.cajas)
-            casilla.setToolTip(f"<b>{p.nombre}</b> {p.texto_cantidad}<br>{p.descripcion}<br><i>{p.texto_prob} por pelea"
+            casilla.setToolTip(f"<b>{p.nombre}</b> {p.texto_cantidad}<br>{p.descripcion}<br><i>"
+                               + ("En cada victoria" if p.siempre else f"{p.texto_prob} por pelea")
                                + (f" · {cajas}" if cajas else "") + "</i>")
             self.fila_premios.addWidget(casilla)
         self.fila_premios.addStretch()

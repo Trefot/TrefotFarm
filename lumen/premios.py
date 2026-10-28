@@ -22,6 +22,7 @@ class Premio:
     cantidades: list[int]
     prob: float  # % por pelea (suma de sus lineas)
     cajas: list[str]
+    siempre: bool = False  # garantizado: sale en cada victoria
 
     @property
     def icono(self) -> Path:
@@ -37,6 +38,8 @@ class Premio:
 
     @property
     def texto_prob(self) -> str:
+        if self.siempre:
+            return "Siempre"
         return f"{self.prob:.1f}".rstrip("0").rstrip(".").replace(".", ",") + " %"
 
 
@@ -53,7 +56,13 @@ def de(id_destino: str) -> list[Premio]:
     datos = _datos()
     objetos = datos.get("objetos") or {}
     juntos: dict[str, Premio] = {}
-    for linea in (datos.get(id_destino) or {}).get("premios") or []:
+    destino = datos.get(id_destino) or {}
+    for linea in destino.get("garantizados") or []:  # primero lo seguro
+        oid = linea["objeto"]
+        info = objetos.get(oid) or {}
+        juntos[f"{oid}@siempre"] = Premio(oid, info.get("nombre", oid), info.get("descripcion", ""),
+                                          [int(linea.get("cantidad", 1))], 100.0, [], siempre=True)
+    for linea in destino.get("premios") or []:
         oid = linea["objeto"]
         info = objetos.get(oid) or {}
         p = juntos.setdefault(oid, Premio(oid, info.get("nombre", oid), info.get("descripcion", ""), [], 0.0, []))

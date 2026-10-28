@@ -180,6 +180,7 @@ QFrame#premio {{ background: {_s.hundido}; border: 1px solid {_s.borde}; border-
 QFrame#premio:hover {{ border-color: {_s.borde_oro}; }}
 QLabel#prob_premio {{ color: {_s.tenue}; font-size: 8.5pt; font-weight: 600; }}
 QLabel#prob_premio[raro="true"] {{ color: {_s.acento}; }}
+QLabel#prob_premio[siempre="true"] {{ color: {OK}; }}
 QFrame#objeto_mini {{ background: {_s.hundido}; border: 1px solid {_s.borde}; border-radius: 9px; min-width: 56px; }}
 QFrame#objeto_mini:hover {{ border-color: {_s.borde_oro}; }}
 QLabel#cantidad_mini {{ color: {_s.acento}; font-weight: 700; font-size: 9pt; }}
