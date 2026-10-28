@@ -46,7 +46,6 @@ Personajes        tu biblioteca: ficha de cada personaje (color, raza, roles, lo
                   pantalla del equipo, y sirven para que el bot compruebe tu equipo antes de empezar.
 Equipos           para cada contenido: que puestos pide, si tienes a los recomendados y con quien
                   podrias sustituirlos (segun los roles que marcaste en Personajes).
-Historial         todas las sesiones con victorias, derrotas, % de exito y victorias por hora.
 Botin             suma de todo lo conseguido (oro y cada objeto, por dia o por sesion) y la
                   foto de cada victoria. Doble clic en un objeto nuevo para ponerle nombre.
 Ajustes           ventana del juego, teclas rapidas, avisos al movil y repositorio de GitHub.
@@ -67,7 +66,7 @@ Como juega (Farmear -> Opciones -> "Como jugar"):
                              usa tambien el % de ataque real de cada carta.
                              Codigo: lumen\inteligencia.py y lumen\valor_cartas.py.
   Simple                     la ulti y luego la carta de mas rango.
-El Historial guarda con cual se jugo cada sesion, para comparar cual gana mas por hora.
+Cada sesion guarda con cual se jugo (logs\historial.jsonl), para comparar cual gana mas por hora.
 Indura tambien tiene "Como pelear": Inteligente (por defecto, igual que arriba pero sin arrastrar
 cartas), Mis cartas (tu lista de prioridades de lumen\datos\estrategias.yaml) o AUTO.
 F9 pausa / reanuda, F10 detiene (cambiables en Ajustes).

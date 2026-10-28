@@ -136,7 +136,7 @@ glosario:
     definicion: "El orden de cartas probado que sigue el bot en cada fase y turno."
   - termino: "Sesión"
     tipo: bot
-    definicion: "Todo lo que farmea desde que pulsas Empezar hasta que se detiene. Queda guardada en Historial."
+    definicion: "Todo lo que farmea desde que pulsas Empezar hasta que se detiene. Su resumen se ve en Farmear y queda guardada para medir los equipos (página Equipos)."
   - termino: "Reinicio"
     tipo: bot
     definicion: "Una pelea que el bot abandonó con Forfeit para repetirla. No cuenta como derrota."
