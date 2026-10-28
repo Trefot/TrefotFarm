@@ -37,7 +37,7 @@ from lumen.gui import iconos, tema
 from lumen.gui.comun import Pagina
 from lumen.gui.paginas.personajes import _en_gris
 from lumen.modos import MODOS
-from lumen.modos.catalogo import CATALOGO
+from lumen.modos.catalogo import CATALOGO, contenido_de
 
 ARCHIVO = Path(__file__).resolve().parents[2] / "datos" / "equipos.yaml"
 NIVELES = {
@@ -133,9 +133,9 @@ def _nombre(pid: str, biblioteca: dict, nombres: dict) -> str:
 
 
 def _retrato(pj: P.Personaje | None, nombre: str, tengo: bool, tam=(68, 68), extra: str = "",
-             detalle: str = "") -> QWidget:
+             detalle: str = "", margen: int = 40) -> QWidget:
     caja = QWidget()
-    caja.setFixedWidth(tam[0] + 40)
+    caja.setFixedWidth(tam[0] + margen)
     if detalle:
         caja.setToolTip(detalle)
     capa = QVBoxLayout(caja)
@@ -154,7 +154,7 @@ def _retrato(pj: P.Personaje | None, nombre: str, tengo: bool, tam=(68, 68), ext
     foto.setProperty("tengo", tengo)
     capa.addWidget(foto, 0, Qt.AlignHCenter)
     texto = QLabel(nombre, alignment=Qt.AlignHCenter | Qt.AlignTop, wordWrap=True)
-    texto.setFixedWidth(tam[0] + 40)
+    texto.setFixedWidth(tam[0] + margen)
     texto.setMinimumHeight(texto.fontMetrics().lineSpacing() * 3 + 4)  # que no se monte sobre la cara
     texto.setStyleSheet(f"color: {tema.TEXTO if tengo else tema.TENUE}; font-size: 8.5pt;")
     capa.addWidget(texto, 0, Qt.AlignHCenter)
@@ -173,7 +173,8 @@ class TarjetaEquipo(QFrame):
     """Un equipo recomendado: cabecera siempre visible y detalle desplegable."""
 
     def __init__(self, datos: dict, biblioteca: dict, abierto: bool, nombres: dict | None = None,
-                 medida: dict | None = None, al_editar=None, al_borrar=None):
+                 medida: dict | None = None, al_editar=None, al_borrar=None, compacto: bool = False):
+        """``compacto``: para una columna estrecha (Farmear): caras mas pequenas y cabecera corta."""
         super().__init__(objectName="tarjeta_equipo")
         capa = QVBoxLayout(self)
         capa.setContentsMargins(14, 12, 14, 12)
@@ -192,9 +193,11 @@ class TarjetaEquipo(QFrame):
         nivel = QLabel(nivel_texto)
         nivel.setStyleSheet(f"background: {nivel_color}; color: {tema.FONDO}; border-radius: 9px; padding: 2px 10px; font-weight: 700;")
         cab.addWidget(nivel, 0, Qt.AlignVCenter)
-        cab.addWidget(QLabel(datos.get("nombre", ""), objectName="titulo_tarjeta"))
+        titulo = QLabel(datos.get("nombre", ""), objectName="nombre_pj" if compacto else "titulo_tarjeta", wordWrap=compacto)
+        cab.addWidget(titulo, 1 if compacto else 0)
         if datos.get("bot"):
-            bot = QLabel("  El bot lo juega")
+            bot = QLabel("Bot" if compacto else "  El bot lo juega")
+            bot.setToolTip("El bot sabe jugar este equipo")
             bot.setStyleSheet(f"color: {tema.ACENTO}; font-weight: 700;")
             cab.addWidget(bot)
         if datos.get("propio"):
@@ -233,7 +236,7 @@ class TarjetaEquipo(QFrame):
                      f"gana el {medida['tasa']:.0f} % · {peleas} pelea{'s' if peleas != 1 else ''}")
             if peleas < MIN_PELEAS:
                 texto += f" (aún pocas: desde {MIN_PELEAS} cuenta para el orden)"
-            cifras = QLabel(texto)
+            cifras = QLabel(texto, wordWrap=True)
             cifras.setStyleSheet(f"color: {tema.ACENTO};")
             cifras.setToolTip("Victorias por hora = victorias entre el tiempo total farmeando (incluye "
                               "menús, cargas y pociones). Junta lo que gana y lo rápido que es. Cuenta las "
@@ -241,7 +244,7 @@ class TarjetaEquipo(QFrame):
             capa.addWidget(cifras)
 
         fila = QHBoxLayout()
-        fila.setSpacing(10)
+        fila.setSpacing(4 if compacto else 10)
         for pid in ids:
             pj = biblioteca.get(pid)
             tengo = bool(pj and pj.tengo) or any(biblioteca.get(a) and biblioteca[a].tengo for a in alternativas.get(pid, []))
@@ -259,7 +262,10 @@ class TarjetaEquipo(QFrame):
                     otros.append(texto + (" ✓" if biblioteca.get(a) and biblioteca[a].tengo else ""))
                 extra = f"+{len(otros)} opción" + ("es" if len(otros) > 1 else "")
                 detalle = "También vale:\n" + "\n".join(f"• {o}" for o in otros)
-            fila.addWidget(_retrato(pj, nombre, tengo, extra=extra, detalle=detalle))
+            if compacto:
+                fila.addWidget(_retrato(pj, nombre, tengo, tam=(54, 54), extra=extra, detalle=detalle, margen=24))
+            else:
+                fila.addWidget(_retrato(pj, nombre, tengo, extra=extra, detalle=detalle))
         fila.addStretch()
         capa.addLayout(fila)
 
@@ -289,6 +295,48 @@ class TarjetaEquipo(QFrame):
         alto = self.detalle.heightForWidth(self.detalle.width()) if self.detalle.isVisible() else 0
         if alto > 0 and self.detalle.minimumHeight() != alto:
             self.detalle.setMinimumHeight(alto)
+
+
+def clave_de_equipos(id_destino: str, equipos: dict | None = None) -> str:
+    """Donde estan los equipos de un destino: con su id ("perros_piso4") o, si no tiene, los de su
+    contenido entero ("rata" = todos sus pisos)."""
+    equipos = cargar_equipos() if equipos is None else equipos
+    if id_destino in equipos:
+        return id_destino
+    contenido = contenido_de(id_destino)
+    return contenido.id if contenido and contenido.id in equipos else id_destino
+
+
+def tarjetas_equipos(clave: str, admin: bool = False, al_editar=None, al_borrar=None,
+                     compacto: bool = False) -> list["TarjetaEquipo"]:
+    """Las tarjetas de los equipos de un contenido, en orden: primero los que el bot midio (de mas a menos
+    victorias por hora, con al menos MIN_PELEAS peleas) y luego el resto como estan en la lista. Viene
+    abierto el mejor que ya puedes armar (o el primero si no tienes ninguno)."""
+    biblioteca = P.cargar()
+    todos = cargar_equipos()
+    medido = medidas(clave)
+    tarjetas = []
+    for datos in todos.get(clave, []):
+        propio = admin and datos.get("propio")
+        tarjetas.append(TarjetaEquipo(
+            datos, biblioteca, abierto=False, nombres=todos.get("_nombres") or {},
+            medida=medido.get(frozenset(datos.get("personajes") or [])),
+            al_editar=(lambda _=False, d=datos: al_editar(d)) if propio and al_editar else None,
+            al_borrar=(lambda _=False, d=datos: al_borrar(d)) if propio and al_borrar else None,
+            compacto=compacto,
+        ))
+
+    def peleas(t):
+        m = t.medida or {}
+        return m.get("victorias", 0) + m.get("derrotas", 0) + m.get("reinicios", 0)
+
+    medidos = sorted((t for t in tarjetas if peleas(t) >= MIN_PELEAS), key=lambda t: -t.medida["por_hora"])
+    tarjetas = medidos + [t for t in tarjetas if peleas(t) < MIN_PELEAS]
+    abierta = next((t for t in tarjetas if t.completo), tarjetas[0] if tarjetas else None)
+    if abierta is not None:
+        abierta.abierto = True
+        abierta._mostrar()
+    return tarjetas
 
 
 class DialogoEquipo(QDialog):
@@ -481,38 +529,7 @@ class PaginaEquipos(Pagina):
         if contenido:
             estado = "El bot ya lo farmea" if juega else "El bot todavía no lo farmea"
             self.subtitulo_modo.setText(f"{contenido.descripcion} · {estado}. Haz clic en un equipo para ver cómo se juega.")
-        biblioteca = P.cargar()
-        todos = cargar_equipos()
-        equipos = todos.get(clave, [])
-        medido = medidas(clave)
-        abierto_ya = False
-        tarjetas = []
-        for datos in equipos:
-            propio = admin and datos.get("propio")
-            t = TarjetaEquipo(
-                datos, biblioteca, abierto=False, nombres=todos.get("_nombres") or {},
-                medida=medido.get(frozenset(datos.get("personajes") or [])),
-                al_editar=(lambda _=False, d=datos: self._editar(d)) if propio else None,
-                al_borrar=(lambda _=False, d=datos: self._borrar(d)) if propio else None,
-            )
-            tarjetas.append(t)
-
-        # "Posicionar": los equipos con bastantes peleas medidas van primero, del que mas victorias saca
-        # por hora al que menos; los demas siguen en el orden de la lista.
-        def peleas(t):
-            m = t.medida or {}
-            return m.get("victorias", 0) + m.get("derrotas", 0) + m.get("reinicios", 0)
-
-        medidos = sorted((t for t in tarjetas if peleas(t) >= MIN_PELEAS), key=lambda t: -t.medida["por_hora"])
-        tarjetas = medidos + [t for t in tarjetas if peleas(t) < MIN_PELEAS]
-        # Se abre de entrada el mejor equipo que ya puedes armar (o el primero si no tienes ninguno).
-        for t in tarjetas:
-            if t.completo and not abierto_ya:
-                t.abierto = abierto_ya = True
-                t._mostrar()
-        if tarjetas and not abierto_ya:
-            tarjetas[0].abierto = True
-            tarjetas[0]._mostrar()
+        tarjetas = tarjetas_equipos(clave, admin, self._editar, self._borrar)
         for t in tarjetas:
             self.lista.addWidget(t)
         if not tarjetas:

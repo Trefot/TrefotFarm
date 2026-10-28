@@ -16,15 +16,15 @@ from PyQt5.QtWidgets import (
     QVBoxLayout,
 )
 
-from lumen import config, historial, ventana
+from lumen import config, historial, premios, ventana
 from lumen import personajes as P
 from lumen.actualizador import version_local
 from lumen.control import control
 from lumen.gui import iconos, tema
-from lumen.gui.comun import Pagina, formatear_tiempo
+from lumen.gui.comun import Pagina, formatear_tiempo, icono_premio
 from lumen.gui.rueda import Rueda
 from lumen.modos import MODOS
-from lumen.modos.catalogo import CATALOGO, GRUPOS, contenido_de
+from lumen.modos.catalogo import CATALOGO, GRUPOS, contenido_de, foto_de
 
 OPCIONES_VICTORIAS = [("1", 1), ("5", 5), ("10", 10), ("25", 25), ("∞", 0)]
 
@@ -89,7 +89,7 @@ class PaginaInicio(Pagina):
         self.pasos = {
             "juego": Paso("juego", "Juego", self._ayuda_juego),
             "ventana": Paso("ventana", "Ventana", self._ajustar),
-            "equipo": Paso("equipo", "Equipo", lambda: app.navegar("equipos")),
+            "equipo": Paso("equipo", "Equipo", lambda: app.farmear.ver_equipos()),
             "cartas": Paso("cartas", "Cartas", lambda: app.navegar("personajes")),
         }
         for paso in self.pasos.values():
@@ -130,6 +130,9 @@ class PaginaInicio(Pagina):
         self.grupo_destinos = QButtonGroup(self, exclusive=True)
         self.grupo_destinos.buttonClicked.connect(lambda b: self._elegir_destino(b.property("destino")))
         self.cuerpo.addLayout(self.fila_destinos)
+        self.fila_premios = QHBoxLayout()  # "Puedes conseguir": lo que da el destino elegido
+        self.fila_premios.setSpacing(8)
+        self.cuerpo.addLayout(self.fila_premios)
         self.fila_equipo = QHBoxLayout()
         self.fila_equipo.setSpacing(6)
         self.cuerpo.addLayout(self.fila_equipo)
@@ -178,6 +181,7 @@ class PaginaInicio(Pagina):
         QTimer(self, timeout=self.refrescar, interval=3000).start()
         QTimer(self, timeout=self._refrescar_vivo, interval=1000).start()
         self._pintar_contenido()
+        self._pintar_premios()
         self._cargar_opciones()
         self.refrescar()
 
@@ -199,6 +203,8 @@ class PaginaInicio(Pagina):
         self.rueda = Rueda(self.lista, listos, self.lista.index(self.contenido))
         self.rueda.cambiado.connect(self._girada)
         self.caja_rueda.addWidget(self.rueda)
+        if contenido_de(getattr(self, "modo_id", "")) is self.contenido:  # foto del piso elegido (Floor 4)
+            self.rueda.poner_foto(self.lista.index(self.contenido), foto_de(self.modo_id))
 
     def _cambiar_grupo(self, grupo: str):
         if grupo == self.contenido.grupo:
@@ -219,11 +225,44 @@ class PaginaInicio(Pagina):
         if self.listo:
             cambios["ultimo_modo"] = id_destino
         config.guardar(cambios)
+        indice = self.lista.index(self.contenido)  # la foto del piso elegido (Floor 4: el trascendente)
+        for i in range(len(self.lista)):
+            self.rueda.poner_foto(i, foto_de(id_destino) if i == indice else None)
         if pintar:
             self._pintar_contenido()
+        self._pintar_premios()
         self._cargar_opciones()
         self.refrescar()
         self.app.refrescar_insignias()
+
+    def _pintar_premios(self):
+        """Los objetos que puede dar el destino elegido, con su cantidad y su probabilidad por pelea."""
+        while self.fila_premios.count():
+            w = self.fila_premios.takeAt(0).widget()
+            if w:
+                w.setParent(None)
+        lista = premios.de(self.modo_id)
+        self.fila_premios.addStretch()
+        if lista:
+            self.fila_premios.addWidget(QLabel("Puedes conseguir", objectName="tenue"))
+        for p in lista:
+            casilla = QFrame(objectName="premio")
+            capa = QVBoxLayout(casilla)
+            capa.setContentsMargins(4, 4, 4, 2)
+            capa.setSpacing(1)
+            dibujo = QLabel(alignment=Qt.AlignCenter)
+            dibujo.setPixmap(icono_premio(p, 46))
+            capa.addWidget(dibujo)
+            prob = QLabel(p.texto_prob, objectName="prob_premio", alignment=Qt.AlignCenter)
+            prob.setProperty("raro", p.prob < 1)
+            prob.setProperty("siempre", p.siempre)
+            capa.addWidget(prob)
+            cajas = ", ".join(f"caja de {c}" for c in p.cajas)
+            casilla.setToolTip(f"<b>{p.nombre}</b> {p.texto_cantidad}<br>{p.descripcion}<br><i>"
+                               + ("En cada victoria" if p.siempre else f"{p.texto_prob} por pelea")
+                               + (f" · {cajas}" if cajas else "") + "</i>")
+            self.fila_premios.addWidget(casilla)
+        self.fila_premios.addStretch()
 
     def _pintar_contenido(self):
         """Nombre, descripcion y pisos del contenido del centro de la rueda."""

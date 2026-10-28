@@ -32,7 +32,6 @@ from lumen.gui.paginas.capturas import PaginaCapturas
 from lumen.gui.paginas.editor_personajes import PaginaEditorPersonajes
 from lumen.gui.paginas.farmear import PaginaFarmear
 from lumen.gui.paginas.heroes_capturados import PaginaHeroesCapturados
-from lumen.gui.paginas.historial import PaginaHistorial
 from lumen.gui.paginas.equipos import PaginaEquipos
 from lumen.gui.paginas.inicio import PaginaInicio
 from lumen.gui.paginas.personajes import PaginaPersonajes
@@ -47,17 +46,16 @@ MENU = [
     ("inicio", "Inicio"),
     ("farmear", "Farmear"),
     ("personajes", "Personajes"),
-    ("equipos", "Equipos"),
-    ("recompensas", "Botín"),
-    ("historial", "Historial"),
     ("ayuda", "Ayuda"),
     ("ajustes", "Ajustes"),
     # Solo con el modo administrador (Ajustes): herramientas para mantener la base del bot.
+    ("equipos", "Equipos"),
+    ("recompensas", "Botín"),
     ("capturas", "Capturas"),
     ("editor", "Editor"),
     ("capturados", "Héroes"),
 ]
-SOLO_ADMIN = {"capturas", "editor", "capturados"}
+SOLO_ADMIN = {"capturas", "editor", "capturados", "equipos", "recompensas"}  # lo demas esta en Farmear
 
 
 class _Senales(QObject):
@@ -137,7 +135,6 @@ class VentanaPrincipal(QMainWindow):
             "editor": PaginaEditorPersonajes(self),
             "capturados": PaginaHeroesCapturados(self),
             "equipos": PaginaEquipos(self),
-            "historial": PaginaHistorial(self),
             "recompensas": PaginaRecompensas(self),
             "ayuda": PaginaAyuda(self),
             "ajustes": PaginaAjustes(self),

@@ -1,0 +1,373 @@
+# Lo que se puede conseguir en cada contenido, sacado de la ventana "Recompensa" del juego.
+# Lo muestra Inicio bajo la rueda ("Puedes conseguir"). Los iconos estan en assets/premios/<objeto>.png.
+#
+# objetos: id -> nombre y descripcion (tal como salen en el juego)
+# <id del destino del catalogo>:
+#   primera_vez: lo que da la primera vez que se supera (una sola vez)
+#   garantizados: lo que da siempre, en cada victoria
+#   lider: lo que da solo al lider del grupo (en los demonios; el bot se une a grupos de otros, asi que no se muestra)
+#   premios: cada linea de la tabla del juego; prob = % que pone el juego (ya es sobre el total)
+
+objetos:
+  magnificencia_valhalla:
+    nombre: Magnificencia del Valhalla
+    descripcion: Una gema brillante que recuerda al Valhalla. Obtenida de Hraesvelgr en batalla de bestia demoníaca.
+  origen_vientos:
+    nombre: Origen de los vientos
+    descripcion: Un objeto necesario para fabricar reliquias sagradas. Obtenido de Hraesvelgr en batalla de bestia demoníaca.
+  carta_hraesvelgr:
+    nombre: Hraesvelgr
+    descripcion: Carta de artefacto de Hraesvelgr.
+  esencia_desconocida:
+    nombre: Esencia mágica desconocida
+    descripcion: Esencia mágica usada para fabricar reliquias sagradas para hadas, gigantes y razas desconocidas.
+  pluma_hraesvelgr:
+    nombre: Pluma de Hraesvelgr
+    descripcion: Una pluma espléndida de Hraesvelgr. Sirve para mejorar reliquias sagradas.
+  orbe_hraesvelgr:
+    nombre: Orbe de Hraesvelgr
+    descripcion: Un orbe que contiene el poder de Hraesvelgr. Sirve para mejorar reliquias sagradas.
+  mural_antiguo:
+    nombre: Mural antiguo
+    descripcion: Carta especial Mural antiguo.
+  campo_hraesvelgr:
+    nombre: Campo de batalla de Hraesvelgr
+    descripcion: Carta de escena del campo de batalla de Hraesvelgr.
+  sublimidad_valquirias:
+    nombre: Sublimidad de las valquirias
+    descripcion: Una gema de gran calidad que simboliza nobles intenciones. Obtenida de Eikthyrnir en batalla de bestia demoníaca.
+  origen_rios:
+    nombre: Origen de los ríos
+    descripcion: Un objeto necesario para fabricar reliquias sagradas. Obtenido de Eikthyrnir en batalla de bestia demoníaca.
+  carta_eikthyrnir:
+    nombre: Eikthyrnir
+    descripcion: Carta de artefacto de Eikthyrnir.
+  meticulosidad_eitri:
+    nombre: Meticulosidad de Eitri
+    descripcion: Pizarra que contiene la meticulosidad de Eitri. Obtenida en la tienda de intercambio de la Torre del Árbol del Mundo.
+  esencia_dorada:
+    nombre: Esencia mágica dorada
+    descripcion: Esencia mágica usada para fabricar reliquias sagradas para diosas.
+  asta_eikthyrnir:
+    nombre: Asta rota de Eikthyrnir
+    descripcion: Una de las numerosas astas de Eikthyrnir. Sirve para mejorar reliquias sagradas.
+  orbe_eikthyrnir:
+    nombre: Orbe de Eikthyrnir
+    descripcion: Un orbe que contiene el poder de Eikthyrnir. Sirve para mejorar reliquias sagradas.
+  campamento_aliadas:
+    nombre: Campamento de las fuerzas aliadas
+    descripcion: Carta de escena del campamento de las fuerzas aliadas.
+  honor_einheriar:
+    nombre: Honor del Einheriar
+    descripcion: Una gema rara concedida solo a los más honorables de los guerreros. Se obtiene de Skoll y Hati en batalla de bestia demoníaca.
+  fuente_ocaso:
+    nombre: Fuente del ocaso
+    descripcion: Objeto necesario para fabricar reliquias sagradas. Se obtiene de Skoll y Hati en batalla de bestia demoníaca.
+  carta_hati:
+    nombre: Hati
+    descripcion: Carta de artefacto de Hati.
+  carta_skoll:
+    nombre: Skoll
+    descripcion: Carta de artefacto de Skoll.
+  fuerza_brok:
+    nombre: Fuerza de Brok
+    descripcion: Una pizarra que contiene la fuerza de Brok.
+  esencia_negra:
+    nombre: Esencia mágica negra
+    descripcion: Esencia mágica usada para fabricar reliquias sagradas para demonios.
+  garra_skoll_hati:
+    nombre: Garra de Skoll y Hati
+    descripcion: Una de las garras de Skoll y Hati. Sirve para mejorar reliquias sagradas.
+  orbe_skoll_hati:
+    nombre: Orbe de Skoll y Hati
+    descripcion: Orbe que contiene el poder de Skoll y Hati. Sirve para mejorar reliquias sagradas.
+  cristal_rojo_oscuro:
+    nombre: Cristal rojo oscuro
+    descripcion: Un mineral precioso que simboliza la inmensidad infinita de la tierra de la oscuridad. Se consigue en la batalla de bestia demoníaca contra Nidhoggr.
+  origen_raices:
+    nombre: Origen de la corrupción de las raíces
+    descripcion: Un objeto necesario para fabricar reliquias sagradas. Obtenido de Nidhoggr en batalla de bestia demoníaca.
+  carta_nidhoggr:
+    nombre: Nidhoggr
+    descripcion: Carta de artefacto de Nidhoggr.
+  tenacidad_volundr:
+    nombre: Tenacidad de Volundr
+    descripcion: Pizarra que contiene la tenacidad de Volundr. Obtenida en la tienda de intercambio de la Torre del Árbol del Mundo.
+  fruto_yggdrasil:
+    nombre: Fruto del Yggdrasil
+    descripcion: Fruto místico que atesora Ratatoskr. Ratatoskr lo proporciona en Batalla de bestia demoníaca.
+  origen_ciclo:
+    nombre: Origen del ciclo
+    descripcion: Objeto necesario para fabricar reliquias sagradas. Ratatoskr lo proporciona en Batalla de bestia demoníaca.
+  runa_magica:
+    nombre: Runa mágica
+    descripcion: Runa hallada en el Salón del Génesis. Se puede obtener en la batalla de bestia demoníaca de Surtr y la llama primordial.
+  origen_fuego:
+    nombre: Origen del fuego
+    descripcion: Objeto necesario para fabricar reliquias sagradas. Se puede obtener en la batalla de bestia demoníaca de Surtr y la llama primordial.
+  cuerno_demonio_rojo:
+    nombre: Cuerno de demonio rojo
+    descripcion: Material que sirve para superar el límite de los héroes. Se obtiene del cadáver de un demonio rojo.
+  perfume_embriagador:
+    nombre: Perfume embriagador
+    descripcion: Sirve para mejorar complementos.
+  carta_demonio_rojo:
+    nombre: Demonio rojo
+    descripcion: Carta de artefacto del demonio rojo.
+  cofre_tesoro:
+    nombre: Cofre del tesoro
+    descripcion: Véndelo en la tienda para adquirir oro.
+  piedra_despertar:
+    nombre: Piedra del despertar
+    descripcion: Una piedra misteriosa que se usa como ingrediente para despertar equipo de grado SSR.
+  ala_demonio_gris:
+    nombre: 'Ala de demonio gris'
+    descripcion: Material que sirve para superar el límite de los héroes. Se obtiene del cadáver de un demonio gris.
+  tela_magnifica:
+    nombre: 'Tela magnífica'
+    descripcion: Sirve para mejorar atuendos de conjunto.
+  carta_demonio_gris:
+    nombre: 'Demonio gris'
+    descripcion: Carta de artefacto del demonio gris.
+  oreja_howlex:
+    nombre: 'Oreja de bestia demoníaca Howlex'
+    descripcion: Material que sirve para superar el límite de los héroes. Se obtiene del cadáver de la bestia demoníaca Howlex.
+  componente_brillante:
+    nombre: 'Componente brillante'
+    descripcion: Sirve para mejorar atuendos de armas.
+  carta_howlex:
+    nombre: 'Bestia demoníaca Howlex'
+    descripcion: Carta de artefacto de la bestia demoníaca Howlex.
+  nucleo_bellmoth:
+    nombre: 'Núcleo de la bestia demoníaca Bellmoth'
+    descripcion: Material que sirve para superar el límite de los héroes. Se obtiene del cadáver de la bestia demoníaca Bellmoth.
+  carta_bellmoth:
+    nombre: 'Bestia demoníaca Bellmoth'
+    descripcion: Carta de artefacto de la bestia demoníaca Bellmoth.
+  energia_original:
+    nombre: 'Energía del demonio original'
+    descripcion: Material que sirve para superar el límite de los héroes.
+  carta_demonio_original:
+    nombre: 'Demonio original'
+    descripcion: Carta de artefacto del demonio original.
+  caja_materiales_atuendos:
+    nombre: 'Caja aleatoria de materiales de mejora de atuendos'
+    descripcion: Una caja con la que puedes conseguir aleatoriamente un componente brillante, una tela magnífica o un perfume embriagador según probabilidades determinadas.
+  carta_eliminador_oscuro:
+    nombre: '"Eliminador oscuro"'
+    descripcion: Carta de historia del capítulo 1 de Prisioneros del cielo.
+  carta_indura:
+    nombre: 'Indura del Castigo'
+    descripcion: Carta de artefacto de Indura del Castigo.
+  fragmento_moneda_sa:
+    nombre: 'Fragmento de moneda de superdespertar'
+    descripcion: Se intercambian por monedas de superdespertar en el intercambio de materiales.
+  fragmento_caos:
+    nombre: 'Fragmento del caos'
+    descripcion: Material necesario para usar [Caos de constelaciones].
+  yunque:
+    nombre: 'Yunque'
+    descripcion: Un yunque mágico que cambia los efectos de bonificación de un equipo según probabilidades determinadas.
+  esencia_azul:
+    nombre: Esencia mágica azul
+    descripcion: Esencia mágica usada para fabricar reliquias sagradas para héroes [humanos y hadas], [humanos] y de [raza desconocida].
+
+pajaro_pisos1a3:  # captura del juego, 2026-10-28
+  primera_vez:
+    - {objeto: magnificencia_valhalla, cantidad: 2}
+    - {objeto: origen_vientos}
+  premios:
+    - {caja: oro, objeto: carta_hraesvelgr, prob: 0.2}
+    - {caja: oro, objeto: magnificencia_valhalla, prob: 10}
+    - {caja: plata, objeto: esencia_desconocida, cantidad: 5, prob: 20}
+    - {caja: plata, objeto: esencia_azul, cantidad: 5, prob: 20}
+    - {caja: bronce, objeto: esencia_desconocida, cantidad: 2, prob: 24.9}
+    - {caja: bronce, objeto: esencia_azul, cantidad: 2, prob: 24.9}
+
+pajaro_piso4:  # captura del juego, 2026-10-28 (la cantidad de la pluma de la caja de oro no se veia: 4, como en Skoll y Hati)
+  garantizados:
+    - {objeto: pluma_hraesvelgr}
+    - {objeto: orbe_hraesvelgr}
+  premios:
+    - {caja: oro, objeto: mural_antiguo, prob: 0.1}
+    - {caja: oro, objeto: carta_hraesvelgr, prob: 1.4}
+    - {caja: oro, objeto: pluma_hraesvelgr, cantidad: 4, prob: 9}
+    - {caja: plata, objeto: campo_hraesvelgr, prob: 2.5}
+    - {caja: plata, objeto: pluma_hraesvelgr, cantidad: 2, prob: 25}
+    - {caja: bronce, objeto: pluma_hraesvelgr, prob: 15}
+    - {caja: bronce, objeto: esencia_desconocida, cantidad: 15, prob: 23.5}
+    - {caja: bronce, objeto: esencia_azul, cantidad: 15, prob: 23.5}
+
+ciervo_pisos1a3:  # captura del juego, 2026-10-28
+  primera_vez:
+    - {objeto: sublimidad_valquirias, cantidad: 2}
+    - {objeto: origen_rios}
+  premios:
+    - {caja: oro, objeto: carta_eikthyrnir, prob: 0.2}
+    - {caja: oro, objeto: sublimidad_valquirias, prob: 10}
+    - {caja: plata, objeto: esencia_desconocida, cantidad: 5, prob: 15}
+    - {caja: plata, objeto: esencia_dorada, cantidad: 5, prob: 15}
+    - {caja: bronce, objeto: meticulosidad_eitri, cantidad: 3, prob: 20}
+    - {caja: bronce, objeto: esencia_desconocida, cantidad: 2, prob: 19.9}
+    - {caja: bronce, objeto: esencia_dorada, cantidad: 2, prob: 19.9}
+
+ciervo_piso4:  # captura del juego, 2026-10-28 (la cantidad del asta de la caja de oro no se veia: 4, como en Skoll y Hati)
+  garantizados:
+    - {objeto: asta_eikthyrnir}
+    - {objeto: orbe_eikthyrnir}
+  premios:
+    - {caja: oro, objeto: mural_antiguo, prob: 0.1}
+    - {caja: oro, objeto: carta_eikthyrnir, prob: 1.4}
+    - {caja: oro, objeto: asta_eikthyrnir, cantidad: 4, prob: 9}
+    - {caja: plata, objeto: campamento_aliadas, prob: 2.5}
+    - {caja: plata, objeto: asta_eikthyrnir, cantidad: 2, prob: 25}
+    - {caja: bronce, objeto: asta_eikthyrnir, prob: 15}
+    - {caja: bronce, objeto: esencia_desconocida, cantidad: 15, prob: 23.5}
+    - {caja: bronce, objeto: esencia_dorada, cantidad: 15, prob: 23.5}
+
+perros_pisos1a3:  # captura del juego, 2026-10-28
+  primera_vez:
+    - {objeto: honor_einheriar, cantidad: 2}
+    - {objeto: fuente_ocaso}
+  premios:
+    - {caja: oro, objeto: carta_hati, prob: 0.2}
+    - {caja: oro, objeto: carta_skoll, prob: 0.2}
+    - {caja: oro, objeto: honor_einheriar, prob: 10}
+    - {caja: plata, objeto: esencia_negra, cantidad: 5, prob: 15}
+    - {caja: plata, objeto: esencia_azul, cantidad: 5, prob: 15}
+    - {caja: bronce, objeto: fuerza_brok, cantidad: 3, prob: 19.6}
+    - {caja: bronce, objeto: esencia_negra, cantidad: 2, prob: 20}
+    - {caja: bronce, objeto: esencia_azul, cantidad: 2, prob: 20}
+
+perros_piso4:  # captura del juego, 2026-10-28
+  garantizados:
+    - {objeto: garra_skoll_hati}
+    - {objeto: orbe_skoll_hati}
+  premios:
+    - {caja: oro, objeto: mural_antiguo, prob: 0.1}
+    - {caja: oro, objeto: carta_hati, prob: 0.7}
+    - {caja: oro, objeto: carta_skoll, prob: 0.7}
+    - {caja: oro, objeto: garra_skoll_hati, cantidad: 4, prob: 9}
+    - {caja: plata, objeto: campamento_aliadas, prob: 2.5}
+    - {caja: plata, objeto: garra_skoll_hati, cantidad: 2, prob: 25}
+    - {caja: bronce, objeto: garra_skoll_hati, prob: 15}
+    - {caja: bronce, objeto: esencia_negra, cantidad: 15, prob: 23.5}
+    - {caja: bronce, objeto: esencia_azul, cantidad: 15, prob: 23.5}
+
+serpiente_pisos1a3:  # captura del juego, 2026-10-28
+  primera_vez:
+    - {objeto: cristal_rojo_oscuro, cantidad: 2}
+    - {objeto: origen_raices}
+  premios:
+    - {caja: oro, objeto: carta_nidhoggr, prob: 0.2}
+    - {caja: oro, objeto: cristal_rojo_oscuro, prob: 10}
+    - {caja: plata, objeto: esencia_desconocida, cantidad: 5, prob: 15}
+    - {caja: plata, objeto: esencia_negra, cantidad: 5, prob: 15}
+    - {caja: bronce, objeto: tenacidad_volundr, cantidad: 3, prob: 20}
+    - {caja: bronce, objeto: esencia_desconocida, cantidad: 2, prob: 19.9}
+    - {caja: bronce, objeto: esencia_negra, cantidad: 2, prob: 19.9}
+
+rata_pisos1a3:  # captura del juego, 2026-10-28 (sin carta de artefacto)
+  primera_vez:
+    - {objeto: fruto_yggdrasil, cantidad: 2}
+    - {objeto: origen_ciclo}
+  premios:
+    - {caja: oro, objeto: fruto_yggdrasil, prob: 10}
+    - {caja: plata, objeto: esencia_dorada, cantidad: 5, prob: 15}
+    - {caja: plata, objeto: esencia_azul, cantidad: 5, prob: 15}
+    - {caja: bronce, objeto: fuerza_brok, cantidad: 3, prob: 20}
+    - {caja: bronce, objeto: esencia_dorada, cantidad: 2, prob: 20}
+    - {caja: bronce, objeto: esencia_azul, cantidad: 2, prob: 20}
+
+surtr_pisos1a3:  # captura del juego, 2026-10-28 (sin carta de artefacto)
+  primera_vez:
+    - {objeto: runa_magica, cantidad: 2}
+    - {objeto: origen_fuego}
+  premios:
+    - {caja: oro, objeto: runa_magica, prob: 10}
+    - {caja: plata, objeto: esencia_desconocida, cantidad: 5, prob: 15}
+    - {caja: plata, objeto: esencia_dorada, cantidad: 5, prob: 15}
+    - {caja: bronce, objeto: tenacidad_volundr, cantidad: 3, prob: 20}
+    - {caja: bronce, objeto: esencia_desconocida, cantidad: 2, prob: 20}
+    - {caja: bronce, objeto: esencia_dorada, cantidad: 2, prob: 20}
+
+demonio_rojo:  # captura del juego, 2026-10-28 (el titulo de la primera seccion estaba cortado: cuerno ×4 en cada victoria)
+  garantizados:
+    - {objeto: cuerno_demonio_rojo, cantidad: 4}
+  lider:
+    - {objeto: perfume_embriagador, prob: 100}
+  premios:
+    - {caja: oro, objeto: carta_demonio_rojo, prob: 0.5}
+    - {caja: oro, objeto: perfume_embriagador, prob: 8}
+    - {caja: plata, objeto: cofre_tesoro, prob: 5.5}
+    - {caja: plata, objeto: piedra_despertar, prob: 6}
+    - {caja: bronce, objeto: cuerno_demonio_rojo, cantidad: 5, prob: 40}
+    - {caja: bronce, objeto: cuerno_demonio_rojo, cantidad: 4, prob: 40}
+
+demonio_gris:  # captura del juego, 2026-10-28
+  garantizados:
+    - {objeto: ala_demonio_gris, cantidad: 4}
+  lider:
+    - {objeto: tela_magnifica, prob: 100}
+  premios:
+    - {caja: oro, objeto: carta_demonio_gris, prob: 0.5}
+    - {caja: oro, objeto: tela_magnifica, prob: 8}
+    - {caja: plata, objeto: cofre_tesoro, prob: 5.5}
+    - {caja: plata, objeto: piedra_despertar, prob: 6}
+    - {caja: bronce, objeto: ala_demonio_gris, cantidad: 5, prob: 40}
+    - {caja: bronce, objeto: ala_demonio_gris, cantidad: 4, prob: 40}
+
+howlex:  # captura del juego, 2026-10-28
+  garantizados:
+    - {objeto: oreja_howlex, cantidad: 4}
+  lider:
+    - {objeto: componente_brillante, prob: 100}
+  premios:
+    - {caja: oro, objeto: carta_howlex, prob: 0.5}
+    - {caja: oro, objeto: componente_brillante, prob: 8}
+    - {caja: plata, objeto: cofre_tesoro, prob: 5.5}
+    - {caja: plata, objeto: piedra_despertar, prob: 6}
+    - {caja: bronce, objeto: oreja_howlex, cantidad: 5, prob: 40}
+    - {caja: bronce, objeto: oreja_howlex, cantidad: 4, prob: 40}
+
+bellmoth:  # captura del juego, 2026-10-28
+  garantizados:
+    - {objeto: nucleo_bellmoth, cantidad: 4}
+  lider:
+    - {objeto: componente_brillante, prob: 100}
+  premios:
+    - {caja: oro, objeto: carta_bellmoth, prob: 0.5}
+    - {caja: oro, objeto: componente_brillante, cantidad: 2, prob: 8}
+    - {caja: plata, objeto: cofre_tesoro, prob: 5.5}
+    - {caja: plata, objeto: piedra_despertar, prob: 6}
+    - {caja: bronce, objeto: nucleo_bellmoth, cantidad: 4, prob: 40}
+    - {caja: bronce, objeto: nucleo_bellmoth, cantidad: 3, prob: 40}
+
+demonio_original:  # captura del juego, 2026-10-28
+  garantizados:
+    - {objeto: energia_original, cantidad: 4}
+  lider:
+    - {objeto: componente_brillante, prob: 100}
+  premios:
+    - {caja: oro, objeto: carta_demonio_original, prob: 0.5}
+    - {caja: oro, objeto: componente_brillante, cantidad: 2, prob: 8}
+    - {caja: plata, objeto: cofre_tesoro, prob: 5.5}
+    - {caja: plata, objeto: piedra_despertar, prob: 6}
+    - {caja: bronce, objeto: energia_original, cantidad: 4, prob: 40}
+    - {caja: bronce, objeto: energia_original, cantidad: 3, prob: 40}
+
+indura:  # captura del juego, 2026-10-28
+  garantizados:
+    - {objeto: caja_materiales_atuendos}
+  lider:
+    - {objeto: componente_brillante, prob: 100}
+  premios:
+    - {caja: oro, objeto: carta_eliminador_oscuro, prob: 0.5}
+    - {caja: oro, objeto: carta_indura, prob: 0.2}
+    - {caja: oro, objeto: componente_brillante, cantidad: 2, prob: 5}
+    - {caja: plata, objeto: fragmento_moneda_sa, cantidad: 5, prob: 5.8}
+    - {caja: plata, objeto: fragmento_caos, cantidad: 4, prob: 5.5}
+    - {caja: bronce, objeto: fragmento_moneda_sa, cantidad: 4, prob: 30}
+    - {caja: bronce, objeto: componente_brillante, prob: 10}
+    - {caja: bronce, objeto: fragmento_caos, cantidad: 2, prob: 20}
+    - {caja: bronce, objeto: yunque, cantidad: 5, prob: 23}

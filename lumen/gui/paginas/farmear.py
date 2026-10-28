@@ -1,9 +1,10 @@
-"""Pagina Farmear: el modo y sus opciones, los controles, que esta haciendo el bot y el registro."""
+"""Pagina Farmear: el modo, los controles, que esta haciendo el bot, el botin que lleva, los mejores
+equipos para ese modo, el registro y las opciones. Todo en una pantalla."""
 
 import time
 
 from PyQt5.QtCore import QSize, Qt, QTimer
-from PyQt5.QtGui import QTextCursor
+from PyQt5.QtGui import QPixmap, QTextCursor
 from PyQt5.QtWidgets import (
     QApplication,
     QButtonGroup,
@@ -16,6 +17,7 @@ from PyQt5.QtWidgets import (
     QLineEdit,
     QMessageBox,
     QPushButton,
+    QScrollArea,
     QSpinBox,
     QStackedWidget,
     QTextEdit,
@@ -23,11 +25,13 @@ from PyQt5.QtWidgets import (
     QVBoxLayout,
 )
 
-from lumen import actualizador, avisos, config, ordenes, ventana
+from lumen import actualizador, avisos, botin, config, ordenes, premios, recompensas, ventana
 from lumen.control import control
-from lumen.gui import iconos, tema
-from lumen.gui.comun import Pagina, formatear_tiempo
+from lumen.gui import iconos, plan, resumen, tema
+from lumen.gui.comun import Pagina, formatear_tiempo, icono_premio
+from lumen.gui.paginas.equipos import clave_de_equipos, tarjetas_equipos
 from lumen.modos import MODOS
+from lumen.modos.catalogo import contenido_de, foto_de
 from lumen.rutas import IMAGENES
 
 CIFRAS = [("victorias", "Victorias", "trofeo"), ("derrotas", "Derrotas", "derrota"), ("reinicios", "Reinicios", "reinicio"),
@@ -60,7 +64,7 @@ class PaginaFarmear(Pagina):
         capa_ahora.setContentsMargins(18, 14, 18, 14)
         capa_ahora.setSpacing(16)
         self.emblema = QLabel()
-        self.emblema.setFixedSize(96, 96)
+        self.emblema.setFixedSize(112, 112)
         capa_ahora.addWidget(self.emblema)
         textos = QVBoxLayout()
         textos.setSpacing(2)
@@ -69,11 +73,16 @@ class PaginaFarmear(Pagina):
         textos.addStretch()
         textos.addWidget(self.nombre_modo)
         textos.addWidget(self.sub_modo)
+        self.fila_pisos = QHBoxLayout()  # Floor 1 -> 2 -> 3 en los modos que recorren pisos
+        self.fila_pisos.setSpacing(4)
+        textos.addLayout(self.fila_pisos)
+        self.pisos: dict[int, QLabel] = {}
         self.combo = QComboBox()
         for modo in MODOS.values():
             self.combo.addItem(modo.nombre, modo.id)
         self.combo.setCurrentIndex(max(0, self.combo.findData(config.obtener("ultimo_modo"))))
         self.combo.setVisible(len(MODOS) > 1)
+        self.combo.setMaximumWidth(340)
         textos.addWidget(self.combo)
         textos.addStretch()
         capa_ahora.addLayout(textos, 1)
@@ -86,14 +95,11 @@ class PaginaFarmear(Pagina):
         estado.addWidget(self.lbl_detalle)
         self.fila_fases = QHBoxLayout()
         self.fila_fases.setSpacing(6)
+        self.fila_fases.addStretch()
         estado.addLayout(self.fila_fases)
-        estado.addStretch()
-        capa_ahora.addLayout(estado)
-        self.cuerpo.addWidget(ahora)
-
-        # ---- controles: tres botones grandes
+        # Controles en la cabecera, bajo el estado: Iniciar, Pausar y Detener
         botones = QHBoxLayout()
-        botones.setSpacing(14)
+        botones.setSpacing(8)
         botones.addStretch()
         self.b_iniciar = QToolButton(objectName="iniciar", text="Iniciar")
         self.b_pausar = QToolButton(objectName="pausar", text="Pausar")
@@ -101,14 +107,16 @@ class PaginaFarmear(Pagina):
         for b, ic in ((self.b_iniciar, "jugar"), (self.b_pausar, "pausa"), (self.b_detener, "detener")):
             b.setToolButtonStyle(Qt.ToolButtonTextUnderIcon)
             b.setIcon(iconos.icono(ic, tema.TEXTO))
-            b.setIconSize(QSize(30, 30))
-            b.setFixedSize(108, 80)
+            b.setIconSize(QSize(22, 22))
+            b.setFixedSize(84, 60)
             b.setCursor(Qt.PointingHandCursor)
             botones.addWidget(b)
-        botones.addStretch()
-        self.cuerpo.addLayout(botones)
-        self.ayuda_teclas = QLabel(objectName="tenue", alignment=Qt.AlignCenter)
-        self.cuerpo.addWidget(self.ayuda_teclas)
+        estado.addLayout(botones)
+        self.ayuda_teclas = QLabel(objectName="tenue", alignment=Qt.AlignRight)
+        estado.addWidget(self.ayuda_teclas)
+        estado.addStretch()
+        capa_ahora.addLayout(estado)
+        self.cuerpo.addWidget(ahora)
 
         # ---- cifras en una fila
         fila_cifras = QHBoxLayout()
@@ -135,6 +143,42 @@ class PaginaFarmear(Pagina):
         self.cifras["tiempo"].setText("0:00:00")
         self.cuerpo.addLayout(fila_cifras)
 
+        # ---- botin: lo que se lleva conseguido (esta sesion, o hoy en este modo si esta parado)
+        caja_botin = QFrame(objectName="seccion")
+        capa_botin = QHBoxLayout(caja_botin)
+        capa_botin.setContentsMargins(14, 8, 8, 8)
+        capa_botin.setSpacing(12)
+        textos_botin = QVBoxLayout()
+        textos_botin.setSpacing(0)
+        self.lbl_botin = QLabel(objectName="titulo_seccion")
+        self.lbl_oro = QLabel(objectName="tenue")
+        textos_botin.addStretch()
+        textos_botin.addWidget(self.lbl_botin)
+        textos_botin.addWidget(self.lbl_oro)
+        textos_botin.addStretch()
+        capa_botin.addLayout(textos_botin)
+        self.fila_botin = QHBoxLayout()
+        self.fila_botin.setSpacing(8)
+        contenedor = QFrame(objectName="contenido_desplazable")
+        contenedor.setLayout(self.fila_botin)
+        desliza = QScrollArea(objectName="area_pagina", widgetResizable=True, frameShape=QFrame.NoFrame)
+        desliza.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        desliza.setWidget(contenedor)
+        desliza.setFixedHeight(78)
+        capa_botin.addWidget(desliza, 1)
+        # A la derecha: lo que se puede conseguir en este modo (lumen/datos/premios.yaml)
+        self.raya_premios = QFrame(frameShape=QFrame.VLine, objectName="raya")
+        capa_botin.addWidget(self.raya_premios)
+        self.caja_premios = QVBoxLayout()
+        self.caja_premios.setSpacing(2)
+        self.caja_premios.addWidget(QLabel("Puedes conseguir", objectName="tenue"))
+        self.fila_premios = QHBoxLayout()
+        self.fila_premios.setSpacing(4)
+        self.caja_premios.addLayout(self.fila_premios)
+        capa_botin.addLayout(self.caja_premios)
+        self.cuerpo.addWidget(caja_botin)
+        self._fotos_vistas = None
+
         # ---- abajo: registro u opciones, una cosa a la vez
         cabecera = QHBoxLayout()
         self.grupo_vista = QButtonGroup(self, exclusive=True)
@@ -147,7 +191,18 @@ class PaginaFarmear(Pagina):
         self.form = QFormLayout()
         capa_op.addLayout(self.form)
         capa_op.addStretch()
-        for i, (texto, ic, vista) in enumerate((("Registro", "registro", self.registro), ("Opciones", "ajustes", panel_opciones))):
+        # Los mejores equipos para el modo elegido (los mismos que la pagina Equipos, hasta 5), a la derecha
+        contenedor_eq = QFrame(objectName="contenido_desplazable")
+        self.lista_equipos = QVBoxLayout(contenedor_eq)
+        self.lista_equipos.setContentsMargins(0, 0, 6, 0)
+        panel_equipos = QScrollArea(objectName="area_pagina", widgetResizable=True, frameShape=QFrame.NoFrame)
+        panel_equipos.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        panel_equipos.setWidget(contenedor_eq)
+        self.panel_plan = plan.PanelPlan()
+        self.panel_plan.iniciar.connect(self.iniciar_plan)
+        self.plan_paso: int | None = None  # tarea del plan en curso (None = no hay plan en marcha)
+        for i, (texto, ic, vista) in enumerate((("Registro", "registro", self.registro), ("Plan", "mdi6.format-list-checks", self.panel_plan),
+                                               ("Opciones", "ajustes", panel_opciones))):
             b = QPushButton(" " + texto, objectName="chip", checkable=True, checked=i == 0)
             b.setIcon(iconos.icono(ic, tema.TENUE, tema.SOBRE_ACENTO))
             b.clicked.connect(lambda _, n=i: self.pila_vista.setCurrentIndex(n))
@@ -162,8 +217,23 @@ class PaginaFarmear(Pagina):
         b_limpiar.setToolTip("Limpiar el registro")
         b_limpiar.clicked.connect(lambda: self.registro.clear())
         cabecera.addWidget(b_limpiar)
-        self.cuerpo.addLayout(cabecera)
-        self.cuerpo.addWidget(self.pila_vista, 1)
+        izquierda = QVBoxLayout()
+        izquierda.addLayout(cabecera)
+        izquierda.addWidget(self.pila_vista, 1)
+        derecha = QVBoxLayout()
+        titulo_eq = QHBoxLayout()
+        icono_eq = QLabel()
+        icono_eq.setPixmap(iconos.pixmap("equipos", 18, tema.ACENTO))
+        titulo_eq.addWidget(icono_eq)
+        titulo_eq.addWidget(QLabel("Mejores equipos", objectName="titulo_seccion"))
+        titulo_eq.addStretch()
+        derecha.addLayout(titulo_eq)
+        derecha.addWidget(panel_equipos, 1)
+        abajo = QHBoxLayout()
+        abajo.setSpacing(14)
+        abajo.addLayout(izquierda, 5)
+        abajo.addLayout(derecha, 4)
+        self.cuerpo.addLayout(abajo, 1)
 
         self.combo.currentIndexChanged.connect(self._mostrar_opciones)
         self.b_iniciar.clicked.connect(self.iniciar)
@@ -195,7 +265,8 @@ class PaginaFarmear(Pagina):
         self.nombre_modo.setText(cls.titulo_juego or cls.nombre)
         self.sub_modo.setText(" · ".join(x for x in (cls.subtitulo_juego, cls.duracion) if x))
         self.nombre_modo.setToolTip(cls.descripcion)
-        pix = iconos.redondo(IMAGENES / cls.imagen, 96, tema.ACENTO) if cls.imagen else None
+        foto = foto_de(cls.id) or (IMAGENES / cls.imagen if cls.imagen else None)  # la del catalogo (assets/modos) o la del modo
+        pix = iconos.redondo(foto, 112, tema.ACENTO) if foto else None
         if pix:
             self.emblema.setPixmap(pix)
         else:
@@ -218,12 +289,33 @@ class PaginaFarmear(Pagina):
             self.campos[op.clave] = campo
             self.form.addRow(op.etiqueta, campo)
 
+        while self.fila_pisos.count():
+            w = self.fila_pisos.takeAt(0).widget()
+            if w:
+                w.setParent(None)
+        self.pisos = {}
+        for i, n in enumerate(getattr(cls, "ciclo_pisos", ())):
+            if i:
+                flecha = QLabel()
+                flecha.setPixmap(iconos.pixmap("mdi6.chevron-right", 16, tema.TENUE))
+                self.fila_pisos.addWidget(flecha)
+            self.pisos[n] = QLabel(f"Floor {n}", objectName="piso", alignment=Qt.AlignCenter)
+            self.fila_pisos.addWidget(self.pisos[n])
+        if self.pisos:
+            self.lbl_vuelta = QLabel(objectName="tenue")
+            self.fila_pisos.addSpacing(8)
+            self.fila_pisos.addWidget(self.lbl_vuelta)
+        self.fila_pisos.addStretch()
+        self._pintar_equipos()
+        self._pintar_botin()
+        self._pintar_premios()
         while self.fila_fases.count():
             w = self.fila_fases.takeAt(0).widget()
             if w:
                 w.setParent(None)
         self.fases = [QLabel(str(n), objectName="fase", alignment=Qt.AlignCenter, toolTip=f"Fase {n}")
                       for n in range(1, cls.fases + 1)]
+        self.fila_fases.addStretch()  # pegadas a la derecha, bajo el estado
         for etiqueta in self.fases:
             self.fila_fases.addWidget(etiqueta)
         self._pintar_estado()
@@ -385,6 +477,14 @@ class PaginaFarmear(Pagina):
                 avisos.enviar(f"No pude sacar la foto: {error}")
                 return
             avisos.enviar(self._resumen(), imagen)
+        elif orden == "plan":
+            if corriendo:
+                avisos.enviar("Ya está en marcha. " + self._resumen())
+                return
+            self.escribir("Orden del movil: plan del día.", "info")
+            self.iniciar_plan(remoto=True)
+            if self.puente.corriendo:
+                avisos.enviar(f"Empiezo el plan del día: {len(plan.cargar())} tareas.")
         elif orden == "iniciar":
             if corriendo:
                 avisos.enviar("Ya esta en marcha. " + self._resumen())
@@ -419,9 +519,19 @@ class PaginaFarmear(Pagina):
         return "\n".join(lineas)
 
     def _terminado(self):
+        if not self.modo_externo:  # solo las sesiones de farmeo, no las herramientas del admin
+            self._mostrar_resumen()
+        self._pintar_botin()
         self._botones(False)
         self.inicio = None
         self.estado_bot = ""
+        if self.plan_paso is not None:
+            if control.detenido or control.parar_en_zona_segura or self.app.update_bloqueante:
+                self.escribir("Plan del día detenido.", "aviso")
+                self.plan_paso = None
+                self.panel_plan.marcar(None)
+            else:  # unos segundos para que el juego vuelva a un menu antes de la siguiente tarea
+                QTimer.singleShot(4000, lambda: self._siguiente_tarea(remoto=True))
         herramienta = getattr(self.modo_externo, "id", "")
         self.modo_externo = None
         self._pintar_estado()
@@ -431,6 +541,51 @@ class PaginaFarmear(Pagina):
             self.app.navegar("equipos")
         elif herramienta == "captura_objetos":  # y la galeria de objetos
             self.app.navegar("recompensas")
+
+    # ------------------------------------------------------------ plan del dia
+    def iniciar_plan(self, remoto: bool = False):
+        """Empieza el plan del dia por la primera tarea."""
+        if self.puente.corriendo:
+            return
+        if not plan.cargar():
+            self._problema("Plan del día", "El plan no tiene tareas.", remoto)
+            return
+        self.escribir("Empieza el plan del día.", "ok")
+        self.plan_paso = -1
+        self._siguiente_tarea(remoto)
+
+    def _siguiente_tarea(self, remoto: bool = True):
+        """Arranca la siguiente tarea del plan; si una no puede empezar, prueba con la siguiente."""
+        if self.plan_paso is None or self.puente.corriendo:
+            return
+        tareas = plan.cargar()
+        for i in range(self.plan_paso + 1, len(tareas)):
+            t = tareas[i]
+            self.plan_paso = i
+            self.panel_plan.marcar(i)
+            self.escribir(f"Plan: tarea {i + 1} de {len(tareas)} · {MODOS[t['modo']].nombre} · {t['victorias']} victorias.", "ok")
+            self.preparar(t["modo"], {"victorias": int(t["victorias"])})
+            self.iniciar(remoto=remoto)
+            if self.puente.corriendo:
+                return
+            self.escribir(f"La tarea {i + 1} no pudo empezar; paso a la siguiente.", "aviso")
+        self.plan_paso = None
+        self.panel_plan.marcar(None)
+        self.escribir("Plan del día terminado.", "ok")
+        avisos.enviar("Lumen Farm: plan del día terminado.")
+
+    def _mostrar_resumen(self):
+        """Tarjeta con lo conseguido en la sesion que acaba de terminar, y lo mismo al movil."""
+        segundos = time.time() - self.inicio if self.inicio else 0
+        if segundos < resumen.MINIMO_S:
+            return
+        sesion = self.ultimas_stats.get("inicio")
+        registros = [r for r in recompensas.leer() if sesion and abs(float(r.get("sesion") or 0) - float(sesion)) < 1]
+        cls = self.modo_cls
+        d = resumen.datos(self.ultimas_stats, segundos, registros)
+        resumen.enviar_al_movil(cls.nombre, d)
+        self._tarjeta_resumen = resumen.TarjetaResumen(self, cls.nombre, foto_de(cls.id), d)
+        self._tarjeta_resumen.show()  # sin bloquear: el programa sigue aunque nadie la cierre
 
     def _botones(self, corriendo: bool):
         self.b_iniciar.setEnabled(not corriendo)
@@ -461,7 +616,7 @@ class PaginaFarmear(Pagina):
             texto, detalle = "En pausa", ""
         else:
             texto = cls.nombres_estados.get(self.estado_bot) or self.estado_bot.replace("_", " ").capitalize() or "Arrancando"
-            detalle = cls.titulo_juego or cls.nombre
+            detalle = "" if cls is self.modo_cls else (cls.titulo_juego or cls.nombre)  # el modo elegido ya sale a la izquierda
         self.lbl_estado.setText(texto)
         self.lbl_detalle.setText(detalle)
         fase = int(self.ultimas_stats.get("fase") or 0) if corriendo else 0
@@ -476,6 +631,98 @@ class PaginaFarmear(Pagina):
             else:
                 estado = ""
             _repintar(etiqueta, "estado", estado)
+        # Floor 1 -> 2 -> 3: el actual en dorado y los ya ganados en esta vuelta en verde
+        piso = int(self.ultimas_stats.get("piso") or 0) if corriendo else 0
+        for n, etiqueta in self.pisos.items():
+            _repintar(etiqueta, "estado", "actual" if n == piso else "hecha" if piso and n < piso else "")
+        if self.pisos:
+            vuelta = int(self.ultimas_stats.get("vuelta") or 0) if corriendo else 0
+            self.lbl_vuelta.setText(f"vuelta {vuelta}" if vuelta else "")
+
+    # ------------------------------------------------------- equipos y botin
+    def ver_equipos(self):
+        """Abre Farmear, donde estan los mejores equipos (p. ej. desde el icono Equipo de Inicio)."""
+        self.app.navegar("farmear")
+
+    def _pintar_equipos(self):
+        while self.lista_equipos.count():
+            w = self.lista_equipos.takeAt(0).widget()
+            if w:
+                w.setParent(None)
+        tarjetas = tarjetas_equipos(clave_de_equipos(self.modo_cls.id), compacto=True)[:5]
+        if not tarjetas:  # p. ej. Hraesvelgr solo tiene equipos para el Floor 4: tambien sirven en el 1-3
+            contenido = contenido_de(self.modo_cls.id)
+            for destino in (contenido.destinos if contenido else ()):
+                tarjetas = tarjetas_equipos(destino.id, compacto=True)[:5]
+                if tarjetas:
+                    self.lista_equipos.addWidget(QLabel(f"Del {destino.nombre}: también sirven aquí.", objectName="tenue"))
+                    break
+        for t in tarjetas:
+            self.lista_equipos.addWidget(t)
+        if not tarjetas:
+            self.lista_equipos.addWidget(QLabel("Todavía no hay equipos recomendados para este modo.", objectName="tenue"))
+        self.lista_equipos.addStretch(1)
+
+    def _pintar_premios(self):
+        while self.fila_premios.count():
+            w = self.fila_premios.takeAt(0).widget()
+            if w:
+                w.setParent(None)
+        lista = premios.de(self.modo_cls.id)
+        for p in lista:
+            casilla = QFrame(objectName="premio_mini")
+            capa = QVBoxLayout(casilla)
+            capa.setContentsMargins(2, 2, 2, 0)
+            capa.setSpacing(0)
+            dibujo = QLabel(alignment=Qt.AlignCenter)
+            dibujo.setPixmap(icono_premio(p, 34))
+            capa.addWidget(dibujo)
+            prob = QLabel(p.texto_prob, objectName="prob_premio", alignment=Qt.AlignCenter)
+            prob.setProperty("raro", p.prob < 1)
+            prob.setProperty("siempre", p.siempre)
+            capa.addWidget(prob)
+            casilla.setToolTip(f"<b>{p.nombre}</b> {p.texto_cantidad}<br>{p.descripcion}<br><i>"
+                               + ("En cada victoria" if p.siempre else f"{p.texto_prob} por pelea") + "</i>")
+            self.fila_premios.addWidget(casilla)
+        for w in (self.raya_premios, self.caja_premios.itemAt(0).widget()):
+            w.setVisible(bool(lista))
+
+    def _pintar_botin(self):
+        """Los objetos y el oro de la sesion en curso (o de hoy en este modo, con el bot parado)."""
+        while self.fila_botin.count():
+            w = self.fila_botin.takeAt(0).widget()
+            if w:
+                w.setParent(None)
+        registros = recompensas.leer()
+        sesion = self.ultimas_stats.get("inicio") if self.puente.corriendo else None
+        if sesion:
+            elegidos = [r for r in registros if abs(float(r.get("sesion") or 0) - float(sesion)) < 1]
+            self.lbl_botin.setText("Botín de esta sesión")
+        else:
+            inicio_hoy = time.mktime(time.localtime()[:3] + (0, 0, 0, 0, 0, -1))
+            elegidos = [r for r in registros if r.get("modo") == self.modo_cls.id and r.get("fecha", 0) >= inicio_hoy]
+            self.lbl_botin.setText("Botín de hoy")
+        oro = sum(int(r.get("oro") or 0) for r in elegidos)
+        victorias = len(elegidos)
+        self.lbl_oro.setText(f"{oro:,} de oro · {victorias} victoria{'s' if victorias != 1 else ''}".replace(",", "."))
+        catalogo = botin.cargar_catalogo()
+        totales = recompensas.totales_objetos(elegidos)
+        for oid, cantidad in list(totales.items())[:40]:
+            casilla = QFrame(objectName="objeto_mini")
+            capa = QVBoxLayout(casilla)
+            capa.setContentsMargins(4, 4, 4, 2)
+            capa.setSpacing(0)
+            dibujo = QLabel(alignment=Qt.AlignCenter)
+            pix = QPixmap(str(botin.ruta_icono(oid)))
+            if not pix.isNull():
+                dibujo.setPixmap(pix.scaled(44, 38, Qt.KeepAspectRatio, Qt.SmoothTransformation))
+            capa.addWidget(dibujo)
+            capa.addWidget(QLabel(f"×{cantidad:,}".replace(",", "."), objectName="cantidad_mini", alignment=Qt.AlignCenter))
+            casilla.setToolTip(botin.nombre(oid, catalogo))
+            self.fila_botin.addWidget(casilla)
+        if not totales:
+            self.fila_botin.addWidget(QLabel("Aún nada: cada victoria suma aquí lo que consigas.", objectName="tenue"))
+        self.fila_botin.addStretch(1)
 
     # --------------------------------------------------------------- registro
     def escribir(self, mensaje: str, nivel: str = "info"):
@@ -500,6 +747,9 @@ class PaginaFarmear(Pagina):
         if "tasa" in s:
             self.cifras["tasa"].setText(f"{s['tasa']:.0f}%")
         self._pintar_estado()
+        if s.get("fotos_recompensas") != self._fotos_vistas:  # una victoria nueva con su botin
+            self._fotos_vistas = s.get("fotos_recompensas")
+            self._pintar_botin()
 
     def _refrescar(self):
         if self.inicio:

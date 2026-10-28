@@ -22,7 +22,6 @@ NOMBRES = {
     "capturas": "mdi6.camera",
     "personajes": "mdi6.account-group",
     "equipos": "mdi6.shield-account",
-    "historial": "mdi6.chart-line",
     "recompensas": "mdi6.treasure-chest",
     "ajustes": "mdi6.cog",
     "ayuda": "mdi6.help-circle-outline",

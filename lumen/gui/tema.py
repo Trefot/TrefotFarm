@@ -172,6 +172,23 @@ QLabel#fase {{ background: {_s.hundido}; color: {_s.tenue}; border: 1px solid {_
                min-width: 30px; max-width: 30px; min-height: 30px; max-height: 30px; font-weight: 700; }}
 QLabel#fase[estado="actual"] {{ background: {_ORO}; color: {_s.sobre_acento}; border-color: {_s.borde_oro}; }}
 QLabel#fase[estado="hecha"] {{ color: {OK}; border-color: #2c5f45; }}
+QLabel#piso {{ background: {_s.hundido}; color: {_s.tenue}; border: 1px solid {_s.borde}; border-radius: 11px;
+               padding: 3px 12px; font-weight: 600; font-size: 9pt; }}
+QLabel#piso[estado="actual"] {{ background: {_ORO}; color: {_s.sobre_acento}; border-color: {_s.borde_oro}; }}
+QLabel#piso[estado="hecha"] {{ color: {OK}; border-color: #2c5f45; }}
+QFrame#premio_mini {{ background: {_s.hundido}; border: 1px solid {_s.borde}; border-radius: 7px; min-width: 42px; }}
+QFrame#raya {{ color: {_s.borde}; }}
+QFrame#premio {{ background: {_s.hundido}; border: 1px solid {_s.borde}; border-radius: 9px; min-width: 54px; }}
+QFrame#premio:hover {{ border-color: {_s.borde_oro}; }}
+QLabel#prob_premio {{ color: {_s.tenue}; font-size: 8.5pt; font-weight: 600; }}
+QLabel#prob_premio[raro="true"] {{ color: {_s.acento}; }}
+QLabel#prob_premio[siempre="true"] {{ color: {OK}; }}
+QFrame#tarea_plan {{ background: {_s.hundido}; border: 1px solid {_s.borde}; border-radius: 9px; }}
+QFrame#tarea_plan[estado="actual"] {{ border: 2px solid {_s.acento}; background: {_SEL}; }}
+QFrame#tarea_plan[estado="hecha"] {{ border-color: #2c5f45; }}
+QFrame#objeto_mini {{ background: {_s.hundido}; border: 1px solid {_s.borde}; border-radius: 9px; min-width: 56px; }}
+QFrame#objeto_mini:hover {{ border-color: {_s.borde_oro}; }}
+QLabel#cantidad_mini {{ color: {_s.acento}; font-weight: 700; font-size: 9pt; }}
 QFrame#tarjeta_objeto {{ background: {_PANEL}; border: 1px solid {_s.borde}; border-radius: 12px; }}
 QFrame#tarjeta_objeto:hover {{ border-color: {_s.borde_oro}; }}
 QFrame#tarjeta_objeto[sin_nombre="true"] {{ border: 1px dashed {AVISO}; }}
