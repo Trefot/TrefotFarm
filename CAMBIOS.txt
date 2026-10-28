@@ -29,6 +29,12 @@ Etapas previstas:
 
 CAMBIOS
 -------
+0.4.1-alpha
+  - Bestias Floor 1-3: un piso ya superado (no se abre) se salta tras 3 toques. Antes, cada vez que se
+    arrancaba el bot tocaba el Floor 1 ya superado durante 40 s (prueba de Hraesvelgr).
+  - Peleas: el boton del talento de Odin ya no empieza un turno si no hay huecos. Con Nidhoggr el bot
+    "empezaba" un turno por segundo en la fase 2 sin jugar ninguna carta.
+
 0.4.0-alpha
   - Nuevos: los 5 demonios en tiempo real (Red Demon, Gray Demon, Howlex, Bellmoth y Original Demon).
     Mismo molde que Indura (aceptar a los 9.3 s, preparacion, foto del botin); pelean en AUTO y en Hell

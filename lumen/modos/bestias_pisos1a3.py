@@ -52,6 +52,7 @@ class EstrategiaInteligente(EstrategiaSimple):
         return (paso[1], paso[2]), None, False
 
 
+TOQUES_PISO = 3  # toques al circulo del piso sin que se abra: ya esta superado, pasar al siguiente
 SALTAR_PISO_S = 40  # sin encontrar el piso que toca en la pantalla de pisos (ni desplazando): pasar al siguiente
 CADA_DESPLAZAR_S = 2.0  # sin ver el piso que toca: deslizar la lista cada 2 s buscandolo
 DESPLAZAR_ABAJO = ((270, 720), (270, 420))  # dedo hacia arriba: la lista baja (el Floor 1 esta abajo)
@@ -111,6 +112,7 @@ class BestiaPisos1a3(PerrosPiso4):
         self._pisos_vistos: tuple[float, set] = (0.0, set())  # (hora, numeros de piso) de la ultima lectura
         self._desplazamientos = 0  # veces que se deslizo la lista buscando el piso que toca
         self._ultimo_desplazamiento = 0.0
+        self._toques_piso = 0  # veces que se toco el piso que toca sin que se abriera
         self.stats.update(piso=self.piso, vuelta=self.vuelta)
 
     def _siguiente_piso(self):
@@ -120,6 +122,7 @@ class BestiaPisos1a3(PerrosPiso4):
             self.pedir_reset = True
         self.buscando_piso_desde = None
         self._desplazamientos = 0
+        self._toques_piso = 0
         self._stats()
 
     def _stats(self):
@@ -179,6 +182,7 @@ class BestiaPisos1a3(PerrosPiso4):
     def elegir_piso(self, p, o):
         if juego.empezar.esta(p):
             self.buscando_piso_desde = None
+            self._toques_piso = 0
             return "preparar"
         if self.clic_si(juego.ok, p, o):  # confirmar al abrir el piso (o el Reset)
             return None
@@ -192,6 +196,14 @@ class BestiaPisos1a3(PerrosPiso4):
             x, y, w, h = rect
             punto = (x + w // 2, y + h // 2 + BAJO_TITULO)
             if punto[1] <= LIMITE_CIRCULO:
+                if self._toques_piso >= TOQUES_PISO:
+                    # Ya superado esta semana (no se abre): en la prueba de la 0.4.0, cada vez que se arrancaba el
+                    # bot tocaba el Floor 1 ya superado durante 40 s antes de pasar al siguiente.
+                    antes = self.piso
+                    self._siguiente_piso()
+                    self.log(f"El Floor {antes} no se abre (¿ya superado?): paso al Floor {self.piso}.", "aviso")
+                    return None
+                self._toques_piso += 1
                 self.log(f"Abro el Floor {self.piso}.")
                 entrada.clic(punto, o, espera=1.0)
                 self._desplazamientos = 0

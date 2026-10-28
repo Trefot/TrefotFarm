@@ -379,11 +379,14 @@ class PerrosPiso4(Modo):
         huecos = C.contar_huecos(p, 0.8)
         if self.turno_abierto:
             return self._jugar_turno() if huecos > 0 else None
+        # El boton del talento de Odin solo vale si tambien hay huecos: con Nidhoggr (prueba de la 0.4.0) se veia
+        # sin huecos y el bot "empezaba" un turno por segundo sin jugar nada durante toda la fase 2.
+        talento = talento and huecos > 0
         if talento or huecos >= 3:
             self.lecturas_turno += 1
             if talento or self.lecturas_turno >= 2:  # dos lecturas seguidas: evita arrancar en una animacion
                 self.lecturas_turno = 0
-                return self._empezar_turno(p, max(huecos, 4 if talento and huecos <= 0 else huecos))
+                return self._empezar_turno(p, max(huecos, 4) if talento else huecos)
         else:
             self.lecturas_turno = 0
         return None
