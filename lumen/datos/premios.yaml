@@ -32,6 +32,21 @@ objetos:
   campo_hraesvelgr:
     nombre: Campo de batalla de Hraesvelgr
     descripcion: Carta de escena del campo de batalla de Hraesvelgr.
+  sublimidad_valquirias:
+    nombre: Sublimidad de las valquirias
+    descripcion: Una gema de gran calidad que simboliza nobles intenciones. Obtenida de Eikthyrnir en batalla de bestia demoníaca.
+  origen_rios:
+    nombre: Origen de los ríos
+    descripcion: Un objeto necesario para fabricar reliquias sagradas. Obtenido de Eikthyrnir en batalla de bestia demoníaca.
+  carta_eikthyrnir:
+    nombre: Eikthyrnir
+    descripcion: Carta de artefacto de Eikthyrnir.
+  meticulosidad_eitri:
+    nombre: Meticulosidad de Eitri
+    descripcion: Pizarra que contiene la meticulosidad de Eitri. Obtenida en la tienda de intercambio de la Torre del Árbol del Mundo.
+  esencia_dorada:
+    nombre: Esencia mágica dorada
+    descripcion: Esencia mágica usada para fabricar reliquias sagradas para diosas.
   esencia_azul:
     nombre: Esencia mágica azul
     descripcion: Esencia mágica usada para fabricar reliquias sagradas para héroes [humanos y hadas], [humanos] y de [raza desconocida].
@@ -61,3 +76,16 @@ pajaro_piso4:  # captura del juego, 2026-10-28 (la cantidad de la pluma de la ca
     - {caja: bronce, objeto: pluma_hraesvelgr, prob: 15}
     - {caja: bronce, objeto: esencia_desconocida, cantidad: 15, prob: 23.5}
     - {caja: bronce, objeto: esencia_azul, cantidad: 15, prob: 23.5}
+
+ciervo_pisos1a3:  # captura del juego, 2026-10-28
+  primera_vez:
+    - {objeto: sublimidad_valquirias, cantidad: 2}
+    - {objeto: origen_rios}
+  premios:
+    - {caja: oro, objeto: carta_eikthyrnir, prob: 0.2}
+    - {caja: oro, objeto: sublimidad_valquirias, prob: 10}
+    - {caja: plata, objeto: esencia_desconocida, cantidad: 5, prob: 15}
+    - {caja: plata, objeto: esencia_dorada, cantidad: 5, prob: 15}
+    - {caja: bronce, objeto: meticulosidad_eitri, cantidad: 3, prob: 20}
+    - {caja: bronce, objeto: esencia_desconocida, cantidad: 2, prob: 19.9}
+    - {caja: bronce, objeto: esencia_dorada, cantidad: 2, prob: 19.9}
