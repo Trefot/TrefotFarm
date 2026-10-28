@@ -15,6 +15,8 @@ import threading
 import time
 from collections import Counter
 
+import cv2
+import numpy as np
 import yaml
 
 from lumen import botin, cartas, historial, juego, recompensas
@@ -39,6 +41,7 @@ AUTO_DEMONIO = Plantilla("demons/auto.jpg")
 DESTRUIDO = Plantilla("demons/demons_destroyed.png")
 UMBRAL_FASE = 0.9
 UMBRAL_RESULTADO = 0.85
+PARECIDO_HUELLA = 4.0  # diferencia media (0-255) para dar una carta por ya vista: brillo/ruido ~1-2, otra carta 20+
 
 
 class Raton:
@@ -81,7 +84,16 @@ class Raton:
 
 
 class IndiceCartas:
-    """Las cartas de todos los heroes de la base, para reconocer el equipo por la mano."""
+    """Las cartas de todos los heroes de la base, para reconocer el equipo por la mano.
+
+    Son mas de 1000 plantillas: compararlas todas a tamano real tarda ~0.35 s por carta (unos 3 s por
+    mano). Por eso primero se compara a mitad de tamano (mucho mas rapido), se quedan las CANDIDATAS
+    mas parecidas y solo esas se comparan a tamano real. Con 150 cartas simuladas da el mismo
+    resultado que compararlas todas, ~4 veces mas rapido. Y una carta que sigue en la mano no se
+    vuelve a mirar (memoria por su dibujo).
+    """
+
+    CANDIDATAS = 30
 
     def __init__(self):
         self.plantillas = []  # (pid, carta, Plantilla, umbral)
@@ -92,16 +104,38 @@ class IndiceCartas:
                 plantilla, umbral = pj.plantilla(c.id)
                 if plantilla is not None and plantilla.disponible:
                     self.plantillas.append((pj.id, c.id, plantilla, umbral))
+        self.mitades = [_mitad(p.imagenes[0]) for _, _, p, _ in self.plantillas]
+        self._memoria: list[tuple[np.ndarray, str | None]] = []  # (huella, heroe) de cartas ya vistas
 
     def heroe_de(self, carta: cartas.Carta) -> str | None:
         if carta.imagen is None or carta.tipo in (cartas.TipoCarta.SUELO, cartas.TipoCarta.NINGUNA):
             return None
+        huella = _huella(carta.imagen)
+        for vista, pid in self._memoria:
+            if float(np.abs(vista - huella).mean()) < PARECIDO_HUELLA:
+                return pid
+        pequena = _mitad(carta.imagen)
+        parecidos = []
+        for i, ref in enumerate(self.mitades):
+            if ref.shape[0] <= pequena.shape[0] and ref.shape[1] <= pequena.shape[1]:
+                parecidos.append((float(cv2.matchTemplate(pequena, ref, cv2.TM_CCOEFF_NORMED).max()), i))
         mejor, valor_mejor = None, 0.0
-        for pid, _, plantilla, umbral in self.plantillas:
+        for _, i in sorted(parecidos, reverse=True)[: self.CANDIDATAS]:
+            pid, _, plantilla, umbral = self.plantillas[i]
             valor, _ = plantilla.confianza(carta.imagen)
             if valor >= umbral and valor > valor_mejor:
                 mejor, valor_mejor = pid, valor
+        self._memoria = self._memoria[-300:] + [(huella, mejor)]
         return mejor
+
+
+def _mitad(imagen):
+    return cv2.resize(imagen, (imagen.shape[1] // 2, imagen.shape[0] // 2), interpolation=cv2.INTER_AREA)
+
+
+def _huella(imagen) -> np.ndarray:
+    """Resumen del dibujo de una carta (gris, 8x16): casi igual mientras la carta no cambia."""
+    return cv2.cvtColor(cv2.resize(imagen, (8, 16), interpolation=cv2.INTER_AREA), cv2.COLOR_BGR2GRAY).astype(np.float32)
 
 
 class Aprender(Modo):
