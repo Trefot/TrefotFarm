@@ -46,16 +46,16 @@ MENU = [
     ("inicio", "Inicio"),
     ("farmear", "Farmear"),
     ("personajes", "Personajes"),
-    ("equipos", "Equipos"),
-    ("recompensas", "Botín"),
     ("ayuda", "Ayuda"),
     ("ajustes", "Ajustes"),
     # Solo con el modo administrador (Ajustes): herramientas para mantener la base del bot.
+    ("equipos", "Equipos"),
+    ("recompensas", "Botín"),
     ("capturas", "Capturas"),
     ("editor", "Editor"),
     ("capturados", "Héroes"),
 ]
-SOLO_ADMIN = {"capturas", "editor", "capturados"}
+SOLO_ADMIN = {"capturas", "editor", "capturados", "equipos", "recompensas"}  # lo demas esta en Farmear
 
 
 class _Senales(QObject):

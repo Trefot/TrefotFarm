@@ -166,7 +166,7 @@ class Asistente(QDialog):
         capa.addWidget(_punto("farmear", "Farmeo solo",
                               "Entro a la pelea, juego las cartas con un guion probado, cobro el botín y repito."))
         capa.addWidget(_punto("recompensas", "Cuento lo que ganas",
-                              "Cada victoria guarda su botín: oro y objetos, sumados en la página Botín."))
+                              "Cada victoria guarda su botín: oro y objetos, a la vista en Farmear."))
         capa.addWidget(_punto("movil", "Te aviso al móvil",
                               "Si quieres, te mando un aviso si algo se atasca o si el juego pide reiniciarse."))
         aviso = QFrame(objectName="aviso")
@@ -328,7 +328,7 @@ class Asistente(QDialog):
             self.zona_equipo.addWidget(caja)
         self.zona_equipo.addWidget(_punto(
             "equipos", "¿No tienes a alguno?",
-            "En la página Equipos verás otras opciones para cada Demonic Beast. Más adelante podré jugar "
+            "En Farmear, pestaña Equipos, verás otras opciones para cada Demonic Beast. Más adelante podré jugar "
             "con cualquier equipo."))
 
     def _seguridad(self) -> QWidget:

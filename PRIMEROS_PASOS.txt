@@ -43,7 +43,7 @@ OPCION B - con el .zip (no recibe actualizaciones)
 - Por ahora el bot sabe jugar un solo contenido: Skollandhati & Hati (perros), Floor 4, con
   este equipo de izquierda a derecha: Odin, Gawain, Freyja (Strength) y Thonar (Speed).
   Si no tienes ese equipo puedes ver la interfaz, pero el bot no podra farmear.
-- Pagina "Equipos": muestra los equipos recomendados y que te falta.
+- Pagina "Farmear", pestana "Equipos": los mejores equipos para el modo elegido y que te falta.
 
 
 5. PROBARLO

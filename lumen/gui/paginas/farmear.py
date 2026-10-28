@@ -1,9 +1,10 @@
-"""Pagina Farmear: el modo y sus opciones, los controles, que esta haciendo el bot y el registro."""
+"""Pagina Farmear: el modo, los controles, que esta haciendo el bot, el botin que lleva, los mejores
+equipos para ese modo, el registro y las opciones. Todo en una pantalla."""
 
 import time
 
 from PyQt5.QtCore import QSize, Qt, QTimer
-from PyQt5.QtGui import QTextCursor
+from PyQt5.QtGui import QPixmap, QTextCursor
 from PyQt5.QtWidgets import (
     QApplication,
     QButtonGroup,
@@ -16,6 +17,7 @@ from PyQt5.QtWidgets import (
     QLineEdit,
     QMessageBox,
     QPushButton,
+    QScrollArea,
     QSpinBox,
     QStackedWidget,
     QTextEdit,
@@ -23,10 +25,11 @@ from PyQt5.QtWidgets import (
     QVBoxLayout,
 )
 
-from lumen import actualizador, avisos, config, ordenes, ventana
+from lumen import actualizador, avisos, botin, config, ordenes, recompensas, ventana
 from lumen.control import control
 from lumen.gui import iconos, tema
 from lumen.gui.comun import Pagina, formatear_tiempo
+from lumen.gui.paginas.equipos import clave_de_equipos, tarjetas_equipos
 from lumen.modos import MODOS
 from lumen.modos.catalogo import foto_de
 from lumen.rutas import IMAGENES
@@ -141,6 +144,32 @@ class PaginaFarmear(Pagina):
         self.cifras["tiempo"].setText("0:00:00")
         self.cuerpo.addLayout(fila_cifras)
 
+        # ---- botin: lo que se lleva conseguido (esta sesion, o hoy en este modo si esta parado)
+        caja_botin = QFrame(objectName="seccion")
+        capa_botin = QHBoxLayout(caja_botin)
+        capa_botin.setContentsMargins(14, 8, 8, 8)
+        capa_botin.setSpacing(12)
+        textos_botin = QVBoxLayout()
+        textos_botin.setSpacing(0)
+        self.lbl_botin = QLabel(objectName="titulo_seccion")
+        self.lbl_oro = QLabel(objectName="tenue")
+        textos_botin.addStretch()
+        textos_botin.addWidget(self.lbl_botin)
+        textos_botin.addWidget(self.lbl_oro)
+        textos_botin.addStretch()
+        capa_botin.addLayout(textos_botin)
+        self.fila_botin = QHBoxLayout()
+        self.fila_botin.setSpacing(8)
+        contenedor = QFrame(objectName="contenido_desplazable")
+        contenedor.setLayout(self.fila_botin)
+        desliza = QScrollArea(objectName="area_pagina", widgetResizable=True, frameShape=QFrame.NoFrame)
+        desliza.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        desliza.setWidget(contenedor)
+        desliza.setFixedHeight(78)
+        capa_botin.addWidget(desliza, 1)
+        self.cuerpo.addWidget(caja_botin)
+        self._fotos_vistas = None
+
         # ---- abajo: registro u opciones, una cosa a la vez
         cabecera = QHBoxLayout()
         self.grupo_vista = QButtonGroup(self, exclusive=True)
@@ -153,7 +182,15 @@ class PaginaFarmear(Pagina):
         self.form = QFormLayout()
         capa_op.addLayout(self.form)
         capa_op.addStretch()
-        for i, (texto, ic, vista) in enumerate((("Registro", "registro", self.registro), ("Opciones", "ajustes", panel_opciones))):
+        # Los mejores equipos para el modo elegido (los mismos que la pagina Equipos, hasta 5)
+        contenedor_eq = QFrame(objectName="contenido_desplazable")
+        self.lista_equipos = QVBoxLayout(contenedor_eq)
+        self.lista_equipos.setContentsMargins(0, 0, 6, 0)
+        panel_equipos = QScrollArea(objectName="area_pagina", widgetResizable=True, frameShape=QFrame.NoFrame)
+        panel_equipos.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        panel_equipos.setWidget(contenedor_eq)
+        for i, (texto, ic, vista) in enumerate((("Registro", "registro", self.registro), ("Equipos", "equipos", panel_equipos),
+                                               ("Opciones", "ajustes", panel_opciones))):
             b = QPushButton(" " + texto, objectName="chip", checkable=True, checked=i == 0)
             b.setIcon(iconos.icono(ic, tema.TENUE, tema.SOBRE_ACENTO))
             b.clicked.connect(lambda _, n=i: self.pila_vista.setCurrentIndex(n))
@@ -161,6 +198,7 @@ class PaginaFarmear(Pagina):
             cabecera.addWidget(b)
             self.pila_vista.addWidget(vista)
         cabecera.addStretch()
+        self.botones_vista = self.grupo_vista.buttons()
         self.chk_debug = QCheckBox("Detalle técnico")
         cabecera.addWidget(self.chk_debug)
         b_limpiar = QPushButton(objectName="chico")
@@ -242,6 +280,8 @@ class PaginaFarmear(Pagina):
             self.fila_pisos.addSpacing(8)
             self.fila_pisos.addWidget(self.lbl_vuelta)
         self.fila_pisos.addStretch()
+        self._pintar_equipos()
+        self._pintar_botin()
         while self.fila_fases.count():
             w = self.fila_fases.takeAt(0).widget()
             if w:
@@ -443,6 +483,7 @@ class PaginaFarmear(Pagina):
         return "\n".join(lineas)
 
     def _terminado(self):
+        self._pintar_botin()
         self._botones(False)
         self.inicio = None
         self.estado_bot = ""
@@ -508,6 +549,61 @@ class PaginaFarmear(Pagina):
             vuelta = int(self.ultimas_stats.get("vuelta") or 0) if corriendo else 0
             self.lbl_vuelta.setText(f"vuelta {vuelta}" if vuelta else "")
 
+    # ------------------------------------------------------- equipos y botin
+    def ver_equipos(self):
+        """Abre Farmear en la pestana Equipos (p. ej. desde el icono Equipo de Inicio)."""
+        self.app.navegar("farmear")
+        self.botones_vista[1].click()
+
+    def _pintar_equipos(self):
+        while self.lista_equipos.count():
+            w = self.lista_equipos.takeAt(0).widget()
+            if w:
+                w.setParent(None)
+        tarjetas = tarjetas_equipos(clave_de_equipos(self.modo_cls.id))[:5]
+        for t in tarjetas:
+            self.lista_equipos.addWidget(t)
+        if not tarjetas:
+            self.lista_equipos.addWidget(QLabel("Todavía no hay equipos recomendados para este modo.", objectName="tenue"))
+        self.lista_equipos.addStretch(1)
+
+    def _pintar_botin(self):
+        """Los objetos y el oro de la sesion en curso (o de hoy en este modo, con el bot parado)."""
+        while self.fila_botin.count():
+            w = self.fila_botin.takeAt(0).widget()
+            if w:
+                w.setParent(None)
+        registros = recompensas.leer()
+        sesion = self.ultimas_stats.get("inicio") if self.puente.corriendo else None
+        if sesion:
+            elegidos = [r for r in registros if abs(float(r.get("sesion") or 0) - float(sesion)) < 1]
+            self.lbl_botin.setText("Botín de esta sesión")
+        else:
+            inicio_hoy = time.mktime(time.localtime()[:3] + (0, 0, 0, 0, 0, -1))
+            elegidos = [r for r in registros if r.get("modo") == self.modo_cls.id and r.get("fecha", 0) >= inicio_hoy]
+            self.lbl_botin.setText("Botín de hoy")
+        oro = sum(int(r.get("oro") or 0) for r in elegidos)
+        victorias = len(elegidos)
+        self.lbl_oro.setText(f"{oro:,} de oro · {victorias} victoria{'s' if victorias != 1 else ''}".replace(",", "."))
+        catalogo = botin.cargar_catalogo()
+        totales = recompensas.totales_objetos(elegidos)
+        for oid, cantidad in list(totales.items())[:40]:
+            casilla = QFrame(objectName="objeto_mini")
+            capa = QVBoxLayout(casilla)
+            capa.setContentsMargins(4, 4, 4, 2)
+            capa.setSpacing(0)
+            dibujo = QLabel(alignment=Qt.AlignCenter)
+            pix = QPixmap(str(botin.ruta_icono(oid)))
+            if not pix.isNull():
+                dibujo.setPixmap(pix.scaled(44, 38, Qt.KeepAspectRatio, Qt.SmoothTransformation))
+            capa.addWidget(dibujo)
+            capa.addWidget(QLabel(f"×{cantidad:,}".replace(",", "."), objectName="cantidad_mini", alignment=Qt.AlignCenter))
+            casilla.setToolTip(botin.nombre(oid, catalogo))
+            self.fila_botin.addWidget(casilla)
+        if not totales:
+            self.fila_botin.addWidget(QLabel("Aún nada: cada victoria suma aquí lo que consigas.", objectName="tenue"))
+        self.fila_botin.addStretch(1)
+
     # --------------------------------------------------------------- registro
     def escribir(self, mensaje: str, nivel: str = "info"):
         if nivel == "debug" and not self.chk_debug.isChecked():
@@ -531,6 +627,9 @@ class PaginaFarmear(Pagina):
         if "tasa" in s:
             self.cifras["tasa"].setText(f"{s['tasa']:.0f}%")
         self._pintar_estado()
+        if s.get("fotos_recompensas") != self._fotos_vistas:  # una victoria nueva con su botin
+            self._fotos_vistas = s.get("fotos_recompensas")
+            self._pintar_botin()
 
     def _refrescar(self):
         if self.inicio:

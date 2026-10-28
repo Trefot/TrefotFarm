@@ -28,8 +28,8 @@ guia:
   - titulo: "5. Victory: el botín"
     imagen: victoria.jpg
     texto: >-
-      Al ganar, el bot guarda una foto de la pantalla, lee los objetos y el oro y los suma en
-      <b>Botín</b>. Luego pulsa OK y repite.
+      Al ganar, el bot guarda una foto de la pantalla, lee los objetos y el oro y los suma en el
+      <b>botín de Farmear</b>. Luego pulsa OK y repite.
   - titulo: "Si algo sale distinto"
     texto: >-
       Si falta una carta clave o una fase dura más de lo previsto, el bot se rinde (<b>Forfeit</b>) y repite
@@ -58,11 +58,12 @@ problemas:
     respuesta: >-
       Pulsa <b>F10</b> para detenerlo (o lleva el ratón a una esquina). Comprueba que nada tape el juego y
       vuelve a empezar. Si activas los avisos al móvil en Ajustes, te escribe cuando se atasca.
-  - pregunta: "Hay objetos sin nombre en Botín"
+  - pregunta: "Hay objetos sin nombre en el botín"
     imagen: victoria.jpg
     respuesta: >-
-      La primera vez que sale un objeto, el bot no sabe cómo se llama. Haz doble clic en su casilla en
-      Botín y escríbele el nombre: a partir de ahí lo reconoce solo.
+      La primera vez que sale un objeto, el bot no sabe cómo se llama (casi siempre lo nombra solo con la
+      galería de objetos). Si no, activa el modo administrador en Ajustes, entra en Botín, haz doble clic
+      en su casilla y escríbele el nombre: a partir de ahí lo reconoce solo.
   - pregunta: "No me deja usarlo hasta que actualice"
     respuesta: >-
       Las actualizaciones son obligatorias para que todos jueguen con el guion más reciente. Pulsa
@@ -136,7 +137,7 @@ glosario:
     definicion: "El orden de cartas probado que sigue el bot en cada fase y turno."
   - termino: "Sesión"
     tipo: bot
-    definicion: "Todo lo que farmea desde que pulsas Empezar hasta que se detiene. Su resumen se ve en Farmear y queda guardada para medir los equipos (página Equipos)."
+    definicion: "Todo lo que farmea desde que pulsas Empezar hasta que se detiene. Su resumen y su botín se ven en Farmear, y queda guardada para medir qué equipo rinde más."
   - termino: "Reinicio"
     tipo: bot
     definicion: "Una pelea que el bot abandonó con Forfeit para repetirla. No cuenta como derrota."

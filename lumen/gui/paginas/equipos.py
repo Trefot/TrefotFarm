@@ -37,7 +37,7 @@ from lumen.gui import iconos, tema
 from lumen.gui.comun import Pagina
 from lumen.gui.paginas.personajes import _en_gris
 from lumen.modos import MODOS
-from lumen.modos.catalogo import CATALOGO
+from lumen.modos.catalogo import CATALOGO, contenido_de
 
 ARCHIVO = Path(__file__).resolve().parents[2] / "datos" / "equipos.yaml"
 NIVELES = {
@@ -291,6 +291,46 @@ class TarjetaEquipo(QFrame):
             self.detalle.setMinimumHeight(alto)
 
 
+def clave_de_equipos(id_destino: str, equipos: dict | None = None) -> str:
+    """Donde estan los equipos de un destino: con su id ("perros_piso4") o, si no tiene, los de su
+    contenido entero ("rata" = todos sus pisos)."""
+    equipos = cargar_equipos() if equipos is None else equipos
+    if id_destino in equipos:
+        return id_destino
+    contenido = contenido_de(id_destino)
+    return contenido.id if contenido and contenido.id in equipos else id_destino
+
+
+def tarjetas_equipos(clave: str, admin: bool = False, al_editar=None, al_borrar=None) -> list["TarjetaEquipo"]:
+    """Las tarjetas de los equipos de un contenido, en orden: primero los que el bot midio (de mas a menos
+    victorias por hora, con al menos MIN_PELEAS peleas) y luego el resto como estan en la lista. Viene
+    abierto el mejor que ya puedes armar (o el primero si no tienes ninguno)."""
+    biblioteca = P.cargar()
+    todos = cargar_equipos()
+    medido = medidas(clave)
+    tarjetas = []
+    for datos in todos.get(clave, []):
+        propio = admin and datos.get("propio")
+        tarjetas.append(TarjetaEquipo(
+            datos, biblioteca, abierto=False, nombres=todos.get("_nombres") or {},
+            medida=medido.get(frozenset(datos.get("personajes") or [])),
+            al_editar=(lambda _=False, d=datos: al_editar(d)) if propio and al_editar else None,
+            al_borrar=(lambda _=False, d=datos: al_borrar(d)) if propio and al_borrar else None,
+        ))
+
+    def peleas(t):
+        m = t.medida or {}
+        return m.get("victorias", 0) + m.get("derrotas", 0) + m.get("reinicios", 0)
+
+    medidos = sorted((t for t in tarjetas if peleas(t) >= MIN_PELEAS), key=lambda t: -t.medida["por_hora"])
+    tarjetas = medidos + [t for t in tarjetas if peleas(t) < MIN_PELEAS]
+    abierta = next((t for t in tarjetas if t.completo), tarjetas[0] if tarjetas else None)
+    if abierta is not None:
+        abierta.abierto = True
+        abierta._mostrar()
+    return tarjetas
+
+
 class DialogoEquipo(QDialog):
     """Crear o editar un equipo del admin: donde va, nombre, nivel, los 4 heroes y notas."""
 
@@ -481,38 +521,7 @@ class PaginaEquipos(Pagina):
         if contenido:
             estado = "El bot ya lo farmea" if juega else "El bot todavía no lo farmea"
             self.subtitulo_modo.setText(f"{contenido.descripcion} · {estado}. Haz clic en un equipo para ver cómo se juega.")
-        biblioteca = P.cargar()
-        todos = cargar_equipos()
-        equipos = todos.get(clave, [])
-        medido = medidas(clave)
-        abierto_ya = False
-        tarjetas = []
-        for datos in equipos:
-            propio = admin and datos.get("propio")
-            t = TarjetaEquipo(
-                datos, biblioteca, abierto=False, nombres=todos.get("_nombres") or {},
-                medida=medido.get(frozenset(datos.get("personajes") or [])),
-                al_editar=(lambda _=False, d=datos: self._editar(d)) if propio else None,
-                al_borrar=(lambda _=False, d=datos: self._borrar(d)) if propio else None,
-            )
-            tarjetas.append(t)
-
-        # "Posicionar": los equipos con bastantes peleas medidas van primero, del que mas victorias saca
-        # por hora al que menos; los demas siguen en el orden de la lista.
-        def peleas(t):
-            m = t.medida or {}
-            return m.get("victorias", 0) + m.get("derrotas", 0) + m.get("reinicios", 0)
-
-        medidos = sorted((t for t in tarjetas if peleas(t) >= MIN_PELEAS), key=lambda t: -t.medida["por_hora"])
-        tarjetas = medidos + [t for t in tarjetas if peleas(t) < MIN_PELEAS]
-        # Se abre de entrada el mejor equipo que ya puedes armar (o el primero si no tienes ninguno).
-        for t in tarjetas:
-            if t.completo and not abierto_ya:
-                t.abierto = abierto_ya = True
-                t._mostrar()
-        if tarjetas and not abierto_ya:
-            tarjetas[0].abierto = True
-            tarjetas[0]._mostrar()
+        tarjetas = tarjetas_equipos(clave, admin, self._editar, self._borrar)
         for t in tarjetas:
             self.lista.addWidget(t)
         if not tarjetas:

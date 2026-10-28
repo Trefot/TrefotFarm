@@ -89,7 +89,7 @@ class PaginaInicio(Pagina):
         self.pasos = {
             "juego": Paso("juego", "Juego", self._ayuda_juego),
             "ventana": Paso("ventana", "Ventana", self._ajustar),
-            "equipo": Paso("equipo", "Equipo", lambda: app.navegar("equipos")),
+            "equipo": Paso("equipo", "Equipo", lambda: app.farmear.ver_equipos()),
             "cartas": Paso("cartas", "Cartas", lambda: app.navegar("personajes")),
         }
         for paso in self.pasos.values():
