@@ -36,7 +36,7 @@ SIN_PELEA_S = 20  # sin boton de pausa ni pantalla de resultado durante este tie
 UMBRAL_PAUSA = 0.9
 # Demonios (Indura...): no hay boton de pausa; en pelea se ve AUTO (0.92-0.98, fuera <=0.48), la mano tiene
 # 7 cartas y el turno se juega en una fila de 6 casillas. Medido en una pelea real de Indura (Chaos).
-DEMONIOS = {"indura", "demonio_rojo", "demonio_gris", "demonio_carmesi", "bellmoth"}
+DEMONIOS = {"demonio_rojo", "demonio_gris", "howlex", "bellmoth", "demonio_original", "indura"}
 AUTO_DEMONIO = Plantilla("demons/auto.jpg")
 DESTRUIDO = Plantilla("demons/demons_destroyed.png")
 UMBRAL_FASE = 0.9

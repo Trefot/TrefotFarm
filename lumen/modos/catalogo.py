@@ -63,10 +63,12 @@ CATALOGO: list[Contenido] = [
     _bestia("ciervo", "Eikthyrnir", "deer/Eikthyrnir.png"),
     _bestia("serpiente", "Nidhoggr", "snake/nidhoggr.png"),
     _bestia("rata", "Ratatoskr", "rat/ratatoskr.png"),
+    # Los 6 demonios en el orden de las pestanas de "Real-time Join Request" (captura del juego, 2026-10-28).
     _unico("demonio_rojo", "Red Demon", "Demonio · tiempo real", "mdi6.fire", DEMONIOS),
     _unico("demonio_gris", "Gray Demon", "Demonio · tiempo real", "mdi6.weather-fog", DEMONIOS),
-    _unico("demonio_carmesi", "Crimson Demon", "Demonio · tiempo real", "mdi6.water", DEMONIOS),
+    _unico("howlex", "Howlex", "Demonio · tiempo real", "mdi6.horse-variant", DEMONIOS),
     _unico("bellmoth", "Bellmoth", "Demonio · tiempo real", "mdi6.butterfly-outline", DEMONIOS),
+    _unico("demonio_original", "Original Demon", "Demonio · tiempo real", "mdi6.fire-circle", DEMONIOS),
     _unico("indura", "Indura", "Demonio · tiempo real", "mdi6.skull-crossbones-outline", DEMONIOS),
     _unico("oro", "Oro", "Mazmorra de oro del Fuerte Solgres", "mdi6.gold", FUERTE),
     _unico("monedas_sa", "Monedas SA", "Mazmorra de monedas SA del Fuerte Solgres", "mdi6.circle-multiple-outline", FUERTE),
