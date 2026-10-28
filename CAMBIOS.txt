@@ -29,6 +29,14 @@ Etapas previstas:
 
 CAMBIOS
 -------
+0.3.1-alpha
+  - Cartas bloqueadas: se reconocen por el velo oscuro (lo mas claro de la carta no pasa de ~135) y no
+    por el brillo medio. Antes se escapaban las bloqueadas de dibujo claro y las ultis bloqueadas, y el
+    bot las seguia jugando sin efecto. Comprobado en 330 capturas de peleas.
+  - Si el juego pide reiniciar ("Restart"), el bot lo pulsa y vuelve a entrar en vez de pararse.
+  - Si la ventana del juego se cierra, el bot pulsa "Run Game" en el lanzador de Netmarble, espera a que
+    abra y empieza el modo desde el principio; si en 10 min no vuelve, se para. Avisa al movil.
+
 0.3.0-alpha
   - Botin: cada objeto se une con su objeto de las tablas de premios del juego, buscando su icono solo
     entre lo que puede salir en el contenido donde aparecio. Asi toman nombre y descripcion en espanol,

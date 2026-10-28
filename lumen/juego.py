@@ -30,6 +30,8 @@ conexion_duplicada = P("duplicate_connection.png", "simultaneous_logins.png", no
 conexion_caducada = P("connection_confirmation_expired.png")
 contrasena = P("password.png")
 servidor_global = P("global_server.png")
+# Boton "Run Game" del lanzador de Netmarble (AutoFarming, MIT): para volver a abrir el juego si se cierra.
+abrir_juego = P("run_game.png", "run_game_2.png", nombre="abrir_juego")
 ok = P(
     "ok_buttons/ok_button.jpg",
     "ok_buttons/OK_save_party.png",

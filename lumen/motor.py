@@ -108,10 +108,13 @@ class Modo:
         if self.clic_si(juego.reconectar, pantalla, origen):
             self.log("Conexion perdida: reconectando...", "aviso")
             return True
-        if juego.reiniciar_juego.esta(pantalla):
-            self.log("El juego pide reiniciar. Detengo el bot para que lo revises.", "error")
-            avisos.enviar("LumenFarm: el juego pide reiniciar, bot detenido.", pantalla)
-            raise TerminarModo()
+        if self.clic_si(juego.reiniciar_juego, pantalla, origen, espera=5.0):
+            # Sin conexion posible: el juego se reinicia y vuelve a la pantalla de inicio, que se toca abajo
+            # (como AutoFarming). Si despues pide la contrasena, el bot se para.
+            self.log("El juego pide reiniciar: pulso Restart y vuelvo a entrar.", "aviso")
+            avisos.enviar("LumenFarm: el juego pidió reiniciar; lo reinicio y vuelvo a entrar.", pantalla)
+            self.estado = self.estado_inicial()
+            return True
         if juego.conexion_duplicada.esta(pantalla, 0.8):
             # "Duplicate connection" / "Simultaneous log ins": se entro a la cuenta desde otro sitio.
             self.log("El juego cerró la sesión (la cuenta se abrió en otro sitio). Cierro el aviso.", "aviso")
@@ -156,7 +159,11 @@ class Modo:
                     self.log("Parada segura (actualizacion pendiente).", "aviso")
                     raise TerminarModo()
                 control.estado(self.estado)
-                pantalla, origen = self.capturar()
+                try:
+                    pantalla, origen = self.capturar()
+                except ventana.VentanaNoEncontrada as error:
+                    self._esperar_juego(str(error))
+                    continue
                 if not self.comprobaciones_globales(pantalla, origen):
                     siguiente = estados[self.estado](pantalla, origen)
                     if siguiente and siguiente != self.estado:
@@ -177,6 +184,39 @@ class Modo:
                 sesion["equipo"] = list(equipo.orden)
             if self.guardar_historial and sesion["fin"] - sesion.get("inicio", sesion["fin"]) > 30:  # no guardar arranques en falso
                 historial.registrar(sesion)
+
+    # ------------------------------------------------------------- juego cerrado
+    MINUTOS_SIN_JUEGO = 10
+
+    def _esperar_juego(self, motivo: str):
+        """La ventana del juego no esta (se cerro o se minimizo): se intenta volver a abrir con el boton
+        "Run Game" del lanzador de Netmarble y se empieza el modo desde el principio. Antes, el modo se
+        cortaba con un error. Si en MINUTOS_SIN_JUEGO no vuelve, se para y avisa al movil."""
+        self.log(f"{motivo} Intento volver a abrirlo.", "error")
+        avisos.enviar("LumenFarm: el juego se cerró. Intento volver a abrirlo.")
+        limite = time.time() + self.MINUTOS_SIN_JUEGO * 60
+        while time.time() < limite:
+            ventana.traer_al_frente()  # si solo estaba minimizado
+            if ventana.ventana_abierta() and ventana.tamano_actual() and min(ventana.tamano_actual()) > 100:
+                control.esperar(5)  # que termine de abrirse
+                ventana.ajustar_tamano()
+                self.estado = self.estado_inicial()
+                self.log("El juego está abierto otra vez: empiezo el modo desde el principio.", "ok")
+                avisos.enviar("LumenFarm: el juego está abierto otra vez, sigo farmeando.")
+                return
+            try:
+                pantalla, origen = ventana.capturar_pantalla()
+                rect = juego.abrir_juego.buscar(pantalla, 0.8)
+            except Exception:
+                rect = None
+            if rect is not None:
+                entrada.clic(tuple(rect), origen, espera=1.0)
+                self.log("Pulso «Run Game» en el lanzador de Netmarble.", "aviso")
+                control.esperar(20)
+            else:
+                control.esperar(10)
+        avisos.enviar(f"LumenFarm: el juego lleva {self.MINUTOS_SIN_JUEGO} min cerrado. Bot detenido.")
+        raise TerminarModo()
 
     # -------------------------------------------------------------- vigilante de atascos
     def _iniciar_vigilante(self):
