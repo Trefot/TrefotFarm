@@ -1,0 +1,31 @@
+# Estrategias de pelea por equipo, sacadas de como juega el administrador (grabaciones y "Aprender de mi").
+# Las usan los modos que juegan las cartas ellos mismos (por ahora Indura).
+#
+# contenido -> lista de estrategias. Cada una:
+#   equipo: ids de lumen/datos/personajes.yaml (el bot la elige si reconoce sus cartas en la mano)
+#   prioridad: cartas "personaje.carta" de la que se juega primero a la ultima. Entre dos cartas iguales
+#              va primero la de mas rango (oro > plata > bronce). Una carta que no esta en la lista no se juega
+#              mientras haya alguna que si.
+
+indura:
+  - nombre: Enjin, Shō, Roxy y Zanka
+    # Grabada el 2026-10-27 (Chaos, victoria en 3 min 10 s). En la mano solo salieron cartas de Enjin,
+    # Shō y Roxy; Zanka va en el equipo pero sus cartas no aparecieron.
+    equipo: [cleaner_enjin_claro, sh_kusakabe_azul, roxy_of_madness_azul, cleaner_zanka_azul]
+    prioridad:
+      # Las ultis en cuanto se tienen (la de Enjin, Umbreaker Octashredder, la jugo dos veces seguidas)
+      - cleaner_enjin_claro.ulti
+      - sh_kusakabe_azul.ulti
+      - roxy_of_madness_azul.ulti
+      - cleaner_zanka_azul.ulti
+      # Area: Noxious Blitz (Enjin) y Frost Slash (Shō), lo que mas jugo
+      - cleaner_enjin_claro.skill_2
+      - sh_kusakabe_azul.skill_2
+      # Un objetivo: Spinning Slicer (Enjin), Phantom Slash (Shō), Crazy Blade (Roxy)
+      - cleaner_enjin_claro.skill_1
+      - sh_kusakabe_azul.skill_1
+      - roxy_of_madness_azul.skill_1
+      - cleaner_zanka_azul.skill_1
+      - cleaner_zanka_azul.skill_2
+      # Flame Grinder (Roxy): casi no la uso
+      - roxy_of_madness_azul.skill_2

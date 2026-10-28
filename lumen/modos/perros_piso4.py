@@ -21,7 +21,7 @@ from collections import defaultdict
 from collections.abc import Sequence
 
 from lumen import cartas as C
-from lumen import entrada, juego
+from lumen import botin, entrada, juego
 from lumen.cartas import Carta, Rango, TipoCarta
 from lumen.control import control
 from lumen.equipo import Equipo, Puesto
@@ -257,6 +257,8 @@ class PerrosPiso4(Modo):
         self.inicio_pelea = time.time()
         self.foto_recompensa = False
         self.ultima_pantalla_victoria = None
+        self.previa_recompensa = None  # captura anterior de la pantalla de recompensas (para verla quieta)
+        self.ok_visto_desde: float | None = None
 
     def _stats(self):
         total = self.victorias + self.derrotas + self.reinicios
@@ -527,7 +529,12 @@ class PerrosPiso4(Modo):
     def victoria(self, p, o):
         self.clic_si(juego.info_mision, p, o)
         if not self.foto_recompensa and juego.ok.esta(p):
-            # La pantalla con el boton OK tras ganar es la que lista las recompensas: foto antes de cerrarla.
+            # La pantalla con el boton OK tras ganar es la que lista las recompensas: foto antes de cerrarla,
+            # pero con la pantalla quieta (si no, salen cofres a medio abrir como objetos). Maximo 6 s.
+            self.ok_visto_desde = self.ok_visto_desde or time.time()
+            if not botin.quieta(self.previa_recompensa, p) and time.time() - self.ok_visto_desde < 6:
+                self.previa_recompensa = p
+                return None
             self.guardar_recompensa(p, self.victorias + 1)
             self.foto_recompensa = True
         self.clic_si(juego.ok, p, o)

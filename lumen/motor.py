@@ -139,6 +139,9 @@ class Modo:
             self.al_terminar()
             sesion = {k: v for k, v in self.stats.items() if isinstance(v, (int, float, str))}
             sesion.update(modo=self.id, nombre=self.nombre, fin=time.time(), version=lumen.__version__)
+            equipo = getattr(self, "equipo", None)
+            if equipo is not None:  # para medir que equipo rinde mas (pagina Equipos)
+                sesion["equipo"] = list(equipo.orden)
             if self.guardar_historial and sesion["fin"] - sesion.get("inicio", sesion["fin"]) > 30:  # no guardar arranques en falso
                 historial.registrar(sesion)
 

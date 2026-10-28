@@ -38,6 +38,19 @@ def totales(sesiones: list[dict]) -> dict:
     return t
 
 
+def por_equipo(sesiones: list[dict], modo: str, por_defecto=()) -> dict[frozenset, dict]:
+    """Totales de las sesiones de un modo, por el equipo con que se jugaron (sin importar el orden).
+    Las sesiones de antes de v3.3 no guardaban el equipo: cuentan como ``por_defecto``."""
+    grupos: dict[frozenset, list[dict]] = {}
+    for s in sesiones:
+        if s.get("modo") != modo:
+            continue
+        ids = frozenset(s.get("equipo") or por_defecto)
+        if ids:
+            grupos.setdefault(ids, []).append(s)
+    return {ids: totales(lista) for ids, lista in grupos.items()}
+
+
 def hoy(sesiones: list[dict]) -> list[dict]:
     inicio_dia = time.mktime(time.localtime()[:3] + (0, 0, 0, 0, 0, -1))
     return [s for s in sesiones if s.get("inicio", 0) >= inicio_dia]

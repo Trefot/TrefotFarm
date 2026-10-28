@@ -30,6 +30,7 @@ class Contenido:
     icono: str  # icono si no hay foto (Material Design Icons)
     imagen: str = ""  # foto por defecto, relativa a assets/imagenes
     destinos: tuple[Destino, ...] = field(default=())
+    grupo: str = ""  # seccion del Inicio (ver GRUPOS)
 
     @property
     def foto(self):
@@ -39,14 +40,21 @@ class Contenido:
         return IMAGENES / self.imagen if self.imagen else None
 
 
+# Secciones del Inicio, en este orden: cada una con su propia rueda.
+BESTIAS, DEMONIOS, FUERTE = "Bestias demoníacas", "Demonios", "Fuerte Solgres"
+GRUPOS = [BESTIAS, DEMONIOS, FUERTE]
+
+
 def _bestia(id_base: str, nombre: str, imagen: str) -> Contenido:
     """Dos destinos: los pisos 1-3 seguidos en una sesion, y el piso 4."""
     pisos = (Destino(f"{id_base}_pisos1a3", "Floor 1-3"), Destino(f"{id_base}_piso4", "Floor 4"))
-    return Contenido(id_base, nombre, "Bestia demoníaca", "mdi6.paw", imagen, pisos)
+    return Contenido(id_base, nombre, "Bestia demoníaca", "mdi6.paw", imagen, pisos, BESTIAS)
 
 
-def _unico(id_: str, nombre: str, descripcion: str, icono: str) -> Contenido:
-    return Contenido(id_, nombre, descripcion, icono, destinos=(Destino(id_, ""),))
+def _unico(id_: str, nombre: str, descripcion: str, icono: str, grupo: str) -> Contenido:
+    # La foto va en assets/modos/<id>.png (las de los demonios son capturas propias de la ventana
+    # "Real-time Join Request" y, la de Indura, de una pelea).
+    return Contenido(id_, nombre, descripcion, icono, destinos=(Destino(id_, ""),), grupo=grupo)
 
 
 CATALOGO: list[Contenido] = [
@@ -55,13 +63,13 @@ CATALOGO: list[Contenido] = [
     _bestia("ciervo", "Eikthyrnir", "deer/Eikthyrnir.png"),
     _bestia("serpiente", "Nidhoggr", "snake/nidhoggr.png"),
     _bestia("rata", "Ratatoskr", "rat/ratatoskr.png"),
-    _unico("demonio_rojo", "Red Demon", "Demonio", "mdi6.fire"),
-    _unico("demonio_gris", "Gray Demon", "Demonio", "mdi6.weather-fog"),
-    _unico("demonio_carmesi", "Crimson Demon", "Demonio", "mdi6.water"),
-    _unico("bellmoth", "Bellmoth", "Demonio", "mdi6.butterfly-outline"),
-    _unico("indura", "Indura", "Demonio", "mdi6.skull-crossbones-outline"),
-    _unico("oro", "Oro", "Farmeo de oro", "mdi6.gold"),
-    _unico("monedas_sa", "Monedas SA", "Farmeo de monedas", "mdi6.circle-multiple-outline"),
+    _unico("demonio_rojo", "Red Demon", "Demonio · tiempo real", "mdi6.fire", DEMONIOS),
+    _unico("demonio_gris", "Gray Demon", "Demonio · tiempo real", "mdi6.weather-fog", DEMONIOS),
+    _unico("demonio_carmesi", "Crimson Demon", "Demonio · tiempo real", "mdi6.water", DEMONIOS),
+    _unico("bellmoth", "Bellmoth", "Demonio · tiempo real", "mdi6.butterfly-outline", DEMONIOS),
+    _unico("indura", "Indura", "Demonio · tiempo real", "mdi6.skull-crossbones-outline", DEMONIOS),
+    _unico("oro", "Oro", "Mazmorra de oro del Fuerte Solgres", "mdi6.gold", FUERTE),
+    _unico("monedas_sa", "Monedas SA", "Mazmorra de monedas SA del Fuerte Solgres", "mdi6.circle-multiple-outline", FUERTE),
 ]
 
 

@@ -100,4 +100,12 @@ FICHA_CARTAS = [(35, 600, 89, 698), (95, 600, 149, 698), (160, 600, 214, 698)]  
 REGION = {
     "espacios_cartas": (150, 690, 410, 800),  # (x1, y1, x2, y2) donde se ven los huecos para cartas
     "mano_4": (61, 822, 517, 945),  # las 8 cartas de la mano con 4 unidades
+    # Peleas de demonios (Indura): 7 cartas en la mano y una fila de 6 casillas para jugarlas.
+    # Medido en una pelea real de Indura (Chaos) el 2026-10-27.
+    "mano_demonio": (50, 812, 520, 938),
+    "casillas_demonio": (60, 680, 500, 800),
 }
+
+# Casilla vacia de la fila de juego en los demonios (captura propia): cuantas hay = cartas que faltan por
+# jugar en este turno (6 al empezarlo, 0 en el turno del demonio).
+casilla_vacia_demonio = P("demons/casilla_vacia.png")

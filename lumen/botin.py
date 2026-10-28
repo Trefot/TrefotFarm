@@ -9,6 +9,15 @@
 - Cantidad: los digitos blancos de la esquina inferior derecha (si no hay, es 1).
 - Oro: los digitos amarillos junto a la moneda.
 Los digitos se comparan con assets/digitos (dibujados con fuentes con remate parecidas a la del juego).
+
+Catalogo de objetos en dos capas, como los personajes: la base (lumen/datos/objetos.yaml y
+assets/objetos/, la publica el administrador con los nombres puestos) y la local de cada jugador
+(recompensas/objetos/), que se mezcla encima. Un objeto puede estar "unido" a otro (era el mismo,
+leido raro: cuenta como el otro) o "descartado" (no era un objeto: p. ej. un cofre a medio abrir).
+
+Galeria: los objetos del inventario del juego con su nombre, tipo y descripcion (los captura el admin
+con lumen/modos/captura_objetos.py; base en lumen/datos/galeria_objetos.yaml + assets/objetos/<id>_ficha.png,
+local en capturas/objetos/). Un objeto del botin que se parece a uno de la galeria toma su nombre solo.
 """
 
 import threading
@@ -30,7 +39,34 @@ DIF_COLOR_MAX = 18.0  # y diferencia maxima de color medio (cubo azul y cubo gri
 
 CARPETA = RAIZ / "recompensas" / "objetos"
 CATALOGO = CARPETA / "catalogo.yaml"
+CARPETA_BASE = ASSETS / "objetos"
+CATALOGO_BASE = Path(__file__).resolve().parent / "datos" / "objetos.yaml"
 _lock = threading.RLock()
+
+CARPETA_GALERIA = RAIZ / "capturas" / "objetos"
+GALERIA = CARPETA_GALERIA / "galeria.yaml"
+GALERIA_BASE = Path(__file__).resolve().parent / "datos" / "galeria_objetos.yaml"
+# Icono de la ficha del inventario (86 px) reducido a 63 px frente al icono del botin: el mismo objeto
+# da 0.97 y los demas <=0.33 (medido con el orbe de Skoll y Hati y los 7 objetos del botin). Pero los
+# cubos de esencia tienen la misma forma y solo cambia el color (cubo gris frente a Blue Magic Essence:
+# forma 0.89, color 53): tambien se exige color parecido (DIF_COLOR_MAX; mismo objeto: 0.8-3.5).
+LADO_FICHA = LADO
+UMBRAL_GALERIA = 0.85
+
+# Pantalla quieta: entre dos capturas seguidas con el OK ya visible, la zona del botin cambia 1-4
+# (fondo animado) si esta quieta y 10-22 si aun se abren cofres o llegan casillas (medido en peleas reales).
+ZONA_BOTIN = (280, 600)
+DIF_QUIETA = 5.0
+
+
+def quieta(anterior, actual) -> bool:
+    """True si la pantalla de recompensas ya no se mueve (para no fotografiar cofres a medio abrir)."""
+    y1, y2 = ZONA_BOTIN
+    if anterior is None or anterior.shape != actual.shape:
+        return False
+    if float(cv2.absdiff(anterior[y1:y2], actual[y1:y2]).mean()) >= DIF_QUIETA:
+        return False
+    return len(casillas(anterior)) == len(casillas(actual))
 
 
 # ------------------------------------------------------------------ casillas
@@ -142,26 +178,168 @@ def icono(celda) -> np.ndarray:
     return celda[5:40, 5:LADO - 5].copy()
 
 
+def _leer_yaml(ruta: Path) -> dict:
+    if not ruta.is_file():
+        return {}
+    with ruta.open(encoding="utf-8") as f:
+        return yaml.safe_load(f) or {}
+
+
 def cargar_catalogo() -> dict[str, dict]:
+    """La base con lo local encima. Las entradas de la base llevan '_base' (no se guardan en local)."""
     with _lock:
-        if not CATALOGO.is_file():
-            return {}
-        with CATALOGO.open(encoding="utf-8") as f:
-            return yaml.safe_load(f) or {}
+        catalogo = {oid: {**(datos or {}), "_base": True} for oid, datos in _leer_yaml(CATALOGO_BASE).items()}
+        for oid, datos in _leer_yaml(CATALOGO).items():
+            catalogo[oid] = {**catalogo.get(oid, {}), **(datos or {})}
+        return catalogo
 
 
 def guardar_catalogo(catalogo: dict) -> None:
+    """Guarda en local solo lo que no esta igual en la base."""
     with _lock:
+        base = _leer_yaml(CATALOGO_BASE)
+        local = {}
+        for oid, datos in catalogo.items():
+            propio = {k: v for k, v in (datos or {}).items() if not k.startswith("_")}
+            if base.get(oid) != propio:
+                local[oid] = propio
         CARPETA.mkdir(parents=True, exist_ok=True)
-        CATALOGO.write_text(yaml.safe_dump(catalogo, allow_unicode=True, sort_keys=False), encoding="utf-8")
+        CATALOGO.write_text(yaml.safe_dump(local, allow_unicode=True, sort_keys=False), encoding="utf-8")
 
 
 def ruta_icono(oid: str) -> Path:
-    return CARPETA / f"{oid}.png"
+    local = CARPETA / f"{oid}.png"
+    return local if local.is_file() else CARPETA_BASE / f"{oid}.png"
 
 
-def identificar(img_icono, catalogo: dict) -> str:
-    """Id del objeto; si no se parece a ninguno conocido, se agrega al catalogo como 'sin nombre'."""
+def destino(oid: str, catalogo: dict) -> str | None:
+    """El objeto que cuenta de verdad: sigue las uniones; None si se descarto."""
+    vistos = set()
+    while oid and oid not in vistos:
+        vistos.add(oid)
+        datos = catalogo.get(oid) or {}
+        if datos.get("descartado"):
+            return None
+        if not datos.get("unido_a"):
+            return oid
+        oid = datos["unido_a"]
+    return oid
+
+
+def visibles(catalogo: dict) -> list[str]:
+    """Objetos que se muestran (sin los unidos a otro ni los descartados)."""
+    return [oid for oid, d in catalogo.items() if not (d or {}).get("unido_a") and not (d or {}).get("descartado")]
+
+
+# ------------------------------------------------------------------ galeria del inventario
+def cargar_galeria_local() -> dict[str, dict]:
+    return _leer_yaml(GALERIA)
+
+
+def guardar_galeria_local(galeria: dict) -> None:
+    with _lock:
+        CARPETA_GALERIA.mkdir(parents=True, exist_ok=True)
+        GALERIA.write_text(yaml.safe_dump(galeria, allow_unicode=True, sort_keys=False, width=110), encoding="utf-8")
+
+
+def cargar_galeria() -> dict[str, dict]:
+    """La galeria publicada con la capturada en esta PC encima (de cada texto, la lectura mas completa)."""
+    galeria = {gid: dict(g or {}) for gid, g in _leer_yaml(GALERIA_BASE).items()}
+    for gid, g in cargar_galeria_local().items():
+        previo = galeria.get(gid, {})
+        galeria[gid] = {**previo, **(g or {})}
+        for campo in ("tipo", "descripcion"):
+            galeria[gid][campo] = max((previo.get(campo) or "", (g or {}).get(campo) or ""), key=len)
+    return galeria
+
+
+def ruta_ficha(gid: str) -> Path:
+    local = CARPETA_GALERIA / f"{gid}_ficha.png"
+    return local if local.is_file() else CARPETA_BASE / f"{gid}_ficha.png"
+
+
+def guardar_ficha(gid: str, icono_ficha) -> None:
+    guardar_imagen(CARPETA_GALERIA / f"{gid}_ficha.png", icono_ficha)
+
+
+def _icono_de_ficha(gid: str):
+    """El icono de la galeria como se ve en el botin (63 px, parte de arriba)."""
+    img = leer_imagen(ruta_ficha(gid))
+    if img is None:
+        return None
+    return icono(cv2.resize(img, (LADO_FICHA, LADO_FICHA), interpolation=cv2.INTER_AREA))
+
+
+_cache_galeria: dict[str, object] = {}
+
+
+def en_galeria(img_icono, galeria: dict) -> str | None:
+    """El objeto de la galeria con ese icono (o None)."""
+    mejor, mejor_valor = None, UMBRAL_GALERIA
+    for gid in galeria:
+        if gid not in _cache_galeria:
+            _cache_galeria[gid] = _icono_de_ficha(gid)
+        ref = _cache_galeria[gid]
+        if ref is None or ref.shape != img_icono.shape:
+            continue
+        valor = float(cv2.matchTemplate(img_icono, ref, cv2.TM_CCOEFF_NORMED).max())
+        dif_color = float(np.abs(img_icono.reshape(-1, 3).mean(0) - ref.reshape(-1, 3).mean(0)).max())
+        if valor >= mejor_valor and dif_color <= DIF_COLOR_MAX:
+            mejor, mejor_valor = gid, valor
+    return mejor
+
+
+def _datos_galeria(g: dict) -> dict:
+    return {k: g[k] for k in ("nombre", "tipo", "descripcion") if g.get(k)}
+
+
+def vincular_galeria() -> int:
+    """Pone nombre, tipo y descripcion de la galeria a los objetos del botin que se le parecen.
+    El nombre que ya les puso el jugador se respeta. Devuelve cuantos vinculo."""
+    with _lock:
+        galeria = cargar_galeria()
+        if not galeria:
+            return 0
+        catalogo = cargar_catalogo()
+        hechos = 0
+        for oid in visibles(catalogo):
+            datos = catalogo[oid]
+            img = leer_imagen(ruta_icono(oid))
+            if datos.get("galeria"):
+                # Vinculos de antes de exigir el color (v3.6.4 llamo "Blue Magic Essence" al cubo gris): deshacer.
+                gid_viejo = datos["galeria"]
+                if img is not None and gid_viejo in galeria and en_galeria(img, {gid_viejo: galeria[gid_viejo]}) is None:
+                    for campo, valor in _datos_galeria(galeria[gid_viejo]).items():
+                        if datos.get(campo) == valor:
+                            datos[campo] = "" if campo == "nombre" else None
+                    datos.pop("galeria", None)
+                    for campo in ("tipo", "descripcion"):
+                        if datos.get(campo) is None:
+                            datos.pop(campo, None)
+                    hechos += 1
+                elif gid_viejo in galeria:
+                    # Vinculo bueno: si la galeria tiene ahora un texto mas completo, se actualiza ("Enha...").
+                    for campo in ("tipo", "descripcion"):
+                        nuevo = galeria[gid_viejo].get(campo) or ""
+                        if len(nuevo) > len(datos.get(campo) or ""):
+                            datos[campo] = nuevo
+                            hechos += 1
+                continue
+            gid = en_galeria(img, galeria) if img is not None else None
+            if gid:
+                nombre_propio = datos.get("nombre")
+                datos.update(_datos_galeria(galeria[gid]), galeria=gid)
+                if nombre_propio:
+                    datos["nombre"] = nombre_propio
+                hechos += 1
+        if hechos:
+            guardar_catalogo(catalogo)
+        return hechos
+
+
+def identificar(img_icono, catalogo: dict) -> str | None:
+    """Id del objeto; si no se parece a ninguno conocido, se agrega al catalogo como 'sin nombre'.
+    None si se parece a uno descartado (no es un objeto)."""
     mejor, mejor_valor = None, UMBRAL_OBJETO
     for oid in catalogo:
         ref = leer_imagen(ruta_icono(oid))
@@ -172,13 +350,16 @@ def identificar(img_icono, catalogo: dict) -> str:
         if valor >= mejor_valor and dif_color <= DIF_COLOR_MAX:
             mejor, mejor_valor = oid, valor
     if mejor:
-        return mejor
+        return destino(mejor, catalogo)
+    galeria = cargar_galeria()
+    gid = en_galeria(img_icono, galeria) if galeria else None
     n = 1
     while f"objeto_{n}" in catalogo:
         n += 1
     oid = f"objeto_{n}"
-    catalogo[oid] = {"nombre": ""}
-    guardar_imagen(ruta_icono(oid), img_icono)
+    # Si esta en la galeria del inventario, entra ya con su nombre y descripcion.
+    catalogo[oid] = {"nombre": "", **(_datos_galeria(galeria[gid]) if gid else {}), **({"galeria": gid} if gid else {})}
+    guardar_imagen(CARPETA / f"{oid}.png", img_icono)
     return oid
 
 
@@ -190,6 +371,8 @@ def analizar(pantalla) -> dict:
         for x, y in casillas(pantalla):
             celda = pantalla[y : y + LADO, x : x + LADO]
             oid = identificar(icono(celda), catalogo)
+            if oid is None:  # descartado: no es un objeto
+                continue
             objetos[oid] = objetos.get(oid, 0) + leer_cantidad(celda)
         guardar_catalogo(catalogo)
         return {"objetos": objetos, "oro": leer_oro(pantalla)}
@@ -197,4 +380,5 @@ def analizar(pantalla) -> dict:
 
 def nombre(oid: str, catalogo: dict | None = None) -> str:
     catalogo = catalogo if catalogo is not None else cargar_catalogo()
+    oid = destino(oid, catalogo) or oid
     return (catalogo.get(oid) or {}).get("nombre") or f"Sin nombre ({oid.split('_')[-1]})"

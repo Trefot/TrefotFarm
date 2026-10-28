@@ -1,10 +1,26 @@
 # Equipos recomendados por contenido (lo mantiene el administrador; viaja con las actualizaciones).
 # Se muestran en la pagina Equipos en este orden: del mejor al que "pasa" con mas dificultad.
 #
+# Clave: el id de un destino del catalogo (lumen/modos/catalogo.py: "perros_pisos1a3" = Floor 1-3,
+# "perros_piso4" = Floor 4) o el de un contenido entero ("rata" = todos sus pisos).
 # nivel: recomendado | bueno | alternativa
 # personajes: ids de lumen/datos/personajes.yaml, de izquierda a derecha como en el juego
-# bot: true si el bot sabe jugar ese equipo (solo uno por contenido por ahora)
-# alternativas: personaje -> otros que pueden ocupar su lugar
+# bot: true si el bot sabe jugar ese equipo
+# alternativas: personaje -> otros que pueden ocupar su lugar (mejor no usarlo: cada opcion va como
+#   un equipo aparte, asi se ve de un vistazo cual puedes armar)
+#
+# Los equipos que no son de Lumen vienen de AutoFarming (BOTS_README). Cada heroe se identifico
+# comparando las cartas de AutoFarming con las de los 361 heroes capturados (2026-10-27).
+
+# Texto del boton cuando la clave es un contenido entero ("" = solo su nombre).
+_pisos:
+  rata: Floors 1–2
+  serpiente: ""
+
+# Heroes que salen en algun equipo pero no estan en la base (nadie los ha capturado aun): id -> nombre.
+# Nicknames de AutoFarming ya resueltos: "LR Liz" = Princess Elizabeth roja [New Legend] (sello LR);
+# "Margaret roja" = Covenant of Light Ludociel rojo [Summer Mirage] (Ludociel en el cuerpo de Margaret).
+_nombres: {}
 
 perros_piso4:
   - nombre: Equipo Lumen
@@ -17,19 +33,143 @@ perros_piso4:
       Fase 2: se quita la Stance del perro de la burbuja y Gawain, Freyja y Odin atacan en area.
       Fase 3: no se ataca; el golpe extra de la Ultimate de Freyja termina la pelea.
 
-  - nombre: Escanor y Meliodas 3000
+  - nombre: Escalin y Meliodas Rey Demonio
     nivel: bueno
-    personajes: [escanor, meliodas_3000, gowther_azul, nasiens]
+    personajes: [merlin_escanor_verde, demon_king_meliodas_azul, holy_knight_gowther_azul, herbalist_nasiens_verde]
     notas: >-
-      Equipo "whale" que usa AutoFarming para el Floor 4. Muy fuerte, pero son personajes dificiles
-      de conseguir. El bot todavia no sabe jugarlo.
+      Equipo "whale" de AutoFarming para el Floor 4: solo para cuentas y personajes muy fuertes.
+      Meliodas Rey Demonio y Gowther con reliquia. Escalin y Meliodas con equipo de Ataque/Crítico;
+      Gowther Ataque/Defensa (14,5 % o más en todo); Nasiens Vida/Defensa sin ninguna tirada de Vida
+      en orbe y cinturón. Escalin debe ir en el puesto 3 o 4. Enlaces: Escalin > Roxy LR,
+      Meliodas > Sabunak, Gowther > Tarmiel rojo, Nasiens > cualquiera menos Escanor UR.
+      El bot todavía no sabe jugarlo.
 
-  - nombre: Escanor y Roxy
+  - nombre: Escalin y Roxy
     nivel: alternativa
-    personajes: [escanor, roxy, nasiens, thonar_azul]
-    alternativas:
-      roxy: [lillia, cusack]
+    personajes: [merlin_escanor_verde, roxy_of_madness_azul, herbalist_nasiens_verde, wanderer_thonar_rojo]
     notas: >-
-      Equipo de AutoFarming para la mayoria de jugadores. Pasa el Floor 4, pero falla mas por suerte
-      y pide jugar con cuidado. Roxy se puede cambiar por Lillia o Cusack. El bot todavia no sabe
-      jugarlo.
+      Equipo de AutoFarming para la mayoría de jugadores. Pasa el Floor 4, pero falla más por suerte
+      y pide jugar con cuidado. Roxy azul es la mejor opción. El bot todavía no sabe jugarlo.
+
+  - nombre: Escalin y Roxy (con Thonar azul)
+    nivel: alternativa
+    personajes: [merlin_escanor_verde, roxy_of_madness_azul, herbalist_nasiens_verde, thonar_azul]
+    notas: >-
+      El mismo equipo con Thonar azul en lugar del rojo. El bot todavía no sabe jugarlo.
+
+  - nombre: Escalin y Roxy roja
+    nivel: alternativa
+    personajes: [merlin_escanor_verde, roxy_of_madness_rojo, herbalist_nasiens_verde, wanderer_thonar_rojo]
+    notas: >-
+      El mismo equipo con la Roxy roja en lugar de la azul. El bot todavía no sabe jugarlo.
+
+  - nombre: Escalin y Lillia
+    nivel: alternativa
+    personajes: [merlin_escanor_verde, lillia_of_desire_rojo, herbalist_nasiens_verde, wanderer_thonar_rojo]
+    notas: >-
+      El mismo equipo con Lillia en lugar de Roxy. El bot todavía no sabe jugarlo.
+
+  - nombre: Escalin y Cusack
+    nivel: alternativa
+    personajes: [merlin_escanor_verde, dual_swordsman_cusack_azul, herbalist_nasiens_verde, wanderer_thonar_rojo]
+    notas: >-
+      El mismo equipo con Cusack en lugar de Roxy. El bot todavía no sabe jugarlo.
+
+perros_pisos1a3:
+  - nombre: Escanor UR y Lostvayne
+    nivel: recomendado
+    personajes: [escanor_the_indomitable_verde, lostvayne_meliodas_rojo, sun_god_freyr_rojo, thonar_azul]
+    notas: >-
+      Floors 1 a 3 (de AutoFarming). Sirve casi cualquier equipo; este es el recomendado.
+      Lostvayne con reliquia; Thonar con reliquia y equipo de Resistencia a críticos (mejor con True
+      Awakening).
+
+  - nombre: Escanor UR y Lostvayne (con Thonar rojo)
+    nivel: alternativa
+    personajes: [escanor_the_indomitable_verde, lostvayne_meliodas_rojo, sun_god_freyr_rojo, wanderer_thonar_rojo]
+    notas: >-
+      El mismo equipo con Thonar rojo en lugar del azul.
+
+  - nombre: Escanor UR y Lostvayne (con Thonar verde)
+    nivel: alternativa
+    personajes: [escanor_the_indomitable_verde, lostvayne_meliodas_rojo, sun_god_freyr_rojo, wanderer_thonar_verde]
+    notas: >-
+      El mismo equipo con Thonar verde en lugar del azul.
+
+pajaro_piso4:
+  - nombre: Meliodas Traidor y Thor
+    nivel: recomendado
+    personajes: [traitor_meliodas_oscuro, thor_the_god_of_thunder_azul, valkyrie_megellda_azul, shion_verde]
+    notas: >-
+      Floor 4 de AutoFarming. Sirve cualquier equipo, pero este es el mejor. Si usas a Diane, ponla
+      siempre en el puesto de la derecha.
+
+  - nombre: Tyr y Thor
+    nivel: alternativa
+    personajes: [god_of_war_tyr_verde, thor_the_god_of_thunder_azul, valkyrie_megellda_azul, shion_verde]
+    notas: >-
+      El mismo equipo con Tyr verde en lugar de Meliodas Traidor.
+
+ciervo_piso4:
+  - nombre: Thor, Jormungand y Freyr
+    nivel: recomendado
+    personajes: [thor_the_god_of_thunder_azul, world_serpent_jormungand_verde, sun_god_freyr_rojo, god_of_war_tyr_verde]
+    notas: >-
+      Floor 4 de AutoFarming. Todos con equipo de Ataque/Daño crítico, menos Jormungand (Ataque/Defensa).
+      Hay que poder terminar la fase 1 en 3 turnos. Sin Skuld.
+
+  - nombre: Thor, Jormungand y Freyr (con Hel)
+    nivel: alternativa
+    personajes: [thor_the_god_of_thunder_azul, world_serpent_jormungand_verde, sun_god_freyr_rojo, repose_of_souls_hel_verde]
+    notas: >-
+      El mismo equipo con Hel verde en lugar de Tyr verde. Sin Skuld.
+
+ciervo_pisos1a3:
+  - nombre: Jormungand, Freyr y Thor
+    nivel: recomendado
+    personajes: [world_serpent_jormungand_verde, sun_god_freyr_rojo, thor_the_god_of_thunder_azul, repose_of_souls_hel_verde]
+    notas: >-
+      Floors 1 a 3 (de AutoFarming). Con Hel verde, la recomendada. Sin Skuld.
+
+  - nombre: Jormungand, Freyr y Thor (con Megellda)
+    nivel: alternativa
+    personajes: [world_serpent_jormungand_verde, sun_god_freyr_rojo, thor_the_god_of_thunder_azul, valkyrie_megellda_rojo]
+    notas: >-
+      El mismo equipo con Megellda roja en lugar de Hel verde. Sin Skuld.
+
+  - nombre: Jormungand, Freyr y Thor (con Tyr)
+    nivel: alternativa
+    personajes: [world_serpent_jormungand_verde, sun_god_freyr_rojo, thor_the_god_of_thunder_azul, god_of_war_tyr_verde]
+    notas: >-
+      El mismo equipo con Tyr verde en lugar de Hel verde. Sin Skuld.
+
+serpiente:
+  - nombre: Mael y Freyja
+    nivel: recomendado
+    personajes: [mael_of_sunshine_claro, covenant_of_light_ludociel_rojo, freyja_roja, princess_elizabeth_rojo]
+    notas: >-
+      De AutoFarming. Freyja con reliquia. Mael (el antiguo) se puede cambiar por Tristan.
+      "Margaret roja" es el Ludociel de verano (rojo) y "LR Liz" la Princess Elizabeth LR (roja).
+
+  - nombre: Jinwoo y Cha Hae-In
+    nivel: bueno
+    personajes: [monarch_of_shadows_sung_jinwoo_oscuro, herbalist_nasiens_verde, the_dancer_cha_hae_ln_azul, urek_mazino_azul]
+    notas: >-
+      Equipo "whale" de AutoFarming: muy rápido pero arriesgado; pide una cuenta muy fuerte (16M+ de
+      Combat Class y la 6.ª constelación). Todos con reliquia. Jinwoo, Cha y Urek con equipo de
+      Ataque/Daño crítico (14,5 % o más); Nasiens Vida/Defensa. Cha Hae-In tiene que ser la de menos
+      Vida del equipo. Enlaces: Roxy en Jinwoo, Escanor UR o Skuld en Nasiens, Tarmiel rojo en Cha,
+      Sabunak en Urek.
+
+rata:
+  - nombre: Liz, Valenti y Jormungand
+    nivel: recomendado
+    personajes: [princess_elizabeth_rojo, valenti_of_obsession_azul, world_serpent_jormungand_rojo, king_diane_azul]
+    notas: >-
+      Floors 1 y 2 (de AutoFarming). King & Diane van siempre en el puesto de la derecha.
+
+  - nombre: Liz, Valenti y Jormungand (con Escalin)
+    nivel: alternativa
+    personajes: [princess_elizabeth_rojo, valenti_of_obsession_azul, world_serpent_jormungand_rojo, merlin_escanor_verde]
+    notas: >-
+      El mismo equipo con Escalin en lugar de King & Diane.
