@@ -128,6 +128,14 @@ Las imagenes que busca el bot son del cliente en ingles. Para jugar en espanol, 
 en espanol en assets\imagenes\es\ con el mismo nombre: el bot busca las dos a la vez.
 
 
+PRUEBAS
+-------
+Doble clic en Probar.bat (o: py -3.12 -m unittest discover -s pruebas). Comprueba en unos 20 s que la
+logica del bot sigue bien: estrategias, juego inteligente, pisos, plan del dia, botin, premios, idiomas
+y que la interfaz abre todas las paginas. No usa el juego ni el raton y no toca config.yaml ni el botin.
+Al cambiar algo del codigo, pasarlas antes de publicar la actualizacion.
+
+
 CARPETAS
 --------
 assets\imagenes\   plantillas de pantalla (de AutoFarming)
