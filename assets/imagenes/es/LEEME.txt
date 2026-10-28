@@ -1,0 +1,8 @@
+Imagenes del juego en ESPANOL.
+
+Cada imagen va con el mismo nombre (y subcarpeta) que su version en ingles de assets/imagenes/.
+Ejemplo: el boton "Start" es assets/imagenes/start.png; su version en espanol ("Comenzar")
+seria assets/imagenes/es/start.png. El bot busca las dos a la vez, asi que funciona con el
+juego en ingles o en espanol sin cambiar nada.
+
+Se capturan con el juego en espanol en el PC, con la ventana ajustada (554x960).

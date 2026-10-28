@@ -8,6 +8,7 @@ import numpy as np
 from lumen.rutas import IMAGENES
 
 RECT_VACIO = np.zeros((0, 4), dtype=np.int32)
+IDIOMA_ES = "es"  # subcarpeta de assets/imagenes con las imagenes del juego en espanol
 
 
 def leer_imagen(ruta: Path) -> np.ndarray | None:
@@ -36,6 +37,9 @@ class Plantilla:
 
     def __init__(self, *rutas: str | Path, nombre: str | None = None):
         self.rutas = [Path(r) if Path(r).is_absolute() else IMAGENES / r for r in rutas]
+        # Juego en espanol: si hay una version de la imagen en assets/imagenes/es/ con el mismo nombre,
+        # se busca tambien (asi el bot funciona con el cliente en ingles o en espanol sin elegir nada).
+        self.rutas += [IMAGENES / IDIOMA_ES / r for r in rutas if not Path(r).is_absolute()]
         self.nombre = nombre or self.rutas[0].stem
         self._imagenes: list[np.ndarray] | None = None
 

@@ -36,6 +36,27 @@ def datos(stats: dict, segundos: float, registros: list[dict]) -> dict:
     }
 
 
+def juntar(lista: list[dict]) -> dict:
+    """Suma los resumenes de varias sesiones (p. ej. las tareas de un plan del dia)."""
+    objetos: dict[str, int] = {}
+    for d in lista:
+        for oid, n in d["objetos"].items():
+            objetos[oid] = objetos.get(oid, 0) + n
+    segundos = sum(d["segundos"] for d in lista)
+    victorias = sum(d["victorias"] for d in lista)
+    fotos = [d["ultima_foto"] for d in lista if d["ultima_foto"]]
+    return {
+        "victorias": victorias,
+        "derrotas": sum(d["derrotas"] for d in lista),
+        "peleas": sum(d["peleas"] for d in lista),
+        "segundos": segundos,
+        "por_hora": victorias / (segundos / 3600) if segundos > 0 else 0.0,
+        "oro": sum(d["oro"] for d in lista),
+        "objetos": dict(sorted(objetos.items(), key=lambda kv: -kv[1])),
+        "ultima_foto": fotos[-1] if fotos else None,
+    }
+
+
 def texto(nombre_modo: str, d: dict, catalogo: dict | None = None) -> str:
     """El resumen en pocas lineas (para el movil)."""
     catalogo = catalogo if catalogo is not None else botin.cargar_catalogo()

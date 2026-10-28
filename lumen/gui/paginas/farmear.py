@@ -28,6 +28,7 @@ from PyQt5.QtWidgets import (
 from lumen import actualizador, avisos, botin, config, ordenes, premios, recompensas, ventana
 from lumen.control import control
 from lumen.gui import iconos, plan, resumen, tema
+from lumen.gui.arranque import EMBLEMA
 from lumen.gui.comun import Pagina, formatear_tiempo, icono_premio
 from lumen.gui.paginas.equipos import clave_de_equipos, tarjetas_equipos
 from lumen.modos import MODOS
@@ -201,6 +202,8 @@ class PaginaFarmear(Pagina):
         self.panel_plan = plan.PanelPlan()
         self.panel_plan.iniciar.connect(self.iniciar_plan)
         self.plan_paso: int | None = None  # tarea del plan en curso (None = no hay plan en marcha)
+        self.plan_resumenes: list[dict] = []  # lo conseguido en cada tarea: un solo resumen al acabar el plan
+        self.plan_sin_estamina = False
         for i, (texto, ic, vista) in enumerate((("Registro", "registro", self.registro), ("Plan", "mdi6.format-list-checks", self.panel_plan),
                                                ("Opciones", "ajustes", panel_opciones))):
             b = QPushButton(" " + texto, objectName="chip", checkable=True, checked=i == 0)
@@ -526,10 +529,11 @@ class PaginaFarmear(Pagina):
         self.inicio = None
         self.estado_bot = ""
         if self.plan_paso is not None:
+            if self.ultimas_stats.get("motivo_fin") == "sin_estamina":
+                self.plan_sin_estamina = True
             if control.detenido or control.parar_en_zona_segura or self.app.update_bloqueante:
                 self.escribir("Plan del día detenido.", "aviso")
-                self.plan_paso = None
-                self.panel_plan.marcar(None)
+                self._fin_plan()
             else:  # unos segundos para que el juego vuelva a un menu antes de la siguiente tarea
                 QTimer.singleShot(4000, lambda: self._siguiente_tarea(remoto=True))
         herramienta = getattr(self.modo_externo, "id", "")
@@ -552,6 +556,8 @@ class PaginaFarmear(Pagina):
             return
         self.escribir("Empieza el plan del día.", "ok")
         self.plan_paso = -1
+        self.plan_resumenes = []
+        self.plan_sin_estamina = False
         self._siguiente_tarea(remoto)
 
     def _siguiente_tarea(self, remoto: bool = True):
@@ -562,6 +568,9 @@ class PaginaFarmear(Pagina):
         for i in range(self.plan_paso + 1, len(tareas)):
             t = tareas[i]
             self.plan_paso = i
+            if self.plan_sin_estamina and any(op.clave == "pociones" for op in MODOS[t["modo"]].opciones):
+                self.escribir(f"Plan: salto la tarea {i + 1} ({MODOS[t['modo']].nombre}): no queda estamina.", "aviso")
+                continue
             self.panel_plan.marcar(i)
             self.escribir(f"Plan: tarea {i + 1} de {len(tareas)} · {MODOS[t['modo']].nombre} · {t['victorias']} victorias.", "ok")
             self.preparar(t["modo"], {"victorias": int(t["victorias"])})
@@ -569,10 +578,23 @@ class PaginaFarmear(Pagina):
             if self.puente.corriendo:
                 return
             self.escribir(f"La tarea {i + 1} no pudo empezar; paso a la siguiente.", "aviso")
+        self.escribir("Plan del día terminado.", "ok")
+        self._fin_plan()
+
+    def _fin_plan(self):
+        """Cierra el plan y muestra un solo resumen con lo de todas sus tareas (tambien al movil)."""
         self.plan_paso = None
         self.panel_plan.marcar(None)
-        self.escribir("Plan del día terminado.", "ok")
-        avisos.enviar("Lumen Farm: plan del día terminado.")
+        if self.plan_resumenes:
+            n = len(self.plan_resumenes)
+            nombre = f"Plan del día ({n} tarea{'s' if n != 1 else ''})"
+            d = resumen.juntar(self.plan_resumenes)
+            resumen.enviar_al_movil(nombre, d)
+            self._tarjeta_resumen = resumen.TarjetaResumen(self, nombre, EMBLEMA, d)
+            self._tarjeta_resumen.show()
+        else:
+            avisos.enviar("Lumen Farm: plan del día terminado.")
+        self.plan_resumenes = []
 
     def _mostrar_resumen(self):
         """Tarjeta con lo conseguido en la sesion que acaba de terminar, y lo mismo al movil."""
@@ -583,6 +605,9 @@ class PaginaFarmear(Pagina):
         registros = [r for r in recompensas.leer() if sesion and abs(float(r.get("sesion") or 0) - float(sesion)) < 1]
         cls = self.modo_cls
         d = resumen.datos(self.ultimas_stats, segundos, registros)
+        if self.plan_paso is not None:  # en un plan, un solo resumen al final (ver _fin_plan)
+            self.plan_resumenes.append(d)
+            return
         resumen.enviar_al_movil(cls.nombre, d)
         self._tarjeta_resumen = resumen.TarjetaResumen(self, cls.nombre, foto_de(cls.id), d)
         self._tarjeta_resumen.show()  # sin bloquear: el programa sigue aunque nadie la cierre
