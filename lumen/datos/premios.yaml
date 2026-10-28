@@ -120,6 +120,54 @@ objetos:
   piedra_despertar:
     nombre: Piedra del despertar
     descripcion: Una piedra misteriosa que se usa como ingrediente para despertar equipo de grado SSR.
+  ala_demonio_gris:
+    nombre: 'Ala de demonio gris'
+    descripcion: Material que sirve para superar el límite de los héroes. Se obtiene del cadáver de un demonio gris.
+  tela_magnifica:
+    nombre: 'Tela magnífica'
+    descripcion: Sirve para mejorar atuendos de conjunto.
+  carta_demonio_gris:
+    nombre: 'Demonio gris'
+    descripcion: Carta de artefacto del demonio gris.
+  oreja_howlex:
+    nombre: 'Oreja de bestia demoníaca Howlex'
+    descripcion: Material que sirve para superar el límite de los héroes. Se obtiene del cadáver de la bestia demoníaca Howlex.
+  componente_brillante:
+    nombre: 'Componente brillante'
+    descripcion: Sirve para mejorar atuendos de armas.
+  carta_howlex:
+    nombre: 'Bestia demoníaca Howlex'
+    descripcion: Carta de artefacto de la bestia demoníaca Howlex.
+  nucleo_bellmoth:
+    nombre: 'Núcleo de la bestia demoníaca Bellmoth'
+    descripcion: Material que sirve para superar el límite de los héroes. Se obtiene del cadáver de la bestia demoníaca Bellmoth.
+  carta_bellmoth:
+    nombre: 'Bestia demoníaca Bellmoth'
+    descripcion: Carta de artefacto de la bestia demoníaca Bellmoth.
+  energia_original:
+    nombre: 'Energía del demonio original'
+    descripcion: Material que sirve para superar el límite de los héroes.
+  carta_demonio_original:
+    nombre: 'Demonio original'
+    descripcion: Carta de artefacto del demonio original.
+  caja_materiales_atuendos:
+    nombre: 'Caja aleatoria de materiales de mejora de atuendos'
+    descripcion: Una caja con la que puedes conseguir aleatoriamente un componente brillante, una tela magnífica o un perfume embriagador según probabilidades determinadas.
+  carta_eliminador_oscuro:
+    nombre: '"Eliminador oscuro"'
+    descripcion: Carta de historia del capítulo 1 de Prisioneros del cielo.
+  carta_indura:
+    nombre: 'Indura del Castigo'
+    descripcion: Carta de artefacto de Indura del Castigo.
+  fragmento_moneda_sa:
+    nombre: 'Fragmento de moneda de superdespertar'
+    descripcion: Se intercambian por monedas de superdespertar en el intercambio de materiales.
+  fragmento_caos:
+    nombre: 'Fragmento del caos'
+    descripcion: Material necesario para usar [Caos de constelaciones].
+  yunque:
+    nombre: 'Yunque'
+    descripcion: Un yunque mágico que cambia los efectos de bonificación de un equipo según probabilidades determinadas.
   esencia_azul:
     nombre: Esencia mágica azul
     descripcion: Esencia mágica usada para fabricar reliquias sagradas para héroes [humanos y hadas], [humanos] y de [raza desconocida].
@@ -255,3 +303,71 @@ demonio_rojo:  # captura del juego, 2026-10-28 (el titulo de la primera seccion 
     - {caja: plata, objeto: piedra_despertar, prob: 6}
     - {caja: bronce, objeto: cuerno_demonio_rojo, cantidad: 5, prob: 40}
     - {caja: bronce, objeto: cuerno_demonio_rojo, cantidad: 4, prob: 40}
+
+demonio_gris:  # captura del juego, 2026-10-28
+  garantizados:
+    - {objeto: ala_demonio_gris, cantidad: 4}
+  lider:
+    - {objeto: tela_magnifica, prob: 100}
+  premios:
+    - {caja: oro, objeto: carta_demonio_gris, prob: 0.5}
+    - {caja: oro, objeto: tela_magnifica, prob: 8}
+    - {caja: plata, objeto: cofre_tesoro, prob: 5.5}
+    - {caja: plata, objeto: piedra_despertar, prob: 6}
+    - {caja: bronce, objeto: ala_demonio_gris, cantidad: 5, prob: 40}
+    - {caja: bronce, objeto: ala_demonio_gris, cantidad: 4, prob: 40}
+
+howlex:  # captura del juego, 2026-10-28
+  garantizados:
+    - {objeto: oreja_howlex, cantidad: 4}
+  lider:
+    - {objeto: componente_brillante, prob: 100}
+  premios:
+    - {caja: oro, objeto: carta_howlex, prob: 0.5}
+    - {caja: oro, objeto: componente_brillante, prob: 8}
+    - {caja: plata, objeto: cofre_tesoro, prob: 5.5}
+    - {caja: plata, objeto: piedra_despertar, prob: 6}
+    - {caja: bronce, objeto: oreja_howlex, cantidad: 5, prob: 40}
+    - {caja: bronce, objeto: oreja_howlex, cantidad: 4, prob: 40}
+
+bellmoth:  # captura del juego, 2026-10-28
+  garantizados:
+    - {objeto: nucleo_bellmoth, cantidad: 4}
+  lider:
+    - {objeto: componente_brillante, prob: 100}
+  premios:
+    - {caja: oro, objeto: carta_bellmoth, prob: 0.5}
+    - {caja: oro, objeto: componente_brillante, cantidad: 2, prob: 8}
+    - {caja: plata, objeto: cofre_tesoro, prob: 5.5}
+    - {caja: plata, objeto: piedra_despertar, prob: 6}
+    - {caja: bronce, objeto: nucleo_bellmoth, cantidad: 4, prob: 40}
+    - {caja: bronce, objeto: nucleo_bellmoth, cantidad: 3, prob: 40}
+
+demonio_original:  # captura del juego, 2026-10-28
+  garantizados:
+    - {objeto: energia_original, cantidad: 4}
+  lider:
+    - {objeto: componente_brillante, prob: 100}
+  premios:
+    - {caja: oro, objeto: carta_demonio_original, prob: 0.5}
+    - {caja: oro, objeto: componente_brillante, cantidad: 2, prob: 8}
+    - {caja: plata, objeto: cofre_tesoro, prob: 5.5}
+    - {caja: plata, objeto: piedra_despertar, prob: 6}
+    - {caja: bronce, objeto: energia_original, cantidad: 4, prob: 40}
+    - {caja: bronce, objeto: energia_original, cantidad: 3, prob: 40}
+
+indura:  # captura del juego, 2026-10-28
+  garantizados:
+    - {objeto: caja_materiales_atuendos}
+  lider:
+    - {objeto: componente_brillante, prob: 100}
+  premios:
+    - {caja: oro, objeto: carta_eliminador_oscuro, prob: 0.5}
+    - {caja: oro, objeto: carta_indura, prob: 0.2}
+    - {caja: oro, objeto: componente_brillante, cantidad: 2, prob: 5}
+    - {caja: plata, objeto: fragmento_moneda_sa, cantidad: 5, prob: 5.8}
+    - {caja: plata, objeto: fragmento_caos, cantidad: 4, prob: 5.5}
+    - {caja: bronce, objeto: fragmento_moneda_sa, cantidad: 4, prob: 30}
+    - {caja: bronce, objeto: componente_brillante, prob: 10}
+    - {caja: bronce, objeto: fragmento_caos, cantidad: 2, prob: 20}
+    - {caja: bronce, objeto: yunque, cantidad: 5, prob: 23}
