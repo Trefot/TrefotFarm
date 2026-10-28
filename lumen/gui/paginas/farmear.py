@@ -27,7 +27,7 @@ from PyQt5.QtWidgets import (
 
 from lumen import actualizador, avisos, botin, config, ordenes, premios, recompensas, ventana
 from lumen.control import control
-from lumen.gui import iconos, tema
+from lumen.gui import iconos, resumen, tema
 from lumen.gui.comun import Pagina, formatear_tiempo, icono_premio
 from lumen.gui.paginas.equipos import clave_de_equipos, tarjetas_equipos
 from lumen.modos import MODOS
@@ -507,6 +507,8 @@ class PaginaFarmear(Pagina):
         return "\n".join(lineas)
 
     def _terminado(self):
+        if not self.modo_externo:  # solo las sesiones de farmeo, no las herramientas del admin
+            self._mostrar_resumen()
         self._pintar_botin()
         self._botones(False)
         self.inicio = None
@@ -520,6 +522,19 @@ class PaginaFarmear(Pagina):
             self.app.navegar("equipos")
         elif herramienta == "captura_objetos":  # y la galeria de objetos
             self.app.navegar("recompensas")
+
+    def _mostrar_resumen(self):
+        """Tarjeta con lo conseguido en la sesion que acaba de terminar, y lo mismo al movil."""
+        segundos = time.time() - self.inicio if self.inicio else 0
+        if segundos < resumen.MINIMO_S:
+            return
+        sesion = self.ultimas_stats.get("inicio")
+        registros = [r for r in recompensas.leer() if sesion and abs(float(r.get("sesion") or 0) - float(sesion)) < 1]
+        cls = self.modo_cls
+        d = resumen.datos(self.ultimas_stats, segundos, registros)
+        resumen.enviar_al_movil(cls.nombre, d)
+        self._tarjeta_resumen = resumen.TarjetaResumen(self, cls.nombre, foto_de(cls.id), d)
+        self._tarjeta_resumen.show()  # sin bloquear: el programa sigue aunque nadie la cierre
 
     def _botones(self, corriendo: bool):
         self.b_iniciar.setEnabled(not corriendo)

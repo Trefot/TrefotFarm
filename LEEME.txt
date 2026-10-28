@@ -91,6 +91,13 @@ Sin internet o sin GitHub configurado, el programa funciona igual y lo vuelve a 
 Ya viene conectado a su repositorio de GitHub (se cambia en Ajustes si hiciera falta).
 
 
+RESUMEN AL TERMINAR
+-------------------
+Cuando una sesion de farmeo acaba (victorias alcanzadas, sin stamina o Detener), sale una tarjeta con
+victorias, tiempo, victorias por hora, oro y el botin conseguido. Si hay canal de ntfy, el mismo
+resumen llega al movil con la foto de la ultima victoria. Sesiones de menos de 30 s no se resumen.
+
+
 AVISOS AL MOVIL (opcional)
 --------------------------
 Instala la app ntfy, suscribete a un canal con un nombre dificil de adivinar y escribelo en
