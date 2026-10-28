@@ -62,6 +62,14 @@ def _capturar_region(origen: tuple[int, int], ancho: int, alto: int) -> np.ndarr
         win32gui.ReleaseDC(escritorio, hdc)
 
 
+def capturar_pantalla() -> tuple[np.ndarray, tuple[int, int]]:
+    """Captura de todas las pantallas juntas y su esquina superior izquierda (para buscar el lanzador)."""
+    metricas = ctypes.windll.user32.GetSystemMetrics
+    origen = (metricas(76), metricas(77))  # SM_XVIRTUALSCREEN, SM_YVIRTUALSCREEN
+    with _lock:
+        return _capturar_region(origen, metricas(78), metricas(79)), origen
+
+
 def capturar() -> tuple[np.ndarray, tuple[int, int]]:
     """Captura de la ventana del juego (BGR) y la esquina superior izquierda en pantalla.
 

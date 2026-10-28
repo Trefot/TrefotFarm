@@ -29,10 +29,12 @@ class TipoCarta(Enum):
     NINGUNA = -100
 
 
-# Una carta bloqueada se ve OSCURECIDA (no gris). Brillo medio del interior medido en 30 manos
-# reales: bloqueadas 73-83, normales 96 o mas (la mayoria 160+). Ojo: hay cartas con dibujo gris
-# pero brillante (la ulti de Thonar) que NO estan bloqueadas.
-BRILLO_BLOQUEADA = 90
+# Una carta bloqueada lleva un velo OSCURO encima: lo mas claro de su dibujo no pasa de ~135. Se mide lo
+# claro (percentil 90 del brillo del interior), no la media: con la media (umbral 90) se escapaban
+# bloqueadas de dibujo claro (93, 96, 98, 100) y se tomaban por bloqueadas cartas normales de dibujo oscuro.
+# Medido en 330 capturas de peleas (2026-10-28): bloqueadas 100-135; normales y ultis 220-255 casi todas
+# (la ulti de Thonar, gris pero brillante, da 240+).
+CLARO_BLOQUEADA = 150
 
 
 class Rango(Enum):
@@ -105,7 +107,7 @@ def tipo_de(carta: np.ndarray) -> TipoCarta:
     dentro = interior(carta)
     if bool(_modelo("ground_cards_predictor.svc").predict(_rasgos_suelo(dentro)).item()):
         return TipoCarta.SUELO
-    if cv2.cvtColor(dentro, cv2.COLOR_BGR2HSV)[..., 2].mean() < BRILLO_BLOQUEADA:
+    if np.percentile(cv2.cvtColor(dentro, cv2.COLOR_BGR2HSV)[..., 2], 90) < CLARO_BLOQUEADA:
         return TipoCarta.BLOQUEADA
     return TipoCarta.NORMAL
 

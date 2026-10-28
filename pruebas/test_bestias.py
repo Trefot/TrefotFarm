@@ -170,6 +170,28 @@ class Navegacion(ConPantallaSimulada):
             m.comprobaciones_globales({"contrasena"}, (0, 0))
         self.assertEqual(len(enviados), 2, "avisa al movil de la sesion cerrada y de la contrasena")
         self.assertFalse(m.comprobaciones_globales(set(), (0, 0)))
+        m.estado = "pelea"
+        self.assertTrue(m.comprobaciones_globales({"reiniciar_juego"}, (0, 0)), "pulsa Restart en vez de parar")
+        self.assertEqual(m.estado, m.estado_inicial(), "y empieza el modo desde el principio")
+
+    def test_juego_cerrado_se_vuelve_a_abrir(self):
+        """Si la ventana del juego desaparece, pulsa "Run Game" en el lanzador y empieza de nuevo."""
+        from lumen import avisos, control as modulo_control, ventana
+
+        self._parchear(juego, "abrir_juego", PlantillaFalsa("abrir_juego"))
+        self._parchear(avisos, "enviar", lambda m, c=None: None)
+        self._parchear(modulo_control.control, "esperar", lambda s: None)
+        abierta = []
+        self._parchear(ventana, "capturar_pantalla", lambda: (abierta.append(1) or {"abrir_juego"}, (0, 0)))
+        self._parchear(ventana, "ventana_abierta", lambda: bool(abierta))
+        self._parchear(ventana, "tamano_actual", lambda: (554, 960))
+        self._parchear(ventana, "traer_al_frente", lambda: None)
+        self._parchear(ventana, "ajustar_tamano", lambda: True)
+        m = self.modo(B.PerrosPisos1a3)
+        m.estado = "pelea"
+        m._esperar_juego("No encuentro la ventana.")
+        self.assertEqual(len(self.clics), 1, "pulsa Run Game una vez")
+        self.assertEqual(m.estado, m.estado_inicial())
 
     def test_floor_1_leido_como_i(self):
         """El lector de texto lee "Twilight Temple Floor 1" como "Floor I" (prueba de la 0.2.1)."""
