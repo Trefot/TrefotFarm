@@ -45,9 +45,9 @@ BESTIAS, DEMONIOS, FUERTE = "Bestias demoníacas", "Demonios", "Fuerte Solgres"
 GRUPOS = [BESTIAS, DEMONIOS, FUERTE]
 
 
-def _bestia(id_base: str, nombre: str, imagen: str) -> Contenido:
-    """Dos destinos: los pisos 1-3 seguidos en una sesion, y el piso 4."""
-    pisos = (Destino(f"{id_base}_pisos1a3", "Floor 1-3"), Destino(f"{id_base}_piso4", "Floor 4"))
+def _bestia(id_base: str, nombre: str, imagen: str, piso4: bool = True) -> Contenido:
+    """Los pisos 1-3 seguidos en una sesion y, si la bestia lo tiene, el piso 4 ("trascendente")."""
+    pisos = (Destino(f"{id_base}_pisos1a3", "Floor 1-3"),) + ((Destino(f"{id_base}_piso4", "Floor 4"),) if piso4 else ())
     return Contenido(id_base, nombre, "Bestia demoníaca", "mdi6.paw", imagen, pisos, BESTIAS)
 
 
@@ -58,11 +58,14 @@ def _unico(id_: str, nombre: str, descripcion: str, icono: str, grupo: str) -> C
 
 
 CATALOGO: list[Contenido] = [
-    _bestia("perros", "Skollandhati & Hati", "demonic_beasts/skollandhati.png"),
+    # Las 6 bestias en el orden del juego; solo las 3 primeras tienen piso 4 ("trascendente"), segun
+    # capturas del juego (2026-10-28). La foto de cada una esta en assets/modos/<id>.png.
     _bestia("pajaro", "Hraesvelgr", "demonic_beasts/hraesvelgr.png"),
     _bestia("ciervo", "Eikthyrnir", "deer/Eikthyrnir.png"),
-    _bestia("serpiente", "Nidhoggr", "snake/nidhoggr.png"),
-    _bestia("rata", "Ratatoskr", "rat/ratatoskr.png"),
+    _bestia("perros", "Skollandhati & Hati", "demonic_beasts/skollandhati.png"),
+    _bestia("serpiente", "Nidhoggr", "snake/nidhoggr.png", piso4=False),
+    _bestia("rata", "Ratatoskr", "rat/ratatoskr.png", piso4=False),
+    _bestia("surtr", "Surtr", "", piso4=False),
     # Los 6 demonios en el orden de las pestanas de "Real-time Join Request" (captura del juego, 2026-10-28).
     _unico("demonio_rojo", "Red Demon", "Demonio · tiempo real", "mdi6.fire", DEMONIOS),
     _unico("demonio_gris", "Gray Demon", "Demonio · tiempo real", "mdi6.weather-fog", DEMONIOS),

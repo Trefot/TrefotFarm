@@ -54,7 +54,8 @@ Ajustes           ventana del juego, teclas rapidas, avisos al movil y repositor
 Para farmear: juego abierto y visible, equipo puesto, Inicio -> gira la rueda -> "Empezar".
 Floor 1-3 (las 5 Demonic Beasts): juega Floor 1, 2 y 3 seguidos y vuelve a empezar. Sirve cualquier
 equipo fuerte (juega primero las ultis y luego las cartas de mas rango). El piso se busca leyendo el
-texto "Floor N" de la pantalla; si un piso no aparece en 25 s, pasa al siguiente.
+texto del piso en la pantalla ("... Floor N" o "Piso N ...", en cualquier parte del nombre); si un piso
+no aparece en 25 s, pasa al siguiente. Floor 4 solo existe en Hraesvelgr, Eikthyrnir y Skoll y Hati.
 Como juega (Farmear -> Opciones -> "Como jugar"):
   Inteligente (por defecto)  piensa el turno entero: prueba todas las jugadas posibles, cuenta las
                              fusiones (jugar la carta del medio para juntar dos iguales, o arrastrar

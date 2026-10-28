@@ -154,7 +154,9 @@ class BestiaPisos1a3(PerrosPiso4):
         return None
 
     def _buscar_piso(self, p):
-        """Rectangulo del texto "Floor N" en la pantalla de pisos (sin contar "Floor N Cleared")."""
+        """Rectangulo del texto del piso que toca en la pantalla de pisos (sin contar "Floor N Cleared").
+        Cada bestia nombra sus pisos a su manera ("Piso 1 del templo del ocaso", "Salón del Génesis
+        (piso 1)"...): se busca "floor N" o "piso N" en cualquier parte de la linea."""
         if not ocr.disponible():
             self.log("Para elegir el piso necesito el lector de texto de Windows: ejecuta Instalar.bat.", "error")
             raise TerminarModo()
@@ -163,8 +165,10 @@ class BestiaPisos1a3(PerrosPiso4):
             self.textos_vistos = True
             self.log("Texto en la pantalla de pisos: " + " | ".join(t for t, _ in lineas), "debug")
         for texto, rect in lineas:
-            limpio = re.sub(r"[^a-z0-9]", "", texto.lower())
-            if limpio.startswith(f"floor{self.piso}") and "clear" not in limpio:
+            t = texto.lower()
+            if "clear" in t or "superad" in t:
+                continue
+            if any(int(n) == self.piso for n in re.findall(r"(?:floor|piso)\s*(\d+)", t)):
                 return rect
         return None
 
