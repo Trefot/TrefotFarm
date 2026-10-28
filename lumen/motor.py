@@ -74,6 +74,25 @@ class Modo:
     def capturar():
         return ventana.capturar()
 
+    # Textos de botones que solo cierran o avanzan una pantalla (nunca gastan nada): si una pantalla no tiene
+    # imagen guardada, el bot la pasa leyendo el boton. Palabras completas, para no tocar "Cancel" ni "Shop".
+    BOTONES_SEGUROS = ("ok", "confirm", "receive", "claim", "close", "next", "continue", "tap to continue",
+                       "touch to continue", "aceptar", "recibir", "cerrar", "siguiente", "continuar")
+
+    def clic_boton_por_texto(self, pantalla, origen) -> str:
+        """Lee la pantalla y toca el primer boton seguro que encuentre; devuelve su texto ("" si ninguno)."""
+        from lumen import ocr
+
+        if not ocr.disponible():
+            return ""
+        for texto, (x, y, w, h) in ocr.lineas_con_posicion(pantalla):
+            limpio = texto.strip().lower().strip(".!")
+            if limpio in self.BOTONES_SEGUROS:
+                entrada.clic((x + w // 2, y + h // 2), origen, espera=0.8)
+                self.log(f"Pantalla sin imagen guardada: toco «{texto.strip()}».", "aviso")
+                return texto.strip()
+        return ""
+
     @staticmethod
     def clic_si(plantilla: Plantilla, pantalla, origen, umbral: float = 0.7, punto=None, espera: float = 0.25) -> bool:
         """Si la plantilla esta en pantalla, clic en ella (o en ``punto``). Devuelve si clico."""

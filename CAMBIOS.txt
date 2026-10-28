@@ -29,6 +29,14 @@ Etapas previstas:
 
 CAMBIOS
 -------
+0.2.3-alpha
+  - Indura: acepta la invitacion igual que AutoFarming (vuelve a mirar y toca hacia los 9.5 s, con un
+    clic rapido). Pulsando justo a los 9.3 s con el raton ya encima se perdian ~la mitad.
+  - Indura: la foto del botin se saca en la pantalla de recompensas (antes salia "Heart Destroyed").
+  - Perros Floor 1-3: ataca al perro que toca en cada fase (claro en la fase 1, oscuro en la 2 y la 3).
+  - Bestias: si tras destruir la bestia sale una pantalla sin imagen guardada (recompensas aseguradas
+    de la semana), a los 5 s el bot lee su boton (OK, Receive...) y lo toca. Antes se quedaba 2 min.
+
 0.2.2-alpha
   - Bestias Floor 1-3: ya entran a la bestia. La lista de recompensas de la pantalla de elegir bestia
     ("Obtain Floor 1 First Clear Reward"...) hacia creer al bot que ya estaba en los pisos.

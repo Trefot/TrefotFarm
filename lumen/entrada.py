@@ -44,6 +44,18 @@ def pulsar() -> None:
     control.actividad()
 
 
+def clic_rapido(objetivo, origen) -> None:
+    """Clic como el de AutoFarming: mover, la pausa de pyautogui (0.1 s) y pulsacion de 0.01 s.
+    Para aceptar invitaciones de tiempo real: con este clic su bot siempre entraba (ver modos/indura)."""
+    control.revisar()
+    pyautogui.moveTo(*_punto(objetivo, origen))
+    time.sleep(0.1)
+    win32api.mouse_event(win32con.MOUSEEVENTF_LEFTDOWN, 0, 0)
+    time.sleep(0.01)
+    win32api.mouse_event(win32con.MOUSEEVENTF_LEFTUP, 0, 0)
+    control.actividad()
+
+
 def clic(objetivo, origen, espera: float = 0.05, jitter: int = JITTER_PX):
     control.revisar()
     x, y = _punto(objetivo, origen)
