@@ -98,6 +98,12 @@ objetos:
   origen_ciclo:
     nombre: Origen del ciclo
     descripcion: Objeto necesario para fabricar reliquias sagradas. Ratatoskr lo proporciona en Batalla de bestia demoníaca.
+  runa_magica:
+    nombre: Runa mágica
+    descripcion: Runa hallada en el Salón del Génesis. Se puede obtener en la batalla de bestia demoníaca de Surtr y la llama primordial.
+  origen_fuego:
+    nombre: Origen del fuego
+    descripcion: Objeto necesario para fabricar reliquias sagradas. Se puede obtener en la batalla de bestia demoníaca de Surtr y la llama primordial.
   esencia_azul:
     nombre: Esencia mágica azul
     descripcion: Esencia mágica usada para fabricar reliquias sagradas para héroes [humanos y hadas], [humanos] y de [raza desconocida].
@@ -208,3 +214,15 @@ rata_pisos1a3:  # captura del juego, 2026-10-28 (sin carta de artefacto)
     - {caja: bronce, objeto: fuerza_brok, cantidad: 3, prob: 20}
     - {caja: bronce, objeto: esencia_dorada, cantidad: 2, prob: 20}
     - {caja: bronce, objeto: esencia_azul, cantidad: 2, prob: 20}
+
+surtr_pisos1a3:  # captura del juego, 2026-10-28 (sin carta de artefacto)
+  primera_vez:
+    - {objeto: runa_magica, cantidad: 2}
+    - {objeto: origen_fuego}
+  premios:
+    - {caja: oro, objeto: runa_magica, prob: 10}
+    - {caja: plata, objeto: esencia_desconocida, cantidad: 5, prob: 15}
+    - {caja: plata, objeto: esencia_dorada, cantidad: 5, prob: 15}
+    - {caja: bronce, objeto: tenacidad_volundr, cantidad: 3, prob: 20}
+    - {caja: bronce, objeto: esencia_desconocida, cantidad: 2, prob: 20}
+    - {caja: bronce, objeto: esencia_dorada, cantidad: 2, prob: 20}
