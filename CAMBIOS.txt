@@ -29,6 +29,14 @@ Etapas previstas:
 
 CAMBIOS
 -------
+0.2.6-alpha
+  - Sesion del juego: "Duplicate connection" / "Simultaneous log ins" se cierran y avisan al movil;
+    "Connection confirmation expired" o la pantalla de contrasena paran el bot y avisan al movil (la
+    contrasena la pone el jugador); la pantalla de servidor ("GLOBAL") se toca para volver a entrar.
+  - Indura: si lleva 3 min sin reconocer la pantalla, manda una foto al movil.
+  - Indura: una carta que no entra en su casilla se aparta el resto del turno (antes la tocaba una y
+    otra vez, perdia el turno y la pelea).
+
 0.2.5-alpha
   - Perros Floor 1-3: en la fase 3 no apunta a ningun perro y juega areas y ultis primero (los dos
     tienen que caer a la vez). Fase 1 perro blanco y fase 2 perro negro, como antes.

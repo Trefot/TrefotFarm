@@ -152,6 +152,25 @@ class Navegacion(ConPantallaSimulada):
         self.assertEqual(m.clic_boton_por_texto(None, (0, 0)), "OK")
         self.assertEqual(self.clics[-1], (215, 806))
 
+    def test_sesion_cerrada(self):
+        """Avisos de sesion del juego: conexion duplicada se cierra y sigue; contrasena para el bot."""
+        from lumen import avisos
+        from lumen.motor import TerminarModo
+
+        for n in ("reconectar", "reiniciar_juego", "conexion_duplicada", "conexion_caducada", "contrasena",
+                  "servidor_global"):
+            self._parchear(juego, n, PlantillaFalsa(n))
+        enviados = []
+        self._parchear(avisos, "enviar", lambda m, c=None: enviados.append(m))
+        m = self.modo(B.PerrosPisos1a3)
+        self.assertTrue(m.comprobaciones_globales({"conexion_duplicada", "ok"}, (0, 0)))
+        self.assertEqual(len(self.clics), 1, "cierra el aviso con OK")
+        self.assertTrue(m.comprobaciones_globales({"servidor_global"}, (0, 0)), "toca para volver a entrar")
+        with self.assertRaises(TerminarModo):
+            m.comprobaciones_globales({"contrasena"}, (0, 0))
+        self.assertEqual(len(enviados), 2, "avisa al movil de la sesion cerrada y de la contrasena")
+        self.assertFalse(m.comprobaciones_globales(set(), (0, 0)))
+
     def test_floor_1_leido_como_i(self):
         """El lector de texto lee "Twilight Temple Floor 1" como "Floor I" (prueba de la 0.2.1)."""
         self.assertEqual(B.numeros_de_piso("Twilight Temple Floor I"), [1])

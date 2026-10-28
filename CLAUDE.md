@@ -32,5 +32,7 @@ Reglas completas en CAMBIOS.txt. Resumen:
   piso por su círculo: ganó F1-F3 en ~2,5 min. 0.2.5 (sin probar): fase 3 solo áreas/ultis, Reset tras el F3,
   cartas que no entran = bloqueadas. PENDIENTE: las cantidades del botín se leen mal (botin.leer_cantidad:
   "5"->1, "2"->1 o 7, "10"->1, "30"->15); hace falta referencias de dígitos reales del juego (hay 0-5 en las
-  fotos de recompensas del 28-10; faltan 6-9). Y el perro claro (der) nunca se confirma al apuntar. El juego no acepta clics de un proceso sin
+  fotos de recompensas del 28-10; faltan 6-9). Y el perro claro (der) nunca se confirma al apuntar.
+  0.2.6 (sin probar): avisos de sesión cerrada (el juego cerró la sesión tras 1 h de Indura y el bot se
+  quedó 6 min sin reconocer nada) y cartas de Indura que no entran. El bot NO escribe la contraseña. El juego no acepta clics de un proceso sin
   permisos de administrador: las pruebas en vivo las lanza el usuario desde Lumen.
