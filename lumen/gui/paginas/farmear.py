@@ -28,6 +28,7 @@ from lumen.control import control
 from lumen.gui import iconos, tema
 from lumen.gui.comun import Pagina, formatear_tiempo
 from lumen.modos import MODOS
+from lumen.modos.catalogo import contenido_de
 from lumen.rutas import IMAGENES
 
 CIFRAS = [("victorias", "Victorias", "trofeo"), ("derrotas", "Derrotas", "derrota"), ("reinicios", "Reinicios", "reinicio"),
@@ -60,7 +61,7 @@ class PaginaFarmear(Pagina):
         capa_ahora.setContentsMargins(18, 14, 18, 14)
         capa_ahora.setSpacing(16)
         self.emblema = QLabel()
-        self.emblema.setFixedSize(96, 96)
+        self.emblema.setFixedSize(112, 112)
         capa_ahora.addWidget(self.emblema)
         textos = QVBoxLayout()
         textos.setSpacing(2)
@@ -69,11 +70,16 @@ class PaginaFarmear(Pagina):
         textos.addStretch()
         textos.addWidget(self.nombre_modo)
         textos.addWidget(self.sub_modo)
+        self.fila_pisos = QHBoxLayout()  # Floor 1 -> 2 -> 3 en los modos que recorren pisos
+        self.fila_pisos.setSpacing(4)
+        textos.addLayout(self.fila_pisos)
+        self.pisos: dict[int, QLabel] = {}
         self.combo = QComboBox()
         for modo in MODOS.values():
             self.combo.addItem(modo.nombre, modo.id)
         self.combo.setCurrentIndex(max(0, self.combo.findData(config.obtener("ultimo_modo"))))
         self.combo.setVisible(len(MODOS) > 1)
+        self.combo.setMaximumWidth(340)
         textos.addWidget(self.combo)
         textos.addStretch()
         capa_ahora.addLayout(textos, 1)
@@ -195,7 +201,9 @@ class PaginaFarmear(Pagina):
         self.nombre_modo.setText(cls.titulo_juego or cls.nombre)
         self.sub_modo.setText(" · ".join(x for x in (cls.subtitulo_juego, cls.duracion) if x))
         self.nombre_modo.setToolTip(cls.descripcion)
-        pix = iconos.redondo(IMAGENES / cls.imagen, 96, tema.ACENTO) if cls.imagen else None
+        contenido = contenido_de(cls.id)  # la foto del catalogo (assets/modos); si no, la del modo
+        foto = contenido.foto if contenido and contenido.foto else (IMAGENES / cls.imagen if cls.imagen else None)
+        pix = iconos.redondo(foto, 112, tema.ACENTO) if foto else None
         if pix:
             self.emblema.setPixmap(pix)
         else:
@@ -218,6 +226,23 @@ class PaginaFarmear(Pagina):
             self.campos[op.clave] = campo
             self.form.addRow(op.etiqueta, campo)
 
+        while self.fila_pisos.count():
+            w = self.fila_pisos.takeAt(0).widget()
+            if w:
+                w.setParent(None)
+        self.pisos = {}
+        for i, n in enumerate(getattr(cls, "ciclo_pisos", ())):
+            if i:
+                flecha = QLabel()
+                flecha.setPixmap(iconos.pixmap("mdi6.chevron-right", 16, tema.TENUE))
+                self.fila_pisos.addWidget(flecha)
+            self.pisos[n] = QLabel(f"Floor {n}", objectName="piso", alignment=Qt.AlignCenter)
+            self.fila_pisos.addWidget(self.pisos[n])
+        if self.pisos:
+            self.lbl_vuelta = QLabel(objectName="tenue")
+            self.fila_pisos.addSpacing(8)
+            self.fila_pisos.addWidget(self.lbl_vuelta)
+        self.fila_pisos.addStretch()
         while self.fila_fases.count():
             w = self.fila_fases.takeAt(0).widget()
             if w:
@@ -461,7 +486,7 @@ class PaginaFarmear(Pagina):
             texto, detalle = "En pausa", ""
         else:
             texto = cls.nombres_estados.get(self.estado_bot) or self.estado_bot.replace("_", " ").capitalize() or "Arrancando"
-            detalle = cls.titulo_juego or cls.nombre
+            detalle = "" if cls is self.modo_cls else (cls.titulo_juego or cls.nombre)  # el modo elegido ya sale a la izquierda
         self.lbl_estado.setText(texto)
         self.lbl_detalle.setText(detalle)
         fase = int(self.ultimas_stats.get("fase") or 0) if corriendo else 0
@@ -476,6 +501,13 @@ class PaginaFarmear(Pagina):
             else:
                 estado = ""
             _repintar(etiqueta, "estado", estado)
+        # Floor 1 -> 2 -> 3: el actual en dorado y los ya ganados en esta vuelta en verde
+        piso = int(self.ultimas_stats.get("piso") or 0) if corriendo else 0
+        for n, etiqueta in self.pisos.items():
+            _repintar(etiqueta, "estado", "actual" if n == piso else "hecha" if piso and n < piso else "")
+        if self.pisos:
+            vuelta = int(self.ultimas_stats.get("vuelta") or 0) if corriendo else 0
+            self.lbl_vuelta.setText(f"vuelta {vuelta}" if vuelta else "")
 
     # --------------------------------------------------------------- registro
     def escribir(self, mensaje: str, nivel: str = "info"):

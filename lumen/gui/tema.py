@@ -172,6 +172,10 @@ QLabel#fase {{ background: {_s.hundido}; color: {_s.tenue}; border: 1px solid {_
                min-width: 30px; max-width: 30px; min-height: 30px; max-height: 30px; font-weight: 700; }}
 QLabel#fase[estado="actual"] {{ background: {_ORO}; color: {_s.sobre_acento}; border-color: {_s.borde_oro}; }}
 QLabel#fase[estado="hecha"] {{ color: {OK}; border-color: #2c5f45; }}
+QLabel#piso {{ background: {_s.hundido}; color: {_s.tenue}; border: 1px solid {_s.borde}; border-radius: 11px;
+               padding: 3px 12px; font-weight: 600; font-size: 9pt; }}
+QLabel#piso[estado="actual"] {{ background: {_ORO}; color: {_s.sobre_acento}; border-color: {_s.borde_oro}; }}
+QLabel#piso[estado="hecha"] {{ color: {OK}; border-color: #2c5f45; }}
 QFrame#tarjeta_objeto {{ background: {_PANEL}; border: 1px solid {_s.borde}; border-radius: 12px; }}
 QFrame#tarjeta_objeto:hover {{ border-color: {_s.borde_oro}; }}
 QFrame#tarjeta_objeto[sin_nombre="true"] {{ border: 1px dashed {AVISO}; }}

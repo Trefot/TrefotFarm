@@ -56,6 +56,7 @@ class BestiaPisos1a3(PerrosPiso4):
     """Base: las subclases ponen id, nombres y ``bestia`` (su imagen del carrusel de bestias)."""
 
     bestia = None  # Plantilla de la bestia en el carrusel
+    ciclo_pisos = (1, 2, 3)  # los pisos que recorre (la pagina Farmear los dibuja con el actual marcado)
     enemigos = 1  # enemigos en la pelea (las cartas de area valen mas con varios)
     piso3_superado = None  # Plantilla de "Floor 3 Cleared" de esta bestia, si la hay
     descripcion = "Floor 1, 2 y 3 seguidos, y vuelta a empezar. Sirve cualquier equipo fuerte."
@@ -81,11 +82,20 @@ class BestiaPisos1a3(PerrosPiso4):
         self.stats["estrategia"] = "Inteligente" if inteligente else "Simple"  # queda en el historial
         self.textos_vistos = False
         self.piso = int(self.valores.get("primer_piso") or 1)
+        self.vuelta = 1  # cuantas veces se ha empezado el ciclo 1 -> 2 -> 3
         self.buscando_piso_desde: float | None = None
+        self.stats.update(piso=self.piso, vuelta=self.vuelta)
 
     def _siguiente_piso(self):
         self.piso = self.piso % 3 + 1
+        if self.piso == 1:
+            self.vuelta += 1
         self.buscando_piso_desde = None
+        self._stats()
+
+    def _stats(self):
+        self.stats.update(piso=self.piso, vuelta=self.vuelta)  # para la pagina Farmear
+        super()._stats()
 
     def victoria(self, p, o):
         siguiente = super().victoria(p, o)  # cuenta la victoria al volver a los pisos
