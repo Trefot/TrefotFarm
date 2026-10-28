@@ -73,6 +73,14 @@ def clic(objetivo, origen, espera: float = 0.05, jitter: int = JITTER_PX):
         control.esperar(espera)
 
 
+def tecla(nombre: str, espera: float = 0.5):
+    """Pulsa una tecla en el juego (p. ej. "esc" para volver atras, como AutoFarming)."""
+    control.revisar()
+    pyautogui.press(nombre)
+    control.actividad()
+    control.esperar(espera)
+
+
 def arrastrar(desde, hasta, origen, duracion: float = 0.4):
     control.revisar()
     x1, y1 = _punto(desde, origen)

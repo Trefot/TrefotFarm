@@ -1,9 +1,11 @@
-"""Indura (Boss Battle en tiempo real): se une a las partidas que otros jugadores abren.
+"""Demonios en tiempo real (Boss Battle): se une a las partidas que otros jugadores abren. Un molde para
+los 6 (Red, Gray, Howlex, Bellmoth, Original e Indura), como el de los pisos 1-3 de las bestias.
 
 Flujo (el de demonios de AutoFarming, MIT; Indura no esta en esa parte publica, asi que su icono es
 una captura propia):
 1. Taberna -> Battle -> Boss Battle -> Real-time: se abre "Real-time Join Request".
-2. Pestana de Indura (la 6.a), el nivel elegido (Chaos por defecto) y OK: el juego busca partida.
+2. Pestana del demonio, el nivel elegido y OK: el juego busca partida. Indura (la 6.a pestana) se toca
+   por su posicion y se comprueba que quede elegida; los otros 5, por su icono (el de AutoFarming).
 3. Llega una invitacion: se acepta JUSTO a los 9.3 s de aparecer. Es un fallo del juego: aceptada en
    ese momento entra a la partida sin gastar entradas de tiempo real. Por eso se cuenta desde el primer
    instante en que se ve, se mira la pantalla muy seguido mientras se espera y, llegado el momento, se
@@ -34,7 +36,8 @@ BOSS_BATTLE = P("demons/demons.jpg")  # menu Boss Battle (AutoFarming, MIT)
 TIEMPO_REAL = P("demons/RT.png")
 VENTANA_UNION = P("demons/union_tiempo_real.png")  # titulo "Real-time Join Request" (captura propia)
 INDURA = P("demons/indura_lumen.png")  # pestana de Indura seleccionada (captura propia)
-NIVELES = {"Extreme": P("demons/extreme.png"), "Hell": P("demons/hell.png"), "Chaos": P("demons/chaos.png")}
+NIVELES = {"Normal": P("demons/normal.png"), "Hard": P("demons/hard.png"), "Extreme": P("demons/extreme.png"),
+           "Hell": P("demons/hell.png"), "Chaos": P("demons/chaos.png")}
 ACEPTAR = P("demons/accept.png")
 CANCELAR_BUSQUEDA = P("demons/cancel.png")
 CARGANDO = P("demons/demons_loading_screen.png")
@@ -46,32 +49,24 @@ PESTANA_INDURA = (490, 258)  # la ultima pestana de la ventana de union (medido)
 OK_UNION = (277, 869)
 
 
-class Indura(Modo):
-    id = "indura"
-    nombre = "Indura"
-    titulo_juego = "Indura"
+class DemonioTiempoReal(Modo):
+    """El molde: cada demonio pone su id, nombre, pestana y niveles (ver _demonio)."""
+
+    id = "demonio"
+    nombre = "Demonio"
     subtitulo_juego = "Boss Battle · Real-time"
-    descripcion = ("Se une a las partidas de Indura que abren otros jugadores y pelea pensando cada turno. "
-                   "Empieza desde la Taberna o el menú Battle.")
-    imagen = "demons/indura_lumen.png"  # icono de Indura (captura propia)
     duracion = "según la partida"
+    pestana: Plantilla | None = None  # icono de la pestana en la ventana de union (se toca)
+    punto_pestana: tuple[int, int] | None = None  # o su posicion, si no hay icono
+    pestana_elegida_img: Plantilla | None = None  # la pestana ya elegida (para comprobarlo), si se tiene
     nombres_estados = {
         "ir_a_indura": "Entrando a Boss Battle",
-        "elegir": "Eligiendo Indura y el nivel",
+        "elegir": "Eligiendo el demonio y el nivel",
         "buscar": "Esperando una invitación",
         "preparar": "Preparando la pelea",
         "pelea": "Peleando",
     }
-    opciones = [
-        Opcion("nivel", "Nivel", "lista", "Chaos", opciones=["Chaos", "Hell", "Extreme"]),
-        Opcion("jugar", "Cómo pelear", "lista", "Inteligente", opciones=["Inteligente", "Mis cartas", "AUTO"],
-               ayuda="Inteligente: piensa las 6 cartas del turno y las fusiones, con cualquier equipo. "
-                     "Mis cartas: tu lista de prioridades (si no reconoce el equipo, AUTO)."),
-        Opcion("espera", "Segundos antes de aceptar", "texto", "9.3",
-               ayuda="Aceptar justo a los 9.3 s entra a la partida sin gastar entradas de tiempo real."),
-        Opcion("victorias", "Victorias (0 = sin límite)", "entero", 0, maximo=999),
-        Opcion("minutos_sin_invitacion", "Parar tras minutos sin invitaciones", "entero", 20, maximo=600),
-    ]
+    opciones: list[Opcion] = []
     pausa_entre_pasos = 0.05  # buscando invitaciones hay que verlas en cuanto salen (cuenta el tiempo)
 
     def __init__(self, valores: dict):
@@ -89,6 +84,7 @@ class Indura(Modo):
         self.desconocida_desde: float | None = None  # pantalla sin nada conocido desde...
         self.avisado_desconocida = False
         self.tocado_en = 0.0
+        self.pestana_elegida = False
 
     def estado_inicial(self):
         return "ir_a_indura"
@@ -116,6 +112,7 @@ class Indura(Modo):
             self.buscando_desde = time.time()
             return "buscar"
         if VENTANA_UNION.esta(p, 0.85):
+            self.pestana_elegida = False
             return "elegir"
         conocida = (self.clic_si(juego.ok, p, o)  # avisos que tapan el menu
                     | self.clic_si(juego.menu_batalla, p, o, umbral=0.6, espera=1.0)
@@ -130,21 +127,33 @@ class Indura(Modo):
         if not self.avisado_desconocida and time.time() - self.desconocida_desde > 180:
             self.avisado_desconocida = True
             self.log("Llevo 3 min sin reconocer la pantalla. Te mando una foto al móvil.", "aviso")
-            avisos.enviar("LumenFarm (Indura): llevo 3 min sin reconocer la pantalla del juego.", p)
+            avisos.enviar(f"LumenFarm ({self.nombre}): llevo 3 min sin reconocer la pantalla del juego.", p)
         return None
 
     def elegir(self, p, o):
         if not VENTANA_UNION.esta(p, 0.85):
             return "ir_a_indura"
-        if not INDURA.esta(p, 0.85):
-            self.clic_si(VENTANA_UNION, p, o, punto=PESTANA_INDURA, espera=1.0)
+        if self.pestana_elegida_img is not None:
+            self.pestana_elegida = self.pestana_elegida_img.esta(p, 0.85)
+        if not self.pestana_elegida:
+            if self.punto_pestana:
+                self.clic_si(VENTANA_UNION, p, o, punto=self.punto_pestana, espera=1.0)
+            elif self.pestana is not None and self.clic_si(self.pestana, p, o, umbral=0.75, espera=1.0):
+                self.pestana_elegida = self.pestana_elegida_img is None  # sin imagen de "elegida": se da por hecha
+            else:
+                # El icono de la pestana elegida puede verse distinto (Red Demon sale elegido al abrir): tras
+                # unos intentos se sigue con la que haya, mejor que quedarse parado.
+                self.intentos_pestana = getattr(self, "intentos_pestana", 0) + 1
+                self.log(f"No veo la pestaña de {self.nombre}.", "aviso")
+                if self.intentos_pestana >= 5:
+                    self.pestana_elegida, self.intentos_pestana = True, 0
             return None
         nivel = self.valores["nivel"]
         if not self.clic_si(NIVELES[nivel], p, o, umbral=0.8, espera=0.8):
-            self.log(f"No veo el nivel {nivel} de Indura.", "aviso")
+            self.log(f"No veo el nivel {nivel} de {self.nombre}.", "aviso")
             return None
         self.clic_si(VENTANA_UNION, p, o, punto=OK_UNION, espera=1.5)  # OK: empieza a buscar
-        self.log(f"Buscando partidas de Indura ({nivel}).", "ok")
+        self.log(f"Buscando partidas de {self.nombre} ({nivel}).", "ok")
         self.buscando_desde = time.time()
         return "buscar"
 
@@ -195,7 +204,7 @@ class Indura(Modo):
             return "ir_a_indura"  # ya no se esta buscando: volver a pedirlo
         minutos = float(self.valores["minutos_sin_invitacion"])
         if minutos and time.time() - self.buscando_desde > minutos * 60:
-            self.log(f"{minutos:.0f} min sin invitaciones (¿se acabó el límite diario de Indura?). Termino.", "aviso")
+            self.log(f"{minutos:.0f} min sin invitaciones (¿se acabó el límite diario?). Termino.", "aviso")
             raise TerminarModo()
         return None
 
@@ -279,7 +288,7 @@ class Indura(Modo):
         if gano and not getattr(self, "_contada", False):
             self._contada = True
             self.victorias += 1
-            self.log(f"¡Indura destruido! Victoria #{self.victorias}.", "ok")
+            self.log(f"¡{self.nombre} destruido! Victoria #{self.victorias}.", "ok")
             self._stats()
             self._foto_pendiente, self._previa, self._ok_desde = True, None, None
         if getattr(self, "_foto_pendiente", False) and juego.ok.esta(p):
@@ -294,7 +303,7 @@ class Indura(Modo):
         if juego.ok.esta(p) or juego.menu_batalla.esta(p, 0.6) or TIEMPO_REAL.esta(p, 0.75):
             if not getattr(self, "_contada", False):
                 self.derrotas += 1
-                self.log("No pudimos con Indura esta vez.", "aviso")
+                self.log(f"No pudimos con {self.nombre} esta vez.", "aviso")
                 self._stats()
             self.clic_si(juego.ok, p, o, espera=1.0)
             self._contada = False
@@ -306,5 +315,47 @@ class Indura(Modo):
         return None
 
     def al_terminar(self):
-        self.log(f"Indura: {self.victorias} victorias, {self.derrotas} derrotas, "
+        self.log(f"{self.nombre}: {self.victorias} victorias, {self.derrotas} derrotas, "
                  f"{self.perdidas} invitaciones perdidas.", "ok")
+
+
+def _opciones(nivel: str, niveles: list[str], jugar: str) -> list[Opcion]:
+    return [
+        Opcion("nivel", "Nivel", "lista", nivel, opciones=niveles),
+        Opcion("jugar", "Cómo pelear", "lista", jugar, opciones=["Inteligente", "Mis cartas", "AUTO"],
+               ayuda="Inteligente: piensa las 6 cartas del turno y las fusiones, con cualquier equipo. "
+                     "Mis cartas: tu lista de prioridades (si no reconoce el equipo, AUTO). AUTO: lo juega el juego."),
+        Opcion("espera", "Segundos antes de aceptar", "texto", "9.3",
+               ayuda="Aceptar justo a los 9.3 s entra a la partida sin gastar entradas de tiempo real."),
+        Opcion("victorias", "Victorias (0 = sin límite)", "entero", 0, maximo=999),
+        Opcion("minutos_sin_invitacion", "Parar tras minutos sin invitaciones", "entero", 20, maximo=600),
+    ]
+
+
+def _demonio(id_: str, nombre: str, imagen: str, *, pestana=None, punto_pestana=None, pestana_elegida_img=None,
+             nivel: str = "Hell", niveles=("Hell", "Extreme", "Hard", "Normal"), jugar: str = "AUTO",
+             descripcion: str = "") -> type:
+    return type(f"Demonio_{id_}", (DemonioTiempoReal,), {
+        "id": id_, "nombre": nombre, "titulo_juego": nombre, "imagen": imagen,
+        "descripcion": descripcion or (f"Se une a las partidas de {nombre} que abren otros jugadores y pelea en AUTO "
+                                       "(como AutoFarming). Empieza desde la Taberna o el menú Battle."),
+        "pestana": pestana, "punto_pestana": punto_pestana, "pestana_elegida_img": pestana_elegida_img,
+        "opciones": _opciones(nivel, list(niveles), jugar),
+    })
+
+
+# Los 5 demonios de AutoFarming: pelean en AUTO (asi los farmea su bot) y en Hell, su nivel por defecto.
+# Los ids son los del catalogo de Inicio (lumen/modos/catalogo.py) y los de las tablas de premios.
+DemonioRojo = _demonio("demonio_rojo", "Red Demon", "demons/red_demon.png", pestana=P("demons/red_demon.png"))
+DemonioGris = _demonio("demonio_gris", "Gray Demon", "demons/gray_demon.png", pestana=P("demons/gray_demon.png"))
+Howlex = _demonio("howlex", "Howlex", "demons/crimson_demon.png", pestana=P("demons/crimson_demon.png"))
+Bellmoth = _demonio("bellmoth", "Bellmoth", "demons/bell_demon.png", pestana=P("demons/bell_demon.png"))
+DemonioOriginal = _demonio("demonio_original", "Original Demon", "demons/og_demon.png",
+                           pestana=P("demons/og_demon.png"), niveles=("Hell", "Chaos", "Extreme", "Hard", "Normal"))
+# Indura: la 6.a pestana (por su posicion; se comprueba con una captura propia), Chaos y pensando cada turno.
+Indura = _demonio("indura", "Indura", "demons/indura_lumen.png", punto_pestana=PESTANA_INDURA,
+                  pestana_elegida_img=INDURA, nivel="Chaos", niveles=("Chaos", "Hell", "Extreme"), jugar="Inteligente",
+                  descripcion="Se une a las partidas de Indura que abren otros jugadores y pelea pensando cada turno. "
+                              "Empieza desde la Taberna o el menú Battle.")
+
+TODOS = [DemonioRojo, DemonioGris, Howlex, Bellmoth, DemonioOriginal, Indura]

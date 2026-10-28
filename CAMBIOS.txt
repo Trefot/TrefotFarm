@@ -29,6 +29,17 @@ Etapas previstas:
 
 CAMBIOS
 -------
+0.4.0-alpha
+  - Nuevos: los 5 demonios en tiempo real (Red Demon, Gray Demon, Howlex, Bellmoth y Original Demon).
+    Mismo molde que Indura (aceptar a los 9.3 s, preparacion, foto del botin); pelean en AUTO y en Hell
+    por defecto, como AutoFarming. Se puede elegir nivel y "Inteligente" o "Mis cartas".
+  - Nuevo: Fuerte Solgres - Oro. 6.o piso de la mazmorra de oro con la repeticion automatica; puede usar
+    los tickets de salto (opcion, con maximo).
+  - Nuevo: Fuerte Solgres - Monedas SA. Torre del reloj de la mazmorra especial con la repeticion
+    automatica; si el jefe deja un cofre peor que el elegido, rinde y repite. Para cuando no quedan llaves.
+  - Pociones de stamina en Fuerte Solgres (apagadas por defecto).
+  - La prueba rapida pasa ahora por los 14 modos listos.
+
 0.3.1-alpha
   - Cartas bloqueadas: se reconocen por el velo oscuro (lo mas claro de la carta no pasa de ~135) y no
     por el brillo medio. Antes se escapaban las bloqueadas de dibujo claro y las ultis bloqueadas, y el

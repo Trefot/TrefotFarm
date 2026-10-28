@@ -34,8 +34,9 @@ Reglas completas en CAMBIOS.txt. Resumen:
   (assets/digitos_juego.npz: unidades 0, 2, 3, 4, 5 y decena 1). FALTAN 6-9 y decenas 2-9: las casillas
   que no reconoce se guardan en recompensas/digitos_nuevos para añadirlas. 0.3.0: botín unido a las tablas de premios
   (premios.yaml lleva `galeria:`; recompensas.vincular_premios). 0.3.1 (sin probar): cartas bloqueadas por el velo
-  oscuro, Restart y volver a abrir el juego (Run Game). PENDIENTE: el perro claro (der) nunca se
-  confirma al apuntar.
+  oscuro, Restart y volver a abrir el juego (Run Game). 0.4.0 (sin probar): 5 demonios (molde en
+  modos/indura.py, pestanas por el icono de AutoFarming) y Fuerte Solgres (modos/fuerte_solgres.py).
+  PENDIENTE: el perro claro (der) nunca se confirma al apuntar.
   0.2.6 (sin probar): avisos de sesión cerrada (el juego cerró la sesión tras 1 h de Indura y el bot se
   quedó 6 min sin reconocer nada) y cartas de Indura que no entran. El bot NO escribe la contraseña. El juego no acepta clics de un proceso sin
   permisos de administrador: las pruebas en vivo las lanza el usuario desde Lumen.

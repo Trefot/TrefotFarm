@@ -48,7 +48,8 @@ class Catalogo(unittest.TestCase):
     def test_modos_listos(self):
         listos = {d.id for c in CATALOGO for d in c.destinos if d.id in MODOS}
         self.assertEqual(listos, {"perros_pisos1a3", "pajaro_pisos1a3", "ciervo_pisos1a3", "serpiente_pisos1a3",
-                                  "rata_pisos1a3", "perros_piso4", "indura"})
+                                  "rata_pisos1a3", "perros_piso4", "demonio_rojo", "demonio_gris", "howlex",
+                                  "bellmoth", "demonio_original", "indura", "oro", "monedas_sa"})
 
     def test_bestias_y_pisos(self):
         destinos = {c.id: [d.nombre for d in c.destinos] for c in CATALOGO if c.grupo == "Bestias demoníacas"}
@@ -287,3 +288,39 @@ class Pisos(ConPantallaSimulada):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class DemoniosYFuerte(ConPantallaSimulada):
+    def test_demonios_eligen_su_pestana(self):
+        """Los 5 demonios de AutoFarming tocan su icono; Indura, su posicion y comprueba que quede elegida."""
+        from lumen.modos import indura as D
+
+        self._parchear(D, "VENTANA_UNION", PlantillaFalsa("union"))
+        self._parchear(D, "NIVELES", {n: PlantillaFalsa(n) for n in D.NIVELES})
+        gris = D.DemonioGris({})
+        self._parchear(gris, "pestana", PlantillaFalsa("gris"))
+        self.assertIsNone(gris.elegir({"union", "gris"}, (0, 0)))
+        self.assertTrue(gris.pestana_elegida, "toca el icono y la da por elegida")
+        self.assertEqual(gris.elegir({"union", "Hell"}, (0, 0)), "buscar", "nivel Hell y OK")
+        self.assertEqual(gris.valores["jugar"], "AUTO")
+        ind = D.Indura({})
+        self._parchear(ind, "pestana_elegida_img", PlantillaFalsa("indura_elegida"))
+        self.assertIsNone(ind.elegir({"union"}, (0, 0)))
+        self.assertFalse(ind.pestana_elegida, "Indura no se da por elegida hasta verla")
+        self.assertEqual(ind.elegir({"union", "indura_elegida", "Chaos"}, (0, 0)), "buscar")
+
+    def test_monedas_sa_repite_si_el_cofre_es_peor(self):
+        from lumen.modos import fuerte_solgres as F
+
+        for n in ("VIDA_JEFE", "EMPEZAR", "REPETICION_TERMINADA", "VUELTA_TERMINADA"):
+            self._parchear(F, n, PlantillaFalsa(n))
+        self._parchear(juego, "pausa", PlantillaFalsa("pausa"))
+        self._parchear(juego, "pocion_stamina", PlantillaFalsa("pocion"))
+        m = F.MonedasSA({"cofre": "Plata"})
+        self._parchear(m, "_cofre", lambda p: "Bronce")
+        self.assertIsNone(m.pelea(set(), (0, 0)), "sin jefe todavia no mira el cofre")
+        self.assertEqual(m.pelea({"VIDA_JEFE", "pausa"}, (0, 0)), "reiniciar")
+        self.assertEqual(m.reinicios, 1)
+        self._parchear(m, "_cofre", lambda p: "Oro")
+        self.assertIsNone(m.pelea({"VIDA_JEFE", "pausa"}, (0, 0)))
+        self.assertEqual(m.cofres["Oro"], 1)
