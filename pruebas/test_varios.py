@@ -70,6 +70,22 @@ class Botin(unittest.TestCase):
             self.assertNotIn("unido_a", catalogo["objeto_3"])
             reanalizar.assert_called_once()
 
+    def test_cantidad_con_los_digitos_del_juego(self):
+        plantillas = botin._plantillas_digitos()
+
+        def casilla(decena=None, unidad=None):
+            c = np.full((botin.LADO, botin.LADO), 60, np.float32)
+            for caja, hueco, d in ((botin.HUECO_DECENAS, "dec", decena), (botin.HUECO_UNIDADES, "uni", unidad)):
+                if d is not None:
+                    y1, y2, x1, x2 = caja
+                    c[y1:y2, x1:x2] = plantillas[hueco][d][0]
+            return cv2.cvtColor(c.astype(np.uint8), cv2.COLOR_GRAY2BGR)
+
+        self.assertEqual(botin.leer_cantidad(casilla(unidad="5")), 5)
+        self.assertEqual(botin.leer_cantidad(casilla("1", "5")), 15)
+        self.assertEqual(botin.leer_cantidad(casilla("1", "0")), 10)
+        self.assertEqual(botin.leer_cantidad(casilla()), 1)  # sin numero: una unidad
+
 
 class Idiomas(unittest.TestCase):
     def test_busca_la_imagen_en_ingles_y_en_espanol(self):

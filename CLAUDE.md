@@ -30,9 +30,10 @@ Reglas completas en CAMBIOS.txt. Resumen:
   con capturas reales; con la 0.2.2 ganó Floor 1, 2 y 3 seguidos. 0.2.3: objetivo de los lobos por
   fase, pantallas sin imagen tras ganar, Indura acepta como AutoFarming y foto del botín. 0.2.4 abre el
   piso por su círculo: ganó F1-F3 en ~2,5 min. 0.2.5 (sin probar): fase 3 solo áreas/ultis, Reset tras el F3,
-  cartas que no entran = bloqueadas. PENDIENTE: las cantidades del botín se leen mal (botin.leer_cantidad:
-  "5"->1, "2"->1 o 7, "10"->1, "30"->15); hace falta referencias de dígitos reales del juego (hay 0-5 en las
-  fotos de recompensas del 28-10; faltan 6-9). Y el perro claro (der) nunca se confirma al apuntar.
+  cartas que no entran = bloqueadas. 0.2.7: cantidades del botín con dígitos reales
+  (assets/digitos_juego.npz: unidades 0, 2, 3, 4, 5 y decena 1). FALTAN 6-9 y decenas 2-9: las casillas
+  que no reconoce se guardan en recompensas/digitos_nuevos para añadirlas. PENDIENTE: el perro claro
+  (der) nunca se confirma al apuntar.
   0.2.6 (sin probar): avisos de sesión cerrada (el juego cerró la sesión tras 1 h de Indura y el bot se
   quedó 6 min sin reconocer nada) y cartas de Indura que no entran. El bot NO escribe la contraseña. El juego no acepta clics de un proceso sin
   permisos de administrador: las pruebas en vivo las lanza el usuario desde Lumen.

@@ -155,13 +155,91 @@ def _grupo_derecho(comps, ancho: int, hueco: int = 3):
     return grupo
 
 
-def leer_cantidad(celda) -> int:
+# ---- digitos reales del juego (assets/digitos_juego.npz)
+# Los numeros de cantidad van siempre en el mismo sitio de la casilla, alineados a la derecha: unidades y
+# decenas en huecos fijos. Cada digito se compara con la media de sus apariciones reales en fotos de botin,
+# pesando mas los pixeles que no cambian entre fotos (el digito y su contorno, no el dibujo de detras).
+# Medido en 71 casillas (cada una sin usarse a si misma de referencia): 68 bien, frente a ~la mitad con
+# los digitos dibujados (_referencias), que leian "5"->1, "2"->1 o 7, "10"->1, "30"->15.
+# Faltan 6-9 (aun no han salido): para ellos queda el metodo viejo y la esquina se guarda para aprenderlos.
+HUECO_UNIDADES = (42, 57, 50, 61)  # y1, y2, x1, x2 dentro de la casilla
+HUECO_DECENAS = (42, 57, 42, 52)
+HOLGURA_DIGITO = 2
+MAX_DIF_UNIDADES = 24.0  # diferencia media ponderada (0-255) por encima: ahi no hay numero (cantidad 1)
+MAX_DIF_DECENAS = 10.0  # mas estricta: un "1" fino se confunde con el fondo de los numeros de una cifra
+DIGITOS_JUEGO = ASSETS / "digitos_juego.npz"
+DIGITOS_NUEVOS = RAIZ / "recompensas" / "digitos_nuevos"
+_digitos_juego: dict | None = None
+
+
+def _plantillas_digitos() -> dict:
+    """{"uni": {"5": (media, peso)...}, "dec": {...}}"""
+    global _digitos_juego
+    if _digitos_juego is None:
+        _digitos_juego = {"uni": {}, "dec": {}}
+        if DIGITOS_JUEGO.is_file():
+            datos = np.load(DIGITOS_JUEGO)
+            for clave in datos.files:
+                hueco, digito, parte = clave.split("_")
+                if parte == "media":
+                    _digitos_juego[hueco][digito] = (datos[clave], datos[f"{hueco}_{digito}_peso"])
+    return _digitos_juego
+
+
+def _diferencia(gris, caja, plantilla) -> float:
+    media, peso = plantilla
+    y1, y2, x1, x2 = caja
+    mejor = float("inf")
+    for dy in range(-HOLGURA_DIGITO, HOLGURA_DIGITO + 1):
+        for dx in range(-HOLGURA_DIGITO, HOLGURA_DIGITO + 1):
+            r = gris[y1 + dy:y2 + dy, x1 + dx:x2 + dx]
+            if r.shape != media.shape:
+                continue
+            mejor = min(mejor, float((np.abs(r - media) * peso).sum() / peso.sum()))
+    return mejor
+
+
+def _cantidad_por_digitos_juego(celda) -> int | None:
+    """La cantidad con los digitos reales; None si las unidades no se parecen a ninguno conocido."""
+    plantillas = _plantillas_digitos()
+    if not plantillas["uni"]:
+        return None
+    gris = cv2.cvtColor(celda, cv2.COLOR_BGR2GRAY).astype(np.float32)
+    dif, unidad = min((_diferencia(gris, HUECO_UNIDADES, t), d) for d, t in plantillas["uni"].items())
+    if dif > MAX_DIF_UNIDADES:
+        return None
+    decena = ""
+    if plantillas["dec"]:
+        dif_d, d = min((_diferencia(gris, HUECO_DECENAS, t), d) for d, t in plantillas["dec"].items())
+        decena = d if dif_d <= MAX_DIF_DECENAS else ""
+    if unidad == "0" and not decena:  # "20", "30"...: una decena que aun no se conoce
+        return None
+    return int(decena + unidad)
+
+
+def _cantidad_dibujada(celda) -> int:
+    """El metodo viejo, con digitos dibujados con fuentes parecidas (respaldo para los que aun no se tienen)."""
     esquina = celda[36:62, 30:LADO]
     hsv = cv2.cvtColor(esquina, cv2.COLOR_BGR2HSV)
     blanco = (hsv[..., 2] >= 185) & (hsv[..., 1] <= 80)
     grupo = _grupo_derecho(_componentes(blanco, 8, 20), esquina.shape[1])
     texto = "".join(_clasificar(m) for *_, m in grupo)
     return int(texto) if texto.isdigit() and int(texto) > 0 else 1
+
+
+def leer_cantidad(celda) -> int:
+    cantidad = _cantidad_por_digitos_juego(celda)
+    if cantidad is not None:
+        return cantidad
+    respaldo = _cantidad_dibujada(celda)
+    if respaldo > 1:  # hay un numero que aun no se conoce (6-9): guardar la esquina para aprenderlo
+        try:
+            import time
+
+            guardar_imagen(DIGITOS_NUEVOS / f"{time.strftime('%Y%m%d_%H%M%S')}_{respaldo}.png", celda)
+        except Exception:
+            pass
+    return respaldo
 
 
 def leer_oro(pantalla) -> int | None:
