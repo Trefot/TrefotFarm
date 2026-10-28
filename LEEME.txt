@@ -67,6 +67,8 @@ Como juega (Farmear -> Opciones -> "Como jugar"):
                              Codigo: lumen\inteligencia.py y lumen\valor_cartas.py.
   Simple                     la ulti y luego la carta de mas rango.
 El Historial guarda con cual se jugo cada sesion, para comparar cual gana mas por hora.
+Indura tambien tiene "Como pelear": Inteligente (por defecto, igual que arriba pero sin arrastrar
+cartas), Mis cartas (tu lista de prioridades de lumen\datos\estrategias.yaml) o AUTO.
 F9 pausa / reanuda, F10 detiene (cambiables en Ajustes).
 Freno de emergencia: lleva el raton a una esquina de la pantalla.
 Mientras corre, el bot usa tu raton: no lo muevas.

@@ -11,7 +11,7 @@ Reutiliza todo el modo de Perros piso 4 (llegar a los pisos, pelear, botin, derr
 import re
 import time
 
-from lumen import entrada, inteligencia, juego, ocr, valor_cartas
+from lumen import entrada, inteligencia, juego, ocr
 from lumen.cartas import Carta, Rango, TipoCarta
 from lumen.motor import Opcion, TerminarModo
 from lumen.modos.perros_piso4 import Estrategia, PerrosPiso4, Reiniciar
@@ -38,28 +38,15 @@ class EstrategiaInteligente(EstrategiaSimple):
     y cada carta se busca en la base de heroes para saber cuanto vale (lumen/valor_cartas.py)."""
 
     def __init__(self, enemigos: int = 1):
-        self.enemigos = enemigos
-        self._indice = self._tasador = None  # se cargan en la primera jugada (tardan ~1 s)
-
-    def _identificar(self, carta: Carta) -> str | None:
-        if self._indice is None:
-            from lumen.modos.aprender import IndiceCartas  # aqui para no cargarlo si no se juega
-
-            self._indice = IndiceCartas()
-            self._tasador = valor_cartas.Tasador(self.enemigos)
-        return self._indice.carta_de(carta)
+        self.jugador = inteligencia.Jugador(enemigos)
 
     def decidir(self, fase: int, turno: int, accion: int, mano: list[Carta], total: int = 4):
-        inteligencia.agrupar_por_dibujo(mano, self._identificar)
-        valores = self._tasador.valores(c.nombre for c in mano) if self._tasador else {}
-        _, plan = inteligencia.planear(mano, total - accion, valores)
-        if not plan:  # nada que jugar ni fusionar: lo de siempre (mover una carta para gastar el hueco)
+        paso = self.jugador.elegir(mano, total - accion)
+        if paso is None:  # nada que jugar ni fusionar: lo de siempre (mover una carta para gastar el hueco)
             return super().decidir(fase, turno, accion, mano, total)
-        reales = inteligencia.posiciones_reales(mano)
-        paso = plan[0]
         if paso[0] == "jugar":
-            return reales[paso[1]], None, False
-        return (reales[paso[1]], reales[paso[2]]), None, False
+            return paso[1], None, False
+        return (paso[1], paso[2]), None, False
 
 
 SALTAR_PISO_S = 25  # sin encontrar el piso que toca en la pantalla de pisos: pasar al siguiente

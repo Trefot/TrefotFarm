@@ -105,7 +105,7 @@ def valor_futuro(mano: tuple, tamano: int) -> float:
 
 
 @lru_cache(maxsize=50_000)
-def _mejor(mano: tuple, acciones: int, tamano: int) -> tuple[float, tuple]:
+def _mejor(mano: tuple, acciones: int, tamano: int, arrastrar: bool = True) -> tuple[float, tuple]:
     """(puntuacion, plan) de la mejor secuencia de ``acciones`` jugadas. Plan: (("jugar", i) | ("mover", i, j), ...)."""
     if acciones == 0 or not mano:
         return PESO_FUTURO * valor_futuro(mano, tamano), ()
@@ -113,12 +113,12 @@ def _mejor(mano: tuple, acciones: int, tamano: int) -> tuple[float, tuple]:
     for i, f in enumerate(mano):
         if f.jugable:
             dano, resto = jugar(mano, i)
-            puntos, plan = _mejor(resto, acciones - 1, tamano)
+            puntos, plan = _mejor(resto, acciones - 1, tamano, arrastrar)
             opciones.append((dano + puntos, (("jugar", i),) + plan))
-    for i, f in enumerate(mano):  # arrastrar sobre una gemela (solo las que no estan ya al lado: esas ya se habrian fusionado)
+    for i, f in enumerate(mano if arrastrar else ()):  # arrastrar sobre una gemela (solo las que no estan ya al lado: esas ya se habrian fusionado)
         for j, g in enumerate(mano):
             if f.jugable and i != j and abs(i - j) > 1 and f.gemela(g):
-                puntos, plan = _mejor(mover(mano, i, j), acciones - 1, tamano)
+                puntos, plan = _mejor(mover(mano, i, j), acciones - 1, tamano, arrastrar)
                 opciones.append((puntos, (("mover", i, j),) + plan))
     if not opciones:  # nada que jugar ni fusionar: el turno se pierde
         return PESO_FUTURO * valor_futuro(mano, tamano), ()
@@ -126,7 +126,7 @@ def _mejor(mano: tuple, acciones: int, tamano: int) -> tuple[float, tuple]:
     return max(opciones, key=lambda o: (round(o[0], 6), o[1][0][0] == "jugar", o[1][0][1]))
 
 
-def planear(mano: list[Carta], acciones: int, valores: dict | None = None) -> tuple[float, tuple]:
+def planear(mano: list[Carta], acciones: int, valores: dict | None = None, arrastrar: bool = True) -> tuple[float, tuple]:
     """El mejor plan para lo que queda del turno. ``mano``: la leida de la pantalla (con sus huecos)."""
     global _VALORES_ACTUALES
     valores = valores or {}
@@ -134,7 +134,40 @@ def planear(mano: list[Carta], acciones: int, valores: dict | None = None) -> tu
         _VALORES_ACTUALES = dict(valores)
         _mejor.cache_clear()
     fichas = tuple(_ficha(c, valores) for c in mano if c.tipo not in (TipoCarta.SUELO, TipoCarta.NINGUNA))
-    return _mejor(fichas, max(0, acciones), max(len(fichas), _tamano(mano)))
+    return _mejor(fichas, max(0, acciones), max(len(fichas), _tamano(mano)), arrastrar)
+
+
+class Jugador:
+    """Lo que usan los modos: reconoce las cartas (dibujo + base de heroes), las tasa y planea.
+
+    ``elegir`` devuelve la primera jugada del mejor plan con posiciones de pantalla: ("jugar", pos) o
+    ("mover", pos_origen, pos_destino), o None si no hay nada que hacer. ``arrastrar=False`` para los
+    contenidos donde no se sabe si se pueden arrastrar cartas (demonios).
+    """
+
+    def __init__(self, enemigos: int = 1, arrastrar: bool = True):
+        self.enemigos = enemigos
+        self.arrastrar = arrastrar
+        self._indice = self._tasador = None  # se cargan en la primera jugada (tardan ~1 s)
+
+    def _identificar(self, carta: Carta) -> str | None:
+        if self._indice is None:
+            from lumen import valor_cartas  # aqui: solo se cargan si se juega en modo inteligente
+            from lumen.modos.aprender import IndiceCartas
+
+            self._indice = IndiceCartas()
+            self._tasador = valor_cartas.Tasador(self.enemigos)
+        return self._indice.carta_de(carta)
+
+    def elegir(self, mano: list[Carta], acciones: int) -> tuple | None:
+        agrupar_por_dibujo(mano, self._identificar)
+        valores = self._tasador.valores(c.nombre for c in mano) if self._tasador else {}
+        _, plan = planear(mano, acciones, valores, self.arrastrar)
+        if not plan:
+            return None
+        reales = posiciones_reales(mano)
+        paso = plan[0]
+        return ("jugar", reales[paso[1]]) if paso[0] == "jugar" else ("mover", reales[paso[1]], reales[paso[2]])
 
 
 def _tamano(mano: list[Carta]) -> int:

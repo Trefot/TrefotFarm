@@ -8,9 +8,12 @@ una captura propia):
    ese momento entra a la partida sin gastar entradas de tiempo real. Por eso se cuenta desde el primer
    instante en que se ve, se mira la pantalla muy seguido mientras se espera y, llegado el momento, se
    toca el Accept ya localizado sin volver a capturar.
-4. Preparacion: se pulsa "Preparation". En la pelea el bot juega las cartas como el administrador
-   (lumen/datos/estrategias.yaml): reconoce el equipo por la mano y en cada casilla libre del turno juega
-   la carta de mas prioridad. Si no reconoce el equipo (uno sin estrategia), pone AUTO.
+4. Preparacion: se pulsa "Preparation". En la pelea, segun la opcion "Como pelear":
+   - Inteligente (por defecto): piensa las casillas que quedan del turno y las fusiones
+     (lumen/inteligencia.py), con cualquier equipo. No arrastra cartas.
+   - Mis cartas: como el administrador (lumen/datos/estrategias.yaml): reconoce el equipo por la mano y en
+     cada casilla libre juega la carta de mas prioridad. Si no reconoce el equipo, pone AUTO.
+   - AUTO: lo juega el juego.
 5. Demonio destruido -> OK. Se cuenta la victoria y se vuelve a buscar.
 
 Indura tiene limite diario de peleas (el juego lo dice en la ventana de union): cuando ya no hay
@@ -19,7 +22,7 @@ partidas, el bot se queda esperando invitaciones que no llegan; se para con un t
 
 import time
 
-from lumen import cartas, entrada, estrategias, juego
+from lumen import cartas, entrada, estrategias, inteligencia, juego
 from lumen.control import Detenido, control
 from lumen.motor import Modo, Opcion, TerminarModo
 from lumen.vision import Plantilla
@@ -46,7 +49,7 @@ class Indura(Modo):
     nombre = "Indura"
     titulo_juego = "Indura"
     subtitulo_juego = "Boss Battle · Real-time"
-    descripcion = ("Se une a las partidas de Indura que abren otros jugadores y pelea en AUTO. "
+    descripcion = ("Se une a las partidas de Indura que abren otros jugadores y pelea pensando cada turno. "
                    "Empieza desde la Taberna o el menú Battle.")
     imagen = "demons/indura_lumen.png"  # icono de Indura (captura propia)
     duracion = "según la partida"
@@ -55,12 +58,13 @@ class Indura(Modo):
         "elegir": "Eligiendo Indura y el nivel",
         "buscar": "Esperando una invitación",
         "preparar": "Preparando la pelea",
-        "pelea": "Peleando (AUTO)",
+        "pelea": "Peleando",
     }
     opciones = [
         Opcion("nivel", "Nivel", "lista", "Chaos", opciones=["Chaos", "Hell", "Extreme"]),
-        Opcion("jugar", "Cómo pelear", "lista", "Mis cartas", opciones=["Mis cartas", "AUTO"],
-               ayuda="Mis cartas: el bot juega como tú con la estrategia de tu equipo (si no la reconoce, AUTO)."),
+        Opcion("jugar", "Cómo pelear", "lista", "Inteligente", opciones=["Inteligente", "Mis cartas", "AUTO"],
+               ayuda="Inteligente: piensa las 6 cartas del turno y las fusiones, con cualquier equipo. "
+                     "Mis cartas: tu lista de prioridades (si no reconoce el equipo, AUTO)."),
         Opcion("espera", "Segundos antes de aceptar", "texto", "9.3",
                ayuda="Aceptar justo a los 9.3 s entra a la partida sin gastar entradas de tiempo real."),
         Opcion("victorias", "Victorias (0 = sin límite)", "entero", 0, maximo=999),
@@ -75,6 +79,7 @@ class Indura(Modo):
         self.auto_puesto = False
         self.estrategias = estrategias.cargar(self.id)
         self.estrategia: estrategias.Estrategia | None = None
+        self.jugador = inteligencia.Jugador(enemigos=1, arrastrar=False)
         self.turnos_sin_equipo = 0
         self.libres_antes = -1  # casillas libres cuando se toco la ultima carta
         self.tocado_en = 0.0
@@ -194,6 +199,9 @@ class Indura(Modo):
         if libres == self.libres_antes and time.time() - self.tocado_en < 2.0:
             return
         mano = cartas.leer_mano_demonio(p)
+        if self.valores.get("jugar") == "Inteligente":
+            self._jugar_inteligente(mano, libres, o)
+            return
         if self.estrategia is None:
             self.estrategia = estrategias.reconocer(self.estrategias, mano)
             if self.estrategia is None:
@@ -207,6 +215,17 @@ class Indura(Modo):
         carta = self.estrategia.elegir(mano) or estrategias.la_de_mas_rango(mano)
         if carta is None:
             return
+        entrada.clic(carta.rect, o, espera=0.3)
+        self.libres_antes, self.tocado_en = libres, time.time()
+        self.log(f"   juego {carta.nombre} ({carta.rango.name.lower()}, posición {carta.posicion + 1})", "debug")
+
+    def _jugar_inteligente(self, mano, libres: int, o):
+        """La carta que deja mejor el turno entero (lumen/inteligencia.py), sin arrastrar cartas: en los
+        demonios aun no se ha comprobado que se pueda."""
+        paso = self.jugador.elegir(mano, libres)
+        if paso is None:
+            return
+        carta = mano[paso[1]]
         entrada.clic(carta.rect, o, espera=0.3)
         self.libres_antes, self.tocado_en = libres, time.time()
         self.log(f"   juego {carta.nombre} ({carta.rango.name.lower()}, posición {carta.posicion + 1})", "debug")
