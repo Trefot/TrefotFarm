@@ -172,6 +172,10 @@ QLabel#fase {{ background: {_s.hundido}; color: {_s.tenue}; border: 1px solid {_
                min-width: 30px; max-width: 30px; min-height: 30px; max-height: 30px; font-weight: 700; }}
 QLabel#fase[estado="actual"] {{ background: {_ORO}; color: {_s.sobre_acento}; border-color: {_s.borde_oro}; }}
 QLabel#fase[estado="hecha"] {{ color: {OK}; border-color: #2c5f45; }}
+QLabel#etapa {{ background: {_s.hundido}; color: {_s.tenue}; border: 1px solid {_s.borde}; border-radius: 13px;
+                padding: 4px 14px; font-weight: 600; }}
+QLabel#etapa[estado="actual"] {{ background: {_ORO}; color: {_s.sobre_acento}; border-color: {_s.borde_oro}; }}
+QLabel#etapa[estado="hecha"] {{ color: {OK}; border-color: #2c5f45; }}
 QLabel#piso {{ background: {_s.hundido}; color: {_s.tenue}; border: 1px solid {_s.borde}; border-radius: 11px;
                padding: 3px 12px; font-weight: 600; font-size: 9pt; }}
 QLabel#piso[estado="actual"] {{ background: {_ORO}; color: {_s.sobre_acento}; border-color: {_s.borde_oro}; }}
@@ -237,7 +241,11 @@ QScrollBar::add-line, QScrollBar::sub-line {{ height: 0; width: 0; }}
 QScrollBar::add-page, QScrollBar::sub-page {{ background: none; }}
 QScrollBar:horizontal {{ background: transparent; height: 10px; margin: 2px; }}
 QScrollBar::handle:horizontal {{ background: {_s.borde}; border-radius: 4px; min-width: 30px; }}
-QCheckBox::indicator {{ width: 15px; height: 15px; }}
+QCheckBox {{ spacing: 8px; }}
+QCheckBox::indicator {{ width: 15px; height: 15px; border: 1px solid {_s.borde_oro}; border-radius: 4px; background: {_s.hundido}; }}
+QCheckBox::indicator:hover {{ border-color: {_s.acento}; }}
+QCheckBox::indicator:checked {{ background: {_ORO}; border-color: {_s.acento}; }}
+QCheckBox::indicator:disabled {{ border-color: {_s.borde}; }}
 QProgressBar {{ background: {_s.hundido}; border: 1px solid {_s.borde}; border-radius: 6px; text-align: center; height: 18px; }}
 QProgressBar::chunk {{ background: {_ORO}; border-radius: 6px; }}
 
@@ -287,7 +295,7 @@ QFrame#tarjeta_equipo:hover {{ border-color: {_s.borde_oro}; }}
 
 /* ---- pestanas */
 QTabWidget::pane {{ border: 1px solid {_s.borde}; border-radius: 8px; top: -1px; background: {_s.fondo}; }}
-QTabBar::tab {{ background: {_s.panel}; color: {_s.tenue}; padding: 8px 20px; border: 1px solid {_s.borde}; border-bottom: none;
+QTabBar::tab {{ background: {_s.panel}; color: {_s.tenue}; padding: 8px 26px; border: 1px solid {_s.borde}; border-bottom: none;
                border-top-left-radius: 7px; border-top-right-radius: 7px; margin-right: 3px; font-family: {_TITULOS}; }}
 QTabBar::tab:selected {{ color: {_s.acento}; background: {_s.fondo}; border-top: 2px solid {_s.acento}; }}
 QTabBar::tab:hover {{ color: {_s.texto}; }}

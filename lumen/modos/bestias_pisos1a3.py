@@ -50,6 +50,7 @@ class EstrategiaInteligente(EstrategiaSimple):
 
 
 SALTAR_PISO_S = 25  # sin encontrar el piso que toca en la pantalla de pisos: pasar al siguiente
+CADA_OCR_S = 1.0  # leer el texto de la pantalla como mucho una vez por segundo (el OCR gasta CPU)
 
 
 class BestiaPisos1a3(PerrosPiso4):
@@ -84,6 +85,7 @@ class BestiaPisos1a3(PerrosPiso4):
         self.piso = int(self.valores.get("primer_piso") or 1)
         self.vuelta = 1  # cuantas veces se ha empezado el ciclo 1 -> 2 -> 3
         self.buscando_piso_desde: float | None = None
+        self._ultimo_ocr: tuple[float, int, object] = (0.0, 0, None)  # (hora, piso, rectangulo) de la ultima lectura
         self.stats.update(piso=self.piso, vuelta=self.vuelta)
 
     def _siguiente_piso(self):
@@ -170,6 +172,14 @@ class BestiaPisos1a3(PerrosPiso4):
         if not ocr.disponible():
             self.log("Para elegir el piso necesito el lector de texto de Windows: ejecuta Instalar.bat.", "error")
             raise TerminarModo()
+        hora, piso, rect = self._ultimo_ocr
+        if piso == self.piso and time.time() - hora < CADA_OCR_S:  # leido hace menos de 1 s: vale lo mismo
+            return rect
+        rect = self._leer_piso(p)
+        self._ultimo_ocr = (time.time(), self.piso, rect)
+        return rect
+
+    def _leer_piso(self, p):
         lineas = ocr.lineas_con_posicion(p) + ocr.lineas_con_posicion(p, invertir=True)
         if not self.textos_vistos and lineas:  # una vez por sesion, para poder ajustar si no lo encuentra
             self.textos_vistos = True

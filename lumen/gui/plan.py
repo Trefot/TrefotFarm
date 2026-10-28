@@ -28,6 +28,7 @@ class PanelPlan(QFrame):
     """La lista editable de tareas y el boton para lanzar el plan."""
 
     iniciar = pyqtSignal()
+    saltar = pyqtSignal()
 
     def __init__(self):
         super().__init__(objectName="seccion")
@@ -56,6 +57,11 @@ class PanelPlan(QFrame):
         fila = QHBoxLayout()
         self.lbl_estado = QLabel(objectName="tenue")
         fila.addWidget(self.lbl_estado, 1)
+        self.b_saltar = QPushButton(" Saltar tarea")
+        self.b_saltar.setIcon(iconos.icono("mdi6.skip-next", tema.TEXTO))
+        self.b_saltar.setToolTip("Deja la tarea en curso y pasa a la siguiente")
+        self.b_saltar.clicked.connect(self.saltar.emit)
+        fila.addWidget(self.b_saltar)
         self.b_iniciar = QPushButton(" Iniciar plan", objectName="primario")
         self.b_iniciar.setIcon(iconos.icono("jugar", tema.SOBRE_ACENTO))
         self.b_iniciar.clicked.connect(self.iniciar.emit)
@@ -139,4 +145,5 @@ class PanelPlan(QFrame):
         else:
             self.lbl_estado.setText(f"{len(tareas)} tarea{'s' if len(tareas) != 1 else ''} · {total} victorias" if tareas else "")
         self.b_iniciar.setEnabled(bool(tareas) and not en_marcha)
+        self.b_saltar.setVisible(en_marcha)
         self.combo.setEnabled(not en_marcha)

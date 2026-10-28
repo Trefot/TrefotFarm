@@ -313,6 +313,7 @@ class PerrosPiso4(Modo):
             limite = int(self.valores["max_pociones"])
             if not self.valores["pociones"] or (limite and self.pociones >= limite):
                 self.log("Sin estamina y no puedo usar mas pociones. Termino.", "aviso")
+                self.publicar_stats(motivo_fin="sin_estamina")  # el plan del dia salta las tareas con estamina
                 raise TerminarModo()
             if self.clic_si(juego.usar_pocion, p, o, umbral=0.8):
                 self.pociones += 1
