@@ -73,8 +73,8 @@ CATALOGO: list[Contenido] = [
     _unico("bellmoth", "Bellmoth", "Demonio · tiempo real", "mdi6.butterfly-outline", DEMONIOS),
     _unico("demonio_original", "Original Demon", "Demonio · tiempo real", "mdi6.fire-circle", DEMONIOS),
     _unico("indura", "Indura", "Demonio · tiempo real", "mdi6.skull-crossbones-outline", DEMONIOS),
-    _unico("oro", "Oro", "Mazmorra de oro del Fuerte Solgres", "mdi6.gold", FUERTE),
-    _unico("monedas_sa", "Monedas SA", "Mazmorra de monedas SA del Fuerte Solgres", "mdi6.circle-multiple-outline", FUERTE),
+    _unico("oro", "Oro", "Cofres del tesoro · Fuerte Solgres", "mdi6.gold", FUERTE),
+    _unico("monedas_sa", "Monedas SA", "Monedas de superdespertar · Fuerte Solgres", "mdi6.circle-multiple-outline", FUERTE),
 ]
 
 
