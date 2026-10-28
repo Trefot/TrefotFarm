@@ -20,6 +20,7 @@ ORDENES = {
     "plan": "empieza el plan del dia (Farmear -> Plan)",
     "plan ver": "las tareas del plan y por cual va",
     "saltar": "deja la tarea del plan en curso y pasa a la siguiente",
+    "prueba": "prueba rapida: 1 victoria de cada modo listo y un informe",
     "pausar": "pausa el bot",
     "reanudar": "sigue despues de una pausa",
     "detener": "detiene el bot",
@@ -28,7 +29,7 @@ ORDENES = {
 }
 SINONIMOS = {"start": "iniciar", "empezar": "iniciar", "pausa": "pausar", "seguir": "reanudar",
              "parar": "detener", "stop": "detener", "foto": "captura", "status": "estado", "?": "ayuda",
-             "tareas": "plan ver", "skip": "saltar", "siguiente": "saltar"}
+             "tareas": "plan ver", "skip": "saltar", "siguiente": "saltar", "test": "prueba"}
 
 
 def texto_ayuda() -> str:

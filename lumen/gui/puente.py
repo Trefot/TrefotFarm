@@ -6,7 +6,7 @@ import traceback
 
 from PyQt5.QtCore import QObject, pyqtSignal
 
-from lumen import config, ordenes
+from lumen import avisos, config, informe, ordenes, ventana
 from lumen.control import control
 from lumen.rutas import LOGS
 
@@ -29,8 +29,10 @@ class Puente(QObject):
         self._archivo = None  # logs/sesion_<fecha>.log de la sesion en curso (incluye el detalle)
         self._lock_archivo = threading.Lock()
         self.escucha = ordenes.Escucha(lambda o: self.orden.emit(o))
+        self.ultimo_error: str | None = None  # el error que paro la ultima sesion (None = acabo bien)
 
     def _registrar(self, mensaje: str, nivel: str):
+        informe.anotar(mensaje, nivel)
         with self._lock_archivo:
             if self._archivo:
                 self._archivo.write(f"{time.strftime('%H:%M:%S')} [{nivel}] {mensaje}\n")
@@ -43,6 +45,7 @@ class Puente(QObject):
 
     def iniciar(self, modo):
         control.reiniciar()
+        self.ultimo_error = None
         with self._lock_archivo:
             self._archivo = (LOGS / f"sesion_{time.strftime('%Y%m%d_%H%M%S')}.log").open("a", encoding="utf-8")
 
@@ -54,6 +57,12 @@ class Puente(QObject):
                 with (LOGS / "errores.log").open("a", encoding="utf-8") as f:
                     f.write(traceback.format_exc() + "\n")
                 control.log("Detalle guardado en logs/errores.log", "error")
+                self.ultimo_error = informe.resumen_error(error)
+                try:
+                    pantalla, _ = ventana.capturar()
+                except Exception:
+                    pantalla = None
+                avisos.enviar(informe.texto_error(modo, error), pantalla)  # para copiarlo desde el movil
             finally:
                 with self._lock_archivo:
                     if self._archivo:

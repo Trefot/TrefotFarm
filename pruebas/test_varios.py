@@ -146,6 +146,39 @@ class EquipoMasRapido(unittest.TestCase):
         self.assertEqual(self.E.texto_minutos(3), "3 min por victoria")
 
 
+class Informe(unittest.TestCase):
+    def test_error_con_donde_y_ultimos_pasos(self):
+        from lumen import informe
+
+        for i in range(20):
+            informe.anotar(f"paso {i}", "info")
+        modo = type("M", (), {"nombre": "Rata · Floor 1-3", "id": "rata_pisos1a3", "estado": "elegir_piso"})()
+        try:
+            informe._tiempo("no es un numero")  # un error que salta dentro de lumen/
+        except ValueError as error:  # (assertRaises borra la traza, y aqui hace falta)
+            texto = informe.texto_error(modo, error)
+            self.assertIn("informe.py:", informe.resumen_error(error))
+        self.assertIn("ERROR", texto)
+        self.assertIn("estado: elegir_piso", texto)
+        self.assertIn("En: ", texto)
+        self.assertIn("paso 19", texto)
+        self.assertNotIn("paso 7", texto, "solo los ultimos pasos")
+
+    def test_texto_de_la_prueba(self):
+        from lumen import informe
+
+        texto = informe.texto_prueba([
+            {"nombre": "Pájaro", "resultado": "ok", "victorias": 1, "segundos": 185, "motivo": ""},
+            {"nombre": "Ciervo", "resultado": "fallo", "victorias": 0, "segundos": 40, "motivo": "ERROR: KeyError"},
+            {"nombre": "Indura", "resultado": "no_empezo", "victorias": 0, "segundos": 0, "motivo": "no empezó: Juego cerrado"},
+        ])
+        lineas = texto.splitlines()
+        self.assertEqual(lineas[1], "✓ Pájaro · 1 victoria · 3:05")
+        self.assertEqual(lineas[2], "✗ Ciervo · 0 victorias · 0:40 · ERROR: KeyError")
+        self.assertEqual(lineas[3], "– Indura · no empezó: Juego cerrado")
+        self.assertEqual(lineas[4], "Resultado: 1 de 3 bien · 3:45")
+
+
 class CanalSecreto(unittest.TestCase):
     def test_nombres_largos_y_distintos(self):
         entorno.app_qt()

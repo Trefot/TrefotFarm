@@ -29,6 +29,7 @@ class PanelPlan(QFrame):
 
     iniciar = pyqtSignal()
     saltar = pyqtSignal()
+    probar = pyqtSignal()
 
     def __init__(self):
         super().__init__(objectName="seccion")
@@ -57,6 +58,11 @@ class PanelPlan(QFrame):
         fila = QHBoxLayout()
         self.lbl_estado = QLabel(objectName="tenue")
         fila.addWidget(self.lbl_estado, 1)
+        self.b_probar = QPushButton(" Prueba rápida")
+        self.b_probar.setIcon(iconos.icono("mdi6.clipboard-check-outline", tema.TEXTO))
+        self.b_probar.setToolTip("1 victoria de cada modo listo y un informe de lo que funcionó")
+        self.b_probar.clicked.connect(self.probar.emit)
+        fila.addWidget(self.b_probar)
         self.b_saltar = QPushButton(" Saltar tarea")
         self.b_saltar.setIcon(iconos.icono("mdi6.skip-next", tema.TEXTO))
         self.b_saltar.setToolTip("Deja la tarea en curso y pasa a la siguiente")
@@ -146,4 +152,5 @@ class PanelPlan(QFrame):
             self.lbl_estado.setText(f"{len(tareas)} tarea{'s' if len(tareas) != 1 else ''} · {total} victorias" if tareas else "")
         self.b_iniciar.setEnabled(bool(tareas) and not en_marcha)
         self.b_saltar.setVisible(en_marcha)
+        self.b_probar.setVisible(not en_marcha)
         self.combo.setEnabled(not en_marcha)

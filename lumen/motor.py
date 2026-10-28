@@ -12,7 +12,7 @@ from dataclasses import dataclass, field
 from typing import Any
 
 import lumen
-from lumen import avisos, config, entrada, historial, juego, recompensas, ventana
+from lumen import avisos, config, entrada, historial, informe, juego, recompensas, ventana
 from lumen.control import Detenido, control
 from lumen.vision import Plantilla
 
@@ -165,7 +165,7 @@ class Modo:
                             pantalla, _ = ventana.capturar()
                         except Exception:
                             pantalla = None
-                        avisos.enviar(f"LumenFarm atascado en '{self.estado}'", pantalla)
+                        avisos.enviar(informe.texto_atasco(self, parado / 60), pantalla)
                 elif avisado:
                     avisado = False
                     self.log("Ya no esta atascado.", "ok")
