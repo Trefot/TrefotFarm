@@ -1,0 +1,36 @@
+# Lo que se puede conseguir en cada contenido, sacado de la ventana "Recompensa" del juego.
+# Lo muestra Inicio bajo la rueda ("Puedes conseguir"). Los iconos estan en assets/premios/<objeto>.png.
+#
+# objetos: id -> nombre y descripcion (tal como salen en el juego)
+# <id del destino del catalogo>:
+#   primera_vez: lo que da la primera vez que se supera (una sola vez)
+#   premios: cada linea de la tabla del juego; prob = % que pone el juego (ya es sobre el total)
+
+objetos:
+  magnificencia_valhalla:
+    nombre: Magnificencia del Valhalla
+    descripcion: Una gema brillante que recuerda al Valhalla. Obtenida de Hraesvelgr en batalla de bestia demoníaca.
+  origen_vientos:
+    nombre: Origen de los vientos
+    descripcion: Un objeto necesario para fabricar reliquias sagradas. Obtenido de Hraesvelgr en batalla de bestia demoníaca.
+  carta_hraesvelgr:
+    nombre: Hraesvelgr
+    descripcion: Carta de artefacto de Hraesvelgr.
+  esencia_desconocida:
+    nombre: Esencia mágica desconocida
+    descripcion: Esencia mágica usada para fabricar reliquias sagradas para hadas, gigantes y razas desconocidas.
+  esencia_azul:
+    nombre: Esencia mágica azul
+    descripcion: Esencia mágica usada para fabricar reliquias sagradas para héroes [humanos y hadas], [humanos] y de [raza desconocida].
+
+pajaro_pisos1a3:  # captura del juego, 2026-10-28
+  primera_vez:
+    - {objeto: magnificencia_valhalla, cantidad: 2}
+    - {objeto: origen_vientos}
+  premios:
+    - {caja: oro, objeto: carta_hraesvelgr, prob: 0.2}
+    - {caja: oro, objeto: magnificencia_valhalla, prob: 10}
+    - {caja: plata, objeto: esencia_desconocida, cantidad: 5, prob: 20}
+    - {caja: plata, objeto: esencia_azul, cantidad: 5, prob: 20}
+    - {caja: bronce, objeto: esencia_desconocida, cantidad: 2, prob: 24.9}
+    - {caja: bronce, objeto: esencia_azul, cantidad: 2, prob: 24.9}

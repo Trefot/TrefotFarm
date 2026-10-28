@@ -3,7 +3,7 @@
 import time
 
 from PyQt5.QtCore import QSize, Qt, QTimer
-from PyQt5.QtGui import QFontMetrics
+from PyQt5.QtGui import QColor, QFontMetrics, QPainter, QPixmap
 from PyQt5.QtWidgets import (
     QButtonGroup,
     QCheckBox,
@@ -16,7 +16,7 @@ from PyQt5.QtWidgets import (
     QVBoxLayout,
 )
 
-from lumen import config, historial, ventana
+from lumen import config, historial, premios, ventana
 from lumen import personajes as P
 from lumen.actualizador import version_local
 from lumen.control import control
@@ -56,6 +56,29 @@ class Paso(QToolButton):
         self.setProperty("estado", estado)
         self.style().unpolish(self)
         self.style().polish(self)
+
+
+def _icono_premio(p, tam: int) -> QPixmap:
+    """El icono del objeto con su cantidad (×5, ×2–5) en la esquina, como en el juego."""
+    pix = QPixmap(str(p.icono))
+    if pix.isNull():
+        pix = iconos.pixmap("mdi6.help-box", tam, tema.TENUE)
+    pix = pix.scaled(tam, tam, Qt.KeepAspectRatio, Qt.SmoothTransformation)
+    if p.texto_cantidad:
+        pintor = QPainter(pix)
+        pintor.setRenderHint(QPainter.Antialiasing)
+        fuente = pintor.font()
+        fuente.setBold(True)
+        fuente.setPointSizeF(7.5)
+        pintor.setFont(fuente)
+        caja = pix.rect().adjusted(0, 0, -3, -1)
+        pintor.setPen(QColor(0, 0, 0, 220))
+        for dx, dy in ((-1, 0), (1, 0), (0, -1), (0, 1)):
+            pintor.drawText(caja.translated(dx, dy), Qt.AlignRight | Qt.AlignBottom, p.texto_cantidad)
+        pintor.setPen(QColor("white"))
+        pintor.drawText(caja, Qt.AlignRight | Qt.AlignBottom, p.texto_cantidad)
+        pintor.end()
+    return pix
 
 
 class PaginaInicio(Pagina):
@@ -130,6 +153,9 @@ class PaginaInicio(Pagina):
         self.grupo_destinos = QButtonGroup(self, exclusive=True)
         self.grupo_destinos.buttonClicked.connect(lambda b: self._elegir_destino(b.property("destino")))
         self.cuerpo.addLayout(self.fila_destinos)
+        self.fila_premios = QHBoxLayout()  # "Puedes conseguir": lo que da el destino elegido
+        self.fila_premios.setSpacing(8)
+        self.cuerpo.addLayout(self.fila_premios)
         self.fila_equipo = QHBoxLayout()
         self.fila_equipo.setSpacing(6)
         self.cuerpo.addLayout(self.fila_equipo)
@@ -178,6 +204,7 @@ class PaginaInicio(Pagina):
         QTimer(self, timeout=self.refrescar, interval=3000).start()
         QTimer(self, timeout=self._refrescar_vivo, interval=1000).start()
         self._pintar_contenido()
+        self._pintar_premios()
         self._cargar_opciones()
         self.refrescar()
 
@@ -226,9 +253,37 @@ class PaginaInicio(Pagina):
             self.rueda.poner_foto(i, foto_de(id_destino) if i == indice else None)
         if pintar:
             self._pintar_contenido()
+        self._pintar_premios()
         self._cargar_opciones()
         self.refrescar()
         self.app.refrescar_insignias()
+
+    def _pintar_premios(self):
+        """Los objetos que puede dar el destino elegido, con su cantidad y su probabilidad por pelea."""
+        while self.fila_premios.count():
+            w = self.fila_premios.takeAt(0).widget()
+            if w:
+                w.setParent(None)
+        lista = premios.de(self.modo_id)
+        self.fila_premios.addStretch()
+        if lista:
+            self.fila_premios.addWidget(QLabel("Puedes conseguir", objectName="tenue"))
+        for p in lista:
+            casilla = QFrame(objectName="premio")
+            capa = QVBoxLayout(casilla)
+            capa.setContentsMargins(4, 4, 4, 2)
+            capa.setSpacing(1)
+            dibujo = QLabel(alignment=Qt.AlignCenter)
+            dibujo.setPixmap(_icono_premio(p, 46))
+            capa.addWidget(dibujo)
+            prob = QLabel(p.texto_prob, objectName="prob_premio", alignment=Qt.AlignCenter)
+            prob.setProperty("raro", p.prob < 1)
+            capa.addWidget(prob)
+            cajas = ", ".join(f"caja de {c}" for c in p.cajas)
+            casilla.setToolTip(f"<b>{p.nombre}</b> {p.texto_cantidad}<br>{p.descripcion}<br><i>{p.texto_prob} por pelea"
+                               + (f" · {cajas}" if cajas else "") + "</i>")
+            self.fila_premios.addWidget(casilla)
+        self.fila_premios.addStretch()
 
     def _pintar_contenido(self):
         """Nombre, descripcion y pisos del contenido del centro de la rueda."""
