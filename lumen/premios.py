@@ -71,3 +71,35 @@ def de(id_destino: str) -> list[Premio]:
         if linea.get("caja") and linea["caja"] not in p.cajas:
             p.cajas.append(linea["caja"])
     return list(juntos.values())
+
+
+# ------------------------------------------------------------------ para las metas de material
+def info(objeto: str) -> dict:
+    """Nombre, descripcion y ficha de la galeria ("galeria") de un objeto."""
+    return (_datos().get("objetos") or {}).get(objeto) or {}
+
+
+def icono_de(objeto: str) -> Path:
+    return ICONOS / f"{objeto}.png"
+
+
+def esperado(id_destino: str, objeto: str) -> float:
+    """Cuantos da de media cada victoria: lo garantizado mas cada linea por su probabilidad."""
+    destino = _datos().get(id_destino) or {}
+    total = sum(int(l.get("cantidad", 1)) for l in destino.get("garantizados") or [] if l["objeto"] == objeto)
+    total += sum(float(l.get("prob", 0)) / 100 * int(l.get("cantidad", 1))
+                 for l in destino.get("premios") or [] if l["objeto"] == objeto)
+    return total
+
+
+def donde_sale(objeto: str) -> list[tuple[str, float]]:
+    """(destino, media por victoria) de los destinos que dan este objeto, del que mas da al que menos."""
+    destinos = [d for d in _datos() if d != "objetos"]
+    salida = [(d, esperado(d, objeto)) for d in destinos]
+    return sorted((x for x in salida if x[1] > 0), key=lambda x: -x[1])
+
+
+@lru_cache(maxsize=1)
+def por_galeria() -> dict[str, str]:
+    """Ficha de la galeria -> objeto de esta tabla (para contar el botin en las metas)."""
+    return {d["galeria"]: oid for oid, d in (_datos().get("objetos") or {}).items() if (d or {}).get("galeria")}
