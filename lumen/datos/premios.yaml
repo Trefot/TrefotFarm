@@ -47,6 +47,15 @@ objetos:
   esencia_dorada:
     nombre: Esencia mágica dorada
     descripcion: Esencia mágica usada para fabricar reliquias sagradas para diosas.
+  asta_eikthyrnir:
+    nombre: Asta rota de Eikthyrnir
+    descripcion: Una de las numerosas astas de Eikthyrnir. Sirve para mejorar reliquias sagradas.
+  orbe_eikthyrnir:
+    nombre: Orbe de Eikthyrnir
+    descripcion: Un orbe que contiene el poder de Eikthyrnir. Sirve para mejorar reliquias sagradas.
+  campamento_aliadas:
+    nombre: Campamento de las fuerzas aliadas
+    descripcion: Carta de escena del campamento de las fuerzas aliadas.
   esencia_azul:
     nombre: Esencia mágica azul
     descripcion: Esencia mágica usada para fabricar reliquias sagradas para héroes [humanos y hadas], [humanos] y de [raza desconocida].
@@ -89,3 +98,17 @@ ciervo_pisos1a3:  # captura del juego, 2026-10-28
     - {caja: bronce, objeto: meticulosidad_eitri, cantidad: 3, prob: 20}
     - {caja: bronce, objeto: esencia_desconocida, cantidad: 2, prob: 19.9}
     - {caja: bronce, objeto: esencia_dorada, cantidad: 2, prob: 19.9}
+
+ciervo_piso4:  # captura del juego, 2026-10-28 (la cantidad del asta de la caja de oro no se veia)
+  garantizados:
+    - {objeto: asta_eikthyrnir}
+    - {objeto: orbe_eikthyrnir}
+  premios:
+    - {caja: oro, objeto: mural_antiguo, prob: 0.1}
+    - {caja: oro, objeto: carta_eikthyrnir, prob: 1.4}
+    - {caja: oro, objeto: asta_eikthyrnir, prob: 9}
+    - {caja: plata, objeto: campamento_aliadas, prob: 2.5}
+    - {caja: plata, objeto: asta_eikthyrnir, cantidad: 2, prob: 25}
+    - {caja: bronce, objeto: asta_eikthyrnir, prob: 15}
+    - {caja: bronce, objeto: esencia_desconocida, cantidad: 15, prob: 23.5}
+    - {caja: bronce, objeto: esencia_dorada, cantidad: 15, prob: 23.5}
