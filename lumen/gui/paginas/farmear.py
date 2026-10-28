@@ -27,7 +27,7 @@ from PyQt5.QtWidgets import (
 
 from lumen import actualizador, avisos, botin, config, ordenes, premios, recompensas, ventana
 from lumen.control import control
-from lumen.gui import iconos, resumen, tema
+from lumen.gui import iconos, plan, resumen, tema
 from lumen.gui.comun import Pagina, formatear_tiempo, icono_premio
 from lumen.gui.paginas.equipos import clave_de_equipos, tarjetas_equipos
 from lumen.modos import MODOS
@@ -198,7 +198,11 @@ class PaginaFarmear(Pagina):
         panel_equipos = QScrollArea(objectName="area_pagina", widgetResizable=True, frameShape=QFrame.NoFrame)
         panel_equipos.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         panel_equipos.setWidget(contenedor_eq)
-        for i, (texto, ic, vista) in enumerate((("Registro", "registro", self.registro), ("Opciones", "ajustes", panel_opciones))):
+        self.panel_plan = plan.PanelPlan()
+        self.panel_plan.iniciar.connect(self.iniciar_plan)
+        self.plan_paso: int | None = None  # tarea del plan en curso (None = no hay plan en marcha)
+        for i, (texto, ic, vista) in enumerate((("Registro", "registro", self.registro), ("Plan", "mdi6.format-list-checks", self.panel_plan),
+                                               ("Opciones", "ajustes", panel_opciones))):
             b = QPushButton(" " + texto, objectName="chip", checkable=True, checked=i == 0)
             b.setIcon(iconos.icono(ic, tema.TENUE, tema.SOBRE_ACENTO))
             b.clicked.connect(lambda _, n=i: self.pila_vista.setCurrentIndex(n))
@@ -473,6 +477,14 @@ class PaginaFarmear(Pagina):
                 avisos.enviar(f"No pude sacar la foto: {error}")
                 return
             avisos.enviar(self._resumen(), imagen)
+        elif orden == "plan":
+            if corriendo:
+                avisos.enviar("Ya está en marcha. " + self._resumen())
+                return
+            self.escribir("Orden del movil: plan del día.", "info")
+            self.iniciar_plan(remoto=True)
+            if self.puente.corriendo:
+                avisos.enviar(f"Empiezo el plan del día: {len(plan.cargar())} tareas.")
         elif orden == "iniciar":
             if corriendo:
                 avisos.enviar("Ya esta en marcha. " + self._resumen())
@@ -513,6 +525,13 @@ class PaginaFarmear(Pagina):
         self._botones(False)
         self.inicio = None
         self.estado_bot = ""
+        if self.plan_paso is not None:
+            if control.detenido or control.parar_en_zona_segura or self.app.update_bloqueante:
+                self.escribir("Plan del día detenido.", "aviso")
+                self.plan_paso = None
+                self.panel_plan.marcar(None)
+            else:  # unos segundos para que el juego vuelva a un menu antes de la siguiente tarea
+                QTimer.singleShot(4000, lambda: self._siguiente_tarea(remoto=True))
         herramienta = getattr(self.modo_externo, "id", "")
         self.modo_externo = None
         self._pintar_estado()
@@ -522,6 +541,38 @@ class PaginaFarmear(Pagina):
             self.app.navegar("equipos")
         elif herramienta == "captura_objetos":  # y la galeria de objetos
             self.app.navegar("recompensas")
+
+    # ------------------------------------------------------------ plan del dia
+    def iniciar_plan(self, remoto: bool = False):
+        """Empieza el plan del dia por la primera tarea."""
+        if self.puente.corriendo:
+            return
+        if not plan.cargar():
+            self._problema("Plan del día", "El plan no tiene tareas.", remoto)
+            return
+        self.escribir("Empieza el plan del día.", "ok")
+        self.plan_paso = -1
+        self._siguiente_tarea(remoto)
+
+    def _siguiente_tarea(self, remoto: bool = True):
+        """Arranca la siguiente tarea del plan; si una no puede empezar, prueba con la siguiente."""
+        if self.plan_paso is None or self.puente.corriendo:
+            return
+        tareas = plan.cargar()
+        for i in range(self.plan_paso + 1, len(tareas)):
+            t = tareas[i]
+            self.plan_paso = i
+            self.panel_plan.marcar(i)
+            self.escribir(f"Plan: tarea {i + 1} de {len(tareas)} · {MODOS[t['modo']].nombre} · {t['victorias']} victorias.", "ok")
+            self.preparar(t["modo"], {"victorias": int(t["victorias"])})
+            self.iniciar(remoto=remoto)
+            if self.puente.corriendo:
+                return
+            self.escribir(f"La tarea {i + 1} no pudo empezar; paso a la siguiente.", "aviso")
+        self.plan_paso = None
+        self.panel_plan.marcar(None)
+        self.escribir("Plan del día terminado.", "ok")
+        avisos.enviar("Lumen Farm: plan del día terminado.")
 
     def _mostrar_resumen(self):
         """Tarjeta con lo conseguido en la sesion que acaba de terminar, y lo mismo al movil."""

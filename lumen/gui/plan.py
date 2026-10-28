@@ -1,0 +1,142 @@
+"""Plan del dia: una lista de tareas (modo + victorias) que el bot hace una tras otra sin nadie.
+
+Se guarda en config.yaml ("plan": [{"modo": id, "victorias": n}, ...]). La pagina Farmear lo ejecuta:
+al terminar una tarea arranca la siguiente; si se detiene a mano (boton o F10), el plan se para.
+"""
+
+from PyQt5.QtCore import QSize, Qt, pyqtSignal
+from PyQt5.QtWidgets import QComboBox, QFrame, QHBoxLayout, QLabel, QPushButton, QSpinBox, QVBoxLayout
+
+from lumen import config
+from lumen.gui import iconos, tema
+from lumen.modos import MODOS
+from lumen.modos.catalogo import foto_de
+
+VICTORIAS_DEFECTO = 10
+
+
+def cargar() -> list[dict]:
+    """Las tareas del plan que se pueden jugar (las de modos que ya no existen se saltan)."""
+    return [t for t in (config.obtener("plan") or []) if t.get("modo") in MODOS]
+
+
+def guardar(tareas: list[dict]) -> None:
+    config.guardar({"plan": [{"modo": t["modo"], "victorias": int(t["victorias"])} for t in tareas]})
+
+
+class PanelPlan(QFrame):
+    """La lista editable de tareas y el boton para lanzar el plan."""
+
+    iniciar = pyqtSignal()
+
+    def __init__(self):
+        super().__init__(objectName="seccion")
+        capa = QVBoxLayout(self)
+        capa.setSpacing(6)
+        capa.addWidget(QLabel("El bot hace las tareas en orden. Al acabar una, empieza la siguiente.",
+                              objectName="tenue", wordWrap=True))
+        self.lista = QVBoxLayout()
+        self.lista.setSpacing(4)
+        capa.addLayout(self.lista)
+
+        nueva = QHBoxLayout()
+        self.combo = QComboBox()
+        for modo in MODOS.values():
+            self.combo.addItem(modo.nombre, modo.id)
+        nueva.addWidget(self.combo, 1)
+        self.spin = QSpinBox(minimum=1, maximum=999, value=VICTORIAS_DEFECTO, suffix=" victorias")
+        nueva.addWidget(self.spin)
+        b_anadir = QPushButton(" Añadir", objectName="chico")
+        b_anadir.setIcon(iconos.icono("mdi6.plus", tema.TEXTO))
+        b_anadir.clicked.connect(self._anadir)
+        nueva.addWidget(b_anadir)
+        capa.addLayout(nueva)
+        capa.addStretch()
+
+        fila = QHBoxLayout()
+        self.lbl_estado = QLabel(objectName="tenue")
+        fila.addWidget(self.lbl_estado, 1)
+        self.b_iniciar = QPushButton(" Iniciar plan", objectName="primario")
+        self.b_iniciar.setIcon(iconos.icono("jugar", tema.SOBRE_ACENTO))
+        self.b_iniciar.clicked.connect(self.iniciar.emit)
+        fila.addWidget(self.b_iniciar)
+        capa.addLayout(fila)
+        self.actual: int | None = None
+        self.pintar()
+
+    # ------------------------------------------------------------------ editar
+    def _anadir(self):
+        tareas = cargar()
+        tareas.append({"modo": self.combo.currentData(), "victorias": self.spin.value()})
+        guardar(tareas)
+        self.pintar()
+
+    def _cambiar(self, i: int, victorias: int):
+        tareas = cargar()
+        tareas[i]["victorias"] = victorias
+        guardar(tareas)
+
+    def _mover(self, i: int, paso: int):
+        tareas = cargar()
+        j = i + paso
+        if 0 <= j < len(tareas):
+            tareas[i], tareas[j] = tareas[j], tareas[i]
+            guardar(tareas)
+            self.pintar()
+
+    def _quitar(self, i: int):
+        tareas = cargar()
+        tareas.pop(i)
+        guardar(tareas)
+        self.pintar()
+
+    # ------------------------------------------------------------------ dibujar
+    def marcar(self, actual: int | None):
+        """La tarea en curso (o None si el plan no esta en marcha)."""
+        self.actual = actual
+        self.pintar()
+
+    def pintar(self):
+        while self.lista.count():
+            w = self.lista.takeAt(0).widget()
+            if w:
+                w.setParent(None)
+        tareas = cargar()
+        en_marcha = self.actual is not None
+        for i, t in enumerate(tareas):
+            fila = QFrame(objectName="tarea_plan")
+            fila.setProperty("estado", "actual" if i == self.actual else "hecha" if en_marcha and i < self.actual else "")
+            capa = QHBoxLayout(fila)
+            capa.setContentsMargins(6, 4, 4, 4)
+            capa.addWidget(QLabel(f"{i + 1}.", objectName="tenue"))
+            foto = QLabel()
+            pix = iconos.redondo(foto_de(t["modo"]), 30, tema.ACENTO) if foto_de(t["modo"]) else None
+            if pix:
+                foto.setPixmap(pix)
+            capa.addWidget(foto)
+            capa.addWidget(QLabel(MODOS[t["modo"]].nombre), 1)
+            spin = QSpinBox(minimum=1, maximum=999, value=int(t["victorias"]), suffix=" vict.")
+            spin.setEnabled(not en_marcha)
+            spin.valueChanged.connect(lambda v, n=i: self._cambiar(n, v))
+            capa.addWidget(spin)
+            for icono, ayuda, accion in (("mdi6.arrow-up", "Subir", lambda _=False, n=i: self._mover(n, -1)),
+                                         ("mdi6.arrow-down", "Bajar", lambda _=False, n=i: self._mover(n, 1)),
+                                         ("mdi6.close", "Quitar", lambda _=False, n=i: self._quitar(n))):
+                b = QPushButton(objectName="chico")
+                b.setFlat(True)
+                b.setIcon(iconos.icono(icono, tema.TEXTO))
+                b.setIconSize(QSize(16, 16))
+                b.setToolTip(ayuda)
+                b.setEnabled(not en_marcha)
+                b.clicked.connect(accion)
+                capa.addWidget(b)
+            self.lista.addWidget(fila)
+        if not tareas:
+            self.lista.addWidget(QLabel("Aún no hay tareas: elige un modo abajo y pulsa Añadir.", objectName="tenue"))
+        total = sum(int(t["victorias"]) for t in tareas)
+        if en_marcha:
+            self.lbl_estado.setText(f"En marcha: tarea {self.actual + 1} de {len(tareas)}")
+        else:
+            self.lbl_estado.setText(f"{len(tareas)} tarea{'s' if len(tareas) != 1 else ''} · {total} victorias" if tareas else "")
+        self.b_iniciar.setEnabled(bool(tareas) and not en_marcha)
+        self.combo.setEnabled(not en_marcha)

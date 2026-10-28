@@ -91,6 +91,13 @@ Sin internet o sin GitHub configurado, el programa funciona igual y lo vuelve a 
 Ya viene conectado a su repositorio de GitHub (se cambia en Ajustes si hiciera falta).
 
 
+PLAN DEL DIA
+------------
+Farmear -> Plan: una lista de tareas (modo + victorias) que el bot hace en orden, sin nadie delante.
+Al acabar una tarea empieza la siguiente; si una no puede empezar, la salta. Detener o F10 paran el
+plan entero. Desde el movil, la orden "plan" lo lanza. Se guarda en config.yaml.
+
+
 RESUMEN AL TERMINAR
 -------------------
 Cuando una sesion de farmeo acaba (victorias alcanzadas, sin stamina o Detener), sale una tarjeta con
@@ -107,6 +114,7 @@ Ordenes desde el movil: marca "Aceptar ordenes desde el movil" en Ajustes y escr
 desde la app ntfy. El bot contesta en el mismo canal:
   estado     que esta haciendo, tiempo, victorias y derrotas
   iniciar    empieza a farmear con el modo elegido en Farmear (el juego tiene que estar abierto)
+  plan       empieza el plan del dia
   pausar / reanudar / detener
   captura    foto de la pantalla del juego
   ayuda      la lista de ordenes

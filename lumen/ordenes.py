@@ -17,6 +17,7 @@ from lumen import avisos, config
 ORDENES = {
     "estado": "que esta haciendo el bot y como va",
     "iniciar": "empieza a farmear con el modo elegido en Farmear",
+    "plan": "empieza el plan del dia (Farmear -> Plan)",
     "pausar": "pausa el bot",
     "reanudar": "sigue despues de una pausa",
     "detener": "detiene el bot",
