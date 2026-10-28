@@ -41,7 +41,7 @@ uso:
     titulo: "Desde el móvil"
     texto: >-
       Con la app ntfy (Ajustes → Avisos al móvil, y marca <b>Aceptar órdenes</b>) puedes escribirle:
-      <b>estado, iniciar, plan, pausar, reanudar, detener, captura</b> o <b>ayuda</b>.
+      <b>estado, iniciar, plan, plan ver, saltar, pausar, reanudar, detener, captura</b> o <b>ayuda</b>.
   - icono: mdi6.translate
     titulo: "Idioma del juego"
     texto: >-

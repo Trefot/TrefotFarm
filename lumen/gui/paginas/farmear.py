@@ -204,6 +204,7 @@ class PaginaFarmear(Pagina):
         self.plan_paso: int | None = None  # tarea del plan en curso (None = no hay plan en marcha)
         self.plan_resumenes: list[dict] = []  # lo conseguido en cada tarea: un solo resumen al acabar el plan
         self.plan_sin_estamina = False
+        self.plan_saltar = False  # se detuvo la tarea en curso para pasar a la siguiente (no el plan)
         for i, (texto, ic, vista) in enumerate((("Registro", "registro", self.registro), ("Plan", "mdi6.format-list-checks", self.panel_plan),
                                                ("Opciones", "ajustes", panel_opciones))):
             b = QPushButton(" " + texto, objectName="chip", checkable=True, checked=i == 0)
@@ -488,6 +489,15 @@ class PaginaFarmear(Pagina):
             self.iniciar_plan(remoto=True)
             if self.puente.corriendo:
                 avisos.enviar(f"Empiezo el plan del día: {len(plan.cargar())} tareas.")
+        elif orden == "plan ver":
+            avisos.enviar(self._texto_plan())
+        elif orden == "saltar":
+            if self.plan_paso is None or not corriendo:
+                avisos.enviar("No hay ningún plan en marcha.")
+                return
+            self.escribir(f"Orden del movil: saltar la tarea {self.plan_paso + 1}.", "aviso")
+            self.saltar_tarea()
+            avisos.enviar(f"Dejo la tarea {self.plan_paso + 1} y paso a la siguiente.")
         elif orden == "iniciar":
             if corriendo:
                 avisos.enviar("Ya esta en marcha. " + self._resumen())
@@ -531,7 +541,8 @@ class PaginaFarmear(Pagina):
         if self.plan_paso is not None:
             if self.ultimas_stats.get("motivo_fin") == "sin_estamina":
                 self.plan_sin_estamina = True
-            if control.detenido or control.parar_en_zona_segura or self.app.update_bloqueante:
+            saltada, self.plan_saltar = self.plan_saltar, False
+            if self.app.update_bloqueante or (not saltada and (control.detenido or control.parar_en_zona_segura)):
                 self.escribir("Plan del día detenido.", "aviso")
                 self._fin_plan()
             else:  # unos segundos para que el juego vuelva a un menu antes de la siguiente tarea
@@ -559,6 +570,24 @@ class PaginaFarmear(Pagina):
         self.plan_resumenes = []
         self.plan_sin_estamina = False
         self._siguiente_tarea(remoto)
+
+    def saltar_tarea(self):
+        """Detiene la tarea en curso; el plan sigue con la siguiente."""
+        if self.plan_paso is not None and self.puente.corriendo:
+            self.plan_saltar = True
+            self.detener()
+
+    def _texto_plan(self) -> str:
+        """Las tareas del plan para el movil: ✓ hecha, ▶ en curso."""
+        tareas = plan.cargar()
+        if not tareas:
+            return "El plan no tiene tareas. Añádelas en Farmear → Plan."
+        lineas = [f"Plan del día · tarea {self.plan_paso + 1} de {len(tareas)}" if self.plan_paso is not None
+                  else f"Plan del día · {len(tareas)} tareas (no está en marcha)"]
+        for i, t in enumerate(tareas):
+            marca = "▶" if i == self.plan_paso else "✓" if self.plan_paso is not None and i < self.plan_paso else "•"
+            lineas.append(f"{marca} {i + 1}. {MODOS[t['modo']].nombre} · {t['victorias']} victorias")
+        return "\n".join(lineas)
 
     def _siguiente_tarea(self, remoto: bool = True):
         """Arranca la siguiente tarea del plan; si una no puede empezar, prueba con la siguiente."""

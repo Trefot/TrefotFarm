@@ -116,7 +116,31 @@ class Interfaz(unittest.TestCase):
             self.assertEqual(arrancados, ["pajaro_pisos1a3", "indura"])
             terminar()
             self.assertIsNone(f.plan_paso)
+            # "saltar" desde el movil: deja la tarea en curso y el plan sigue
+            arrancados.clear()
+            f.iniciar_plan()
+            with mock.patch.object(f, "detener", lambda: terminar(por_usuario=True)):
+                f._orden("saltar")
+            self.assertEqual(arrancados, ["pajaro_pisos1a3", "ciervo_pisos1a3"])
+            self.assertEqual(f.plan_paso, 1)
+            enviados = []
+            with mock.patch.object(avisos, "enviar", lambda texto, *a: enviados.append(texto)):
+                f._orden("plan ver")
+            self.assertIn("tarea 2 de 3", enviados[0])
+            self.assertIn("✓ 1.", enviados[0])
+            self.assertIn("▶ 2.", enviados[0])
+            terminar()
+            terminar()
+            self.assertIsNone(f.plan_paso)
         control.reiniciar()
+
+    def test_ordenes_del_movil(self):
+        from lumen import ordenes
+
+        for texto, orden in (("Plan ver", "plan ver"), ("tareas", "plan ver"), ("plan", "plan"),
+                             ("saltar", "saltar"), ("skip", "saltar"), ("pausa", "pausar"), ("hola", None)):
+            with self.subTest(texto=texto):
+                self.assertEqual(ordenes.interpretar(texto), orden)
 
 
 if __name__ == "__main__":

@@ -18,6 +18,8 @@ ORDENES = {
     "estado": "que esta haciendo el bot y como va",
     "iniciar": "empieza a farmear con el modo elegido en Farmear",
     "plan": "empieza el plan del dia (Farmear -> Plan)",
+    "plan ver": "las tareas del plan y por cual va",
+    "saltar": "deja la tarea del plan en curso y pasa a la siguiente",
     "pausar": "pausa el bot",
     "reanudar": "sigue despues de una pausa",
     "detener": "detiene el bot",
@@ -25,7 +27,8 @@ ORDENES = {
     "ayuda": "esta lista",
 }
 SINONIMOS = {"start": "iniciar", "empezar": "iniciar", "pausa": "pausar", "seguir": "reanudar",
-             "parar": "detener", "stop": "detener", "foto": "captura", "status": "estado", "?": "ayuda"}
+             "parar": "detener", "stop": "detener", "foto": "captura", "status": "estado", "?": "ayuda",
+             "tareas": "plan ver", "skip": "saltar", "siguiente": "saltar"}
 
 
 def texto_ayuda() -> str:
@@ -33,10 +36,12 @@ def texto_ayuda() -> str:
 
 
 def interpretar(texto: str) -> str | None:
-    palabra = (texto or "").strip().lower().split(maxsplit=1)
-    if not palabra:
+    palabras = (texto or "").strip().lower().split()
+    if not palabras:
         return None
-    orden = SINONIMOS.get(palabra[0], palabra[0])
+    if palabras[0] == "plan" and len(palabras) > 1 and palabras[1] in ("ver", "lista", "?"):
+        return "plan ver"
+    orden = SINONIMOS.get(palabras[0], palabras[0])
     return orden if orden in ORDENES else None
 
 

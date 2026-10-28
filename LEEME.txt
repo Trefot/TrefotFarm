@@ -116,6 +116,8 @@ desde la app ntfy. El bot contesta en el mismo canal:
   estado     que esta haciendo, tiempo, victorias y derrotas
   iniciar    empieza a farmear con el modo elegido en Farmear (el juego tiene que estar abierto)
   plan       empieza el plan del dia
+  plan ver   las tareas del plan y por cual va
+  saltar     deja la tarea del plan en curso y pasa a la siguiente
   pausar / reanudar / detener
   captura    foto de la pantalla del juego
   ayuda      la lista de ordenes
