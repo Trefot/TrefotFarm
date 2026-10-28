@@ -25,7 +25,7 @@ uso:
     titulo: "Plan del día"
     texto: >-
       Farmear → <b>Plan</b>: añade tareas (modo + victorias) y pulsa <b>Iniciar plan</b>. El bot las hace en
-      orden sin ti; si se acaba la estamina salta las que la usan. Detener o F10 paran el plan entero.
+      orden sin ti; si se acaba la estamina salta las que la usan. <b>Saltar tarea</b> pasa a la siguiente; Detener o F10 paran el plan entero.
   - icono: trofeo
     titulo: "Resumen al terminar"
     texto: >-

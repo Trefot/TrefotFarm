@@ -201,6 +201,7 @@ class PaginaFarmear(Pagina):
         panel_equipos.setWidget(contenedor_eq)
         self.panel_plan = plan.PanelPlan()
         self.panel_plan.iniciar.connect(self.iniciar_plan)
+        self.panel_plan.saltar.connect(self.saltar_tarea)
         self.plan_paso: int | None = None  # tarea del plan en curso (None = no hay plan en marcha)
         self.plan_resumenes: list[dict] = []  # lo conseguido en cada tarea: un solo resumen al acabar el plan
         self.plan_sin_estamina = False

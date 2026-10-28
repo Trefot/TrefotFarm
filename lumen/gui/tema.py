@@ -241,7 +241,11 @@ QScrollBar::add-line, QScrollBar::sub-line {{ height: 0; width: 0; }}
 QScrollBar::add-page, QScrollBar::sub-page {{ background: none; }}
 QScrollBar:horizontal {{ background: transparent; height: 10px; margin: 2px; }}
 QScrollBar::handle:horizontal {{ background: {_s.borde}; border-radius: 4px; min-width: 30px; }}
-QCheckBox::indicator {{ width: 15px; height: 15px; }}
+QCheckBox {{ spacing: 8px; }}
+QCheckBox::indicator {{ width: 15px; height: 15px; border: 1px solid {_s.borde_oro}; border-radius: 4px; background: {_s.hundido}; }}
+QCheckBox::indicator:hover {{ border-color: {_s.acento}; }}
+QCheckBox::indicator:checked {{ background: {_ORO}; border-color: {_s.acento}; }}
+QCheckBox::indicator:disabled {{ border-color: {_s.borde}; }}
 QProgressBar {{ background: {_s.hundido}; border: 1px solid {_s.borde}; border-radius: 6px; text-align: center; height: 18px; }}
 QProgressBar::chunk {{ background: {_ORO}; border-radius: 6px; }}
 
