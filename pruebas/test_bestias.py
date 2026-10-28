@@ -112,6 +112,28 @@ class Navegacion(ConPantallaSimulada):
         self.assertEqual(m.ir_a_perros({"pantalla_bestias", "pajaro"}, (0, 0)), "elegir_piso")
         self.assertFalse(self.clics, "no vuelve a tocar al pajaro")
 
+    def test_las_recompensas_no_son_la_pantalla_de_pisos(self):
+        """La pantalla de elegir bestia lista "Obtain Floor 1 First Clear Reward"...: no son los pisos
+        (en la prueba de la 0.2.1 el bot creia estar en los pisos y nunca entraba a la bestia)."""
+        self.texto[:] = ["Demonic Beast Battle", "Skoll and Hati", "Obtain Floor 1 First Clear Reward",
+                         "Obtain Floor 2 First Clear Reward", "Obtain Floor 3 First Clear Reward",
+                         "Clear Twilight Temple Floor 3 to receive the guaranteed reward."]
+        m = self.modo(B.PerrosPisos1a3, bestia=2)
+        m.piso3_superado = PlantillaFalsa("piso3_superado")
+        self.assertIsNone(m.ir_a_perros({"pantalla_bestias", "perros"}, (0, 0)))
+        self.assertEqual(len(self.clics), 1, "toca a los perros para entrar")
+
+    def test_floor_1_leido_como_i(self):
+        """El lector de texto lee "Twilight Temple Floor 1" como "Floor I" (prueba de la 0.2.1)."""
+        self.assertEqual(B.numeros_de_piso("Twilight Temple Floor I"), [1])
+        self.assertEqual(B.numeros_de_piso("Floor l"), [1])
+        self.assertEqual(B.numeros_de_piso("Floor Info"), [])
+        self.texto[:] = ["Twilight Temple Floor 3", "Twilight Temple Floor 2", "Twilight Temple Floor I"]
+        m = self.modo(B.PerrosPisos1a3, bestia=2)
+        self.assertIsNone(m.elegir_piso(set(), (0, 0)))
+        self.assertEqual(len(self.clics), 1, "toca el Floor 1")
+        self.assertFalse(self.arrastres, "no hace falta deslizar")
+
     def test_cierra_el_aviso_al_abrir_la_bestia(self):
         m = self.modo(B.PajaroPisos1a3, bestia=0)
         self.assertIsNone(m.ir_a_perros({"pantalla_bestias", "pajaro", "ok"}, (0, 0)))

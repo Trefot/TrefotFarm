@@ -29,6 +29,13 @@ Etapas previstas:
 
 CAMBIOS
 -------
+0.2.2-alpha
+  - Bestias Floor 1-3: ya entran a la bestia. La lista de recompensas de la pantalla de elegir bestia
+    ("Obtain Floor 1 First Clear Reward"...) hacia creer al bot que ya estaba en los pisos.
+  - Bestias Floor 1-3: encuentran el Floor 1 aunque el lector de texto lo lea "Floor I".
+  - Pruebas: las versiones de color de un heroe comparten la imagen de la ulti; la prueba de
+    "Aprender de mi" ya no falla por eso.
+
 0.2.1-alpha
   - Bestias Floor 1-3: cierra el aviso que sale al abrir la bestia; reconoce la pantalla de pisos
     aunque siga arriba el titulo "Demonic Beast Battle"; desliza la lista hasta ver el piso que toca

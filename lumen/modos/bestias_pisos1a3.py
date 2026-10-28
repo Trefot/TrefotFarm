@@ -205,7 +205,7 @@ class BestiaPisos1a3(PerrosPiso4):
         hora, numeros = self._pisos_vistos
         if time.time() - hora < CADA_OCR_S:
             return numeros
-        numeros = {int(n) for texto, _ in self._lineas(p) for n in re.findall(r"(?:floor|piso)\s*(\d+)", texto.lower())}
+        numeros = {n for texto, _ in self._lineas(p) if not _es_premio(texto) for n in numeros_de_piso(texto)}
         self._pisos_vistos = (time.time(), numeros)
         return numeros
 
@@ -219,11 +219,31 @@ class BestiaPisos1a3(PerrosPiso4):
             self.log("Texto en la pantalla de pisos: " + " | ".join(t for t, _ in lineas), "debug")
         for texto, rect in lineas:
             t = texto.lower()
-            if "clear" in t or "superad" in t:
+            if _es_premio(t):
                 continue
-            if any(int(n) == self.piso for n in re.findall(r"(?:floor|piso)\s*(\d+)", t)):
+            if self.piso in numeros_de_piso(t):
                 return rect
         return None
+
+
+def numeros_de_piso(texto: str) -> list[int]:
+    """Los numeros tras "floor" o "piso". El lector de texto suele leer el 1 como I, l o |
+    ("Twilight Temple Floor I"): por eso nunca encontraba el Floor 1 (prueba de la 0.2.1)."""
+    encontrados = re.findall(r"(?:floor|piso)\s*([0-9il|]+)(?![a-z0-9])", texto, flags=re.IGNORECASE)
+    numeros = []
+    for n in encontrados:
+        n = n.lower().replace("i", "1").replace("l", "1").replace("|", "1")
+        if n.isdigit():
+            numeros.append(int(n))
+    return numeros
+
+
+def _es_premio(texto: str) -> bool:
+    """Lineas que nombran un piso pero no son su boton: "Floor 3 Cleared" y, en la pantalla de elegir
+    bestia, la lista de recompensas ("Obtain Floor 1 First Clear Reward"). Contarlas hacia creer al bot
+    que ya estaba en los pisos sin haber entrado a la bestia (primera prueba de la 0.2.1)."""
+    t = texto.lower()
+    return any(palabra in t for palabra in ("clear", "superad", "reward", "recompensa", "obtain", "obten"))
 
 
 def _bestia(id_base: str, titulo: str, plantilla, imagen: str, piso3=None, enemigos: int = 1):

@@ -205,11 +205,18 @@ class Aprender(unittest.TestCase):
             fondo[y:y + img.shape[0], x:x + img.shape[1]] = cv2.convertScaleAbs(img, alpha=rng.uniform(0.9, 1.1), beta=rng.uniform(-12, 12))
             return np.clip(fondo + np.random.normal(0, 5, fondo.shape), 0, 255).astype(np.uint8)
 
+        def gemelos(img):
+            """Heroes con esa misma imagen de carta: las versiones de color de un heroe suelen compartir
+            la ulti (Griamore verde y azul, Ban de tres colores... 141 pares en la base). Con solo esa
+            carta no se puede saber cual es; el equipo se reconoce por todas las cartas de la mano."""
+            return {p for p, _, t, _ in ind.plantillas
+                    if t.imagenes[0].shape == img.shape and float(cv2.absdiff(t.imagenes[0], img).mean()) < 1}
+
         for i in rng.sample(range(len(ind.plantillas)), 25):
             pid, cid, plantilla, _ = ind.plantillas[i]
             with self.subTest(carta=f"{pid}.{cid}"):
                 carta = Carta(0, imagen=carta_de(plantilla.imagenes[0]), tipo=T.NORMAL)
-                self.assertEqual(ind.heroe_de(carta), pid)
+                self.assertIn(ind.heroe_de(carta), gemelos(plantilla.imagenes[0]) | {pid})
 
 
 if __name__ == "__main__":
