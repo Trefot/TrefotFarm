@@ -146,6 +146,18 @@ class EquipoMasRapido(unittest.TestCase):
         self.assertEqual(self.E.texto_minutos(3), "3 min por victoria")
 
 
+class CanalSecreto(unittest.TestCase):
+    def test_nombres_largos_y_distintos(self):
+        entorno.app_qt()
+        from lumen.gui.paginas.ajustes import MINIMO_CANAL, canal_secreto
+
+        nombres = {canal_secreto() for _ in range(50)}
+        self.assertEqual(len(nombres), 50)
+        for n in nombres:
+            self.assertRegex(n, r"^lumen-[a-z0-9]{16}$")
+            self.assertGreaterEqual(len(n), MINIMO_CANAL)
+
+
 class Aprender(unittest.TestCase):
     def test_reconoce_igual_que_comparar_todo(self):
         from lumen.modos.aprender import IndiceCartas

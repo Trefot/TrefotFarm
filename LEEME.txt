@@ -35,6 +35,8 @@ Si una carta de la ficha no se reconoce bien en pelea, captura esa carta en una 
 Las capturas quedan en la biblioteca: personajes\<personaje>\ (sirven para todos los modos).
 
 
+Versiones y lista de cambios: CAMBIOS.txt.
+
 LA INTERFAZ (menu de la izquierda)
 ----------------------------------
 Inicio            4 iconos (Juego, Ventana, Equipo, Cartas: en verde = listo), la rueda para elegir
@@ -125,7 +127,8 @@ desde la app ntfy. El bot contesta en el mismo canal:
   pausar / reanudar / detener
   captura    foto de la pantalla del juego
   ayuda      la lista de ordenes
-Quien conozca el nombre del canal puede manejar el bot: usa un nombre largo y dificil de adivinar.
+Quien conozca el nombre del canal puede leer los avisos y manejar el bot: pulsa Generar en
+Ajustes (crea un nombre secreto) y no lo compartas.
 
 
 IDIOMA DEL JUEGO
