@@ -49,7 +49,10 @@ class EstrategiaInteligente(EstrategiaSimple):
         return (paso[1], paso[2]), None, False
 
 
-SALTAR_PISO_S = 25  # sin encontrar el piso que toca en la pantalla de pisos: pasar al siguiente
+SALTAR_PISO_S = 40  # sin encontrar el piso que toca en la pantalla de pisos (ni desplazando): pasar al siguiente
+CADA_DESPLAZAR_S = 2.0  # sin ver el piso que toca: deslizar la lista cada 2 s buscandolo
+DESPLAZAR_ABAJO = ((270, 720), (270, 420))  # dedo hacia arriba: la lista baja (el Floor 1 esta abajo)
+DESPLAZAR_ARRIBA = ((270, 420), (270, 720))
 CADA_OCR_S = 1.0  # leer el texto de la pantalla como mucho una vez por segundo (el OCR gasta CPU)
 
 
@@ -86,6 +89,9 @@ class BestiaPisos1a3(PerrosPiso4):
         self.vuelta = 1  # cuantas veces se ha empezado el ciclo 1 -> 2 -> 3
         self.buscando_piso_desde: float | None = None
         self._ultimo_ocr: tuple[float, int, object] = (0.0, 0, None)  # (hora, piso, rectangulo) de la ultima lectura
+        self._pisos_vistos: tuple[float, set] = (0.0, set())  # (hora, numeros de piso) de la ultima lectura
+        self._desplazamientos = 0  # veces que se deslizo la lista buscando el piso que toca
+        self._ultimo_desplazamiento = 0.0
         self.stats.update(piso=self.piso, vuelta=self.vuelta)
 
     def _siguiente_piso(self):
@@ -93,6 +99,7 @@ class BestiaPisos1a3(PerrosPiso4):
         if self.piso == 1:
             self.vuelta += 1
         self.buscando_piso_desde = None
+        self._desplazamientos = 0
         self._stats()
 
     def _stats(self):
@@ -112,6 +119,12 @@ class BestiaPisos1a3(PerrosPiso4):
         if self.clic_si(juego.cancelar, p, o):
             self.log("Habia una pelea a medias; la doy por perdida y empiezo de nuevo.", "aviso")
             return None
+        if self._en_pisos(p):  # antes que nada: el titulo "Demonic Beast Battle" sigue arriba en los pisos
+            self.log(f"En la pantalla de pisos de {self.titulo_juego}.", "ok")
+            return "elegir_piso"
+        if self.clic_si(juego.ok, p, o) or self.clic_si(juego.cerrar, p, o):
+            self.log("Cierro un aviso.")  # p. ej. el que sale al abrir la bestia
+            return None
         self.clic_si(juego.menu_batalla, p, o, umbral=0.6)
         self.clic_si(juego.nido_criaturas, p, o)
         if juego.pantalla_bestias.esta(p):
@@ -120,9 +133,6 @@ class BestiaPisos1a3(PerrosPiso4):
                 return None
             self.clic_si(self.bestia, p, o)
             return None
-        if self._en_pisos(p):
-            self.log(f"En la pantalla de pisos de {self.titulo_juego}.", "ok")
-            return "elegir_piso"
         return None
 
     def _deslizar_hacia_bestia(self, p, o):
@@ -134,11 +144,11 @@ class BestiaPisos1a3(PerrosPiso4):
         entrada.arrastrar(desde, hasta, o)
 
     def _en_pisos(self, p) -> bool:
-        """En la pantalla de pisos: por "Floor 3 Cleared" (si esta bestia tiene esa imagen) o, como eso
-        no sale si aun no se ha pasado el piso 3 en esta vuelta, por el texto del piso que toca."""
+        """En la pantalla de pisos: por "Floor 3 Cleared" (si esta bestia tiene esa imagen) o por leer en
+        la lista al menos dos pisos distintos (el que toca puede no verse sin desplazar la lista)."""
         if self.piso3_superado is not None and self.piso3_superado.esta(p):
             return True
-        return not juego.pantalla_bestias.esta(p) and self._buscar_piso(p) is not None
+        return len(self._numeros_de_piso(p)) >= 2
 
     def _volvio_a_pisos(self, p) -> bool:
         return juego.carga_bestias.esta(p) or self._en_pisos(p)
@@ -156,8 +166,17 @@ class BestiaPisos1a3(PerrosPiso4):
         if rect is not None:
             self.log(f"Abro el Floor {self.piso}.")
             entrada.clic(rect, o, espera=1.0)
+            self._desplazamientos = 0
             return None
-        # Sin el piso a la vista (p. ej. una bestia sin Floor 3, o aun no desbloqueado): no quedarse ahi.
+        # Sin el piso a la vista: deslizar la lista (4 veces hacia abajo, 4 hacia arriba...).
+        if time.time() - self._ultimo_desplazamiento > CADA_DESPLAZAR_S:
+            abajo = (self._desplazamientos // 4) % 2 == 0
+            self.log(f"No veo el Floor {self.piso}: deslizo la lista hacia {'abajo' if abajo else 'arriba'}.", "debug")
+            entrada.arrastrar(*(DESPLAZAR_ABAJO if abajo else DESPLAZAR_ARRIBA), o)
+            self._desplazamientos += 1
+            self._ultimo_desplazamiento = time.time()
+            self._ultimo_ocr = (0.0, 0, None)  # la lista se movio: volver a leer
+        # Sin el piso ni desplazando (p. ej. una bestia sin Floor 3, o aun no desbloqueado): no quedarse ahi.
         self.buscando_piso_desde = self.buscando_piso_desde or time.time()
         if time.time() - self.buscando_piso_desde > SALTAR_PISO_S:
             antes = self.piso
@@ -179,8 +198,22 @@ class BestiaPisos1a3(PerrosPiso4):
         self._ultimo_ocr = (time.time(), self.piso, rect)
         return rect
 
+    def _numeros_de_piso(self, p) -> set[int]:
+        """Los numeros de piso que se leen en pantalla (como mucho una lectura por segundo)."""
+        if not ocr.disponible():
+            return set()
+        hora, numeros = self._pisos_vistos
+        if time.time() - hora < CADA_OCR_S:
+            return numeros
+        numeros = {int(n) for texto, _ in self._lineas(p) for n in re.findall(r"(?:floor|piso)\s*(\d+)", texto.lower())}
+        self._pisos_vistos = (time.time(), numeros)
+        return numeros
+
+    def _lineas(self, p):
+        return ocr.lineas_con_posicion(p) + ocr.lineas_con_posicion(p, invertir=True)
+
     def _leer_piso(self, p):
-        lineas = ocr.lineas_con_posicion(p) + ocr.lineas_con_posicion(p, invertir=True)
+        lineas = self._lineas(p)
         if not self.textos_vistos and lineas:  # una vez por sesion, para poder ajustar si no lo encuentra
             self.textos_vistos = True
             self.log("Texto en la pantalla de pisos: " + " | ".join(t for t, _ in lineas), "debug")

@@ -61,7 +61,7 @@ class ConPantallaSimulada(unittest.TestCase):
     """Base: imagenes del juego falsas, clics anotados y OCR que devuelve ``self.texto``."""
 
     def setUp(self):
-        for n in ("cancelar", "menu_batalla", "nido_criaturas", "pantalla_bestias", "ok", "empezar",
+        for n in ("cancelar", "cerrar", "menu_batalla", "nido_criaturas", "pantalla_bestias", "ok", "empezar",
                   "carga_bestias", "piso3_superado"):
             self._parchear(juego, n, PlantillaFalsa(n))
         self.orden = [PlantillaFalsa(n) for n in ("pajaro", "ciervo", "perros", "serpiente", "rata")]
@@ -104,6 +104,32 @@ class Navegacion(ConPantallaSimulada):
     def test_pantalla_de_pisos_por_el_texto(self):
         self.texto[:] = ["Floor 1", "Floor 2"]
         self.assertEqual(self.modo(B.RataPisos1a3, bestia=4).ir_a_perros(set(), (0, 0)), "elegir_piso")
+
+    def test_pisos_aunque_siga_el_titulo_de_bestias(self):
+        """En la pantalla de pisos sigue arriba "Demonic Beast Battle": basta con leer dos pisos."""
+        self.texto[:] = ["Demonic Beast Battle", "Floor 3", "Floor 2"]
+        m = self.modo(B.PajaroPisos1a3, bestia=0)
+        self.assertEqual(m.ir_a_perros({"pantalla_bestias", "pajaro"}, (0, 0)), "elegir_piso")
+        self.assertFalse(self.clics, "no vuelve a tocar al pajaro")
+
+    def test_cierra_el_aviso_al_abrir_la_bestia(self):
+        m = self.modo(B.PajaroPisos1a3, bestia=0)
+        self.assertIsNone(m.ir_a_perros({"pantalla_bestias", "pajaro", "ok"}, (0, 0)))
+        self.assertEqual(len(self.clics), 1)
+
+    def test_desliza_la_lista_hasta_ver_el_piso(self):
+        m = self.modo(B.PajaroPisos1a3)
+        m.piso = 1
+        self.texto[:] = ["Floor 4", "Floor 3"]
+        for _ in range(5):
+            m._ultimo_desplazamiento = 0
+            m.elegir_piso(set(), (0, 0))
+        self.assertEqual(self.arrastres[:4], [B.DESPLAZAR_ABAJO] * 4)
+        self.assertEqual(self.arrastres[4], B.DESPLAZAR_ARRIBA)
+        self.texto[:] = ["Floor 2", "Floor 1"]
+        m.elegir_piso(set(), (0, 0))
+        self.assertTrue(self.clics, "abre el Floor 1 en cuanto lo ve")
+        self.assertEqual(m._desplazamientos, 0)
 
     def test_piso_que_no_aparece_se_salta(self):
         m = self.modo(B.RataPisos1a3)

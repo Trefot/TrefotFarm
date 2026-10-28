@@ -15,3 +15,14 @@ Reglas completas en CAMBIOS.txt. Resumen:
 ## Pruebas
 
 `python3 -m unittest discover -s pruebas -t pruebas` (en Windows, Probar.bat). Tienen que pasar antes de subir.
+
+## Trabajo a medias
+
+- **Metas de material** (diseño aprobado por el usuario): datos, lógica (`lumen/metas.py`) y diálogos
+  (`lumen/gui/metas.py`) están en el commit 944477b, deshecho en 487831b para sacar antes un arreglo.
+  Para seguir: `git revert 487831b`. Falta: botón "Metas x/y" y progreso en "Puedes conseguir" de Inicio,
+  chip "Meta" en la barra de Empezar (parar al cumplirla; en el plan, saltar a la siguiente tarea),
+  quitar la línea "Hoy", y pruebas. 36 materiales tienen ficha de galería en premios.yaml y se cuentan
+  solos; esencia negra, piedra del despertar, cartas y escenas no (se ajustan a mano).
+- **Probar con el juego**: la prueba rápida (Farmear → Plan) aún no ha pasado entera. En la primera
+  prueba el Pájaro Floor 1-3 se quedaba en la pantalla de la bestia (arreglado en 0.2.1, sin probar).
