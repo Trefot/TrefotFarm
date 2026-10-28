@@ -194,6 +194,15 @@ class Navegacion(ConPantallaSimulada):
         self.assertEqual(len(self.clics), 1, "pulsa Run Game una vez")
         self.assertEqual(m.estado, m.estado_inicial())
 
+    def test_piso_superado_se_salta(self):
+        """Un piso ya superado no se abre: tras 3 toques pasa al siguiente (prueba de la 0.4.0: 40 s perdidos)."""
+        self.texto[:] = ["Twilight Temple Floor 2", "Twilight Temple Floor 1"]
+        m = self.modo(B.PerrosPisos1a3, bestia=2)
+        for _ in range(B.TOQUES_PISO + 1):
+            self.assertIsNone(m.elegir_piso(set(), (0, 0)))
+        self.assertEqual(len(self.clics), B.TOQUES_PISO)
+        self.assertEqual(m.piso, 2)
+
     def test_floor_1_leido_como_i(self):
         """El lector de texto lee "Twilight Temple Floor 1" como "Floor I" (prueba de la 0.2.1)."""
         self.assertEqual(B.numeros_de_piso("Twilight Temple Floor I"), [1])
