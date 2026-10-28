@@ -11,6 +11,7 @@ from PyQt5.QtGui import QPixmap
 from PyQt5.QtWidgets import (
     QButtonGroup,
     QFrame,
+    QGridLayout,
     QHBoxLayout,
     QLabel,
     QLineEdit,
@@ -101,11 +102,42 @@ class PaginaAyuda(Pagina):
 
         datos = cargar()
         self.pestanas = QTabWidget()
-        self.pestanas.addTab(self._guia(datos.get("guia", [])), iconos.icono("mdi6.book-open-variant", tema.TENUE), " Guía")
+        self.pestanas.addTab(self._uso(datos.get("uso", [])), iconos.icono("mdi6.compass-outline", tema.TENUE), " Cómo usarlo  ")
+        self.pestanas.addTab(self._guia(datos.get("guia", [])), iconos.icono("mdi6.book-open-variant", tema.TENUE), " Guía Floor 4")
         self.pestanas.addTab(self._problemas(datos.get("problemas", [])), iconos.icono("mdi6.lifebuoy", tema.TENUE), " Problemas")
         self.terminos = datos.get("glosario", [])
         self.pestanas.addTab(self._glosario(), iconos.icono("mdi6.book-alphabet", tema.TENUE), " Glosario")
         self.cuerpo.addWidget(self.pestanas, 1)
+
+    # ------------------------------------------------------------- como usarlo
+    def _uso(self, tarjetas: list[dict]) -> QWidget:
+        """Una tarjeta corta por cada parte del bot, en dos columnas."""
+        w = QWidget()
+        capa = QVBoxLayout(w)
+        capa.setContentsMargins(14, 14, 14, 14)
+        rejilla = QGridLayout()
+        rejilla.setSpacing(12)
+        for i, t in enumerate(tarjetas):
+            caja = QFrame(objectName="seccion")
+            fila = QHBoxLayout(caja)
+            fila.setContentsMargins(14, 12, 14, 12)
+            fila.setSpacing(12)
+            dibujo = QLabel(objectName="icono_tarjeta", alignment=Qt.AlignCenter)
+            dibujo.setPixmap(iconos.pixmap(t.get("icono", "ayuda"), 24, tema.ACENTO))
+            dibujo.setFixedSize(44, 44)
+            fila.addWidget(dibujo, 0, Qt.AlignTop)
+            textos = QVBoxLayout()
+            textos.setSpacing(4)
+            textos.addWidget(QLabel(t["titulo"], objectName="titulo_seccion"))
+            textos.addWidget(_texto(t["texto"]))
+            textos.addStretch()
+            fila.addLayout(textos, 1)
+            rejilla.addWidget(caja, i // 2, i % 2)
+        rejilla.setColumnStretch(0, 1)
+        rejilla.setColumnStretch(1, 1)
+        capa.addLayout(rejilla)
+        capa.addStretch()
+        return _desplazable(w)
 
     # ------------------------------------------------------------------ guia
     def _guia(self, pasos: list[dict]) -> QWidget:

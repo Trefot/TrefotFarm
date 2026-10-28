@@ -82,7 +82,7 @@ class Asistente(QDialog):
         fila_pasos = QHBoxLayout()
         fila_pasos.setSpacing(6)
         for i, nombre in enumerate(PASOS):
-            marca = QLabel(f"{i + 1}  {nombre}", objectName="fase", alignment=Qt.AlignCenter)
+            marca = QLabel(f"{i + 1}  {nombre}", objectName="etapa", alignment=Qt.AlignCenter)
             self.marcas.append(marca)
             fila_pasos.addWidget(marca, 1)
         raiz.addLayout(fila_pasos)
@@ -164,7 +164,9 @@ class Asistente(QDialog):
                                "Juego por ti las peleas repetitivas de The Seven Deadly Sins: Grand Cross "
                                "mientras tú haces otra cosa. En un par de minutos te explico cómo usarme.")
         capa.addWidget(_punto("farmear", "Farmeo solo",
-                              "Entro a la pelea, juego las cartas con un guion probado, cobro el botín y repito."))
+                              "Entro a la pelea, juego las cartas pensando cada turno, cobro el botín y repito."))
+        capa.addWidget(_punto("mdi6.format-list-checks", "Hago tu plan del día",
+                              "Dime qué farmear y cuánto: lo hago todo seguido y al final te doy un resumen."))
         capa.addWidget(_punto("recompensas", "Cuento lo que ganas",
                               "Cada victoria guarda su botín: oro y objetos, a la vista en Farmear."))
         capa.addWidget(_punto("movil", "Te aviso al móvil",
@@ -357,6 +359,8 @@ class Asistente(QDialog):
         capa.addWidget(_punto("farmear", "2. Gira la rueda", "Elige qué farmear y su piso."))
         capa.addWidget(_punto("trofeo", "3. Elige cuántas victorias", "Un número fijo, o sin límite."))
         capa.addWidget(_punto("jugar", "4. Pulsa Empezar", "Y déjame el ratón. En Farmear ves qué estoy haciendo."))
+        capa.addWidget(_punto("mdi6.format-list-checks", "Para varias cosas seguidas: el Plan",
+                              "En Farmear → Plan. Y en Ayuda → Cómo usarlo tienes todo explicado."))
         self.crear_acceso = QCheckBox("Crear un acceso directo en el escritorio y en el menú Inicio")
         self.crear_acceso.setChecked(True)
         self.crear_acceso.setVisible(not accesos.existen())

@@ -1,6 +1,53 @@
 # Contenido de la pagina Ayuda. Las imagenes estan en assets/ayuda.
 # Los terminos del juego van con su nombre del cliente Global (en ingles).
 
+# Pestana "Como usarlo": una tarjeta por cada parte del bot (icono de Material Design Icons).
+uso:
+  - icono: inicio
+    titulo: "Inicio: elige qué farmear"
+    texto: >-
+      Arriba, 4 iconos (Juego, Ventana, Equipo, Cartas): en <b>verde</b> = listo; toca uno para arreglarlo.
+      Elige la sección (<b>Bestias, Demonios, Fuerte Solgres</b>), gira la <b>rueda</b> y elige el piso.
+      Lo que tiene candado aún no lo sabe farmear el bot.
+  - icono: mdi6.treasure-chest
+    titulo: "Puedes conseguir"
+    texto: >-
+      Bajo la rueda y en Farmear: lo que puede dar ese contenido, con su <b>% por pelea</b>.
+      <b>Siempre</b> (verde) = sale en cada victoria; en <b>dorado</b>, lo que sale menos del 1 %.
+      Pasa el ratón por un objeto para ver su nombre y para qué sirve.
+  - icono: farmear
+    titulo: "Farmear: todo en una pantalla"
+    texto: >-
+      Arriba, el modo con <b>Iniciar / Pausar / Detener</b> (y en Floor 1-3, el piso y la vuelta). En medio,
+      las cifras y el <b>botín</b> de esta sesión. Abajo, el <b>Registro</b> (o Plan, u Opciones) junto a los
+      <b>5 mejores equipos</b> para ese modo.
+  - icono: mdi6.format-list-checks
+    titulo: "Plan del día"
+    texto: >-
+      Farmear → <b>Plan</b>: añade tareas (modo + victorias) y pulsa <b>Iniciar plan</b>. El bot las hace en
+      orden sin ti; si se acaba la estamina salta las que la usan. Detener o F10 paran el plan entero.
+  - icono: trofeo
+    titulo: "Resumen al terminar"
+    texto: >-
+      Al acabar una sesión (o un plan entero) sale una tarjeta con victorias, tiempo, victorias por hora,
+      oro y el botín. Con avisos al móvil activados, te llega lo mismo con la foto de la última victoria.
+  - icono: mdi6.brain
+    titulo: "Cómo juega"
+    texto: >-
+      En Floor 1-3 e Indura, por defecto <b>Inteligente</b>: piensa el turno entero, junta cartas iguales
+      (fusiones) y prefiere las de área contra varios enemigos. Sirve con cualquier equipo. Se cambia a
+      <b>Simple</b> en Farmear → Opciones.
+  - icono: movil
+    titulo: "Desde el móvil"
+    texto: >-
+      Con la app ntfy (Ajustes → Avisos al móvil, y marca <b>Aceptar órdenes</b>) puedes escribirle:
+      <b>estado, iniciar, plan, pausar, reanudar, detener, captura</b> o <b>ayuda</b>.
+  - icono: mdi6.translate
+    titulo: "Idioma del juego"
+    texto: >-
+      El bot está hecho para el cliente de PC en <b>inglés</b>. Para el español se añaden las imágenes de
+      los botones en español (assets/imagenes/es) y reconoce los dos idiomas a la vez.
+
 guia:
   - titulo: "1. Arma el equipo"
     imagen: equipo.jpg
@@ -64,6 +111,15 @@ problemas:
       La primera vez que sale un objeto, el bot no sabe cómo se llama (casi siempre lo nombra solo con la
       galería de objetos). Si no, activa el modo administrador en Ajustes, entra en Botín, haz doble clic
       en su casilla y escríbele el nombre: a partir de ahí lo reconoce solo.
+  - pregunta: "En Floor 1-3 no encuentra el piso"
+    respuesta: >-
+      El bot lee el texto de la pantalla de pisos ("Floor 1", "Piso 1"...). Si un piso no aparece en
+      25 segundos, pasa al siguiente. Si pasa siempre, en Farmear marca <b>Detalle técnico</b>: el
+      registro muestra el texto que leyó; mándalo para ajustarlo.
+  - pregunta: "El plan del día se saltó una tarea"
+    respuesta: >-
+      Una tarea se salta si no puede empezar (juego cerrado, faltan capturas, una actualización
+      pendiente...) o, si se acabó la estamina, las que la usan. El <b>Registro</b> dice el motivo.
   - pregunta: "No me deja usarlo hasta que actualice"
     respuesta: >-
       Las actualizaciones son obligatorias para que todos jueguen con el guion más reciente. Pulsa
@@ -156,6 +212,18 @@ glosario:
   - termino: "Avisos al móvil (ntfy)"
     tipo: bot
     definicion: "App gratuita que recibe los avisos del bot si se atasca. Con 'Aceptar órdenes desde el móvil' (Ajustes) también puedes escribirle: estado, iniciar, pausar, reanudar, detener, captura o ayuda."
+  - termino: "Floor 1-3"
+    tipo: bot
+    definicion: "Modo que juega los pisos 1, 2 y 3 de una bestia seguidos y vuelve a empezar. Sirve cualquier equipo fuerte."
+  - termino: "Plan del día"
+    tipo: bot
+    definicion: "Lista de tareas (modo + victorias) que el bot hace una tras otra sin nadie delante. Farmear → Plan."
+  - termino: "Juego inteligente"
+    tipo: bot
+    definicion: "Forma de jugar que piensa el turno entero: fusiones, cartas de área y lo que deja para el turno siguiente."
+  - termino: "Garantizado"
+    tipo: juego
+    definicion: "Premio que sale en cada victoria (en Puedes conseguir, \"Siempre\")."
   - termino: "Modo administrador"
     tipo: bot
     definicion: "Opciones para quien mantiene la base del bot (capturas, personajes y equipos). Un jugador normal no lo necesita."
