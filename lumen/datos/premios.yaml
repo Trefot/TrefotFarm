@@ -5,6 +5,7 @@
 # <id del destino del catalogo>:
 #   primera_vez: lo que da la primera vez que se supera (una sola vez)
 #   garantizados: lo que da siempre, en cada victoria
+#   lider: lo que da solo al lider del grupo (en los demonios; el bot se une a grupos de otros, asi que no se muestra)
 #   premios: cada linea de la tabla del juego; prob = % que pone el juego (ya es sobre el total)
 
 objetos:
@@ -104,6 +105,21 @@ objetos:
   origen_fuego:
     nombre: Origen del fuego
     descripcion: Objeto necesario para fabricar reliquias sagradas. Se puede obtener en la batalla de bestia demoníaca de Surtr y la llama primordial.
+  cuerno_demonio_rojo:
+    nombre: Cuerno de demonio rojo
+    descripcion: Material que sirve para superar el límite de los héroes. Se obtiene del cadáver de un demonio rojo.
+  perfume_embriagador:
+    nombre: Perfume embriagador
+    descripcion: Sirve para mejorar complementos.
+  carta_demonio_rojo:
+    nombre: Demonio rojo
+    descripcion: Carta de artefacto del demonio rojo.
+  cofre_tesoro:
+    nombre: Cofre del tesoro
+    descripcion: Véndelo en la tienda para adquirir oro.
+  piedra_despertar:
+    nombre: Piedra del despertar
+    descripcion: Una piedra misteriosa que se usa como ingrediente para despertar equipo de grado SSR.
   esencia_azul:
     nombre: Esencia mágica azul
     descripcion: Esencia mágica usada para fabricar reliquias sagradas para héroes [humanos y hadas], [humanos] y de [raza desconocida].
@@ -226,3 +242,16 @@ surtr_pisos1a3:  # captura del juego, 2026-10-28 (sin carta de artefacto)
     - {caja: bronce, objeto: tenacidad_volundr, cantidad: 3, prob: 20}
     - {caja: bronce, objeto: esencia_desconocida, cantidad: 2, prob: 20}
     - {caja: bronce, objeto: esencia_dorada, cantidad: 2, prob: 20}
+
+demonio_rojo:  # captura del juego, 2026-10-28 (el titulo de la primera seccion estaba cortado: cuerno ×4 en cada victoria)
+  garantizados:
+    - {objeto: cuerno_demonio_rojo, cantidad: 4}
+  lider:
+    - {objeto: perfume_embriagador, prob: 100}
+  premios:
+    - {caja: oro, objeto: carta_demonio_rojo, prob: 0.5}
+    - {caja: oro, objeto: perfume_embriagador, prob: 8}
+    - {caja: plata, objeto: cofre_tesoro, prob: 5.5}
+    - {caja: plata, objeto: piedra_despertar, prob: 6}
+    - {caja: bronce, objeto: cuerno_demonio_rojo, cantidad: 5, prob: 40}
+    - {caja: bronce, objeto: cuerno_demonio_rojo, cantidad: 4, prob: 40}
