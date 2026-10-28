@@ -53,6 +53,8 @@ SALTAR_PISO_S = 40  # sin encontrar el piso que toca en la pantalla de pisos (ni
 CADA_DESPLAZAR_S = 2.0  # sin ver el piso que toca: deslizar la lista cada 2 s buscandolo
 DESPLAZAR_ABAJO = ((270, 720), (270, 420))  # dedo hacia arriba: la lista baja (el Floor 1 esta abajo)
 DESPLAZAR_ARRIBA = ((270, 420), (270, 720))
+BAJO_TITULO = 56  # del centro del titulo del piso al centro de su circulo (lo que se toca)
+LIMITE_CIRCULO = 780  # mas abajo lo tapa la barra del equipo
 CADA_OCR_S = 1.0  # leer el texto de la pantalla como mucho una vez por segundo (el OCR gasta CPU)
 
 
@@ -173,9 +175,21 @@ class BestiaPisos1a3(PerrosPiso4):
             return None
         rect = self._buscar_piso(p)
         if rect is not None:
-            self.log(f"Abro el Floor {self.piso}.")
-            entrada.clic(rect, o, espera=1.0)
-            self._desplazamientos = 0
+            # El piso se abre tocando su circulo (la imagen de la bestia), no su titulo: en la prueba de la
+            # 0.2.3 el bot tocaba "Twilight Temple Floor 1" una y otra vez sin abrir nada. El circulo queda
+            # ~56 px por debajo del centro del titulo (medido en una captura real).
+            x, y, w, h = rect
+            punto = (x + w // 2, y + h // 2 + BAJO_TITULO)
+            if punto[1] <= LIMITE_CIRCULO:
+                self.log(f"Abro el Floor {self.piso}.")
+                entrada.clic(punto, o, espera=1.0)
+                self._desplazamientos = 0
+                return None
+            # El circulo aun queda tapado por la barra del equipo: bajar la lista antes de tocar.
+            if time.time() - self._ultimo_desplazamiento > CADA_DESPLAZAR_S:
+                entrada.arrastrar(*DESPLAZAR_ABAJO, o)
+                self._ultimo_desplazamiento = time.time()
+                self._ultimo_ocr = (0.0, 0, None)
             return None
         # Sin el piso a la vista: deslizar la lista (4 veces hacia abajo, 4 hacia arriba...).
         if time.time() - self._ultimo_desplazamiento > CADA_DESPLAZAR_S:

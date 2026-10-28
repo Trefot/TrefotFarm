@@ -148,6 +148,7 @@ class Navegacion(ConPantallaSimulada):
         m = self.modo(B.PerrosPisos1a3, bestia=2)
         self.assertIsNone(m.elegir_piso(set(), (0, 0)))
         self.assertEqual(len(self.clics), 1, "toca el Floor 1")
+        self.assertEqual(self.clics[-1], (7, 7 + B.BAJO_TITULO), "en su circulo, no en el titulo (prueba de la 0.2.3)")
         self.assertFalse(self.arrastres, "no hace falta deslizar")
 
     def test_cierra_el_aviso_al_abrir_la_bestia(self):
