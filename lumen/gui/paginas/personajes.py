@@ -165,7 +165,7 @@ class PaginaPersonajes(Pagina):
     def _construir(self):
         """Una tarjeta por personaje (se hacen una vez; filtrar solo las coloca o las esconde)."""
         for t in self.tarjetas.values():
-            t.setParent(None)
+            t.deleteLater()
         from lumen.gui.paginas.equipos import cargar_equipos
 
         self.en_equipos = {pid for clave, lista in cargar_equipos().items() if not clave.startswith("_")

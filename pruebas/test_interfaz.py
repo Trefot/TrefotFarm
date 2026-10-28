@@ -134,11 +134,68 @@ class Interfaz(unittest.TestCase):
             self.assertIsNone(f.plan_paso)
         control.reiniciar()
 
+    def test_prueba_rapida(self):
+        from lumen.gui.paginas import farmear
+
+        f = self.v.farmear
+        corriendo = {"v": False}
+        arrancados, informes, enviados = [], [], []
+        guion = {}  # modo -> como acaba: "ok", "error", "no_arranca" o "sin_victoria"
+
+        def iniciar(remoto=False):
+            m = f.modo_cls.id
+            arrancados.append(m)
+            if guion.get(m) == "no_arranca":
+                f._problema("Juego cerrado", "No encuentro la ventana.", remoto)
+                return
+            corriendo["v"] = True
+            self.v.puente.ultimo_error = None
+            f.inicio = time.time() - 90
+
+        def terminar():
+            m = f.modo_cls.id
+            corriendo["v"] = False
+            control.reiniciar()
+            if guion.get(m) == "error":
+                self.v.puente.ultimo_error = "KeyError: 'x' (bestias_pisos1a3.py:12 en elegir_piso)"
+            f.ultimas_stats = {"victorias": 0 if guion.get(m) in ("error", "sin_victoria") else 1}
+            f._terminado()
+
+        tareas = farmear.tareas_de_prueba()
+        self.assertEqual(len(tareas), 7)
+        self.assertTrue(all(t["victorias"] == 1 for t in tareas))
+        ids = [t["modo"] for t in tareas]
+        guion.update({ids[1]: "error", ids[2]: "no_arranca", ids[3]: "sin_victoria"})
+        with mock.patch.object(type(self.v.puente), "corriendo", property(lambda s: corriendo["v"])), \
+             mock.patch.object(f, "iniciar", iniciar), \
+             mock.patch.object(ventana, "ventana_abierta", lambda: True), \
+             mock.patch("lumen.gui.paginas.farmear.QTimer.singleShot", lambda ms, fn: fn()), \
+             mock.patch.object(farmear, "VentanaInforme", lambda padre, texto: informes.append(texto) or mock.MagicMock()), \
+             mock.patch.object(farmear, "LOGS", entorno.TEMPORAL), \
+             mock.patch.object(avisos, "enviar", lambda texto, *a: enviados.append(texto)):
+            f.iniciar_prueba(remoto=True)
+            while corriendo["v"]:
+                terminar()
+        self.assertEqual(arrancados, ids)
+        self.assertIsNone(f.plan_paso)
+        self.assertFalse(f.plan_prueba)
+        resultados = [r["resultado"] for r in f.plan_resultados]
+        self.assertEqual(resultados, ["ok", "fallo", "no_empezo", "sin_victoria", "ok", "ok", "ok"])
+        self.assertIn("no empezó: Juego cerrado", f.plan_resultados[2]["motivo"])
+        texto = informes[0]
+        self.assertIn("Resultado: 4 de 7 bien", texto)
+        self.assertIn("✗", texto)
+        self.assertIn("KeyError", texto)
+        self.assertIn(texto, enviados, "el informe tambien va al movil")
+        self.assertEqual(len(list(entorno.TEMPORAL.glob("prueba_*.txt"))), 1)
+        control.reiniciar()
+
     def test_ordenes_del_movil(self):
         from lumen import ordenes
 
         for texto, orden in (("Plan ver", "plan ver"), ("tareas", "plan ver"), ("plan", "plan"),
-                             ("saltar", "saltar"), ("skip", "saltar"), ("pausa", "pausar"), ("hola", None)):
+                             ("saltar", "saltar"), ("skip", "saltar"), ("pausa", "pausar"), ("prueba", "prueba"),
+                             ("hola", None)):
             with self.subTest(texto=texto):
                 self.assertEqual(ordenes.interpretar(texto), orden)
 

@@ -124,6 +124,7 @@ desde la app ntfy. El bot contesta en el mismo canal:
   plan       empieza el plan del dia
   plan ver   las tareas del plan y por cual va
   saltar     deja la tarea del plan en curso y pasa a la siguiente
+  prueba     prueba rapida (ver PRUEBAS)
   pausar / reanudar / detener
   captura    foto de la pantalla del juego
   ayuda      la lista de ordenes
@@ -143,6 +144,12 @@ Doble clic en Probar.bat (o: py -3.12 -m unittest discover -s pruebas). Comprueb
 logica del bot sigue bien: estrategias, juego inteligente, pisos, plan del dia, botin, premios, idiomas
 y que la interfaz abre todas las paginas. No usa el juego ni el raton y no toca config.yaml ni el botin.
 Al cambiar algo del codigo, pasarlas antes de publicar la actualizacion.
+
+Prueba rapida (con el juego): Farmear -> Plan -> "Prueba rapida" (o la orden "prueba" desde el movil).
+Juega 1 victoria de cada modo listo, uno tras otro, y al final da un informe: bien, fallo, no empezo o
+sin victoria, con el tiempo y el motivo. Sale en una ventana con boton Copiar, llega al movil y se
+guarda en logs\prueba_<fecha>.txt. Ademas, si el bot falla o se atasca, al movil llega el modo, el
+estado, el error con su archivo y linea y los ultimos pasos: se puede copiar y pegar tal cual.
 
 
 CARPETAS

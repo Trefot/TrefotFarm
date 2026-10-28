@@ -10,6 +10,7 @@ from PyQt5.QtWidgets import (
     QButtonGroup,
     QCheckBox,
     QComboBox,
+    QDialog,
     QFormLayout,
     QFrame,
     QHBoxLayout,
@@ -25,15 +26,15 @@ from PyQt5.QtWidgets import (
     QVBoxLayout,
 )
 
-from lumen import actualizador, avisos, botin, config, ordenes, premios, recompensas, ventana
+from lumen import actualizador, avisos, botin, config, informe, ordenes, premios, recompensas, ventana
 from lumen.control import control
 from lumen.gui import iconos, plan, resumen, tema
 from lumen.gui.arranque import EMBLEMA
 from lumen.gui.comun import Pagina, formatear_tiempo, icono_premio
 from lumen.gui.paginas.equipos import clave_de_equipos, tarjetas_equipos
 from lumen.modos import MODOS
-from lumen.modos.catalogo import contenido_de, foto_de
-from lumen.rutas import IMAGENES
+from lumen.modos.catalogo import CATALOGO, contenido_de, foto_de
+from lumen.rutas import IMAGENES, LOGS
 
 CIFRAS = [("victorias", "Victorias", "trofeo"), ("derrotas", "Derrotas", "derrota"), ("reinicios", "Reinicios", "reinicio"),
           ("tasa", "% de éxito", "tasa"), ("pociones", "Pociones", "pocion"), ("tiempo", "Tiempo", "reloj")]
@@ -44,6 +45,35 @@ def _repintar(widget, propiedad: str, valor):
     widget.style().unpolish(widget)
     widget.style().polish(widget)
 
+
+
+def tareas_de_prueba() -> list[dict]:
+    """Los modos de farmeo listos, en el orden del catalogo, con 1 victoria cada uno."""
+    return [{"modo": d.id, "victorias": 1} for c in CATALOGO for d in c.destinos if d.id in MODOS]
+
+
+class VentanaInforme(QDialog):
+    """El informe de la prueba rapida, con un boton para copiarlo (y pegarlo a quien mantiene el bot)."""
+
+    def __init__(self, padre, texto: str):
+        super().__init__(padre)
+        self.setWindowTitle("Informe de la prueba")
+        self.resize(560, 420)
+        capa = QVBoxLayout(self)
+        capa.addWidget(QLabel("Prueba rápida terminada. También te llegó al móvil.", objectName="titulo_seccion"))
+        caja = QTextEdit(readOnly=True, objectName="registro")
+        caja.setPlainText(texto)
+        capa.addWidget(caja, 1)
+        fila = QHBoxLayout()
+        fila.addStretch()
+        b_copiar = QPushButton(" Copiar", objectName="primario")
+        b_copiar.setIcon(iconos.icono("mdi6.content-copy", tema.SOBRE_ACENTO))
+        b_copiar.clicked.connect(lambda: (QApplication.clipboard().setText(texto), b_copiar.setText(" Copiado")))
+        fila.addWidget(b_copiar)
+        b_cerrar = QPushButton("Cerrar")
+        b_cerrar.clicked.connect(self.close)
+        fila.addWidget(b_cerrar)
+        capa.addLayout(fila)
 
 class PaginaFarmear(Pagina):
     titulo = "Farmear"
@@ -202,10 +232,15 @@ class PaginaFarmear(Pagina):
         self.panel_plan = plan.PanelPlan()
         self.panel_plan.iniciar.connect(self.iniciar_plan)
         self.panel_plan.saltar.connect(self.saltar_tarea)
+        self.panel_plan.probar.connect(self.iniciar_prueba)
         self.plan_paso: int | None = None  # tarea del plan en curso (None = no hay plan en marcha)
         self.plan_resumenes: list[dict] = []  # lo conseguido en cada tarea: un solo resumen al acabar el plan
         self.plan_sin_estamina = False
         self.plan_saltar = False  # se detuvo la tarea en curso para pasar a la siguiente (no el plan)
+        self.plan_tareas: list[dict] = []  # las tareas del plan en marcha (el guardado o el de la prueba)
+        self.plan_prueba = False  # el plan en marcha es la prueba rapida: al final, un informe
+        self.plan_resultados: list[dict] = []  # como acabo cada tarea (para el informe)
+        self.ultimo_problema = ""  # por que no pudo empezar la ultima vez
         for i, (texto, ic, vista) in enumerate((("Registro", "registro", self.registro), ("Plan", "mdi6.format-list-checks", self.panel_plan),
                                                ("Opciones", "ajustes", panel_opciones))):
             b = QPushButton(" " + texto, objectName="chip", checkable=True, checked=i == 0)
@@ -363,8 +398,12 @@ class PaginaFarmear(Pagina):
 
     # ------------------------------------------------------------------ control
     def _problema(self, titulo: str, texto: str, remoto: bool):
-        """Avisa de por que no se puede arrancar: en pantalla, o al movil si la orden vino de ahi."""
-        if remoto:
+        """Avisa de por que no se puede arrancar: en pantalla, o al movil si la orden vino de ahi.
+        En la prueba rapida solo se apunta (sale en el informe)."""
+        self.ultimo_problema = f"{titulo}: {texto.splitlines()[0] if texto else ''}".rstrip(": ")
+        if self.plan_prueba:
+            self.escribir(self.ultimo_problema, "aviso")
+        elif remoto:
             avisos.enviar(f"{titulo}: {texto}")
         else:
             QMessageBox.warning(self, titulo, texto)
@@ -391,7 +430,7 @@ class PaginaFarmear(Pagina):
         if equipo is not None:
             equipo.recargar()
             faltan = equipo.faltantes()
-            if faltan and remoto:
+            if faltan and (remoto or self.plan_prueba):
                 self._problema("Faltan capturas", "\n".join(f"• {d.descripcion}" for d in faltan), True)
                 return
             if faltan:
@@ -497,6 +536,14 @@ class PaginaFarmear(Pagina):
             self.iniciar_plan(remoto=True)
             if self.puente.corriendo:
                 avisos.enviar(f"Empiezo el plan del día: {len(plan.cargar())} tareas.")
+        elif orden == "prueba":
+            if corriendo:
+                avisos.enviar("Ya está en marcha. " + self._resumen())
+                return
+            self.escribir("Orden del movil: prueba rápida.", "info")
+            self.iniciar_prueba(remoto=True)
+            if self.puente.corriendo:
+                avisos.enviar(f"Empiezo la prueba rápida: {len(self.plan_tareas)} modos, 1 victoria de cada uno.")
         elif orden == "plan ver":
             avisos.enviar(self._texto_plan())
         elif orden == "saltar":
@@ -540,6 +587,7 @@ class PaginaFarmear(Pagina):
         return "\n".join(lineas)
 
     def _terminado(self):
+        segundos = time.time() - self.inicio if self.inicio else 0
         if not self.modo_externo:  # solo las sesiones de farmeo, no las herramientas del admin
             self._mostrar_resumen()
         self._pintar_botin()
@@ -550,6 +598,7 @@ class PaginaFarmear(Pagina):
             if self.ultimas_stats.get("motivo_fin") == "sin_estamina":
                 self.plan_sin_estamina = True
             saltada, self.plan_saltar = self.plan_saltar, False
+            self._apuntar_resultado(segundos, saltada)
             if self.app.update_bloqueante or (not saltada and (control.detenido or control.parar_en_zona_segura)):
                 self.escribir("Plan del día detenido.", "aviso")
                 self._fin_plan()
@@ -566,18 +615,61 @@ class PaginaFarmear(Pagina):
             self.app.navegar("recompensas")
 
     # ------------------------------------------------------------ plan del dia
-    def iniciar_plan(self, remoto: bool = False):
-        """Empieza el plan del dia por la primera tarea."""
+    def iniciar_plan(self, remoto: bool = False, tareas: list[dict] | None = None, prueba: bool = False):
+        """Empieza el plan del dia (o las ``tareas`` dadas) por la primera tarea."""
         if self.puente.corriendo:
             return
-        if not plan.cargar():
+        tareas = tareas if tareas is not None else plan.cargar()
+        if not tareas:
             self._problema("Plan del día", "El plan no tiene tareas.", remoto)
             return
-        self.escribir("Empieza el plan del día.", "ok")
+        self.escribir("Empieza la prueba rápida." if prueba else "Empieza el plan del día.", "ok")
+        self.plan_tareas = tareas
+        self.plan_prueba = prueba
+        self.plan_resultados = []
         self.plan_paso = -1
         self.plan_resumenes = []
         self.plan_sin_estamina = False
         self._siguiente_tarea(remoto)
+
+    def iniciar_prueba(self, remoto: bool = False):
+        """Prueba rapida: 1 victoria de cada modo listo, una tras otra, y un informe al final."""
+        if self.puente.corriendo:
+            return
+        tareas = tareas_de_prueba()
+        if not ventana.ventana_abierta():
+            self._problema("Juego cerrado", "Abre el juego y llega a la Tavern antes de la prueba.", remoto)
+            return
+        if not remoto and QMessageBox.question(
+                self, "Prueba rápida",
+                f"Juego 1 victoria de cada modo listo ({len(tareas)}), uno tras otro, y al final te doy un informe "
+                "con lo que funcionó y lo que no.\n\nDeja el juego en la Tavern con el equipo puesto. "
+                "F10 para pararla.\n\n¿Empezar?") != QMessageBox.Yes:
+            return
+        self.iniciar_plan(remoto, tareas, prueba=True)
+
+    def _apuntar_resultado(self, segundos: float, saltada: bool):
+        """Como acabo la tarea en curso del plan (para el informe de la prueba)."""
+        if not 0 <= self.plan_paso < len(self.plan_tareas):
+            return
+        v = int(self.ultimas_stats.get("victorias", 0) or 0)
+        error = self.puente.ultimo_error
+        if error:
+            resultado, motivo = "fallo", f"ERROR: {error}"
+        elif saltada:
+            resultado, motivo = "saltada", "saltada a mano"
+        elif v >= 1:
+            resultado, motivo = "ok", ""
+        elif control.detenido:
+            resultado, motivo = "detenida", "detenida a mano"
+        else:
+            fin = self.ultimas_stats.get("motivo_fin", "")
+            resultado, motivo = "sin_victoria", "sin estamina" if fin == "sin_estamina" else (fin or "acabó sin ganar")
+        self._resultado(self.plan_paso, resultado, motivo, v, segundos)
+
+    def _resultado(self, i: int, resultado: str, motivo: str = "", victorias: int = 0, segundos: float = 0):
+        self.plan_resultados.append({"nombre": MODOS[self.plan_tareas[i]["modo"]].nombre, "resultado": resultado,
+                                     "motivo": motivo, "victorias": victorias, "segundos": segundos})
 
     def saltar_tarea(self):
         """Detiene la tarea en curso; el plan sigue con la siguiente."""
@@ -587,7 +679,7 @@ class PaginaFarmear(Pagina):
 
     def _texto_plan(self) -> str:
         """Las tareas del plan para el movil: ✓ hecha, ▶ en curso."""
-        tareas = plan.cargar()
+        tareas = self.plan_tareas if self.plan_paso is not None else plan.cargar()
         if not tareas:
             return "El plan no tiene tareas. Añádelas en Farmear → Plan."
         lineas = [f"Plan del día · tarea {self.plan_paso + 1} de {len(tareas)}" if self.plan_paso is not None
@@ -601,27 +693,36 @@ class PaginaFarmear(Pagina):
         """Arranca la siguiente tarea del plan; si una no puede empezar, prueba con la siguiente."""
         if self.plan_paso is None or self.puente.corriendo:
             return
-        tareas = plan.cargar()
+        tareas = self.plan_tareas
         for i in range(self.plan_paso + 1, len(tareas)):
             t = tareas[i]
             self.plan_paso = i
             if self.plan_sin_estamina and any(op.clave == "pociones" for op in MODOS[t["modo"]].opciones):
                 self.escribir(f"Plan: salto la tarea {i + 1} ({MODOS[t['modo']].nombre}): no queda estamina.", "aviso")
+                self._resultado(i, "saltada", "sin estamina")
                 continue
-            self.panel_plan.marcar(i)
+            if not self.plan_prueba:
+                self.panel_plan.marcar(i)
             self.escribir(f"Plan: tarea {i + 1} de {len(tareas)} · {MODOS[t['modo']].nombre} · {t['victorias']} victorias.", "ok")
             self.preparar(t["modo"], {"victorias": int(t["victorias"])})
+            self.ultimo_problema = ""
             self.iniciar(remoto=remoto)
             if self.puente.corriendo:
                 return
             self.escribir(f"La tarea {i + 1} no pudo empezar; paso a la siguiente.", "aviso")
-        self.escribir("Plan del día terminado.", "ok")
+            self._resultado(i, "no_empezo", f"no empezó: {self.ultimo_problema}" if self.ultimo_problema else "no empezó")
+        self.escribir("Prueba rápida terminada." if self.plan_prueba else "Plan del día terminado.", "ok")
         self._fin_plan()
 
     def _fin_plan(self):
         """Cierra el plan y muestra un solo resumen con lo de todas sus tareas (tambien al movil)."""
         self.plan_paso = None
         self.panel_plan.marcar(None)
+        if self.plan_prueba:
+            self.plan_prueba = False
+            self.plan_resumenes = []
+            self._informe_prueba(informe.texto_prueba(self.plan_resultados))
+            return
         if self.plan_resumenes:
             n = len(self.plan_resumenes)
             nombre = f"Plan del día ({n} tarea{'s' if n != 1 else ''})"
@@ -632,6 +733,17 @@ class PaginaFarmear(Pagina):
         else:
             avisos.enviar("Lumen Farm: plan del día terminado.")
         self.plan_resumenes = []
+
+    def _informe_prueba(self, texto: str):
+        """El informe de la prueba: en una ventana para copiarlo, al movil y en logs/."""
+        try:
+            (LOGS / f"prueba_{time.strftime('%Y%m%d_%H%M%S')}.txt").write_text(texto, encoding="utf-8")
+        except OSError:
+            pass
+        avisos.enviar(texto)
+        self.escribir(texto, "info")
+        self._ventana_informe = VentanaInforme(self, texto)
+        self._ventana_informe.show()
 
     def _mostrar_resumen(self):
         """Tarjeta con lo conseguido en la sesion que acaba de terminar, y lo mismo al movil."""

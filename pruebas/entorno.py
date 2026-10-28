@@ -6,8 +6,11 @@
 - config.yaml no se toca: los ajustes viven en memoria mientras corren las pruebas.
 """
 
+import atexit
 import os
+import shutil
 import sys
+import tempfile
 from pathlib import Path
 from unittest import mock
 
@@ -29,6 +32,10 @@ _ajustes = dict(config.POR_DEFECTO)
 config.obtener = lambda clave, defecto=None: _ajustes.get(clave, defecto)
 config.guardar = lambda cambios: _ajustes.update(cambios)
 config.todo = lambda: dict(_ajustes)
+
+
+TEMPORAL = Path(tempfile.mkdtemp(prefix="lumen_pruebas_"))  # archivos que escriben las pruebas (se borra al acabar)
+atexit.register(shutil.rmtree, TEMPORAL, True)
 
 
 def ajustes() -> dict:

@@ -29,6 +29,13 @@ Etapas previstas:
 
 CAMBIOS
 -------
+0.2.0-alpha
+  - Prueba rapida: 1 victoria de cada modo listo y un informe (bien / fallo / no empezo), en
+    pantalla con boton Copiar, al movil y en logs. Desde el movil: orden "prueba".
+  - Errores y atascos llegan al movil con el detalle: modo, estado, error, archivo y linea y los
+    ultimos pasos, listo para copiar.
+  - Personajes: las tarjetas viejas se borran bien al recargar.
+
 0.1.0-alpha
   Primera version con el nombre Lumen Farm. Lo que trae:
   - Inicio: rueda con fotos para elegir que farmear (bestias Floor 1-3 y Floor 4, demonios),

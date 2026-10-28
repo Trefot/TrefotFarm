@@ -25,7 +25,7 @@ uso:
     titulo: "Plan del día"
     texto: >-
       Farmear → <b>Plan</b>: añade tareas (modo + victorias) y pulsa <b>Iniciar plan</b>. El bot las hace en
-      orden sin ti; si se acaba la estamina salta las que la usan. <b>Saltar tarea</b> pasa a la siguiente; Detener o F10 paran el plan entero.
+      orden sin ti; si se acaba la estamina salta las que la usan. <b>Saltar tarea</b> pasa a la siguiente; Detener o F10 paran el plan entero. <b>Prueba rápida</b>: 1 victoria de cada modo y un informe de lo que funcionó.
   - icono: trofeo
     titulo: "Resumen al terminar"
     texto: >-
@@ -41,7 +41,7 @@ uso:
     titulo: "Desde el móvil"
     texto: >-
       Con la app ntfy (Ajustes → Avisos al móvil: pulsa <b>Generar</b> y marca <b>Aceptar órdenes</b>) puedes escribirle:
-      <b>estado, iniciar, plan, plan ver, saltar, pausar, reanudar, detener, captura</b> o <b>ayuda</b>.
+      <b>estado, iniciar, plan, plan ver, saltar, prueba, pausar, reanudar, detener, captura</b> o <b>ayuda</b>. Si algo falla o se atasca, te llega el detalle para copiarlo.
   - icono: mdi6.translate
     titulo: "Idioma del juego"
     texto: >-
