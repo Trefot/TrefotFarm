@@ -146,13 +146,14 @@ def unir_repetidos_de_galeria() -> int:
 def deshacer_uniones_malas() -> int:
     """Uniones hechas porque dos objetos tenian el mismo de la galeria, cuando uno de esos vinculos ya no
     vale (p. ej. el cubo gris tomado por Blue Magic Essence): se separan y se releen las fotos para que
-    cada uno recupere sus cantidades. Devuelve cuantas deshizo."""
+    cada uno recupere sus cantidades. Devuelve cuantas deshizo.
+    Solo las que hizo el bot ("unido_auto"): las que une el jugador a mano se respetan siempre."""
     catalogo = botin.cargar_catalogo()
     deshechas = 0
     for oid, datos in catalogo.items():
         destino = (datos or {}).get("unido_a")
         gid = (datos or {}).get("galeria")
-        if destino and gid and (catalogo.get(destino) or {}).get("galeria") != gid:
+        if (datos or {}).get("unido_auto") and destino and gid and (catalogo.get(destino) or {}).get("galeria") != gid:
             datos.pop("unido_a", None)
             datos.pop("unido_auto", None)
             deshechas += 1

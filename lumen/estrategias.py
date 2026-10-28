@@ -44,6 +44,14 @@ class Estrategia:
         return min(candidatas, key=lambda c: (self.prioridad.index(c.nombre), ORDEN_RANGO.get(c.rango, 3), -c.posicion))
 
 
+def la_de_mas_rango(mano: list[Carta]) -> Carta | None:
+    """Si ninguna carta de la mano esta en la prioridad: la jugable de mas rango, para no quedarse parado."""
+    jugables = [c for c in mano if c.tipo not in NO_JUGABLES]
+    if not jugables:
+        return None
+    return min(jugables, key=lambda c: (ORDEN_RANGO.get(c.rango, 3), -c.posicion))
+
+
 def cargar(contenido: str) -> list[Estrategia]:
     if not ARCHIVO.is_file():
         return []
