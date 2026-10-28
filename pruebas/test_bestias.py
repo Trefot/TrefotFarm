@@ -123,6 +123,22 @@ class Navegacion(ConPantallaSimulada):
         self.assertIsNone(m.ir_a_perros({"pantalla_bestias", "perros"}, (0, 0)))
         self.assertEqual(len(self.clics), 1, "toca a los perros para entrar")
 
+    def test_lobos_objetivo_por_fase(self):
+        """Floor 1-3 de los perros: fase 1 el perro claro (der), fases 2 y 3 el oscuro (izq)."""
+        m = self.modo(B.PerrosPisos1a3, {"jugar": "Simple"})
+        mano = [Carta(i, (0, 0, 1, 1), None, T.NORMAL, Rango.PLATA) for i in range(8)]
+        self.assertEqual([m.estrategia.decidir(f, 1, 0, mano, 4)[1] for f in (1, 2, 3)], ["der", "izq", "izq"])
+        self.assertIsNone(self.modo(B.PajaroPisos1a3, {"jugar": "Simple"}).estrategia.decidir(1, 1, 0, mano, 4)[1])
+
+    def test_boton_por_texto_solo_seguros(self):
+        """Pantallas sin imagen: toca OK/Receive..., nunca Cancel ni Shop."""
+        m = self.modo(B.PerrosPisos1a3)
+        self._parchear(ocr, "lineas_con_posicion", lambda p, **k: [("Cancel", (10, 10, 40, 10)), ("Shop", (10, 30, 40, 10))])
+        self.assertEqual(m.clic_boton_por_texto(None, (0, 0)), "")
+        self._parchear(ocr, "lineas_con_posicion", lambda p, **k: [("Cancel", (10, 10, 40, 10)), ("OK", (200, 800, 30, 12))])
+        self.assertEqual(m.clic_boton_por_texto(None, (0, 0)), "OK")
+        self.assertEqual(self.clics[-1], (215, 806))
+
     def test_floor_1_leido_como_i(self):
         """El lector de texto lee "Twilight Temple Floor 1" como "Floor I" (prueba de la 0.2.1)."""
         self.assertEqual(B.numeros_de_piso("Twilight Temple Floor I"), [1])

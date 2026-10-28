@@ -27,5 +27,6 @@ Reglas completas en CAMBIOS.txt. Resumen:
 - **Probar con el juego**: la prueba rápida (Farmear → Plan) aún no ha pasado entera. En la prueba de
   la 0.2.1 (Perros Floor 1-3) el bot creía estar en los pisos sin haber entrado a la bestia (contaba
   "Obtain Floor N First Clear Reward") y no veía el Floor 1 (el OCR lee "Floor I"): arreglado en 0.2.2
-  con capturas reales, sin probar aún una pelea entera. El juego no acepta clics de un proceso sin
+  con capturas reales; con la 0.2.2 ganó Floor 1, 2 y 3 seguidos. 0.2.3: objetivo de los lobos por
+  fase, pantallas sin imagen tras ganar, Indura acepta como AutoFarming y foto del botín: sin probar. El juego no acepta clics de un proceso sin
   permisos de administrador: las pruebas en vivo las lanza el usuario desde Lumen.

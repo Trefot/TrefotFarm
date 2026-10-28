@@ -63,6 +63,7 @@ class BestiaPisos1a3(PerrosPiso4):
     ciclo_pisos = (1, 2, 3)  # los pisos que recorre (la pagina Farmear los dibuja con el actual marcado)
     enemigos = 1  # enemigos en la pelea (las cartas de area valen mas con varios)
     piso3_superado = None  # Plantilla de "Floor 3 Cleared" de esta bestia, si la hay
+    objetivos: dict[int, str] = {}  # fase -> enemigo al que atacar ("izq"/"der"); vacio = el que marque el juego
     descripcion = "Floor 1, 2 y 3 seguidos, y vuelta a empezar. Sirve cualquier equipo fuerte."
     duracion = ""
     fases = 0  # no se sabe aun cuantas fases tienen estos pisos
@@ -83,6 +84,14 @@ class BestiaPisos1a3(PerrosPiso4):
         super().__init__(valores)
         inteligente = self.valores.get("jugar", "Inteligente") != "Simple"
         self.estrategia = EstrategiaInteligente(self.enemigos) if inteligente else EstrategiaSimple()
+        if self.objetivos:  # la estrategia no elige enemigo: se le pone el de la fase
+            decidir = self.estrategia.decidir
+
+            def con_objetivo(fase, turno, accion, mano, total=4):
+                idx, objetivo, talento = decidir(fase, turno, accion, mano, total)
+                return idx, objetivo or self.objetivos.get(fase), talento
+
+            self.estrategia.decidir = con_objetivo
         self.stats["estrategia"] = "Inteligente" if inteligente else "Simple"  # queda en el historial
         self.textos_vistos = False
         self.piso = int(self.valores.get("primer_piso") or 1)
@@ -246,17 +255,19 @@ def _es_premio(texto: str) -> bool:
     return any(palabra in t for palabra in ("clear", "superad", "reward", "recompensa", "obtain", "obten"))
 
 
-def _bestia(id_base: str, titulo: str, plantilla, imagen: str, piso3=None, enemigos: int = 1):
+def _bestia(id_base: str, titulo: str, plantilla, imagen: str, piso3=None, enemigos: int = 1, objetivos=None):
     """Crea el modo Floor 1-3 de una bestia."""
     return type(f"Pisos1a3_{id_base}", (BestiaPisos1a3,), {
         "id": f"{id_base}_pisos1a3", "nombre": f"{titulo} · Floor 1-3", "titulo_juego": titulo,
         "subtitulo_juego": "Demonic Beast · Floor 1-3", "imagen": imagen, "bestia": plantilla,
-        "piso3_superado": piso3, "enemigos": enemigos,
+        "piso3_superado": piso3, "enemigos": enemigos, "objetivos": objetivos or {},
     })
 
 
 PerrosPisos1a3 = _bestia("perros", "Skollandhati & Hati", juego.perros, "demonic_beasts/skollandhati.png",
-                         juego.piso3_superado, enemigos=2)  # los dos perros
+                         juego.piso3_superado, enemigos=2,  # los dos perros
+                         # Como AutoFarming: en la fase 1 el perro claro (derecha), en la 2 y la 3 el oscuro (izquierda).
+                         objetivos={1: "der", 2: "izq", 3: "izq"})
 PajaroPisos1a3 = _bestia("pajaro", "Hraesvelgr", juego.pajaro, "demonic_beasts/hraesvelgr.png")
 CiervoPisos1a3 = _bestia("ciervo", "Eikthyrnir", juego.ciervo, "deer/Eikthyrnir.png")
 SerpientePisos1a3 = _bestia("serpiente", "Nidhoggr", juego.serpiente, "snake/nidhoggr.png")

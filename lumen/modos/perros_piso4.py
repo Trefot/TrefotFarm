@@ -256,6 +256,8 @@ class PerrosPiso4(Modo):
         self.talento_usado = False
         self.inicio_pelea = time.time()
         self.foto_recompensa = False
+        self.destruida_desde: float | None = None  # cuando se vio "Creature Destroyed" (fin de la pelea)
+        self.ultimo_boton_texto = 0.0
         self.ultima_pantalla_victoria = None
         self.previa_recompensa = None  # captura anterior de la pantalla de recompensas (para verla quieta)
         self.ok_visto_desde: float | None = None
@@ -348,11 +350,17 @@ class PerrosPiso4(Modo):
         self.clic_si(juego.saltar, p, o)
         self.clic_si(juego.mision_semanal, p, o, punto=juego.COORD["mision_semanal"])
         self.clic_si(juego.info_mision, p, o)
-        self.clic_si(juego.criatura_destruida, p, o)
+        if self.clic_si(juego.criatura_destruida, p, o):
+            self.destruida_desde = self.destruida_desde or time.time()
         if juego.derrota.esta(p) or juego.cerrar.esta(p):
             return "derrota"
         if juego.victoria.esta(p):
             return "victoria"
+        # Tras destruir la bestia puede salir una pantalla sin imagen guardada (las recompensas aseguradas de la
+        # semana): en la prueba de la 0.2.2 el bot se quedo ahi 2 minutos. A los 5 s se lee y se toca su boton.
+        if self.destruida_desde and time.time() - self.destruida_desde > 5 and time.time() - self.ultimo_boton_texto > 2:
+            self.ultimo_boton_texto = time.time()
+            self.clic_boton_por_texto(p, o)
         if juego.piso3_superado.esta(p):
             self.log("Volvi a la pantalla de pisos sin ver el final de la pelea.", "aviso")
             return "elegir_piso"

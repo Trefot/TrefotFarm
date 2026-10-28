@@ -22,7 +22,7 @@ partidas, el bot se queda esperando invitaciones que no llegan; se para con un t
 
 import time
 
-from lumen import cartas, entrada, estrategias, inteligencia, juego
+from lumen import botin, cartas, entrada, estrategias, inteligencia, juego
 from lumen.control import Detenido, control
 from lumen.motor import Modo, Opcion, TerminarModo
 from lumen.vision import Plantilla
@@ -140,7 +140,6 @@ class Indura(Modo):
                 espera = float(str(self.valores["espera"]).replace(",", "."))
             except ValueError:
                 espera = 9.3
-            entrada.apuntar(rect, o)  # el raton ya encima de Accept: a los 9.3 s solo falta pulsar
             self.log(f"¡Invitación! La acepto a los {espera:.1f} s.")
             while (falta := espera - (time.perf_counter() - visto)) > 0:
                 time.sleep(min(falta, 0.05))  # en trozos cortos: F10 y la pausa siguen respondiendo
@@ -149,8 +148,17 @@ class Indura(Modo):
                 if control.en_pausa:
                     self.log("En pausa: dejo pasar esta invitación.", "aviso")
                     return None
-            # Sin volver a capturar ni mover el raton: pulsar ya (cada centesima cuenta).
-            entrada.pulsar()
+            # Igual que AutoFarming (su bot siempre entraba; el nuestro, pulsando justo a los 9.3 s con el
+            # raton ya encima, perdia ~la mitad): volver a capturar, buscar Accept y clic rapido. Asi el
+            # toque llega hacia los 9.5 s de verla.
+            p, o = self.capturar()
+            rect = ACEPTAR.buscar(p, 0.7)
+            if rect is None:
+                self.perdidas += 1
+                self.log("La invitación desapareció antes de aceptarla.", "aviso")
+                self._stats()
+                return None
+            entrada.clic_rapido(rect, o)
             self.log(f"Aceptada a los {time.perf_counter() - visto:.2f} s.", "debug")
             control.esperar(3.0)
             p, _ = self.capturar()
@@ -244,8 +252,17 @@ class Indura(Modo):
             self._contada = True
             self.victorias += 1
             self.log(f"¡Indura destruido! Victoria #{self.victorias}.", "ok")
-            self.guardar_recompensa(p, self.victorias)
             self._stats()
+            self._foto_pendiente, self._previa, self._ok_desde = True, None, None
+        if getattr(self, "_foto_pendiente", False) and juego.ok.esta(p):
+            # La foto del botin, en la pantalla de recompensas (la del OK) y quieta: antes se sacaba al ver
+            # "destroyed" y no salian los objetos. Como mucho se esperan 6 s a que se quede quieta.
+            self._ok_desde = self._ok_desde or time.time()
+            if not botin.quieta(self._previa, p) and time.time() - self._ok_desde < 6:
+                self._previa = p
+                return None
+            self.guardar_recompensa(p, self.victorias)
+            self._foto_pendiente = False
         if juego.ok.esta(p) or juego.menu_batalla.esta(p, 0.6) or TIEMPO_REAL.esta(p, 0.75):
             if not getattr(self, "_contada", False):
                 self.derrotas += 1
