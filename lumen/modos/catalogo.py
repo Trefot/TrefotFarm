@@ -6,7 +6,8 @@ programado, ese id coincide con el de su clase en MODOS y se puede farmear; si n
 "Próximamente".
 
 Para programar uno: copia modos/perros_piso4.py, usa el mismo id que aqui y anadelo a MODOS.
-Para cambiar la foto de un contenido: pon assets/modos/<id del contenido>.png.
+Para cambiar la foto de un contenido: pon assets/modos/<id del contenido>.png; un destino puede tener la
+suya (assets/modos/<id del destino>.png, p. ej. perros_piso4.png con el retrato "trascendente").
 """
 
 from dataclasses import dataclass, field
@@ -76,6 +77,16 @@ CATALOGO: list[Contenido] = [
     _unico("oro", "Oro", "Cofres del tesoro · Fuerte Solgres", "mdi6.gold", FUERTE),
     _unico("monedas_sa", "Monedas SA", "Monedas de superdespertar · Fuerte Solgres", "mdi6.circle-multiple-outline", FUERTE),
 ]
+
+
+def foto_de(id_destino: str):
+    """La foto de un destino: la suya si la tiene (assets/modos/<id del destino>.png, p. ej. el retrato
+    "trascendente" del piso 4) o la de su contenido."""
+    propia = CARPETA_FOTOS / f"{id_destino}.png"
+    if propia.is_file():
+        return propia
+    contenido = contenido_de(id_destino)
+    return contenido.foto if contenido else None
 
 
 def contenido_de(id_destino: str) -> Contenido | None:

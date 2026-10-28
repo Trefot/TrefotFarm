@@ -24,7 +24,7 @@ from lumen.gui import iconos, tema
 from lumen.gui.comun import Pagina, formatear_tiempo
 from lumen.gui.rueda import Rueda
 from lumen.modos import MODOS
-from lumen.modos.catalogo import CATALOGO, GRUPOS, contenido_de
+from lumen.modos.catalogo import CATALOGO, GRUPOS, contenido_de, foto_de
 
 OPCIONES_VICTORIAS = [("1", 1), ("5", 5), ("10", 10), ("25", 25), ("∞", 0)]
 
@@ -199,6 +199,8 @@ class PaginaInicio(Pagina):
         self.rueda = Rueda(self.lista, listos, self.lista.index(self.contenido))
         self.rueda.cambiado.connect(self._girada)
         self.caja_rueda.addWidget(self.rueda)
+        if contenido_de(getattr(self, "modo_id", "")) is self.contenido:  # foto del piso elegido (Floor 4)
+            self.rueda.poner_foto(self.lista.index(self.contenido), foto_de(self.modo_id))
 
     def _cambiar_grupo(self, grupo: str):
         if grupo == self.contenido.grupo:
@@ -219,6 +221,9 @@ class PaginaInicio(Pagina):
         if self.listo:
             cambios["ultimo_modo"] = id_destino
         config.guardar(cambios)
+        indice = self.lista.index(self.contenido)  # la foto del piso elegido (Floor 4: el trascendente)
+        for i in range(len(self.lista)):
+            self.rueda.poner_foto(i, foto_de(id_destino) if i == indice else None)
         if pintar:
             self._pintar_contenido()
         self._cargar_opciones()

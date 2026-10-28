@@ -13,9 +13,10 @@ TAM = 200  # diametro de la foto del centro
 SEPARACION = 175  # distancia entre el centro y la primera vecina
 
 
-def foto_redonda(contenido, tam: int = TAM) -> QPixmap:
-    """La foto del contenido en circulo; si no tiene, su icono dorado sobre fondo oscuro."""
-    pix = iconos.redondo(contenido.foto, tam) if contenido.foto else None
+def foto_redonda(contenido, tam: int = TAM, foto=None) -> QPixmap:
+    """La foto del contenido (u otra, ``foto``) en circulo; si no tiene, su icono dorado sobre fondo oscuro."""
+    foto = foto or contenido.foto
+    pix = iconos.redondo(foto, tam) if foto else None
     if pix:
         return pix
     pix = QPixmap(tam, tam)
@@ -58,6 +59,11 @@ class Rueda(QWidget):
             b.setCursor(Qt.PointingHandCursor)
             b.clicked.connect(lambda _, s=paso: self.girar(s))
             self.flechas.append(b)
+
+    def poner_foto(self, indice: int, foto=None):
+        """Cambia la foto de una parada (p. ej. la del piso elegido); sin ``foto``, vuelve a la suya."""
+        self.fotos[indice] = foto_redonda(self.contenidos[indice], foto=foto)
+        self.update()
 
     # ------------------------------------------------------------------ girar
     def girar(self, pasos: int):
