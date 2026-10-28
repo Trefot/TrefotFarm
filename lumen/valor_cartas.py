@@ -96,5 +96,12 @@ class Tasador:
         base = (pct / PORCENTAJE_NORMAL) if pct else VALOR_TIPO[tipo]
         return base * enemigos if tipo == "area" else base
 
+    def es_area(self, nombre: str) -> bool:
+        """La carta pega a todos los enemigos (o es una ulti): para las fases en que hay que matarlos a la vez."""
+        pid, _, cid = nombre.split("@")[0].partition(".")
+        pj = self.biblioteca.get(pid)
+        carta = pj.cartas.get(cid) if pj else None
+        return cid == "ulti" or (carta is not None and tipo_de(carta.descripcion) == "area")
+
     def valores(self, nombres) -> dict[str, float]:
         return {n: self.valor(n) for n in nombres if n and "." in n.split("@")[0]}

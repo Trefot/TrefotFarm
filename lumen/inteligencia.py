@@ -30,6 +30,7 @@ VALOR_RANGO = {Rango.BRONCE: 1.0, Rango.PLATA: 1.6, Rango.ORO: 2.6}
 VALOR_ULTI = 4.0
 PESO_FUTURO = 0.45  # cuanto cuenta lo que deja la mano para el turno siguiente frente al dano de ahora
 ACCIONES_SIGUIENTE = 4  # cartas que se podran jugar en el turno siguiente (para valorar la mano que queda)
+SOLO_AREA_RESTO = 0.2  # en las fases de "solo area", lo que vale una carta de un objetivo frente a lo normal
 VALOR_NUEVA = 1.1  # lo que se espera de cada carta nueva que rellena la mano (casi siempre bronce; a veces fusiona)
 MISMO_DIBUJO = 8.0  # distancia de dibujo (0-100, ver agrupar_por_dibujo) por debajo: es la misma carta
 SUBIR = {Rango.BRONCE: Rango.PLATA, Rango.PLATA: Rango.ORO}
@@ -148,6 +149,7 @@ class Jugador:
     def __init__(self, enemigos: int = 1, arrastrar: bool = True):
         self.enemigos = enemigos
         self.arrastrar = arrastrar
+        self.solo_area = False  # True: las cartas de un objetivo casi no valen (todos los enemigos a la vez)
         self._indice = self._tasador = None  # se cargan en la primera jugada (tardan ~1 s)
 
     def _identificar(self, carta: Carta) -> str | None:
@@ -162,6 +164,10 @@ class Jugador:
     def elegir(self, mano: list[Carta], acciones: int) -> tuple | None:
         agrupar_por_dibujo(mano, self._identificar)
         valores = self._tasador.valores(c.nombre for c in mano) if self._tasador else {}
+        if self.solo_area and self._tasador:
+            # Fase en que todos los enemigos tienen que caer a la vez (fase 3 de los perros de Floor 1-3):
+            # areas y ultis primero; las de un objetivo solo si no queda otra cosa.
+            valores = {n: v if self._tasador.es_area(n) else v * SOLO_AREA_RESTO for n, v in valores.items()}
         _, plan = planear(mano, acciones, valores, self.arrastrar)
         if not plan:
             return None

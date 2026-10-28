@@ -40,7 +40,10 @@ class EstrategiaInteligente(EstrategiaSimple):
     def __init__(self, enemigos: int = 1):
         self.jugador = inteligencia.Jugador(enemigos)
 
+    fases_area: frozenset = frozenset()  # fases en que hay que matar a todos a la vez (las pone el modo)
+
     def decidir(self, fase: int, turno: int, accion: int, mano: list[Carta], total: int = 4):
+        self.jugador.solo_area = fase in self.fases_area
         paso = self.jugador.elegir(mano, total - accion)
         if paso is None:  # nada que jugar ni fusionar: lo de siempre (mover una carta para gastar el hueco)
             return super().decidir(fase, turno, accion, mano, total)
@@ -66,6 +69,7 @@ class BestiaPisos1a3(PerrosPiso4):
     enemigos = 1  # enemigos en la pelea (las cartas de area valen mas con varios)
     piso3_superado = None  # Plantilla de "Floor 3 Cleared" de esta bestia, si la hay
     objetivos: dict[int, str] = {}  # fase -> enemigo al que atacar ("izq"/"der"); vacio = el que marque el juego
+    fases_area: frozenset = frozenset()  # fases en que todos los enemigos tienen que caer a la vez: areas y ultis
     descripcion = "Floor 1, 2 y 3 seguidos, y vuelta a empezar. Sirve cualquier equipo fuerte."
     duracion = ""
     fases = 0  # no se sabe aun cuantas fases tienen estos pisos
@@ -86,6 +90,10 @@ class BestiaPisos1a3(PerrosPiso4):
         super().__init__(valores)
         inteligente = self.valores.get("jugar", "Inteligente") != "Simple"
         self.estrategia = EstrategiaInteligente(self.enemigos) if inteligente else EstrategiaSimple()
+        if isinstance(self.estrategia, EstrategiaInteligente):
+            self.estrategia.fases_area = self.fases_area
+        self.pedir_reset = False  # tras el Floor 3 hay que pulsar Reset para volver a abrir el Floor 1
+        self.reset_desde: float | None = None
         if self.objetivos:  # la estrategia no elige enemigo: se le pone el de la fase
             decidir = self.estrategia.decidir
 
@@ -109,6 +117,7 @@ class BestiaPisos1a3(PerrosPiso4):
         self.piso = self.piso % 3 + 1
         if self.piso == 1:
             self.vuelta += 1
+            self.pedir_reset = True
         self.buscando_piso_desde = None
         self._desplazamientos = 0
         self._stats()
@@ -171,7 +180,9 @@ class BestiaPisos1a3(PerrosPiso4):
         if juego.empezar.esta(p):
             self.buscando_piso_desde = None
             return "preparar"
-        if self.clic_si(juego.ok, p, o):  # confirmar al abrir el piso
+        if self.clic_si(juego.ok, p, o):  # confirmar al abrir el piso (o el Reset)
+            return None
+        if self.pedir_reset and self._pulsar_reset(p, o):
             return None
         rect = self._buscar_piso(p)
         if rect is not None:
@@ -206,6 +217,25 @@ class BestiaPisos1a3(PerrosPiso4):
             self._siguiente_piso()
             self.log(f"No encuentro el Floor {antes}: paso al Floor {self.piso}.", "aviso")
         return None
+
+    def _pulsar_reset(self, p, o) -> bool:
+        """Tras superar el Floor 3 los pisos quedan cerrados hasta pulsar "Reset" (lo dijo el usuario en la
+        prueba de la 0.2.4: el bot intentaba abrir el Floor 1 sin mas). Se busca el boton por su texto."""
+        self.reset_desde = self.reset_desde or time.time()
+        if time.time() - self.reset_desde > 15:  # sin boton Reset a la vista: quiza no hace falta
+            self.log("No veo el botón Reset; sigo con el Floor 1.", "aviso")
+            self.pedir_reset, self.reset_desde = False, None
+            return False
+        if not ocr.disponible():
+            return False
+        for texto, (x, y, w, h) in self._lineas(p):
+            t = texto.strip().lower()
+            if t in ("reset", "restablecer", "reiniciar") or t.startswith("reset "):
+                self.log("Pulso Reset para volver a empezar desde el Floor 1.", "ok")
+                entrada.clic((x + w // 2, y + h // 2), o, espera=1.5)
+                self.pedir_reset, self.reset_desde = False, None
+                return True
+        return False
 
     def _buscar_piso(self, p):
         """Rectangulo del texto del piso que toca en la pantalla de pisos (sin contar "Floor N Cleared").
@@ -269,19 +299,24 @@ def _es_premio(texto: str) -> bool:
     return any(palabra in t for palabra in ("clear", "superad", "reward", "recompensa", "obtain", "obten"))
 
 
-def _bestia(id_base: str, titulo: str, plantilla, imagen: str, piso3=None, enemigos: int = 1, objetivos=None):
+def _bestia(id_base: str, titulo: str, plantilla, imagen: str, piso3=None, enemigos: int = 1, objetivos=None,
+            fases_area=()):
     """Crea el modo Floor 1-3 de una bestia."""
     return type(f"Pisos1a3_{id_base}", (BestiaPisos1a3,), {
         "id": f"{id_base}_pisos1a3", "nombre": f"{titulo} · Floor 1-3", "titulo_juego": titulo,
         "subtitulo_juego": "Demonic Beast · Floor 1-3", "imagen": imagen, "bestia": plantilla,
         "piso3_superado": piso3, "enemigos": enemigos, "objetivos": objetivos or {},
+        "fases_area": frozenset(fases_area),
     })
 
 
 PerrosPisos1a3 = _bestia("perros", "Skollandhati & Hati", juego.perros, "demonic_beasts/skollandhati.png",
                          juego.piso3_superado, enemigos=2,  # los dos perros
                          # Como AutoFarming: en la fase 1 el perro claro (derecha), en la 2 y la 3 el oscuro (izquierda).
-                         objetivos={1: "der", 2: "izq", 3: "izq"})
+                         objetivos={1: "der", 2: "izq"},
+                         # Fase 3 (lo explico el usuario): los dos perros tienen que caer a la vez, asi que sin
+                         # objetivo y todo areas y ultis.
+                         fases_area={3})
 PajaroPisos1a3 = _bestia("pajaro", "Hraesvelgr", juego.pajaro, "demonic_beasts/hraesvelgr.png")
 CiervoPisos1a3 = _bestia("ciervo", "Eikthyrnir", juego.ciervo, "deer/Eikthyrnir.png")
 SerpientePisos1a3 = _bestia("serpiente", "Nidhoggr", juego.serpiente, "snake/nidhoggr.png")

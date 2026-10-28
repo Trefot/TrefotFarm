@@ -29,6 +29,13 @@ Etapas previstas:
 
 CAMBIOS
 -------
+0.2.5-alpha
+  - Perros Floor 1-3: en la fase 3 no apunta a ningun perro y juega areas y ultis primero (los dos
+    tienen que caer a la vez). Fase 1 perro blanco y fase 2 perro negro, como antes.
+  - Bestias Floor 1-3: tras superar el Floor 3 pulsa Reset antes de volver al Floor 1.
+  - Una carta que se juega y no entra en su hueco se trata como bloqueada el resto del turno, en vez
+    de repetirla.
+
 0.2.4-alpha
   - Bestias Floor 1-3: abren el piso tocando su circulo (la imagen de la bestia), no su titulo. En la
     prueba de la 0.2.3 tocaba "Twilight Temple Floor 1" una y otra vez sin abrir nada.
