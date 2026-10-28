@@ -31,7 +31,7 @@ from lumen.gui import iconos, tema
 from lumen.gui.comun import Pagina, formatear_tiempo
 from lumen.gui.paginas.equipos import clave_de_equipos, tarjetas_equipos
 from lumen.modos import MODOS
-from lumen.modos.catalogo import foto_de
+from lumen.modos.catalogo import contenido_de, foto_de
 from lumen.rutas import IMAGENES
 
 CIFRAS = [("victorias", "Victorias", "trofeo"), ("derrotas", "Derrotas", "derrota"), ("reinicios", "Reinicios", "reinicio"),
@@ -95,14 +95,11 @@ class PaginaFarmear(Pagina):
         estado.addWidget(self.lbl_detalle)
         self.fila_fases = QHBoxLayout()
         self.fila_fases.setSpacing(6)
+        self.fila_fases.addStretch()
         estado.addLayout(self.fila_fases)
-        estado.addStretch()
-        capa_ahora.addLayout(estado)
-        self.cuerpo.addWidget(ahora)
-
-        # ---- controles: tres botones grandes
+        # Controles en la cabecera, bajo el estado: Iniciar, Pausar y Detener
         botones = QHBoxLayout()
-        botones.setSpacing(14)
+        botones.setSpacing(8)
         botones.addStretch()
         self.b_iniciar = QToolButton(objectName="iniciar", text="Iniciar")
         self.b_pausar = QToolButton(objectName="pausar", text="Pausar")
@@ -110,14 +107,16 @@ class PaginaFarmear(Pagina):
         for b, ic in ((self.b_iniciar, "jugar"), (self.b_pausar, "pausa"), (self.b_detener, "detener")):
             b.setToolButtonStyle(Qt.ToolButtonTextUnderIcon)
             b.setIcon(iconos.icono(ic, tema.TEXTO))
-            b.setIconSize(QSize(30, 30))
-            b.setFixedSize(108, 80)
+            b.setIconSize(QSize(22, 22))
+            b.setFixedSize(84, 60)
             b.setCursor(Qt.PointingHandCursor)
             botones.addWidget(b)
-        botones.addStretch()
-        self.cuerpo.addLayout(botones)
-        self.ayuda_teclas = QLabel(objectName="tenue", alignment=Qt.AlignCenter)
-        self.cuerpo.addWidget(self.ayuda_teclas)
+        estado.addLayout(botones)
+        self.ayuda_teclas = QLabel(objectName="tenue", alignment=Qt.AlignRight)
+        estado.addWidget(self.ayuda_teclas)
+        estado.addStretch()
+        capa_ahora.addLayout(estado)
+        self.cuerpo.addWidget(ahora)
 
         # ---- cifras en una fila
         fila_cifras = QHBoxLayout()
@@ -182,15 +181,14 @@ class PaginaFarmear(Pagina):
         self.form = QFormLayout()
         capa_op.addLayout(self.form)
         capa_op.addStretch()
-        # Los mejores equipos para el modo elegido (los mismos que la pagina Equipos, hasta 5)
+        # Los mejores equipos para el modo elegido (los mismos que la pagina Equipos, hasta 5), a la derecha
         contenedor_eq = QFrame(objectName="contenido_desplazable")
         self.lista_equipos = QVBoxLayout(contenedor_eq)
         self.lista_equipos.setContentsMargins(0, 0, 6, 0)
         panel_equipos = QScrollArea(objectName="area_pagina", widgetResizable=True, frameShape=QFrame.NoFrame)
         panel_equipos.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         panel_equipos.setWidget(contenedor_eq)
-        for i, (texto, ic, vista) in enumerate((("Registro", "registro", self.registro), ("Equipos", "equipos", panel_equipos),
-                                               ("Opciones", "ajustes", panel_opciones))):
+        for i, (texto, ic, vista) in enumerate((("Registro", "registro", self.registro), ("Opciones", "ajustes", panel_opciones))):
             b = QPushButton(" " + texto, objectName="chip", checkable=True, checked=i == 0)
             b.setIcon(iconos.icono(ic, tema.TENUE, tema.SOBRE_ACENTO))
             b.clicked.connect(lambda _, n=i: self.pila_vista.setCurrentIndex(n))
@@ -198,7 +196,6 @@ class PaginaFarmear(Pagina):
             cabecera.addWidget(b)
             self.pila_vista.addWidget(vista)
         cabecera.addStretch()
-        self.botones_vista = self.grupo_vista.buttons()
         self.chk_debug = QCheckBox("Detalle técnico")
         cabecera.addWidget(self.chk_debug)
         b_limpiar = QPushButton(objectName="chico")
@@ -206,8 +203,23 @@ class PaginaFarmear(Pagina):
         b_limpiar.setToolTip("Limpiar el registro")
         b_limpiar.clicked.connect(lambda: self.registro.clear())
         cabecera.addWidget(b_limpiar)
-        self.cuerpo.addLayout(cabecera)
-        self.cuerpo.addWidget(self.pila_vista, 1)
+        izquierda = QVBoxLayout()
+        izquierda.addLayout(cabecera)
+        izquierda.addWidget(self.pila_vista, 1)
+        derecha = QVBoxLayout()
+        titulo_eq = QHBoxLayout()
+        icono_eq = QLabel()
+        icono_eq.setPixmap(iconos.pixmap("equipos", 18, tema.ACENTO))
+        titulo_eq.addWidget(icono_eq)
+        titulo_eq.addWidget(QLabel("Mejores equipos", objectName="titulo_seccion"))
+        titulo_eq.addStretch()
+        derecha.addLayout(titulo_eq)
+        derecha.addWidget(panel_equipos, 1)
+        abajo = QHBoxLayout()
+        abajo.setSpacing(14)
+        abajo.addLayout(izquierda, 5)
+        abajo.addLayout(derecha, 4)
+        self.cuerpo.addLayout(abajo, 1)
 
         self.combo.currentIndexChanged.connect(self._mostrar_opciones)
         self.b_iniciar.clicked.connect(self.iniciar)
@@ -288,6 +300,7 @@ class PaginaFarmear(Pagina):
                 w.setParent(None)
         self.fases = [QLabel(str(n), objectName="fase", alignment=Qt.AlignCenter, toolTip=f"Fase {n}")
                       for n in range(1, cls.fases + 1)]
+        self.fila_fases.addStretch()  # pegadas a la derecha, bajo el estado
         for etiqueta in self.fases:
             self.fila_fases.addWidget(etiqueta)
         self._pintar_estado()
@@ -551,16 +564,22 @@ class PaginaFarmear(Pagina):
 
     # ------------------------------------------------------- equipos y botin
     def ver_equipos(self):
-        """Abre Farmear en la pestana Equipos (p. ej. desde el icono Equipo de Inicio)."""
+        """Abre Farmear, donde estan los mejores equipos (p. ej. desde el icono Equipo de Inicio)."""
         self.app.navegar("farmear")
-        self.botones_vista[1].click()
 
     def _pintar_equipos(self):
         while self.lista_equipos.count():
             w = self.lista_equipos.takeAt(0).widget()
             if w:
                 w.setParent(None)
-        tarjetas = tarjetas_equipos(clave_de_equipos(self.modo_cls.id))[:5]
+        tarjetas = tarjetas_equipos(clave_de_equipos(self.modo_cls.id), compacto=True)[:5]
+        if not tarjetas:  # p. ej. Hraesvelgr solo tiene equipos para el Floor 4: tambien sirven en el 1-3
+            contenido = contenido_de(self.modo_cls.id)
+            for destino in (contenido.destinos if contenido else ()):
+                tarjetas = tarjetas_equipos(destino.id, compacto=True)[:5]
+                if tarjetas:
+                    self.lista_equipos.addWidget(QLabel(f"Del {destino.nombre}: también sirven aquí.", objectName="tenue"))
+                    break
         for t in tarjetas:
             self.lista_equipos.addWidget(t)
         if not tarjetas:

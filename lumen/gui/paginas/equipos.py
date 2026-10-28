@@ -133,9 +133,9 @@ def _nombre(pid: str, biblioteca: dict, nombres: dict) -> str:
 
 
 def _retrato(pj: P.Personaje | None, nombre: str, tengo: bool, tam=(68, 68), extra: str = "",
-             detalle: str = "") -> QWidget:
+             detalle: str = "", margen: int = 40) -> QWidget:
     caja = QWidget()
-    caja.setFixedWidth(tam[0] + 40)
+    caja.setFixedWidth(tam[0] + margen)
     if detalle:
         caja.setToolTip(detalle)
     capa = QVBoxLayout(caja)
@@ -154,7 +154,7 @@ def _retrato(pj: P.Personaje | None, nombre: str, tengo: bool, tam=(68, 68), ext
     foto.setProperty("tengo", tengo)
     capa.addWidget(foto, 0, Qt.AlignHCenter)
     texto = QLabel(nombre, alignment=Qt.AlignHCenter | Qt.AlignTop, wordWrap=True)
-    texto.setFixedWidth(tam[0] + 40)
+    texto.setFixedWidth(tam[0] + margen)
     texto.setMinimumHeight(texto.fontMetrics().lineSpacing() * 3 + 4)  # que no se monte sobre la cara
     texto.setStyleSheet(f"color: {tema.TEXTO if tengo else tema.TENUE}; font-size: 8.5pt;")
     capa.addWidget(texto, 0, Qt.AlignHCenter)
@@ -173,7 +173,8 @@ class TarjetaEquipo(QFrame):
     """Un equipo recomendado: cabecera siempre visible y detalle desplegable."""
 
     def __init__(self, datos: dict, biblioteca: dict, abierto: bool, nombres: dict | None = None,
-                 medida: dict | None = None, al_editar=None, al_borrar=None):
+                 medida: dict | None = None, al_editar=None, al_borrar=None, compacto: bool = False):
+        """``compacto``: para una columna estrecha (Farmear): caras mas pequenas y cabecera corta."""
         super().__init__(objectName="tarjeta_equipo")
         capa = QVBoxLayout(self)
         capa.setContentsMargins(14, 12, 14, 12)
@@ -192,9 +193,11 @@ class TarjetaEquipo(QFrame):
         nivel = QLabel(nivel_texto)
         nivel.setStyleSheet(f"background: {nivel_color}; color: {tema.FONDO}; border-radius: 9px; padding: 2px 10px; font-weight: 700;")
         cab.addWidget(nivel, 0, Qt.AlignVCenter)
-        cab.addWidget(QLabel(datos.get("nombre", ""), objectName="titulo_tarjeta"))
+        titulo = QLabel(datos.get("nombre", ""), objectName="nombre_pj" if compacto else "titulo_tarjeta", wordWrap=compacto)
+        cab.addWidget(titulo, 1 if compacto else 0)
         if datos.get("bot"):
-            bot = QLabel("  El bot lo juega")
+            bot = QLabel("Bot" if compacto else "  El bot lo juega")
+            bot.setToolTip("El bot sabe jugar este equipo")
             bot.setStyleSheet(f"color: {tema.ACENTO}; font-weight: 700;")
             cab.addWidget(bot)
         if datos.get("propio"):
@@ -233,7 +236,7 @@ class TarjetaEquipo(QFrame):
                      f"gana el {medida['tasa']:.0f} % · {peleas} pelea{'s' if peleas != 1 else ''}")
             if peleas < MIN_PELEAS:
                 texto += f" (aún pocas: desde {MIN_PELEAS} cuenta para el orden)"
-            cifras = QLabel(texto)
+            cifras = QLabel(texto, wordWrap=True)
             cifras.setStyleSheet(f"color: {tema.ACENTO};")
             cifras.setToolTip("Victorias por hora = victorias entre el tiempo total farmeando (incluye "
                               "menús, cargas y pociones). Junta lo que gana y lo rápido que es. Cuenta las "
@@ -241,7 +244,7 @@ class TarjetaEquipo(QFrame):
             capa.addWidget(cifras)
 
         fila = QHBoxLayout()
-        fila.setSpacing(10)
+        fila.setSpacing(4 if compacto else 10)
         for pid in ids:
             pj = biblioteca.get(pid)
             tengo = bool(pj and pj.tengo) or any(biblioteca.get(a) and biblioteca[a].tengo for a in alternativas.get(pid, []))
@@ -259,7 +262,10 @@ class TarjetaEquipo(QFrame):
                     otros.append(texto + (" ✓" if biblioteca.get(a) and biblioteca[a].tengo else ""))
                 extra = f"+{len(otros)} opción" + ("es" if len(otros) > 1 else "")
                 detalle = "También vale:\n" + "\n".join(f"• {o}" for o in otros)
-            fila.addWidget(_retrato(pj, nombre, tengo, extra=extra, detalle=detalle))
+            if compacto:
+                fila.addWidget(_retrato(pj, nombre, tengo, tam=(54, 54), extra=extra, detalle=detalle, margen=24))
+            else:
+                fila.addWidget(_retrato(pj, nombre, tengo, extra=extra, detalle=detalle))
         fila.addStretch()
         capa.addLayout(fila)
 
@@ -301,7 +307,8 @@ def clave_de_equipos(id_destino: str, equipos: dict | None = None) -> str:
     return contenido.id if contenido and contenido.id in equipos else id_destino
 
 
-def tarjetas_equipos(clave: str, admin: bool = False, al_editar=None, al_borrar=None) -> list["TarjetaEquipo"]:
+def tarjetas_equipos(clave: str, admin: bool = False, al_editar=None, al_borrar=None,
+                     compacto: bool = False) -> list["TarjetaEquipo"]:
     """Las tarjetas de los equipos de un contenido, en orden: primero los que el bot midio (de mas a menos
     victorias por hora, con al menos MIN_PELEAS peleas) y luego el resto como estan en la lista. Viene
     abierto el mejor que ya puedes armar (o el primero si no tienes ninguno)."""
@@ -316,6 +323,7 @@ def tarjetas_equipos(clave: str, admin: bool = False, al_editar=None, al_borrar=
             medida=medido.get(frozenset(datos.get("personajes") or [])),
             al_editar=(lambda _=False, d=datos: al_editar(d)) if propio and al_editar else None,
             al_borrar=(lambda _=False, d=datos: al_borrar(d)) if propio and al_borrar else None,
+            compacto=compacto,
         ))
 
     def peleas(t):
