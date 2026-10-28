@@ -162,7 +162,7 @@ class Interfaz(unittest.TestCase):
             f._terminado()
 
         tareas = farmear.tareas_de_prueba()
-        self.assertEqual(len(tareas), 7)
+        self.assertEqual(len(tareas), 14)  # 5 bestias F1-3, perros F4, 6 demonios y 2 de Fuerte Solgres
         self.assertTrue(all(t["victorias"] == 1 for t in tareas))
         ids = [t["modo"] for t in tareas]
         guion.update({ids[1]: "error", ids[2]: "no_arranca", ids[3]: "sin_victoria"})
@@ -180,10 +180,10 @@ class Interfaz(unittest.TestCase):
         self.assertIsNone(f.plan_paso)
         self.assertFalse(f.plan_prueba)
         resultados = [r["resultado"] for r in f.plan_resultados]
-        self.assertEqual(resultados, ["ok", "fallo", "no_empezo", "sin_victoria", "ok", "ok", "ok"])
+        self.assertEqual(resultados, ["ok", "fallo", "no_empezo", "sin_victoria"] + ["ok"] * 10)
         self.assertIn("no empezó: Juego cerrado", f.plan_resultados[2]["motivo"])
         texto = informes[0]
-        self.assertIn("Resultado: 4 de 7 bien", texto)
+        self.assertIn("Resultado: 11 de 14 bien", texto)
         self.assertIn("✗", texto)
         self.assertIn("KeyError", texto)
         self.assertIn(texto, enviados, "el informe tambien va al movil")
