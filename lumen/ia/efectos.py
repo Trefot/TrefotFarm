@@ -56,7 +56,9 @@ def _objetivo(frase: str) -> str:
     f = frase.lower()
     if re.search(r"\ball enemies\b", f):
         return "todos"
-    if re.search(r"\b(one|an|a single|the) enemy\b|\btheir\b|\btarget", f):
+    if re.search(r"\bon all\b.*\benemies\b", f):  # "on all inflicts Spike damage ... enemies" (texto desordenado)
+        return "todos"
+    if re.search(r"\b(one|an|a single|the) enemy\b|\btheir\b|\btarget|\bon one\b", f):
         return "uno"
     if re.search(r"\ball allies\b|\ballies'?\b", f):
         return "aliados"
@@ -68,8 +70,11 @@ def _objetivo(frase: str) -> str:
 
 
 def _turnos(frase: str) -> int | None:
-    m = re.search(r"for (\d+) turn", frase, re.I)
-    return int(m.group(1)) if m else None
+    # El lector de texto lee a menudo el "1" como "I", "l" o "t" ("for I turn(s)")
+    m = re.search(r"for (\d+|[iIlt]) turn", frase)
+    if not m:
+        return None
+    return int(m.group(1)) if m.group(1).isdigit() else 1
 
 
 def _stat(texto: str) -> str:
@@ -83,6 +88,8 @@ def _dano(m: re.Match, frase: str) -> list[Efecto]:
     detalles = [d for d, clave in (("cleave", "cleave"), ("ignora_defensa", "ignor"), ("critico", "crit damage"))
                 if clave in f and not (d == "critico" and "does not activate crit" in f)]
     valores = [float(v) for v in re.findall(r"(\d{2,4})\s*%\s*of\s*(?:their\s+|its\s+)?(?:attack|atk)", f)]
+    if not valores:  # el lector de texto a veces desordena la frase: "damage equal to of Attack on one enemy 160%"
+        valores = [float(v) for v in re.findall(r"(\d{2,4})\s*%", f)][:1] or [None]  # dano sin cifra legible
     return [Efecto("dano", v, _objetivo(frase), None, ",".join(detalles)) for v in valores]
 
 
@@ -98,18 +105,115 @@ def _simple(tipo: str, con_valor: bool = False):
     return construir
 
 
+def _cambio_suelto(tipo: str):
+    """"Attack +30%" o "+20% damage dealt": el stat y el % pueden ir en cualquier orden."""
+    def construir(m: re.Match, frase: str) -> list[Efecto]:
+        g = m.groupdict()
+        pct = g.get("pct") or g.get("pct2")
+        return [Efecto(tipo, float(pct) if pct else None, _objetivo(frase), _turnos(frase),
+                       _stat(g.get("stat") or g.get("stat2") or ""))]
+    return construir
+
+
+def _con_detalle(tipo: str, grupo: str = "detalle", con_valor: bool = False):
+    def construir(m: re.Match, frase: str) -> list[Efecto]:
+        detalle = (m.groupdict().get(grupo) or "").lower().rstrip("s")
+        return [Efecto(tipo, _numero(m, "pct") if con_valor else None, _objetivo(frase), _turnos(frase), detalle)]
+    return construir
+
+
+# Palabras clave del glosario de las cartas ("*Pierce: 2x Pierce Rate increase"): lo que significan para el bot.
+# Con la definicion el bot sabe que la carta lleva ese efecto; el valor exacto lo dice la definicion.
+PALABRAS_CLAVE = {
+    **{p: "dano_extra" for p in (
+        "pierce", "sever", "spike", "charge", "shatter", "power strike", "weak point", "rupture", "break",
+        "amplify", "flood", "detonate", "pulverize", "secret technique", "quell", "resonance", "verdict", "death",
+        "wave", "smite", "craving", "transgression", "severance", "alteration", "flying sword", "cleave",
+        "release", "fury", "rage", "wrath", "penetrate")},
+    **{p: "dano_tiempo" for p in ("bleed", "poison", "shock", "ignite", "corrosion", "abyss", "explosion", "burn")},
+    "taunt": "provocar", "infect": "anti_curacion", "lifesteal": "curar", "rejuvenate": "curar",
+    "despair": "curar", "reflect": "reflejar", "expel": "expulsar", "transformation": "transformar",
+    "extort": "robar_stats", "stun": "aturdir", "petrify": "aturdir", "freeze": "aturdir", "silence": "bloquear",
+}
+_GLOSARIO = re.compile(r"^\*\s*(?P<clave>[a-z][a-z' ]{1,30}?)\s*:\s*(?P<definicion>.+)$", re.I)
+# Restos del lector de texto que no son frases: "Lv", "3/5 2", "220%", "to 150%", "enemies", "(limit 3)"...
+_RUIDO = re.compile(r"^(?:lv\.?\s*\d*|[\d/ .%]+|n%|(?:to|of|from|by)\s+[\w%. ]{0,12}|\(?limit \d+\)?"
+                    r"|[a-z']+|\d+%\s*lv|[a-z]+ [a-z]+)$", re.I)
+
+
+def es_ruido(frase: str) -> bool:
+    """Trozos que no son una frase (los deja el lector de texto al partir la descripcion de la carta)."""
+    if frase.lstrip().startswith("(") or re.match(r"effect is removed when", frase.strip(), re.I):
+        return True  # notas: "(excludes stance and recovery skills)", "(can be stacked up to 3 times)"
+    f = frase.strip(" .,;()*")
+    return bool(_RUIDO.match(f)) and not _GLOSARIO.match(frase) and not re.search(
+        r"\b(taunt|stun|stuns|freeze|poisons?|bleed|ignites?|shocks?)\b", f, re.I)
+
+
+def _palabra_clave(m: re.Match, frase: str) -> list[Efecto]:
+    clave = m.group("clave").lower().strip()
+    return [Efecto(PALABRAS_CLAVE.get(clave, "palabra_clave"), None, "", None, clave)]
+
+
 REGLAS_HEROE: list[tuple[re.Pattern, Callable[[re.Match, str], list[Efecto]]]] = [
+    (_GLOSARIO, _palabra_clave),
     (re.compile(r"(?:inflict(?:s|ing)?|deal(?:s|ing)?)\b.*?damage.*?\d+\s*%\s*of\s*(?:their\s+|its\s+)?(?:attack|atk)"
-                r"|^\d+\s*%\s*of\s*(?:their\s+|its\s+)?attack\s+again", re.I), _dano),
+                r"|^\d+\s*%\s*of\s*(?:their\s+|its\s+)?attack\s+again"
+                r"|damage equal(?: to)?\b.*\b(?:attack|max hp|remaining hp)\b|\binflicts?\b.*\bdamage equal\b"
+                r"|\binflicts?\s+(?:of\s+)?attack\b", re.I), _dano),
     (re.compile(r"decreases?\s+(?P<stat>[\w'\- ]+?)\s+by\s+(?P<pct>\d+)\s*%", re.I), _cambio("debuff")),
     (re.compile(r"increases?\s+(?P<stat>[\w'\- ]+?)\s+by\s+(?P<pct>\d+)\s*%", re.I), _cambio("buff")),
-    (re.compile(r"(?:removes?|ignores?|nullif(?:y|ies))\b.*\bstance", re.I), _simple("quitar_postura")),
+    (re.compile(r"(?:removes?|ignores?|nullif(?:y|ies)|cancels?)\b.*\bstance", re.I), _simple("quitar_postura")),
+    (re.compile(r"(?:removes?|cancels?)\s+(?:all\s+|\S+\s+)?buffs?\b|removing\b.*\bbuffs from enemies"
+                r"|deletes? all enemy skills", re.I),
+     _simple("quitar_buffs")),
     (re.compile(r"(?:removes?|cleanses?)\b.*\bdebuffs?", re.I), _simple("limpiar")),
-    (re.compile(r"(?:restores?|recovers?)\s+(?:\w+\s+)*?hp\b(?:.*?(?P<pct>\d+)\s*%)?", re.I), _simple("curar", True)),
+    (re.compile(r"(?:restores?|recovers?|heals?)\s+(?:\w+\s+)*?hp\b(?:.*?(?P<pct>\d+)\s*%)?"
+                r"|\brejuvenates?\b|\bheals? for\b", re.I), _simple("curar", True)),
     (re.compile(r"\b(?:barrier|shield)\b", re.I), _simple("escudo")),
     (re.compile(r"\bstuns?\b|\bpetrif|\bfreezes?\b", re.I), _simple("aturdir")),
     (re.compile(r"ultimate move gauge.*?(?P<pct>\d+)\s*orb|fills?.*ultimate move gauge", re.I), _simple("orbes", True)),
     (re.compile(r"cannot be evaded|ignores?\s+evasion", re.I), _simple("ignora_evasion")),
+    # Danos por turno y estados (texto real de la captura de heroes, 2026-10-27)
+    (re.compile(r"\b(?P<detalle>bleed|poisons?|shocks?|ignites?|corrosion)\b(?:.*\bfor\s+(?:\d+|i)\s+turn)"
+                r"|applies\s+\d+\s+(?P<d2>ignite)", re.I), _con_detalle("dano_tiempo")),
+    (re.compile(r"\binfects?\b|applies infect|disables? recovery skills|restricts recovery", re.I),
+     _simple("anti_curacion")),
+    (re.compile(r"depletes?\b.*ultimate move gauge|removes?\s+(?:\d+|i|t)\s+orb", re.I), _simple("quitar_orbes")),
+    (re.compile(r"prevents? ultimate move gauge", re.I), _simple("bloquear_orbes")),
+    (re.compile(r"decreases? skill ranks?|lowers? (?:the )?number of skill uses", re.I), _simple("bajar_rango")),
+    (re.compile(r"increases? skill ranks?", re.I), _simple("subir_rango")),
+    (re.compile(r"disables? (?P<detalle>attack|recovery|debuff|buff|stance|\w+) skills", re.I),
+     _con_detalle("bloquear")),
+    (re.compile(r"\bimmun", re.I), _simple("inmunidad")),
+    (re.compile(r"assumes? a stance", re.I), _simple("postura")),
+    (re.compile(r"\btaunts?\b|directs all attacks to self", re.I), _simple("provocar")),
+    (re.compile(r"attribute advantage regardless", re.I), _simple("ventaja_atributo")),
+    (re.compile(r"\bextorts?\b", re.I), _simple("robar_stats", True)),
+    (re.compile(r"\btransforms?\b", re.I), _simple("transformar")),
+    (re.compile(r"\bexpels?\b", re.I), _simple("expulsar")),
+    (re.compile(r"\breturns? a portion of damage|\breflects?\b", re.I), _simple("reflejar")),
+    (re.compile(r"\d+(?:\.\d+)?x\s+(?:pierce|crit|damage)|additional damage|damage dealt\s*\+|increases damage dealt"
+                r"|ignores?\s+(?:\d+%\s+of\s+)?(?:the\s+)?enem\w*'?s?\s+(?:crit\s+)?(?:defense|resistance)"
+                r"|increased damage per", re.I), _simple("dano_extra")),
+    (re.compile(r"blocks?\b.*\bskill effects", re.I), _simple("bloquear")),
+    (re.compile(r"(?P<stat>attack|damage dealt(?: with [\w-]+)?|[\w-]+ stats|crit \w+)\s*\+\s*(?P<pct>\d+)\s*%"
+                r"|\+\s*(?P<pct2>\d+)\s*%\s*(?P<stat2>damage dealt)", re.I), _cambio_suelto("buff")),
+    (re.compile(r"(?P<stat>damage dealt[\w -]*?)\s*-\s*(?P<pct>\d+)\s*%", re.I), _cambio_suelto("debuff")),
+    (re.compile(r"takes damage only from basic stats", re.I), _simple("defensa")),
+]
+
+# Solo si no salio nada mas de la frase: "increases attack-related stats" sin "by N%" (el lector de texto a
+# veces desordena la frase y el porcentaje queda en otro trozo).
+REGLAS_SUELTAS: list[tuple[re.Pattern, Callable[[re.Match, str], list[Efecto]]]] = [
+    # "Attack-related stats by 20% for 2 turn(s)": el verbo quedo en otro trozo; se sabe que cambia, no hacia donde
+    (re.compile(r"(?P<stat>[\w'\-]+(?:[ -]related)?(?: stats| chance| damage| hp)?)\s+by\s+(?P<pct>\d+)\s*%", re.I),
+     _cambio("cambio_stats")),
+    (re.compile(r"\bapplies\b|\bgains?\b.*\beffect", re.I), _simple("aplica_estado")),
+    (re.compile(r"\bdecreases?\s+(?P<stat>[\w'\-]+(?:[ -]related)?(?: stats| stat| damage[\w ]*)?)", re.I),
+     _cambio("debuff")),
+    (re.compile(r"\bincreases?\s+(?P<stat>[\w'\-]+(?:[ -]related)?(?: stats| stat| damage[\w ]*)?)", re.I),
+     _cambio("buff")),
 ]
 
 
@@ -117,13 +221,21 @@ def efectos(texto: str) -> list[Efecto]:
     """Los efectos de una habilidad, pasiva o talento (en el orden del texto)."""
     salida: list[Efecto] = []
     for frase in frases(texto):
-        for patron, construir in REGLAS_HEROE:
-            m = patron.search(frase)
-            if m:
-                for e in construir(m, frase):
-                    if not e.objetivo and salida:  # "then 100% of Attack again": al mismo de antes
-                        e = Efecto(e.tipo, e.valor, salida[-1].objetivo, e.turnos, e.detalle)
-                    salida.append(e)
+        if _GLOSARIO.match(frase):  # una definicion del glosario: solo su palabra clave
+            salida.extend(_palabra_clave(_GLOSARIO.match(frase), frase))
+            continue
+        de_la_frase: list[Efecto] = []
+        for reglas in (REGLAS_HEROE, REGLAS_SUELTAS):
+            for patron, construir in reglas:
+                m = patron.search(frase)
+                if m:
+                    for e in construir(m, frase):
+                        if not e.objetivo and (de_la_frase or salida):  # "then 100% of Attack again": al de antes
+                            e = Efecto(e.tipo, e.valor, (de_la_frase or salida)[-1].objetivo, e.turnos, e.detalle)
+                        de_la_frase.append(e)
+            if de_la_frase:
+                break
+        salida.extend(de_la_frase)
     return salida
 
 
@@ -221,6 +333,8 @@ def cobertura(textos: list[str]) -> Informe:
     inf = Informe()
     for texto in textos:
         for frase in frases(texto):
+            if es_ruido(frase):  # restos del lector de texto ("Lv", "3/5 2"): no son frases
+                continue
             inf.total += 1
             if efectos(frase):
                 inf.entendidas += 1
