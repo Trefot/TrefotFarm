@@ -129,7 +129,8 @@ class CapturaArtworks(Modo):
             return None
         # En la ficha la figura del heroe se mueve todo el rato: se espera solo a que quede quieta la fila de
         # cartas (como la Captura de heroes). Con toda la ilustracion nunca quedaba quieta y no capturaba nada.
-        if not self._quieta(p, C.ZONAS_ESTABLES[0]):
+        # Como mucho 5 s: el arma de Milim Nava cruza la fila de cartas y no se queda quieta nunca.
+        if not self._quieta(p, C.ZONAS_ESTABLES[0]) and time.time() - self.desde < 5:
             return None
         pid = self._quien(p)
         if pid is None or pid == self.anterior_id:

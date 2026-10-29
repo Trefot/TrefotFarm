@@ -29,6 +29,10 @@ Etapas previstas:
 
 CAMBIOS
 -------
+0.9.4-alpha
+  - Capturar pasivas y artworks: se quedaban esperando en Milim Nava, cuya arma cruza la fila de cartas y
+    nunca queda quieta. Ahora se espera como mucho 5 s y se lee igual.
+
 0.9.3-alpha
   - Capturar pasivas: tambien el Talento (y la Unidad si la hay). Cada ventana se reconoce por su titulo,
     porque el orden de los iconos cambia (Nemesis Meliodas: sin Gracia, con Unique y Talent).
