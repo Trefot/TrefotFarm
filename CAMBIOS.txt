@@ -29,6 +29,10 @@ Etapas previstas:
 
 CAMBIOS
 -------
+0.9.5-alpha
+  - Capturar pasivas: el nombre de la Gracia ya no se confunde con el titulo del heroe que va encima
+    ("[Advent of Flash]" medio tapado).
+
 0.9.4-alpha
   - Capturar pasivas y artworks: se quedaban esperando en Milim Nava, cuya arma cruza la fila de cartas y
     nunca queda quieta. Ahora se espera como mucho 5 s y se lee igual.
