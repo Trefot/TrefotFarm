@@ -23,8 +23,7 @@ Reglas completas en CAMBIOS.txt. Resumen:
   probados con manos simuladas (pruebas/test_guiones.py). Falta el modo: navegar al Floor 4 de
   Eikthyrnir, detectar sus 4 fases (capturas de F3 y F4), un Equipo con freyja_roja,
   thor_the_god_of_thunder_azul, sun_god_freyr_rojo (es LR en el juego) y god_of_war_tyr_verde, y las
-  capturas de sus cartas. Por confirmar con el usuario: "area de Thor" del F1T1 (alias area_thor:
-  ¿skill_2 Thunderstorm o su ulti?). Los orbes de la ulti se cuentan, no se leen de pantalla.
+  capturas de sus cartas. Los orbes de la ulti se cuentan, no se leen de pantalla.
 
 - **Metas de material** (diseño aprobado por el usuario): datos, lógica (`lumen/metas.py`) y diálogos
   (`lumen/gui/metas.py`) están en el commit 944477b, deshecho en 487831b para sacar antes un arreglo.

@@ -23,14 +23,14 @@ equipo: [freyja_roja, thor_the_god_of_thunder_azul, sun_god_freyr_rojo, god_of_w
 alias:
   desventaja_freyr: sun_god_freyr_rojo.skill_2   # Raining Blades: baja el ataque 20 % 1 turno
   single_freyja: freyja_roja.normal_1            # Elegant Leopard
-  single_thor: thor_the_god_of_thunder_azul.skill_1
-  area_thor: thor_the_god_of_thunder_azul.skill_2  # POR CONFIRMAR: "area de Thor" (¿Thunderstorm o su ulti?)
+  lightning_shift: thor_the_god_of_thunder_azul.skill_1   # primero
+  thunderstorm: thor_the_god_of_thunder_azul.skill_2      # despues
   ulti_freyr: sun_god_freyr_rojo.ulti
 
 fases:
   1:
     turnos:
-      1: [{carta: desventaja_freyr}, {carta: single_freyja}, {carta: single_thor}, {carta: area_thor}]
+      1: [{carta: desventaja_freyr}, {carta: single_freyja}, {carta: lightning_shift}, {carta: thunderstorm}]
       resto: [cualquiera, cualquiera, cualquiera, cualquiera]   # si no murio en el turno 1
   2:
     turnos:
