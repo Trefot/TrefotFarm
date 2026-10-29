@@ -32,24 +32,72 @@ DIF_QUIETA = 3.0
 ARTWORK = "artwork.jpg"
 
 
-def recorte_cara(ilustracion: np.ndarray) -> np.ndarray:
-    """Cabeza y hombros: un cuadrado centrado en la figura, arriba del todo. La figura se separa del fondo
-    (liso) por color; su centro es el de la parte de arriba de la figura (la cabeza, con alas y armas)."""
+BORDE_ARRIBA = 20  # sombra de la barra del juego que queda arriba de la ilustracion guardada
+
+
+def _zona_cara(ilustracion: np.ndarray) -> np.ndarray:
+    """La parte de la ilustracion donde se busca la cara: sin la sombra de la barra ni el nombre de abajo."""
     alto = min(ilustracion.shape[0], SIN_NOMBRE - ILUSTRACION[1])
-    ilu = ilustracion[:alto]
+    return ilustracion[BORDE_ARRIBA:alto]
+
+
+def cara_en(ilustracion: np.ndarray, cx: int, cy: int) -> np.ndarray:
+    """El cuadrado de la cara centrado en (cx, cy) de la ilustracion (la cara un poco por encima del centro)."""
+    ilu = _zona_cara(ilustracion)
+    alto, ancho = ilu.shape[:2]
+    lado = int(ancho * LADO_CARA)
+    cy -= BORDE_ARRIBA
+    x0 = max(0, min(ancho - lado, cx - lado // 2))
+    y0 = max(0, min(alto - lado, cy - int(lado * 0.45)))
+    return ilu[y0:y0 + lado, x0:x0 + lado].copy()
+
+
+def recorte_cara(ilustracion: np.ndarray) -> np.ndarray:
+    """Cabeza y hombros. Primero, un cuadrado centrado en lo mas alto de la figura (separada del fondo liso por
+    color). Si dentro no hay ninguna mancha de piel grande (la cara), se centra en la mancha de piel mas alta
+    de la mitad de arriba: con dragones, alas o destellos arriba (Lillia, Sun God Freyr) salia otra cosa.
+    Probado con los primeros 25 artworks (2026-10-29). Los que aun salgan mal se corrigen con "Cara"."""
+    ilu = _zona_cara(ilustracion)
+    alto, ancho = ilu.shape[:2]
+    lado = int(ancho * LADO_CARA)
     lab = cv2.cvtColor(ilu, cv2.COLOR_BGR2LAB).astype(np.float32)
     borde = np.concatenate([lab[:15].reshape(-1, 3), lab[:, :10].reshape(-1, 3), lab[:, -10:].reshape(-1, 3)])
-    figura = (np.linalg.norm(lab - np.median(borde, 0), axis=2) > 28).astype(np.uint8)
-    figura = cv2.morphologyEx(figura, cv2.MORPH_OPEN, np.ones((5, 5), np.uint8))
-    ancho = ilu.shape[1]
-    lado = int(ancho * LADO_CARA)
+    figura = np.linalg.norm(lab - np.median(borde, 0), axis=2) > 28
+    hsv = cv2.cvtColor(ilu, cv2.COLOR_BGR2HSV).astype(np.int16)
+    piel = figura & (hsv[..., 0] <= 20) & (hsv[..., 1] >= 25) & (hsv[..., 1] <= 140) & (hsv[..., 2] >= 160)
+    piel = cv2.morphologyEx(piel.astype(np.uint8), cv2.MORPH_OPEN, np.ones((7, 7), np.uint8))
+    figura = cv2.morphologyEx(figura.astype(np.uint8), cv2.MORPH_OPEN, np.ones((5, 5), np.uint8))
     filas = np.where(figura.sum(1) > 8)[0]
     arriba = int(filas[0]) if filas.size else 0
     banda = figura[arriba:arriba + int(lado * 0.6)].sum(0)
     centro = int(np.average(np.arange(ancho), weights=banda)) if banda.sum() else ancho // 2
     x0 = max(0, min(ancho - lado, centro - lado // 2))
     y0 = max(0, min(alto - lado, arriba - 10))
+    n, _, stats, centros = cv2.connectedComponentsWithStats(piel)
+    caras = [i for i in range(1, n) if stats[i, 4] > 500 and stats[i, 1] < alto * 0.55]
+    dentro = [i for i in caras if x0 <= centros[i][0] <= x0 + lado and y0 <= stats[i, 1] <= y0 + lado * 0.7]
+    if caras and not dentro:
+        i = min(sorted(caras, key=lambda k: -stats[k, 4])[:3], key=lambda k: stats[k, 1])
+        return cara_en(ilustracion, int(centros[i][0]), int(stats[i, 1] + stats[i, 3] * 0.4) + BORDE_ARRIBA)
     return ilu[y0:y0 + lado, x0:x0 + lado].copy()
+
+
+def guardar_cara(pid: str, cara: np.ndarray, catalogo: dict) -> None:
+    """La cara de un heroe capturado, en su carpeta y en su personaje (pagina Personajes)."""
+    guardar_imagen(C.CARPETA / pid / P.CARA_ARTWORK, cara)
+    destino = C._existente(catalogo[pid], P.cargar(), P._leer_yaml(P.BASE), list(catalogo.values())) or pid
+    guardar_imagen(P.CARPETA / destino / P.CARA_ARTWORK, cara)
+
+
+def rehacer_caras(catalogo: dict) -> int:
+    """Vuelve a recortar la cara de todos los artworks guardados (al mejorar recorte_cara)."""
+    hechas = 0
+    for pid in catalogo:
+        ilustracion = leer_imagen(C.CARPETA / pid / ARTWORK)
+        if ilustracion is not None and not catalogo[pid].get("cara_a_mano"):
+            guardar_cara(pid, recorte_cara(ilustracion), catalogo)
+            hechas += 1
+    return hechas
 
 
 def pasar_caras(catalogo: dict) -> int:
