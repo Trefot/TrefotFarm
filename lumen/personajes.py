@@ -41,6 +41,7 @@ ROLES = {
 }
 RETRATO = "retrato"  # captura de la cara en la pantalla del equipo (no es una carta)
 ICONO = "icono"  # icono del heroe en la lista de Heroes del juego: es lo que se muestra en la interfaz
+CARA_ARTWORK = "cara_artwork.jpg"  # cabeza y hombros de su ilustracion (Artwork): si esta, se muestra antes
 
 # Cartas sacadas de la ficha del heroe (Heroes -> personaje -> fila "Skills"). Medido con capturas
 # reales: la carta de la ficha es mas pequena que en la mano (x1.22 de ancho, x1.26 de alto) y,
@@ -88,8 +89,12 @@ class Personaje:
         return self._archivo(f"{carta}.png")
 
     def ruta_cara(self) -> Path:
-        """Imagen para mostrar: el icono de la lista de Heroes; si no hay, el retrato del equipo.
-        (Para comprobar el equipo en pantalla se sigue usando el retrato.)"""
+        """Imagen para mostrar: la cara de su Artwork (la prefirio el usuario, 2026-10-29); si no hay, el icono
+        de la lista de Heroes; si tampoco, el retrato del equipo. (Para comprobar el equipo en pantalla se
+        sigue usando el retrato.)"""
+        artwork = self._archivo(CARA_ARTWORK)
+        if artwork.is_file():
+            return artwork
         icono = self.ruta(ICONO)
         return icono if icono.is_file() else self.ruta(RETRATO)
 
