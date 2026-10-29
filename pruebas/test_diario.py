@@ -79,6 +79,10 @@ class EnElModo(unittest.TestCase):
             p = mock.patch.object(entrada, n, lambda *a, **k: None)
             p.start()
             self.addCleanup(p.stop)
+        # Carpeta propia: las peleas que apuntan las otras pruebas de bestias no se mezclan (fallaba a veces).
+        p = mock.patch.object(D, "CARPETA", Path(tempfile.mkdtemp(dir=entorno.TEMPORAL)))
+        p.start()
+        self.addCleanup(p.stop)
 
     def test_pelea_que_acaba_en_derrota(self):
         m = B.PerrosPisos1a3({})

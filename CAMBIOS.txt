@@ -29,6 +29,12 @@ Etapas previstas:
 
 CAMBIOS
 -------
+0.7.4-alpha
+  - Bestias Floor 1-3: una pasada es Floor 1, 2, 3, Reset y parar. Por defecto 3 victorias (tambien en
+    Farmear y desde el movil). Al parar apunta el piso que toca para la proxima vez.
+  - El "1" de victorias que dejo la prueba rapida se borra al abrir Lumen, antes que lo lea ninguna pagina:
+    en la 0.7.3 la pagina Farmear ya lo tenia cargado y lo volvia a guardar.
+
 0.7.3-alpha
   - Bestias Floor 1-3: el bot recuerda por que piso va cada bestia y si tiene que pulsar Reset. Antes
     empezaba siempre en el Floor 1 y tocaba los 3 pisos superados (casi 1 min) antes de pulsar Reset.
