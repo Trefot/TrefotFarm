@@ -123,6 +123,36 @@ class Interfaz(Base):
         self.assertTrue(ini.b_meta.isChecked())
         self.assertTrue(ini.editor.isHidden())
 
+    def test_plan_hasta_la_meta(self):
+        from lumen.gui import plan
+
+        f = self.v.farmear
+        metas.poner("garra_skoll_hati", 0, 40)  # la da perros_piso4; indura no da ninguna meta
+        corriendo, arrancados = {"v": False}, []
+
+        def iniciar(remoto=False, meta=False):
+            arrancados.append((f.modo_cls.id, meta))
+            corriendo["v"] = True
+
+        with mock.patch.object(type(self.v.puente), "corriendo", property(lambda s: corriendo["v"])), \
+             mock.patch.object(f, "iniciar", iniciar), \
+             mock.patch("lumen.gui.paginas.farmear.QTimer.singleShot", lambda ms, fn: fn()):
+            plan.guardar([{"modo": "indura", "victorias": 0}, {"modo": "perros_piso4", "victorias": 0},
+                          {"modo": "indura", "victorias": 3}])
+            f.iniciar_plan()
+            self.assertEqual(arrancados, [("perros_piso4", True)], "la de indura 'hasta la meta' se salta")
+            self.assertEqual(f.plan_resultados[0]["resultado"], "saltada")
+            corriendo["v"] = False
+            control.reiniciar()
+            f.inicio, f.ultimas_stats = time.time() - 60, {"victorias": 5}
+            f._terminado()
+            self.assertEqual(arrancados[-1], ("indura", False))
+            corriendo["v"] = False
+            f._terminado()
+        self.assertIsNone(f.plan_paso)
+        self.assertEqual(plan.texto_victorias(0), "hasta completar sus metas")
+        control.reiniciar()
+
     def test_para_al_cumplir_la_meta(self):
         f = self.v.farmear
         metas.poner("garra_skoll_hati", 0, 4)

@@ -66,7 +66,7 @@ class Interfaz(unittest.TestCase):
         corriendo = {"v": False}
         arrancados, no_arranca, tarjetas = [], set(), []
 
-        def iniciar(remoto=False):
+        def iniciar(remoto=False, meta=False):
             arrancados.append(f.modo_cls.id)
             corriendo["v"] = f.modo_cls.id not in no_arranca
 
@@ -142,7 +142,7 @@ class Interfaz(unittest.TestCase):
         arrancados, informes, enviados = [], [], []
         guion = {}  # modo -> como acaba: "ok", "error", "no_arranca" o "sin_victoria"
 
-        def iniciar(remoto=False):
+        def iniciar(remoto=False, meta=False):
             m = f.modo_cls.id
             arrancados.append(m)
             if guion.get(m) == "no_arranca":
