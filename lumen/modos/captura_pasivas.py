@@ -23,7 +23,7 @@ from lumen.vision import Plantilla, guardar_imagen
 
 CERRAR = Plantilla("heroes/cerrar_ventana.png")  # la X roja de las ventanas de Gracia, Unique y Reliquia
 MAS_TEXTO = Plantilla("heroes/flecha_mas_texto.png")  # flecha amarilla bajo un texto largo: hay que deslizar
-PAGINAS_MAX = 4
+PAGINAS_MAX = 6  # "The Final Battle" de Meliodas necesita varias
 # Iconos de la fila "Grace / Unique" (ficha de 550x940): Gracia, Unique, Reliquia y un hueco mas por si acaso
 ICONOS = ((80, 785), (157, 785), (240, 785), (320, 785))
 COLUMNAS_TEXTO = (70, 480)
