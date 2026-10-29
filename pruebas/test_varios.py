@@ -294,3 +294,12 @@ class Pasivas(unittest.TestCase):
             v = CP.leer_ventana(pantalla, (456, 233, 44, 42))
         self.assertEqual((v["tipo"], v["nombre"]), ("pasiva", "Distorted Holiness"))
         self.assertIn("8%", v["texto"])
+
+    def test_texto_largo_en_dos_trozos(self):
+        from lumen.modos import captura_pasivas as CP
+
+        antes = ["Increases Applicable Allies' basic stats by 4%", "The hero's Crit Damage increases by 60%",
+                 "When the hero uses a skill, Attack-related stats increase"]
+        despues = ["The hero's Crit Damage increases by 60%.", "When the hero uses a skill, Attack-related stats increase",
+                   "by 2% for every 4% of remaining HP", "(Applies before skill activation)"]
+        self.assertEqual(CP.juntar(antes, despues), antes + despues[2:], "sin repetir lo que se ve en los dos trozos")
