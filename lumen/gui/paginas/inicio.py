@@ -28,7 +28,7 @@ from lumen.gui.rueda import Rueda
 from lumen.modos import MODOS
 from lumen.modos.catalogo import CATALOGO, GRUPOS, contenido_de, foto_de
 
-OPCIONES_VICTORIAS = [("1", 1), ("5", 5), ("10", 10), ("25", 25), ("∞", 0)]
+OPCIONES_VICTORIAS = [("1", 1), ("3", 3), ("5", 5), ("10", 10), ("25", 25), ("∞", 0)]
 
 
 class Paso(QToolButton):
@@ -343,7 +343,8 @@ class PaginaInicio(Pagina):
 
     def _cargar_opciones(self):
         guardadas = (config.obtener("opciones_modos") or {}).get(self.modo_id, {})
-        victorias = int(guardadas.get("victorias", 0))
+        # Sin nada elegido, los Floor 1-3 hacen una vuelta entera (los 3 pisos); lo demas, sin limite.
+        victorias = int(guardadas.get("victorias", 3 if self.modo_id.endswith("_pisos1a3") else 0))
         for b in self.grupo_victorias.buttons():
             b.setChecked(b.property("valor") == victorias)
         if not self.grupo_victorias.checkedButton():
