@@ -26,9 +26,10 @@ from PyQt5.QtWidgets import (
     QVBoxLayout,
 )
 
-from lumen import actualizador, avisos, botin, config, informe, ordenes, premios, recompensas, ventana
+from lumen import actualizador, avisos, botin, config, informe, metas, ordenes, premios, recompensas, ventana
 from lumen.control import control
 from lumen.gui import iconos, plan, resumen, tema
+from lumen.gui.metas import ICONO as ICONO_METAS, PanelMetas, marcar_meta
 from lumen.gui.arranque import EMBLEMA
 from lumen.gui.comun import Pagina, formatear_tiempo, icono_premio
 from lumen.gui.paginas.equipos import clave_de_equipos, tarjetas_equipos
@@ -241,8 +242,14 @@ class PaginaFarmear(Pagina):
         self.plan_prueba = False  # el plan en marcha es la prueba rapida: al final, un informe
         self.plan_resultados: list[dict] = []  # como acabo cada tarea (para el informe)
         self.ultimo_problema = ""  # por que no pudo empezar la ultima vez
+        self.panel_metas = PanelMetas()
+        self.panel_metas.farmear.connect(self.farmear_meta)
+        self.panel_metas.cambiado.connect(self._metas_cambiadas)
+        self.parar_en_meta = False  # parar (o pasar a la siguiente tarea del plan) al cumplir las metas
+        self.metas_objetivo: list[str] = []  # las metas que llena el modo en marcha
+        self._ultima_revision_metas = 0.0
         for i, (texto, ic, vista) in enumerate((("Registro", "registro", self.registro), ("Plan", "mdi6.format-list-checks", self.panel_plan),
-                                               ("Opciones", "ajustes", panel_opciones))):
+                                               ("Metas", ICONO_METAS, self.panel_metas), ("Opciones", "ajustes", panel_opciones))):
             b = QPushButton(" " + texto, objectName="chip", checkable=True, checked=i == 0)
             b.setIcon(iconos.icono(ic, tema.TENUE, tema.SOBRE_ACENTO))
             b.clicked.connect(lambda _, n=i: self._ver_vista(n))
@@ -294,8 +301,11 @@ class PaginaFarmear(Pagina):
         self.actualizar_ayuda_teclas()
 
     def _ver_vista(self, n: int):
-        """Registro (0), Plan (1) u Opciones (2) abajo a la izquierda."""
+        """Registro (0), Plan (1), Metas (2) u Opciones (3) abajo a la izquierda."""
         self.pila_vista.setCurrentIndex(n)
+        self.grupo_vista.buttons()[n].setChecked(True)
+        if self.pila_vista.widget(n) is self.panel_metas:
+            self.panel_metas.refrescar()
         for w in self.solo_registro:
             w.setVisible(n == 0)
 
@@ -408,7 +418,12 @@ class PaginaFarmear(Pagina):
         else:
             QMessageBox.warning(self, titulo, texto)
 
-    def iniciar(self, remoto: bool = False):
+    def iniciar(self, remoto: bool = False, meta: bool = False):
+        """``meta``: parar al completar las metas que llena este modo (el chip "Meta" de Inicio)."""
+        self.parar_en_meta, self.metas_objetivo = False, []
+        if meta:
+            self.metas_objetivo = [m.objeto for m in metas.del_destino(self.modo_cls.id, metas.cargar(fresco=True))]
+            self.parar_en_meta = bool(self.metas_objetivo)
         # Antes de farmear, mirar si salio una version nueva (las revisiones automaticas son cada
         # 30 min y podria estar jugando con un guion viejo). Si no hay internet, sigue igual.
         est = self.app.estado_update
@@ -814,6 +829,43 @@ class PaginaFarmear(Pagina):
             self.lbl_vuelta.setText(f"vuelta {vuelta}" if vuelta else "")
 
     # ------------------------------------------------------- equipos y botin
+    # ------------------------------------------------------------ metas de material
+    def ver_meta(self, objeto: str):
+        """Hace meta un objeto (al tocarlo en "Puedes conseguir") y abre la pestana Metas."""
+        self.app.navegar("farmear")
+        self._ver_vista(2)
+        self.panel_metas.anadir(objeto)
+
+    def farmear_meta(self, id_destino: str):
+        """Boton Farmear de una meta: ese modo, sin limite de victorias, hasta completarla."""
+        if self.puente.corriendo:
+            return
+        self.preparar(id_destino, {"victorias": 0})
+        self.iniciar(meta=True)
+
+    def _metas_cambiadas(self):
+        self._pintar_premios()
+        self.app.paginas["inicio"].refrescar_metas()
+
+    def _revisar_metas(self):
+        """Con el bot en marcha: avance de las metas y, si se pidio, parar al cumplirlas."""
+        todas = metas.cargar()
+        if self.pila_vista.currentWidget() is self.panel_metas:
+            self.panel_metas.refrescar()
+        if not self.parar_en_meta:
+            return
+        pendientes = [m for m in todas if m.objeto in self.metas_objetivo and not m.completa]
+        if pendientes:
+            return
+        nombres = ", ".join(m.nombre for m in todas if m.objeto in self.metas_objetivo)
+        self.parar_en_meta = False
+        self.escribir(f"Meta cumplida: {nombres}.", "ok")
+        avisos.enviar(f"Lumen Farm: meta cumplida ({nombres}).")
+        if self.plan_paso is not None:
+            self.saltar_tarea()  # en un plan, sigue con la siguiente tarea
+        else:
+            self.detener()
+
     def ver_equipos(self):
         """Abre Farmear, donde estan los mejores equipos (p. ej. desde el icono Equipo de Inicio)."""
         self.app.navegar("farmear")
@@ -843,6 +895,7 @@ class PaginaFarmear(Pagina):
             if w:
                 w.setParent(None)
         lista = premios.de(self.modo_cls.id)
+        metas_ahora = metas.cargar()
         for p in lista:
             casilla = QFrame(objectName="premio_mini")
             capa = QVBoxLayout(casilla)
@@ -857,6 +910,9 @@ class PaginaFarmear(Pagina):
             capa.addWidget(prob)
             casilla.setToolTip(f"<b>{p.nombre}</b> {p.texto_cantidad}<br>{p.descripcion}<br><i>"
                                + ("En cada victoria" if p.siempre else f"{p.texto_prob} por pelea") + "</i>")
+            marcar_meta(casilla, prob, p.objeto, metas_ahora, ancho=34)
+            casilla.setCursor(Qt.PointingHandCursor)
+            casilla.mousePressEvent = lambda _e, o=p.objeto: self.ver_meta(o)
             self.fila_premios.addWidget(casilla)
         for w in (self.raya_premios, self.caja_premios.itemAt(0).widget()):
             w.setVisible(bool(lista))
@@ -926,5 +982,8 @@ class PaginaFarmear(Pagina):
             self._pintar_botin()
 
     def _refrescar(self):
+        if self.puente.corriendo and time.time() - self._ultima_revision_metas > 5:
+            self._ultima_revision_metas = time.time()
+            self._revisar_metas()
         if self.inicio:
             self.cifras["tiempo"].setText(formatear_tiempo(time.time() - self.inicio))

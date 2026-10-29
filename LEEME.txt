@@ -43,7 +43,9 @@ Inicio            4 iconos (Juego, Ventana, Equipo, Cartas: en verde = listo), l
                   que farmear y su piso, el equipo mas rapido medido, victorias y Empezar.
 Farmear           todo en una pantalla: arriba el modo (en Floor 1-3, el piso y la vuelta) con
                   Iniciar / Pausar / Detener; las cifras; el botin que lleva (esta sesion; parado, el
-                  de hoy en ese modo); y abajo el Registro (u Opciones) junto a los 5 mejores equipos.
+                  de hoy en ese modo); y abajo el Registro (o Plan, Metas u Opciones) junto a los 5
+                  mejores equipos. Metas: toca un objeto de "Puedes conseguir" para hacerlo meta; el
+                  botin suma solo y el chip "Meta" de Inicio para el bot al cumplirla.
 Capturas          sacar y comprobar las imagenes de tus cartas (la insignia roja = las que faltan).
 Personajes        tu biblioteca: ficha de cada personaje (color, raza, roles, lo tengo), sus cartas y su
                   retrato. Una captura sirve para todos los modos. Los retratos se sacan aqui, en la

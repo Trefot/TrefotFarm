@@ -16,12 +16,13 @@ from PyQt5.QtWidgets import (
     QVBoxLayout,
 )
 
-from lumen import config, historial, premios, ventana
+from lumen import config, metas, premios, ventana
 from lumen import personajes as P
 from lumen.actualizador import version_local
 from lumen.control import control
 from lumen.gui import iconos, tema
 from lumen.gui.comun import Pagina, formatear_tiempo, icono_premio
+from lumen.gui.metas import ICONO as ICONO_METAS, marcar_meta
 from lumen.gui.rueda import Rueda
 from lumen.modos import MODOS
 from lumen.modos.catalogo import CATALOGO, GRUPOS, contenido_de, foto_de
@@ -156,6 +157,11 @@ class PaginaInicio(Pagina):
             b.setToolTip("Sin límite" if not valor else f"Parar tras {valor} victorias")
             self.grupo_victorias.addButton(b)
             fila.addWidget(b)
+        self.b_meta = QPushButton(" Meta", objectName="chip", checkable=True)
+        self.b_meta.setIcon(iconos.icono(ICONO_METAS, tema.TENUE, tema.SOBRE_ACENTO))
+        self.b_meta.setProperty("valor", "meta")
+        self.grupo_victorias.addButton(self.b_meta)
+        fila.addWidget(self.b_meta)
         fila.addSpacing(14)
         self.chk_pociones = QCheckBox("Pociones")
         self.chk_pociones.setIcon(iconos.icono("pocion", tema.TENUE))
@@ -170,10 +176,7 @@ class PaginaInicio(Pagina):
         self.b_empezar.clicked.connect(self._empezar_o_detener)
         fila.addWidget(self.b_empezar)
         self.cuerpo.addWidget(barra_inicio)
-
-        # ---- 4. Hoy
-        self.lbl_hoy = QLabel(objectName="tenue", alignment=Qt.AlignCenter)
-        self.cuerpo.addWidget(self.lbl_hoy)
+        self._firma_metas = None  # para repintar "Puedes conseguir" solo si cambia el avance de las metas
 
         app.puente.estado.connect(lambda _: self.refrescar())
         app.puente.stats.connect(lambda _: self._refrescar_vivo())
@@ -242,6 +245,8 @@ class PaginaInicio(Pagina):
             if w:
                 w.setParent(None)
         lista = premios.de(self.modo_id)
+        todas = metas.cargar()
+        self._firma_metas = tuple((m.objeto, m.actual, m.quiero) for m in todas)
         self.fila_premios.addStretch()
         if lista:
             self.fila_premios.addWidget(QLabel("Puedes conseguir", objectName="tenue"))
@@ -261,8 +266,27 @@ class PaginaInicio(Pagina):
             casilla.setToolTip(f"<b>{p.nombre}</b> {p.texto_cantidad}<br>{p.descripcion}<br><i>"
                                + ("En cada victoria" if p.siempre else f"{p.texto_prob} por pelea")
                                + (f" · {cajas}" if cajas else "") + "</i>")
+            marcar_meta(casilla, prob, p.objeto, todas, ancho=46)
+            casilla.setCursor(Qt.PointingHandCursor)
+            casilla.mousePressEvent = lambda _e, o=p.objeto: self.app.farmear.ver_meta(o)
             self.fila_premios.addWidget(casilla)
         self.fila_premios.addStretch()
+        self._pintar_chip_meta(todas)
+
+    def _pintar_chip_meta(self, todas: list):
+        """El chip "Meta" solo vale si este destino ayuda a alguna meta sin completar."""
+        utiles = metas.del_destino(self.modo_id, todas) if self.listo else []
+        self.b_meta.setEnabled(bool(utiles))
+        self.b_meta.setToolTip("Parar al completar: " + ", ".join(f"{m.nombre} ({m.actual}/{m.quiero})" for m in utiles)
+                               if utiles else "Ninguna meta tuya sale aquí. Toca un objeto de «Puedes conseguir» para crear una.")
+        if not utiles and self.b_meta.isChecked():
+            self._marcar_sin_limite()
+
+    def _marcar_sin_limite(self):
+        next(b for b in self.grupo_victorias.buttons() if b.property("valor") == 0).setChecked(True)
+
+    def refrescar_metas(self):
+        self._pintar_premios()
 
     def _pintar_contenido(self):
         """Nombre, descripcion y pisos del contenido del centro de la rueda."""
@@ -294,7 +318,7 @@ class PaginaInicio(Pagina):
         for b in self.grupo_victorias.buttons():
             b.setChecked(b.property("valor") == victorias)
         if not self.grupo_victorias.checkedButton():
-            self.grupo_victorias.buttons()[-1].setChecked(True)
+            self._marcar_sin_limite()
         self.chk_pociones.setChecked(bool(guardadas.get("pociones", False)))
         modo = MODOS.get(self.modo_id)  # Indura, p. ej., no usa pociones
         self.chk_pociones.setVisible(modo is None or any(op.clave == "pociones" for op in modo.opciones))
@@ -310,8 +334,10 @@ class PaginaInicio(Pagina):
             if r != QMessageBox.Yes:
                 return
         victorias = self.grupo_victorias.checkedButton().property("valor")
-        self.app.farmear.preparar(self.modo_id, {"victorias": victorias, "pociones": self.chk_pociones.isChecked()})
-        self.app.farmear.iniciar()
+        meta = victorias == "meta"  # sin limite de victorias: para al completar las metas
+        self.app.farmear.preparar(self.modo_id, {"victorias": 0 if meta else victorias,
+                                                 "pociones": self.chk_pociones.isChecked()})
+        self.app.farmear.iniciar(meta=meta)
         self.refrescar()
 
     # ------------------------------------------------------------------ pasos
@@ -361,8 +387,8 @@ class PaginaInicio(Pagina):
             self.pasos["cartas"].poner("nada", "—", "Este modo aún no está listo.")
         self._pintar_equipo(equipo, biblioteca)
 
-        t = historial.totales(historial.hoy(historial.leer()))
-        self.lbl_hoy.setText(f"Hoy: {t['victorias']} victorias · {formatear_tiempo(t['segundos'])}")
+        if tuple((m.objeto, m.actual, m.quiero) for m in metas.cargar()) != self._firma_metas:
+            self._pintar_premios()  # avanzo una meta (el botin de la ultima victoria)
         self._refrescar_version()
         self._refrescar_vivo()
 

@@ -29,6 +29,13 @@ Etapas previstas:
 
 CAMBIOS
 -------
+0.5.0-alpha
+  - Metas de material: toca un objeto de "Puedes conseguir" (Inicio o Farmear) y queda como meta en
+    Farmear -> Metas (tengo / quiero en la misma fila, donde sale mas y cuantas victorias faltan). El botin
+    de cada victoria suma solo. Chip "Meta" en Inicio: farmea hasta cumplirlas (en un plan, pasa a la
+    siguiente tarea). Los objetos con meta llevan borde dorado y "12/40". Sin ventanas nuevas.
+  - Inicio: fuera la linea "Hoy: X victorias".
+
 0.4.2-alpha
   - Guiones de pelea (lumen/guiones.py): como jugar un jefe fase a fase en un archivo legible
     (lumen/datos/guiones/). Primero: Eikthyrnir Floor 4 con Freyja roja, Thor, Freyr LR y Tyr verde,

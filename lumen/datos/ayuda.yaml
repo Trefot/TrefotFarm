@@ -14,7 +14,9 @@ uso:
     texto: >-
       Bajo la rueda y en Farmear: lo que puede dar ese contenido, con su <b>% por pelea</b>.
       <b>Siempre</b> (verde) = sale en cada victoria; en <b>dorado</b>, lo que sale menos del 1 %.
-      Pasa el ratón por un objeto para ver su nombre y para qué sirve.
+      Pasa el ratón por un objeto para ver su nombre y para qué sirve. <b>Tócalo para hacerlo meta</b>:
+      en Farmear → <b>Metas</b> pones cuántos tienes y quieres, ves dónde sale más y el chip <b>Meta</b>
+      de Inicio para el bot al conseguirlo.
   - icono: farmear
     titulo: "Farmear: todo en una pantalla"
     texto: >-
