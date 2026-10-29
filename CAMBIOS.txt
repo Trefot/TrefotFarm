@@ -29,6 +29,10 @@ Etapas previstas:
 
 CAMBIOS
 -------
+0.8.1-alpha
+  - Captura de artworks: no capturaba nada. Esperaba a que la ficha quedara quieta mirando la figura del
+    heroe, que se mueve siempre; ahora mira la fila de cartas, como la Captura de heroes.
+
 0.8.0-alpha
   - Retratos con la ilustracion de cada heroe (su Artwork del juego): cabeza y hombros, en Personajes,
     Equipos, Inicio y el asistente. Nuevo boton "3. Capturar artworks" (administrador, Heroes capturados):
