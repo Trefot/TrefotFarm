@@ -11,7 +11,7 @@ Reutiliza todo el modo de Perros piso 4 (llegar a los pisos, pelear, botin, derr
 import re
 import time
 
-from lumen import entrada, inteligencia, juego, ocr
+from lumen import config, entrada, inteligencia, juego, ocr
 from lumen.cartas import Carta, Rango, TipoCarta
 from lumen.motor import Opcion, TerminarModo
 from lumen.modos.perros_piso4 import Estrategia, PerrosPiso4, Reiniciar
@@ -109,6 +109,12 @@ class BestiaPisos1a3(PerrosPiso4):
         self.stats["estrategia"] = "Inteligente" if inteligente else "Simple"  # queda en el historial
         self.textos_vistos = False
         self.piso = int(self.valores.get("primer_piso") or 1)
+        # Por donde iba esta bestia la ultima vez (piso que toca y si hay que pulsar Reset antes): en la prueba de
+        # la 0.7.2 el bot empezaba siempre en el Floor 1 y tocaba los 3 pisos superados antes de pulsar Reset.
+        guardado = (config.obtener("pisos_bestias") or {}).get(self.id) or {}
+        if self.piso == 1 and guardado:
+            self.piso = int(guardado.get("piso", 1))
+            self.pedir_reset = bool(guardado.get("reset"))
         self.vuelta = 1  # cuantas veces se ha empezado el ciclo 1 -> 2 -> 3
         self.buscando_piso_desde: float | None = None
         self._ultimo_ocr: tuple[float, int, object] = (0.0, 0, None)  # (hora, piso, rectangulo) de la ultima lectura
@@ -126,7 +132,13 @@ class BestiaPisos1a3(PerrosPiso4):
         self.buscando_piso_desde = None
         self._desplazamientos = 0
         self._toques_piso = 0
+        self._recordar_piso()
         self._stats()
+
+    def _recordar_piso(self):
+        pisos = dict(config.obtener("pisos_bestias") or {})
+        pisos[self.id] = {"piso": self.piso, "reset": bool(self.pedir_reset)}
+        config.guardar({"pisos_bestias": pisos})
 
     def _stats(self):
         self.stats.update(piso=self.piso, vuelta=self.vuelta)  # para la pagina Farmear
@@ -249,6 +261,7 @@ class BestiaPisos1a3(PerrosPiso4):
                 self.log("Pulso Reset para volver a empezar desde el Floor 1.", "ok")
                 entrada.clic((x + w // 2, y + h // 2), o, espera=1.5)
                 self.pedir_reset, self.reset_desde = False, None
+                self._recordar_piso()
                 return True
         return False
 
