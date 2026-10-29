@@ -368,3 +368,10 @@ class CapturasCompletas(unittest.TestCase):
         self.assertGreater(int(piel.sum() // 255), 2000, "el recorte va a la cara, no al dragon")
         manual = A.cara_en(ilu, 400, 330)
         self.assertEqual(manual.shape[:2], (270, 270))
+
+    def test_detector_de_caras_disponible(self):
+        from lumen.modos import captura_artworks as A
+
+        self.assertTrue(A.DETECTOR_CARAS.is_file())
+        self.assertIsNone(A.buscar_cara(np.full((800, 540, 3), 200, np.uint8)), "sin cara: None (se estima)")
+        self.assertFalse(A._detector.empty(), "el detector se carga")
