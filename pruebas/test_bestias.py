@@ -209,6 +209,24 @@ class Navegacion(ConPantallaSimulada):
         self.assertEqual(self.modo(B.CiervoPisos1a3, bestia=1).piso, 1, "cada bestia lleva su cuenta")
         config.guardar({"pisos_bestias": {}})
 
+    def test_turno_con_pocos_huecos(self):
+        """Nidhoggr y Ratatoskr dejan menos de 3 huecos: el turno empieza igual, tras 3 lecturas seguidas."""
+        from lumen import cartas as C
+
+        m = self.modo(B.SerpientePisos1a3, bestia=3)
+        empezados = []
+        self._parchear(m, "_empezar_turno", lambda p, h: empezados.append(h))
+        self._parchear(m, "_talento_visible", lambda p: False)
+        self._parchear(C, "contar_huecos", lambda p, u=0.8: 2)
+        for juego_falso in ("derrota", "cerrar", "victoria", "criatura_destruida", "piso3_superado", "saltar",
+                            "mision_semanal", "info_mision"):
+            self._parchear(juego, juego_falso, PlantillaFalsa(juego_falso))
+        m.pelea(set(), (0, 0))
+        m.pelea(set(), (0, 0))
+        self.assertEqual(empezados, [], "con 2 huecos no basta con 2 lecturas")
+        m.pelea(set(), (0, 0))
+        self.assertEqual(empezados, [2])
+
     def test_pasada_completa_acaba_con_reset(self):
         """Victorias cumplidas tras el Floor 3: pulsa Reset, confirma y para (antes paraba sin mas)."""
         from lumen import config

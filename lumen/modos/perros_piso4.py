@@ -27,6 +27,8 @@ from lumen.control import control
 from lumen.ia.diario import Diario
 from lumen.equipo import Equipo, Puesto
 from lumen.motor import Modo, Opcion, TerminarModo
+from lumen.rutas import LOGS
+from lumen.vision import guardar_imagen
 
 # ---------------------------------------------------------------------- el equipo
 EQUIPO = Equipo(
@@ -264,6 +266,8 @@ class PerrosPiso4(Modo):
         self.objetivo_actual: str | None = None
         self.talento_usado = False
         self.inicio_pelea = time.time()
+        self.ultimo_turno = time.time()  # para guardar una captura si no llega ningun turno
+        self.foto_sin_turno_hecha = False
         self.foto_recompensa = False
         self.destruida_desde: float | None = None  # cuando se vio "Creature Destroyed" (fin de la pelea)
         self.ultimo_boton_texto = 0.0
@@ -401,14 +405,30 @@ class PerrosPiso4(Modo):
         # El boton del talento de Odin solo vale si tambien hay huecos: con Nidhoggr (prueba de la 0.4.0) se veia
         # sin huecos y el bot "empezaba" un turno por segundo sin jugar nada durante toda la fase 2.
         talento = talento and huecos > 0
-        if talento or huecos >= 3:
+        if talento or huecos >= 1:
             self.lecturas_turno += 1
-            if talento or self.lecturas_turno >= 2:  # dos lecturas seguidas: evita arrancar en una animacion
+            # Lecturas seguidas antes de empezar (evita arrancar en una animacion): 2 con 3 o mas huecos y 3 con
+            # menos. Antes hacian falta 3 huecos: con Nidhoggr (fase 2) y Ratatoskr, que dejan menos, el bot jugaba
+            # el primer turno y se quedaba quieto hasta rendirse (prueba de la 0.7.4).
+            if talento or self.lecturas_turno >= (2 if huecos >= 3 else 3):
                 self.lecturas_turno = 0
                 return self._empezar_turno(p, max(huecos, 4) if talento else huecos)
         else:
             self.lecturas_turno = 0
+        self._foto_sin_turno(p)
         return None
+
+    def _foto_sin_turno(self, p):
+        """Si pasa 1 min sin ningun turno, guarda una captura (una por pelea) para ver que hay en pantalla."""
+        if self.foto_sin_turno_hecha or time.time() - self.ultimo_turno < 60:
+            return
+        self.foto_sin_turno_hecha = True
+        ruta = LOGS / "sin_turno" / f"{self.id}_{time.strftime('%Y%m%d_%H%M%S')}.png"
+        try:
+            guardar_imagen(ruta, p)
+            self.log(f"1 min sin ver mi turno: guardo una captura en logs/sin_turno ({ruta.name}).", "aviso")
+        except Exception:
+            pass
 
     def _detectar_fase(self, p, huecos: int) -> int | None:
         if juego.fase_3_perros.esta(p, 0.8):
@@ -420,6 +440,7 @@ class PerrosPiso4(Modo):
         return None
 
     def _empezar_turno(self, p, huecos: int):
+        self.ultimo_turno = time.time()
         detectada = self._detectar_fase(p, huecos)
         if self.fase is None:
             self.fase = detectada or 1
