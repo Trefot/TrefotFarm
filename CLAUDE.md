@@ -16,6 +16,12 @@ Reglas completas en CAMBIOS.txt. Resumen:
 
 `python3 -m unittest discover -s pruebas -t pruebas` (en Windows, Probar.bat). Tienen que pasar antes de subir.
 
+## La IA del bot
+
+El plan completo esta en `IA.md` (leer, decidir, aprender solo y equipos que el bot propone y prueba).
+Al terminar una pieza, actualizar su estado alli. En el PC: `py -m lumen.ia.efectos` dice cuanto entiende
+el lector de los textos de cartas capturados y que frases faltan (anadirlas con su prueba real).
+
 ## Trabajo a medias
 
 - **Floor 4 del ciervo con guion** (0.4.2): el motor `lumen/guiones.py` (EstrategiaGuion, misma forma

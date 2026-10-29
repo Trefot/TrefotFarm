@@ -29,6 +29,22 @@ Etapas previstas:
 
 CAMBIOS
 -------
+0.7.0-alpha
+  - Empieza la IA del bot (plan en IA.md): lector de efectos (lumen/ia/efectos.py). Convierte el texto
+    de una habilidad o pasiva (dano 220 % a uno, baja el ataque 20 % 1 turno, quita postura, cura,
+    limpia...) y el de un jefe (Torrent, Inmortalidad, reduccion de dano por atributo...) en efectos y
+    mecanicas con su contramedida. Probado con Raining Blades y las 4 fases del Floor 4 del ciervo.
+  - Decidir (lumen/ia/decidir.py): el juego inteligente puede subir o bajar el valor de cada carta segun
+    lo que pide el jefe en la fase (quitar postura x3, ultis contra el Torrent x2, mismo color x1.5...) y
+    apunta el motivo. Enemy Info por fase en lumen/datos/jefes.yaml (ya esta el ciervo F4).
+    Aun no cambia como juega el bot: falta que cada modo le pase las mecanicas de su fase.
+  - Diario de peleas (lumen/ia/diario.py): las bestias (Floor 1-3 y Floor 4) apuntan cada jugada y como
+    acabo la pelea en logs/diario. Orden "diario" desde el movil: victorias, derrotas por fase, motivos
+    de reinicio y lo que se juega al ganar, listo para pasarselo al analista.
+  - Aprender solo (lumen/ia/aprendizaje.py): en las bestias Floor 1-3, 1 de cada 10 peleas el juego
+    inteligente prueba una variante pequena (un parametro, un paso) y se queda con la que saca mas
+    victorias por hora (minimo 5 peleas y un 5 % mejor); descarta las que pierden. Opcion "Aprender solo".
+
 0.6.0-alpha
   - Plan del dia con metas: las victorias de una tarea bajan hasta "Meta" = farmear hasta completar
     las metas de material que da ese modo, y el plan sigue con la siguiente. Si ya no le queda ninguna

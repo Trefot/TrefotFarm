@@ -37,12 +37,13 @@ uso:
     texto: >-
       En Floor 1-3 e Indura, por defecto <b>Inteligente</b>: piensa el turno entero, junta cartas iguales
       (fusiones) y prefiere las de área contra varios enemigos. Sirve con cualquier equipo. Se cambia a
-      <b>Simple</b> en Farmear → Opciones.
+      <b>Simple</b> en Farmear → Opciones. En las bestias <b>aprende solo</b>: 1 de cada 10 peleas prueba una
+      variante pequeña y se queda con la que gana más rápido (se apaga en Opciones → Aprender solo).
   - icono: movil
     titulo: "Desde el móvil"
     texto: >-
       Con la app ntfy (Ajustes → Avisos al móvil: pulsa <b>Generar</b> y marca <b>Aceptar órdenes</b>) puedes escribirle:
-      <b>estado, iniciar, plan, plan ver, saltar, prueba, pausar, reanudar, detener, captura</b> o <b>ayuda</b>. Si algo falla o se atasca, te llega el detalle para copiarlo.
+      <b>estado, iniciar, plan, plan ver, saltar, prueba, diario, pausar, reanudar, detener, captura</b> o <b>ayuda</b>. Si algo falla o se atasca, te llega el detalle para copiarlo.
   - icono: mdi6.translate
     titulo: "Idioma del juego"
     texto: >-

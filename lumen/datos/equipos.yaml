@@ -6,6 +6,8 @@
 # nivel: recomendado | bueno | alternativa
 # personajes: ids de lumen/datos/personajes.yaml, de izquierda a derecha como en el juego
 # bot: true si el bot sabe jugar ese equipo
+# reliquias (a futuro, ver IA.md): heroe -> id de su reliquia (o true si solo tiene una) cuando el equipo
+#   la necesita. Un heroe puede tener varias reliquias distintas. Hoy solo se nombran en las notas.
 # minutos: minutos por victoria medidos en las pruebas (con menus y cargas). El mas rapido sale en Inicio
 #   y primero en Farmear. Lo que mida el bot en cada PC (5 peleas o mas) manda sobre este numero.
 # alternativas: personaje -> otros que pueden ocupar su lugar (mejor no usarlo: cada opcion va como

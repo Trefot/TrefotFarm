@@ -1,0 +1,32 @@
+# Enemy Info de cada jefe, tal como sale en el juego (cliente en ingles), por destino y fase.
+# Lo lee lumen/ia/efectos.py (mecanicas de cada fase) y lo usa lumen/ia/decidir.py para valorar las cartas.
+# Para anadir un jefe: copiar el texto de "Pattern Description" de cada fase y el de las pasivas del piso
+# ("Floor N Phase M") de la pestana de la calavera. Ver IA.md.
+
+ciervo_piso4:  # Transcendent Eikthyrnir (capturas del usuario, 2026-10-29)
+  fases:
+    1:
+      - >-
+        The Demonic Beast uses "Splash Shower" every set number of turns to apply Torrent on enemies. All
+        Torrent effects are removed when the enemy uses an Ultimate Move or when they are hit by the
+        Demonic Beast's "Icy Pond".
+      - Recovers HP equal to 50% of the damage dealt to enemies with Torrent.
+    2:
+      - >-
+        At the start of the battle, the Demonic Beast gains Damage Taken Decrease effects for Strength, HP,
+        and Speed attributes. When you continuously attack the Demonic Beast with the same attribute, the
+        Damage Taken Decrease effect related to the attribute that is weak against the attacker's attribute
+        will be removed.
+    3:
+      - >-
+        When the Demonic Beast is attacked a certain number of times using the same attribute all enemies
+        gain Eikthyrnir's Protection. Enemies with Eikthyrnir's Protection do not take damage from the
+        Demonic Beast's "Fierce Rush" skill.
+      - Increases the hero's Crit Chance by 10% for every orb filled in the hero's Ultimate Move Gauge.
+      - Increases the hero's Crit Damage by 20% for every orb filled in the hero's Ultimate Move Gauge.
+    4:
+      - >-
+        At the start of the battle, the Demonic Beast gains Immortality and Attribute Defense against all
+        attributes. 1 Immortality effect is removed when it is attacked a certain number of times in a
+        certain sequence of attributes. The Attribute Defense of each attribute is removed at certain
+        amounts of HP.
