@@ -37,7 +37,8 @@ uso:
     texto: >-
       En Floor 1-3 e Indura, por defecto <b>Inteligente</b>: piensa el turno entero, junta cartas iguales
       (fusiones) y prefiere las de área contra varios enemigos. Sirve con cualquier equipo. Se cambia a
-      <b>Simple</b> en Farmear → Opciones.
+      <b>Simple</b> en Farmear → Opciones. En las bestias <b>aprende solo</b>: 1 de cada 10 peleas prueba una
+      variante pequeña y se queda con la que gana más rápido (se apaga en Opciones → Aprender solo).
   - icono: movil
     titulo: "Desde el móvil"
     texto: >-

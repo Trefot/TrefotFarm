@@ -554,7 +554,12 @@ class PaginaFarmear(Pagina):
         elif orden == "diario":
             from lumen.ia import diario
 
-            avisos.enviar(diario.texto(self.modo_cls.id, self.modo_cls.nombre))
+            from lumen.ia import aprendizaje
+
+            texto = diario.texto(self.modo_cls.id, self.modo_cls.nombre)
+            if any(p.get("config") for p in diario.leer(self.modo_cls.id, 1000)):
+                texto += "\n" + aprendizaje.texto(diario.leer(self.modo_cls.id, 1000))
+            avisos.enviar(texto)
         elif orden == "plan ver":
             avisos.enviar(self._texto_plan())
         elif orden == "saltar":

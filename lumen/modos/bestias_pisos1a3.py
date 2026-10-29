@@ -83,6 +83,9 @@ class BestiaPisos1a3(PerrosPiso4):
         Opcion("primer_piso", "Empezar en el Floor", "lista", "1", opciones=["1", "2", "3"]),
         Opcion("jugar", "Cómo jugar", "lista", "Inteligente", opciones=["Inteligente", "Simple"],
                ayuda="Inteligente: piensa el turno entero y las fusiones. Simple: ulti y luego la de más rango."),
+        Opcion("aprender", "Aprender solo", "si_no", True,
+               ayuda="1 de cada 10 peleas prueba una variante pequeña del juego inteligente y se queda con lo que "
+                     "gane más rápido. Apagado: juega siempre con lo ya aprendido."),
         Opcion("pociones", "Usar pociones de stamina", "si_no", True),
         Opcion("max_pociones", "Máximo de pociones (0 = sin límite)", "entero", 0, maximo=999),
     ]

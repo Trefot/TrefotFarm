@@ -336,10 +336,25 @@ class PerrosPiso4(Modo):
         if juego.carga_bestias.esta(p) or juego.carga_taberna.esta(p):
             self._nueva_pelea()
             self.diario.terminar("abandonada")  # la anterior acabo sin verse el final
-            self.diario.empezar(equipo=getattr(self.equipo, "orden", None), estrategia=self.stats.get("estrategia", ""))
+            config, prueba = self._configuracion()
+            self.diario.empezar(equipo=getattr(self.equipo, "orden", None), estrategia=self.stats.get("estrategia", ""),
+                                **({"config": config, "prueba": prueba} if config else {}))
             self.log("¡A pelear!", "ok")
             return "pelea"
         return None
+
+    def _configuracion(self) -> tuple[dict | None, bool]:
+        """Con que parametros juega el juego inteligente esta pelea (IA.md, pieza 6). Solo si lo usa."""
+        jugador = getattr(self.estrategia, "jugador", None)
+        if jugador is None:
+            return None, False
+        from lumen.ia import aprendizaje, diario
+
+        config, prueba = aprendizaje.elegir(diario.leer(self.id, 1000), explorar=bool(self.valores.get("aprender", True)))
+        jugador.params = config
+        if prueba:
+            self.log(f"Aprendiendo: esta pelea pruebo {aprendizaje.diferencia(config) or 'lo de siempre'}.")
+        return config, prueba
 
     def _verificar_equipo(self, p):
         """Una vez por sesion, antes del primer Start: el equipo en pantalla debe ser el del guion."""

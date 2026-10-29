@@ -32,6 +32,10 @@ PESO_FUTURO = 0.45  # cuanto cuenta lo que deja la mano para el turno siguiente 
 ACCIONES_SIGUIENTE = 4  # cartas que se podran jugar en el turno siguiente (para valorar la mano que queda)
 SOLO_AREA_RESTO = 0.2  # en las fases de "solo area", lo que vale una carta de un objetivo frente a lo normal
 VALOR_NUEVA = 1.1  # lo que se espera de cada carta nueva que rellena la mano (casi siempre bronce; a veces fusiona)
+# Los que puede ajustar el aprendizaje (lumen/ia/aprendizaje.py), con su valor de siempre. Se pasan por
+# Jugador.params; los calculos cacheados usan _PARAMS (como _VALORES_ACTUALES: al cambiar, se vacia la cache).
+PARAMS_DEFECTO = {"peso_futuro": PESO_FUTURO, "valor_ulti": VALOR_ULTI, "solo_area_resto": SOLO_AREA_RESTO}
+_PARAMS: dict = dict(PARAMS_DEFECTO)
 MISMO_DIBUJO = 8.0  # distancia de dibujo (0-100, ver agrupar_por_dibujo) por debajo: es la misma carta
 SUBIR = {Rango.BRONCE: Rango.PLATA, Rango.PLATA: Rango.ORO}
 
@@ -58,7 +62,7 @@ class Ficha:
 def valor_de(nombre: str | None, rango: Rango, ulti: bool, valores: dict) -> float:
     """Dano relativo de una carta. ``valores``: nombre -> multiplicador de esa carta (1.0 = normal)."""
     base = valores.get(nombre, 1.0) if nombre else 1.0
-    return base * (VALOR_ULTI if ulti else VALOR_RANGO.get(rango, 1.0))
+    return base * (_PARAMS["valor_ulti"] if ulti else VALOR_RANGO.get(rango, 1.0))
 
 
 def _fusionar(mano: tuple, i: int) -> tuple:
@@ -109,7 +113,7 @@ def valor_futuro(mano: tuple, tamano: int) -> float:
 def _mejor(mano: tuple, acciones: int, tamano: int, arrastrar: bool = True) -> tuple[float, tuple]:
     """(puntuacion, plan) de la mejor secuencia de ``acciones`` jugadas. Plan: (("jugar", i) | ("mover", i, j), ...)."""
     if acciones == 0 or not mano:
-        return PESO_FUTURO * valor_futuro(mano, tamano), ()
+        return _PARAMS["peso_futuro"] * valor_futuro(mano, tamano), ()
     opciones = []
     for i, f in enumerate(mano):
         if f.jugable:
@@ -122,17 +126,20 @@ def _mejor(mano: tuple, acciones: int, tamano: int, arrastrar: bool = True) -> t
                 puntos, plan = _mejor(mover(mano, i, j), acciones - 1, tamano, arrastrar)
                 opciones.append((puntos, (("mover", i, j),) + plan))
     if not opciones:  # nada que jugar ni fusionar: el turno se pierde
-        return PESO_FUTURO * valor_futuro(mano, tamano), ()
+        return _PARAMS["peso_futuro"] * valor_futuro(mano, tamano), ()
     # Empates: preferir jugar a mover y, entre jugadas, la carta mas a la derecha (como una persona).
     return max(opciones, key=lambda o: (round(o[0], 6), o[1][0][0] == "jugar", o[1][0][1]))
 
 
-def planear(mano: list[Carta], acciones: int, valores: dict | None = None, arrastrar: bool = True) -> tuple[float, tuple]:
-    """El mejor plan para lo que queda del turno. ``mano``: la leida de la pantalla (con sus huecos)."""
-    global _VALORES_ACTUALES
+def planear(mano: list[Carta], acciones: int, valores: dict | None = None, arrastrar: bool = True,
+            params: dict | None = None) -> tuple[float, tuple]:
+    """El mejor plan para lo que queda del turno. ``mano``: la leida de la pantalla (con sus huecos).
+    ``params``: los que cambie el aprendizaje (ver PARAMS_DEFECTO); los que falten, los de siempre."""
+    global _VALORES_ACTUALES, _PARAMS
     valores = valores or {}
-    if valores != _VALORES_ACTUALES:
-        _VALORES_ACTUALES = dict(valores)
+    params = {**PARAMS_DEFECTO, **(params or {})}
+    if valores != _VALORES_ACTUALES or params != _PARAMS:
+        _VALORES_ACTUALES, _PARAMS = dict(valores), params
         _mejor.cache_clear()
     fichas = tuple(_ficha(c, valores) for c in mano if c.tipo not in (TipoCarta.SUELO, TipoCarta.NINGUNA))
     return _mejor(fichas, max(0, acciones), max(len(fichas), _tamano(mano)), arrastrar)
@@ -154,6 +161,7 @@ class Jugador:
         self.mecanicas: list = []
         self.color_turno: str | None = None  # color que ya se esta jugando este turno ("mismo atributo")
         self.razones: dict[str, list[str]] = {}  # por que valio mas o menos cada carta (para el diario)
+        self.params: dict = {}  # lo que cambia el aprendizaje (lumen/ia/aprendizaje.py); vacio = los de siempre
         self._indice = self._tasador = self._lector = None  # se cargan en la primera jugada (tardan ~1 s)
 
     def _identificar(self, carta: Carta) -> str | None:
@@ -171,7 +179,8 @@ class Jugador:
         if self.solo_area and self._tasador:
             # Fase en que todos los enemigos tienen que caer a la vez (fase 3 de los perros de Floor 1-3):
             # areas y ultis primero; las de un objetivo solo si no queda otra cosa.
-            valores = {n: v if self._tasador.es_area(n) else v * SOLO_AREA_RESTO for n, v in valores.items()}
+            resto = self.params.get("solo_area_resto", SOLO_AREA_RESTO)
+            valores = {n: v if self._tasador.es_area(n) else v * resto for n, v in valores.items()}
         self.razones = {}
         if self.mecanicas and valores:
             from lumen.ia import decidir
@@ -180,7 +189,7 @@ class Jugador:
                 self._lector = decidir.LectorCartas()
             valores, self.razones = decidir.ajustar(valores, self.mecanicas, self._lector.efectos_de,
                                                     self._lector.color_de, self.color_turno)
-        _, plan = planear(mano, acciones, valores, self.arrastrar)
+        _, plan = planear(mano, acciones, valores, self.arrastrar, self.params)
         if not plan:
             return None
         reales = posiciones_reales(mano)
