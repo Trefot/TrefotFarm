@@ -194,6 +194,21 @@ class Navegacion(ConPantallaSimulada):
         self.assertEqual(len(self.clics), 1, "pulsa Run Game una vez")
         self.assertEqual(m.estado, m.estado_inicial())
 
+    def test_recuerda_el_piso_y_el_reset(self):
+        """Al volver a arrancar sigue por el piso que tocaba y, tras el Floor 3, pulsa Reset primero."""
+        from lumen import config
+
+        config.guardar({"pisos_bestias": {}})
+        m = self.modo(B.PajaroPisos1a3, bestia=0)
+        m._siguiente_piso()
+        self.assertEqual(self.modo(B.PajaroPisos1a3, bestia=0).piso, 2)
+        m._siguiente_piso()
+        m._siguiente_piso()  # despues del Floor 3: vuelta al 1 con Reset
+        nuevo = self.modo(B.PajaroPisos1a3, bestia=0)
+        self.assertEqual((nuevo.piso, nuevo.pedir_reset), (1, True))
+        self.assertEqual(self.modo(B.CiervoPisos1a3, bestia=1).piso, 1, "cada bestia lleva su cuenta")
+        config.guardar({"pisos_bestias": {}})
+
     def test_piso_superado_se_salta(self):
         """Un piso ya superado no se abre: tras 3 toques pasa al siguiente (prueba de la 0.4.0: 40 s perdidos)."""
         self.texto[:] = ["Twilight Temple Floor 2", "Twilight Temple Floor 1"]

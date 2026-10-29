@@ -29,6 +29,12 @@ Etapas previstas:
 
 CAMBIOS
 -------
+0.7.3-alpha
+  - Bestias Floor 1-3: el bot recuerda por que piso va cada bestia y si tiene que pulsar Reset. Antes
+    empezaba siempre en el Floor 1 y tocaba los 3 pisos superados (casi 1 min) antes de pulsar Reset.
+  - Se borra una vez el "1" de victorias que la prueba rapida habia dejado guardado en los modos (el
+    Floor 1-3 seguia parando tras un piso aunque se actualizara a la 0.7.2).
+
 0.7.2-alpha
   - La prueba rapida y el plan del dia ya no cambian las victorias que eliges en Inicio. La prueba ponia
     1 victoria a cada modo y se quedaba guardada: el Floor 1-3 paraba tras un solo piso.
