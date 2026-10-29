@@ -1,5 +1,5 @@
 # Lo que se puede conseguir en cada contenido, sacado de la ventana "Recompensa" del juego.
-# Lo muestra Inicio bajo la rueda ("Puedes conseguir"). Los iconos estan en assets/premios/<objeto>.png.
+# Lo muestran Inicio y Farmear (fila "Metas") y sirve para las metas de material. Los iconos estan en assets/premios/<objeto>.png.
 #
 # objetos: id -> nombre y descripcion (tal como salen en el juego) y su id en la galeria del inventario
 #   (lumen/datos/galeria_objetos.yaml), si esta: une el botin con estas tablas (recompensas.vincular_premios)

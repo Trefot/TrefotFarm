@@ -85,19 +85,43 @@ class Interfaz(Base):
         for p in cls.parches:
             p.stop()
 
-    def test_tocar_un_objeto_lo_hace_meta_en_farmear(self):
+    def test_fila_metas_y_franja_en_inicio(self):
         ini, f = self.v.paginas["inicio"], self.v.farmear
-        ini._elegir_destino("perros_piso4")
+        ini.ir_a_destino("perros_piso4")
+        self.assertEqual(ini.fila_metas.objetos.count("garra_skoll_hati"), 1, "cada material una sola vez")
         self.assertFalse(ini.b_meta.isEnabled(), "sin metas, el chip Meta no vale")
-        casilla = next(ini.fila_premios.itemAt(i).widget() for i in range(ini.fila_premios.count())
-                       if ini.fila_premios.itemAt(i).widget() and "Garra" in ini.fila_premios.itemAt(i).widget().toolTip())
-        casilla.mousePressEvent(None)
-        self.app.processEvents()
-        self.assertIs(self.v.pila.currentWidget(), f)
-        self.assertIs(f.pila_vista.currentWidget(), f.panel_metas)
-        self.assertIn("garra_skoll_hati", f.panel_metas.filas)
-        ini.refrescar_metas()
+        ini._tocar_material("garra_skoll_hati")
+        self.assertFalse(ini.editor.isHidden())
+        self.assertTrue(ini.caja_equipo.isHidden(), "la franja ocupa el sitio del equipo")
+        self.assertIsNone(metas.de("garra_skoll_hati", metas.cargar(fresco=True)), "solo mirar no crea la meta")
+        ini.editor.tengo.setValue(5)
+        ini.editor.quiero.setValue(30)
+        ini.editor.b_crear.click()
+        m = metas.de("garra_skoll_hati", metas.cargar(fresco=True))
+        self.assertEqual((m.actual, m.quiero), (5, 30))
         self.assertTrue(ini.b_meta.isEnabled(), "ahora este destino ayuda a una meta")
+        ini._tocar_material("garra_skoll_hati")  # tocarlo otra vez cierra la franja
+        self.assertTrue(ini.editor.isHidden())
+        self.assertFalse(ini.caja_equipo.isHidden())
+
+    def test_desde_farmear_abre_la_franja_en_inicio(self):
+        ini, f = self.v.paginas["inicio"], self.v.farmear
+        ini.ir_a_destino("indura")
+        f.preparar("perros_piso4", {})
+        f.fila_metas.tocado.emit("orbe_skoll_hati")
+        self.app.processEvents()
+        self.assertIs(self.v.pila.currentWidget(), ini)
+        self.assertEqual((ini.modo_id, ini.editor.objeto), ("perros_piso4", "orbe_skoll_hati"))
+        ini.editor.cerrar()
+
+    def test_ir_a_farmearla_gira_la_rueda_y_pone_meta(self):
+        ini = self.v.paginas["inicio"]
+        metas.poner("esencia_azul", 0, 100)  # sale en el pajaro Floor 1-3, pero mas en los perros Floor 4
+        ini.abrir_meta("esencia_azul", "pajaro_pisos1a3")
+        ini.editor.b_ir.click()
+        self.assertEqual(ini.modo_id, "perros_piso4")
+        self.assertTrue(ini.b_meta.isChecked())
+        self.assertTrue(ini.editor.isHidden())
 
     def test_para_al_cumplir_la_meta(self):
         f = self.v.farmear

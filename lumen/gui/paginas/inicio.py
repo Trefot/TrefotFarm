@@ -14,15 +14,16 @@ from PyQt5.QtWidgets import (
     QPushButton,
     QToolButton,
     QVBoxLayout,
+    QWidget,
 )
 
-from lumen import config, metas, premios, ventana
+from lumen import config, metas, ventana
 from lumen import personajes as P
 from lumen.actualizador import version_local
 from lumen.control import control
 from lumen.gui import iconos, tema
-from lumen.gui.comun import Pagina, formatear_tiempo, icono_premio
-from lumen.gui.metas import ICONO as ICONO_METAS, marcar_meta
+from lumen.gui.comun import Pagina, formatear_tiempo
+from lumen.gui.metas import ICONO as ICONO_METAS, EditorMeta, FilaMateriales
 from lumen.gui.rueda import Rueda
 from lumen.modos import MODOS
 from lumen.modos.catalogo import CATALOGO, GRUPOS, contenido_de, foto_de
@@ -131,14 +132,24 @@ class PaginaInicio(Pagina):
         self.grupo_destinos = QButtonGroup(self, exclusive=True)
         self.grupo_destinos.buttonClicked.connect(lambda b: self._elegir_destino(b.property("destino")))
         self.cuerpo.addLayout(self.fila_destinos)
-        self.fila_premios = QHBoxLayout()  # "Puedes conseguir": lo que da el destino elegido
-        self.fila_premios.setSpacing(8)
-        self.cuerpo.addLayout(self.fila_premios)
+        # "Metas": los materiales del destino elegido; al tocar uno, su franja debajo (tengo / quiero)
+        self.fila_metas = FilaMateriales(46, "premio", centrar=True)
+        self.fila_metas.tocado.connect(self._tocar_material)
+        self.cuerpo.addWidget(self.fila_metas)
+        self.editor = EditorMeta()
+        self.editor.cambiado.connect(self._metas_cambiadas)
+        self.editor.cerrado.connect(self._editor_cerrado)
+        self.editor.ir.connect(self._ir_a_meta)
+        self.cuerpo.addWidget(self.editor)
+        self.caja_equipo = QWidget()  # el equipo mas rapido (se oculta mientras la franja esta abierta)
+        capa_equipo = QVBoxLayout(self.caja_equipo)
+        capa_equipo.setContentsMargins(0, 0, 0, 0)
         self.fila_equipo = QHBoxLayout()
         self.fila_equipo.setSpacing(6)
-        self.cuerpo.addLayout(self.fila_equipo)
+        capa_equipo.addLayout(self.fila_equipo)
         self.lbl_estado = QLabel(alignment=Qt.AlignCenter)
-        self.cuerpo.addWidget(self.lbl_estado)
+        capa_equipo.addWidget(self.lbl_estado)
+        self.cuerpo.addWidget(self.caja_equipo)
         self.cuerpo.addStretch()
 
         # ---- 3. Victorias, pociones y Empezar
@@ -176,7 +187,7 @@ class PaginaInicio(Pagina):
         self.b_empezar.clicked.connect(self._empezar_o_detener)
         fila.addWidget(self.b_empezar)
         self.cuerpo.addWidget(barra_inicio)
-        self._firma_metas = None  # para repintar "Puedes conseguir" solo si cambia el avance de las metas
+        self._firma_metas = None  # para repintar la fila "Metas" solo si cambia el avance de las metas
 
         app.puente.estado.connect(lambda _: self.refrescar())
         app.puente.stats.connect(lambda _: self._refrescar_vivo())
@@ -239,38 +250,14 @@ class PaginaInicio(Pagina):
         self.app.refrescar_insignias()
 
     def _pintar_premios(self):
-        """Los objetos que puede dar el destino elegido, con su cantidad y su probabilidad por pelea."""
-        while self.fila_premios.count():
-            w = self.fila_premios.takeAt(0).widget()
-            if w:
-                w.setParent(None)
-        lista = premios.de(self.modo_id)
+        """La fila "Metas" del destino elegido, con el avance de cada meta."""
         todas = metas.cargar()
         self._firma_metas = tuple((m.objeto, m.actual, m.quiero) for m in todas)
-        self.fila_premios.addStretch()
-        if lista:
-            self.fila_premios.addWidget(QLabel("Puedes conseguir", objectName="tenue"))
-        for p in lista:
-            casilla = QFrame(objectName="premio")
-            capa = QVBoxLayout(casilla)
-            capa.setContentsMargins(4, 4, 4, 2)
-            capa.setSpacing(1)
-            dibujo = QLabel(alignment=Qt.AlignCenter)
-            dibujo.setPixmap(icono_premio(p, 46))
-            capa.addWidget(dibujo)
-            prob = QLabel(p.texto_prob, objectName="prob_premio", alignment=Qt.AlignCenter)
-            prob.setProperty("raro", p.prob < 1)
-            prob.setProperty("siempre", p.siempre)
-            capa.addWidget(prob)
-            cajas = ", ".join(f"caja de {c}" for c in p.cajas)
-            casilla.setToolTip(f"<b>{p.nombre}</b> {p.texto_cantidad}<br>{p.descripcion}<br><i>"
-                               + ("En cada victoria" if p.siempre else f"{p.texto_prob} por pelea")
-                               + (f" · {cajas}" if cajas else "") + "</i>")
-            marcar_meta(casilla, prob, p.objeto, todas, ancho=46)
-            casilla.setCursor(Qt.PointingHandCursor)
-            casilla.mousePressEvent = lambda _e, o=p.objeto: self.app.farmear.ver_meta(o)
-            self.fila_premios.addWidget(casilla)
-        self.fila_premios.addStretch()
+        self.fila_metas.pintar(self.modo_id, todas, abierto=self.editor.objeto)
+        if self.editor.objeto and self.editor.objeto not in self.fila_metas.objetos:
+            self.editor.objeto = None  # otro destino: la franja era de un material que aqui no sale
+            self.editor.hide()
+            self.caja_equipo.show()
         self._pintar_chip_meta(todas)
 
     def _pintar_chip_meta(self, todas: list):
@@ -278,7 +265,7 @@ class PaginaInicio(Pagina):
         utiles = metas.del_destino(self.modo_id, todas) if self.listo else []
         self.b_meta.setEnabled(bool(utiles))
         self.b_meta.setToolTip("Parar al completar: " + ", ".join(f"{m.nombre} ({m.actual}/{m.quiero})" for m in utiles)
-                               if utiles else "Ninguna meta tuya sale aquí. Toca un objeto de «Puedes conseguir» para crear una.")
+                               if utiles else "Ninguna meta tuya sale aquí. Toca un material de «Metas» para crear una.")
         if not utiles and self.b_meta.isChecked():
             self._marcar_sin_limite()
 
@@ -287,6 +274,48 @@ class PaginaInicio(Pagina):
 
     def refrescar_metas(self):
         self._pintar_premios()
+
+    # ------------------------------------------------------------------ metas
+    def _tocar_material(self, objeto: str):
+        if self.editor.objeto == objeto:  # tocar el mismo otra vez cierra la franja
+            self.editor.cerrar()
+            return
+        self.abrir_meta(objeto)
+
+    def abrir_meta(self, objeto: str, id_destino: str | None = None):
+        """Abre la franja de la meta de un material (desde Farmear, en el destino que se esta farmeando)."""
+        if id_destino and id_destino != self.modo_id:
+            self.ir_a_destino(id_destino)
+        self.app.navegar("inicio")
+        self.caja_equipo.hide()
+        self.editor.abrir(objeto)
+        self._pintar_premios()
+
+    def _editor_cerrado(self):
+        self.caja_equipo.show()
+        self._pintar_premios()
+
+    def _metas_cambiadas(self):
+        self._pintar_premios()
+        self.app.farmear.repintar_metas()
+
+    def _ir_a_meta(self, id_destino: str):
+        """'Ir a farmearla': gira la rueda al sitio donde mas sale y deja puesto el chip Meta."""
+        self.editor.cerrar()
+        self.ir_a_destino(id_destino)
+        if self.b_meta.isEnabled():
+            self.b_meta.setChecked(True)
+
+    def ir_a_destino(self, id_destino: str):
+        c = contenido_de(id_destino)
+        if c is None:
+            return
+        if c is not self.contenido:
+            self.contenido = c
+            self._poner_rueda(c.grupo)
+            for b in self.botones_grupo.buttons():
+                b.setChecked(b.property("grupo") == c.grupo)
+        self._elegir_destino(id_destino, pintar=True)
 
     def _pintar_contenido(self):
         """Nombre, descripcion y pisos del contenido del centro de la rueda."""

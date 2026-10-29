@@ -3,7 +3,7 @@
 import cv2
 import numpy as np
 from PyQt5.QtCore import Qt
-from PyQt5.QtGui import QColor, QImage, QPainter, QPixmap
+from PyQt5.QtGui import QImage, QPixmap
 from PyQt5.QtWidgets import QFrame, QHBoxLayout, QLabel, QScrollArea, QVBoxLayout, QWidget
 
 
@@ -78,28 +78,3 @@ class Pagina(QWidget):
 def formatear_tiempo(segundos: float) -> str:
     s = int(max(0, segundos))
     return f"{s // 3600}:{s % 3600 // 60:02d}:{s % 60:02d}"
-
-
-def icono_premio(p, tam: int) -> QPixmap:
-    """El icono del objeto con su cantidad (×5, ×2–5) en la esquina, como en el juego."""
-    from lumen.gui import iconos, tema
-
-    pix = QPixmap(str(p.icono))
-    if pix.isNull():
-        pix = iconos.pixmap("mdi6.help-box", tam, tema.TENUE)
-    pix = pix.scaled(tam, tam, Qt.KeepAspectRatio, Qt.SmoothTransformation)
-    if p.texto_cantidad:
-        pintor = QPainter(pix)
-        pintor.setRenderHint(QPainter.Antialiasing)
-        fuente = pintor.font()
-        fuente.setBold(True)
-        fuente.setPointSizeF(7.5)
-        pintor.setFont(fuente)
-        caja = pix.rect().adjusted(0, 0, -3, -1)
-        pintor.setPen(QColor(0, 0, 0, 220))
-        for dx, dy in ((-1, 0), (1, 0), (0, -1), (0, 1)):
-            pintor.drawText(caja.translated(dx, dy), Qt.AlignRight | Qt.AlignBottom, p.texto_cantidad)
-        pintor.setPen(QColor("white"))
-        pintor.drawText(caja, Qt.AlignRight | Qt.AlignBottom, p.texto_cantidad)
-        pintor.end()
-    return pix

@@ -10,13 +10,12 @@ uso:
       Elige la sección (<b>Bestias, Demonios, Fuerte Solgres</b>), gira la <b>rueda</b> y elige el piso.
       Debajo, el <b>equipo más rápido</b> medido. Lo que tiene candado aún no lo sabe farmear el bot.
   - icono: mdi6.treasure-chest
-    titulo: "Puedes conseguir"
+    titulo: "Metas"
     texto: >-
-      Bajo la rueda y en Farmear: lo que puede dar ese contenido, con su <b>% por pelea</b>.
-      <b>Siempre</b> (verde) = sale en cada victoria; en <b>dorado</b>, lo que sale menos del 1 %.
-      Pasa el ratón por un objeto para ver su nombre y para qué sirve. <b>Tócalo para hacerlo meta</b>:
-      en Farmear → <b>Metas</b> pones cuántos tienes y quieres, ves dónde sale más y el chip <b>Meta</b>
-      de Inicio para el bot al conseguirlo.
+      Bajo la rueda (y en Farmear): los materiales que da ese contenido. Pasa el ratón para ver qué es y
+      cuánto sale. <b>Tócalo</b> y debajo pones cuántos <b>tienes</b> y <b>quieres</b>: ves dónde sale más y
+      cuánto falta. Cada victoria suma sola (barrita y <b>12/40</b>). El chip <b>Meta</b> de la barra de
+      Empezar para el bot al conseguirlo.
   - icono: farmear
     titulo: "Farmear: todo en una pantalla"
     texto: >-
@@ -225,7 +224,7 @@ glosario:
     definicion: "Forma de jugar que piensa el turno entero: fusiones, cartas de área y lo que deja para el turno siguiente."
   - termino: "Garantizado"
     tipo: juego
-    definicion: "Premio que sale en cada victoria (en Puedes conseguir, \"Siempre\")."
+    definicion: "Premio que sale en cada victoria."
   - termino: "Modo administrador"
     tipo: bot
     definicion: "Opciones para quien mantiene la base del bot (capturas, personajes y equipos). Un jugador normal no lo necesita."
