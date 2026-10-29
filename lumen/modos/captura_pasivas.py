@@ -6,7 +6,8 @@ volver al primero). En cada ficha toca los iconos de la fila "Grace / Unique": l
 cierra con la X y sigue. Medido con Covenant of Light Ludociel (capturas del 2026-10-29).
 
 Se guarda en capturas/heroes/catalogo.yaml, en cada heroe: ``gracia`` y ``pasiva`` ({nombre, texto}),
-``reliquias`` ([{nombre, efecto}]), ``talento``, ``unidad`` y ``mandamiento`` si los tiene, y ``otras`` (con otro
+``reliquias`` ([{nombre, efecto}]), ``talento``, ``unidad`` y ``mandamiento`` si los tiene, ``conjuntos`` (bonus
+de conjunto de atuendos: [{nombre, piezas, bonus}]) y ``otras`` (con otro
 titulo). El orden de los iconos cambia segun el heroe (Nemesis Meliodas no tiene Gracia y si Talent): cada
 ventana se reconoce por su titulo.
 """
@@ -84,6 +85,22 @@ def leer_ventana(pantalla, x_cerrar: tuple[int, int, int, int]) -> dict | None:
         nombre, cuerpo = (cuerpo[0], cuerpo[1:]) if cuerpo else ("", [])
         nombre = re.sub(r"^\[.*?\]\s*", "", nombre)
     return {"tipo": tipo, "titulo": titulo, "nombre": nombre, "lineas": cuerpo, "texto": unir(cuerpo)}
+
+
+def leer_conjunto(pantalla, x_cerrar: tuple[int, int, int, int]) -> dict | None:
+    """Ventana de "Costume Set" (bonus de conjunto de atuendos): fondo claro, sin la banda gris de las pasivas.
+    {tipo: "conjunto", nombre, piezas, texto}. Algunos heroes tienen este icono en la fila (Wanderer Thonar:
+    "1 additional Skoll and Hati's Orb ... upon clearing Transcendent Skoll and Hati"; 2026-10-29)."""
+    y = int(x_cerrar[1])
+    lineas = [l.strip() for l in ocr.leer(pantalla[max(0, y - 10):y + 620, 40:520]) if len(l.strip()) > 2]  # sin "At"
+    bajas = [l.lower() for l in lineas]
+    if "costume set" not in bajas:
+        return None
+    i_set = bajas.index("costume set")
+    i_bonus = next((i for i, l in enumerate(bajas) if l.startswith("costume set bonus")), len(lineas))
+    nombre = next((l for l in reversed(lineas[:i_set]) if "costume" in l.lower()), lineas[i_set - 1] if i_set else "")
+    return {"tipo": "conjunto", "titulo": "Costume Set", "nombre": nombre, "piezas": lineas[i_set + 1:i_bonus],
+            "lineas": lineas[i_bonus + 1:], "texto": unir(lineas[i_bonus + 1:])}
 
 
 def unir(lineas: list[str]) -> str:
@@ -181,7 +198,7 @@ class CapturaPasivas(CapturaArtworks):
             if time.time() - self.desde > ESPERA_VENTANA:  # hueco vacio: no hay mas iconos
                 return self._guardar_heroe(o)
             return None
-        ventana = leer_ventana(p, tuple(int(v) for v in rect))
+        ventana = leer_ventana(p, tuple(int(v) for v in rect)) or leer_conjunto(p, tuple(int(v) for v in rect))
         if ventana and (ventana["nombre"] or ventana["texto"]):
             self.leidas.append(ventana)
             self.log(f"   {ventana['tipo']}: {ventana['nombre']}", "debug")
@@ -238,6 +255,10 @@ class CapturaPasivas(CapturaArtworks):
                 reliquias = h.setdefault("reliquias", [])
                 if not any(r.get("nombre") == v["nombre"] for r in reliquias):
                     reliquias.append({"nombre": v["nombre"], "efecto": v["texto"]})
+            elif v["tipo"] == "conjunto":
+                conjuntos = h.setdefault("conjuntos", [])
+                if not any(c.get("nombre") == v["nombre"] for c in conjuntos):
+                    conjuntos.append({"nombre": v["nombre"], "piezas": v.get("piezas", []), "bonus": v["texto"]})
             elif v["tipo"] in TIPOS_UNICOS:
                 h[v["tipo"]] = {"nombre": v["nombre"], "texto": v["texto"]}
             else:

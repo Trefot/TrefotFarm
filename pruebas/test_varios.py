@@ -345,3 +345,14 @@ class CapturasCompletas(unittest.TestCase):
         self.assertFalse(C.pasivas_completas({"pasivas_capturadas": "hoy", "pasiva": {"texto": "x"},
                                               "pasivas_incompletas": True}))
         self.assertTrue(C.pasivas_completas({"pasivas_capturadas": "hoy", "pasiva": {"texto": "x"}}))
+
+    def test_conjunto_de_atuendos(self):
+        from lumen.modos import captura_pasivas as CP
+
+        lineas = ["At", "Twilight Hunter Costume", "Costume Set", "Twilight Hunter", "Mark of Twilight", "Costume Set Bonus",
+                  "I additional Skoll and Hati's Orb as a Set Bonus Reward", "upon clearing Transcendent Skoll and Hati."]
+        with mock.patch.object(CP.ocr, "leer", lambda img, escala=2.0: [l for l in lineas]):
+            v = CP.leer_conjunto(np.zeros((940, 550, 3), np.uint8), (440, 238, 44, 42))
+        self.assertEqual((v["tipo"], v["nombre"]), ("conjunto", "Twilight Hunter Costume"))
+        self.assertEqual(v["piezas"], ["Twilight Hunter", "Mark of Twilight"])
+        self.assertIn("Transcendent Skoll and Hati", v["texto"])
