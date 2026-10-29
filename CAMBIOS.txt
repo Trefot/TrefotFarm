@@ -29,6 +29,12 @@ Etapas previstas:
 
 CAMBIOS
 -------
+0.6.0-alpha
+  - Plan del dia con metas: las victorias de una tarea bajan hasta "Meta" = farmear hasta completar
+    las metas de material que da ese modo, y el plan sigue con la siguiente. Si ya no le queda ninguna
+    meta, la tarea se salta (nunca farmea sin fin). "Perros F4 hasta 40 garras, luego Indura hasta 200
+    fragmentos" encadenado solo.
+
 0.5.0-alpha
   - Metas de material: "Puedes conseguir" pasa a ser "Metas": cada material del contenido una vez, sin %.
     Al tocar uno se abre debajo su franja (tengo / quiero, donde sale mas y cuantas victorias faltan,

@@ -103,7 +103,8 @@ PLAN DEL DIA
 ------------
 Farmear -> Plan: una lista de tareas (modo + victorias) que el bot hace en orden, sin nadie delante.
 Al acabar una tarea empieza la siguiente; si una no puede empezar, la salta. Si se acaba la estamina,
-salta las tareas que la usan (Indura sigue). Detener o F10 paran el plan entero. Al final sale un
+salta las tareas que la usan (Indura sigue). Una tarea con victorias en "Meta" (0) farmea hasta
+completar las metas de material que da ese modo. Detener o F10 paran el plan entero. Al final sale un
 solo resumen con todo lo conseguido. Desde el movil, la orden "plan" lo lanza. Se guarda en config.yaml.
 
 

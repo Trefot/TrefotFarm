@@ -693,7 +693,7 @@ class PaginaFarmear(Pagina):
                   else f"Plan del día · {len(tareas)} tareas (no está en marcha)"]
         for i, t in enumerate(tareas):
             marca = "▶" if i == self.plan_paso else "✓" if self.plan_paso is not None and i < self.plan_paso else "•"
-            lineas.append(f"{marca} {i + 1}. {MODOS[t['modo']].nombre} · {t['victorias']} victorias")
+            lineas.append(f"{marca} {i + 1}. {MODOS[t['modo']].nombre} · {plan.texto_victorias(t['victorias'])}")
         return "\n".join(lineas)
 
     def _siguiente_tarea(self, remoto: bool = True):
@@ -710,10 +710,17 @@ class PaginaFarmear(Pagina):
                 continue
             if not self.plan_prueba:
                 self.panel_plan.marcar(i)
-            self.escribir(f"Plan: tarea {i + 1} de {len(tareas)} · {MODOS[t['modo']].nombre} · {t['victorias']} victorias.", "ok")
+            hasta_meta = int(t["victorias"]) == 0
+            if hasta_meta and not metas.del_destino(t["modo"], metas.cargar(fresco=True)):
+                # Sin metas pendientes que de este modo, "hasta la meta" seria farmear sin fin: se salta.
+                self.escribir(f"Plan: salto la tarea {i + 1} ({MODOS[t['modo']].nombre}): no le queda ninguna meta.", "aviso")
+                self._resultado(i, "saltada", "sus metas ya están completas")
+                continue
+            self.escribir(f"Plan: tarea {i + 1} de {len(tareas)} · {MODOS[t['modo']].nombre} · "
+                          f"{plan.texto_victorias(t['victorias'])}.", "ok")
             self.preparar(t["modo"], {"victorias": int(t["victorias"])})
             self.ultimo_problema = ""
-            self.iniciar(remoto=remoto)
+            self.iniciar(remoto=remoto, meta=hasta_meta)
             if self.puente.corriendo:
                 return
             self.escribir(f"La tarea {i + 1} no pudo empezar; paso a la siguiente.", "aviso")

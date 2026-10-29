@@ -1,6 +1,7 @@
 """Plan del dia: una lista de tareas (modo + victorias) que el bot hace una tras otra sin nadie.
 
-Se guarda en config.yaml ("plan": [{"modo": id, "victorias": n}, ...]). La pagina Farmear lo ejecuta:
+Se guarda en config.yaml ("plan": [{"modo": id, "victorias": n}, ...]; victorias 0 = hasta completar
+las metas de material que da ese modo, ver lumen/metas.py). La pagina Farmear lo ejecuta:
 al terminar una tarea arranca la siguiente; si se detiene a mano (boton o F10), el plan se para.
 """
 
@@ -13,6 +14,19 @@ from lumen.modos import MODOS
 from lumen.modos.catalogo import foto_de
 
 VICTORIAS_DEFECTO = 10
+META = "🎯 Meta"  # victorias 0 en una tarea: farmear hasta completar las metas que da ese modo
+AYUDA_META = "Baja hasta «🎯 Meta» para farmear hasta completar tus metas de ese material"
+
+
+def texto_victorias(victorias: int) -> str:
+    return "hasta completar sus metas" if int(victorias) == 0 else f"{victorias} victorias"
+
+
+def _spin(valor: int, sufijo: str) -> QSpinBox:
+    spin = QSpinBox(minimum=0, maximum=999, value=valor, suffix=sufijo)
+    spin.setSpecialValueText(META)
+    spin.setToolTip(AYUDA_META)
+    return spin
 
 
 def cargar() -> list[dict]:
@@ -46,7 +60,7 @@ class PanelPlan(QFrame):
         for modo in MODOS.values():
             self.combo.addItem(modo.nombre, modo.id)
         nueva.addWidget(self.combo, 1)
-        self.spin = QSpinBox(minimum=1, maximum=999, value=VICTORIAS_DEFECTO, suffix=" victorias")
+        self.spin = _spin(VICTORIAS_DEFECTO, " victorias")
         nueva.addWidget(self.spin)
         b_anadir = QPushButton(" Añadir", objectName="chico")
         b_anadir.setIcon(iconos.icono("mdi6.plus", tema.TEXTO))
@@ -127,7 +141,7 @@ class PanelPlan(QFrame):
                 foto.setPixmap(pix)
             capa.addWidget(foto)
             capa.addWidget(QLabel(MODOS[t["modo"]].nombre), 1)
-            spin = QSpinBox(minimum=1, maximum=999, value=int(t["victorias"]), suffix=" vict.")
+            spin = _spin(int(t["victorias"]), " vict.")
             spin.setEnabled(not en_marcha)
             spin.valueChanged.connect(lambda v, n=i: self._cambiar(n, v))
             capa.addWidget(spin)
@@ -146,10 +160,13 @@ class PanelPlan(QFrame):
         if not tareas:
             self.lista.addWidget(QLabel("Aún no hay tareas: elige un modo abajo y pulsa Añadir.", objectName="tenue"))
         total = sum(int(t["victorias"]) for t in tareas)
+        con_meta = sum(1 for t in tareas if int(t["victorias"]) == 0)
         if en_marcha:
             self.lbl_estado.setText(f"En marcha: tarea {self.actual + 1} de {len(tareas)}")
         else:
-            self.lbl_estado.setText(f"{len(tareas)} tarea{'s' if len(tareas) != 1 else ''} · {total} victorias" if tareas else "")
+            partes = [f"{len(tareas)} tarea{'s' if len(tareas) != 1 else ''}"] + ([f"{total} victorias"] if total else []) \
+                + ([f"{con_meta} hasta la meta"] if con_meta else [])
+            self.lbl_estado.setText(" · ".join(partes) if tareas else "")
         self.b_iniciar.setEnabled(bool(tareas) and not en_marcha)
         self.b_saltar.setVisible(en_marcha)
         self.b_probar.setVisible(not en_marcha)

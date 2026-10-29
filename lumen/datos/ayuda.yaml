@@ -26,7 +26,7 @@ uso:
     titulo: "Plan del día"
     texto: >-
       Farmear → <b>Plan</b>: añade tareas (modo + victorias) y pulsa <b>Iniciar plan</b>. El bot las hace en
-      orden sin ti; si se acaba la estamina salta las que la usan. <b>Saltar tarea</b> pasa a la siguiente; Detener o F10 paran el plan entero. <b>Prueba rápida</b>: 1 victoria de cada modo y un informe de lo que funcionó.
+      orden sin ti; si se acaba la estamina salta las que la usan. <b>Saltar tarea</b> pasa a la siguiente; Detener o F10 paran el plan entero. Baja las victorias de una tarea hasta <b>🎯 Meta</b> para farmear hasta completar tus metas de ese contenido. <b>Prueba rápida</b>: 1 victoria de cada modo y un informe de lo que funcionó.
   - icono: trofeo
     titulo: "Resumen al terminar"
     texto: >-
