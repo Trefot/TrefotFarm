@@ -16,11 +16,14 @@ import cv2
 import numpy as np
 
 from lumen import entrada, ocr
+from lumen.control import control
 from lumen.modos import captura_heroes as C
 from lumen.modos.captura_artworks import CapturaArtworks
 from lumen.vision import Plantilla, guardar_imagen
 
 CERRAR = Plantilla("heroes/cerrar_ventana.png")  # la X roja de las ventanas de Gracia, Unique y Reliquia
+MAS_TEXTO = Plantilla("heroes/flecha_mas_texto.png")  # flecha amarilla bajo un texto largo: hay que deslizar
+PAGINAS_MAX = 4
 # Iconos de la fila "Grace / Unique" (ficha de 550x940): Gracia, Unique, Reliquia y un hueco mas por si acaso
 ICONOS = ((80, 785), (157, 785), (240, 785), (320, 785))
 COLUMNAS_TEXTO = (70, 480)
@@ -64,8 +67,24 @@ def leer_ventana(pantalla, x_cerrar: tuple[int, int, int, int]) -> dict | None:
         tipo = "gracia" if titulo.lower().startswith("grac") else "pasiva" if titulo.lower().startswith("uniq") else "otra"
         nombre, cuerpo = (cuerpo[0], cuerpo[1:]) if cuerpo else ("", [])
         nombre = re.sub(r"^\[.*?\]\s*", "", nombre)  # la gracia lleva el titulo del heroe encima
-    texto = re.sub(r"\s+", " ", " ".join(cuerpo)).strip()
-    return {"tipo": tipo, "titulo": titulo, "nombre": nombre, "texto": texto}
+    return {"tipo": tipo, "titulo": titulo, "nombre": nombre, "lineas": cuerpo, "texto": unir(cuerpo)}
+
+
+def unir(lineas: list[str]) -> str:
+    return re.sub(r"\s+", " ", " ".join(lineas)).strip()
+
+
+def _igual(a: str, b: str) -> bool:
+    return re.sub(r"\W", "", a.lower()) == re.sub(r"\W", "", b.lower())
+
+
+def juntar(previas: list[str], nuevas: list[str]) -> list[str]:
+    """Las lineas de un texto largo leido en dos trozos (antes y despues de deslizar), sin repetir las que
+    se ven en los dos: se busca el solape mas largo entre el final de las primeras y el principio de las otras."""
+    for k in range(min(len(previas), len(nuevas)), 0, -1):
+        if all(_igual(a, b) for a, b in zip(previas[-k:], nuevas[:k])):
+            return previas + nuevas[k:]
+    return previas + [n for n in nuevas if not any(_igual(n, a) for a in previas)]
 
 
 class CapturaPasivas(CapturaArtworks):
@@ -79,9 +98,11 @@ class CapturaPasivas(CapturaArtworks):
         super().__init__(valores)
         self.icono = 0
         self.leidas: list[dict] = []
+        self.paginas = 0
 
     def estados(self):
-        return {"ficha": self.ficha, "leer": self.leer, "cerrado": self.cerrado, "volver": self.volver}
+        return {"ficha": self.ficha, "leer": self.leer, "leer_mas": self.leer_mas, "cerrado": self.cerrado,
+                "volver": self.volver}
 
     def _ya_hecho(self, pid: str) -> bool:
         return bool(self.catalogo.get(pid, {}).get("pasivas_capturadas"))
@@ -107,13 +128,41 @@ class CapturaPasivas(CapturaArtworks):
         if ventana and (ventana["nombre"] or ventana["texto"]):
             self.leidas.append(ventana)
             self.log(f"   {ventana['tipo']}: {ventana['nombre']}", "debug")
+            self.paginas = 1
+            if MAS_TEXTO.esta(p, 0.85):
+                return self._deslizar(p, o)
         else:
             guardar_imagen(C.CARPETA / "sin_leer" / f"pasiva_{time.strftime('%H%M%S')}.jpg", p)
             self.log("No pude leer esta ventana (guardo la captura en capturas/heroes/sin_leer).", "aviso")
-        entrada.clic(tuple(int(v) for v in (rect[0] + rect[2] // 2, rect[1] + rect[3] // 2)), o, espera=0.8)
+        return self._cerrar(rect, o)
+
+    def _cerrar(self, rect, o):
+        entrada.clic((int(rect[0] + rect[2] // 2), int(rect[1] + rect[3] // 2)), o, espera=0.8)
         self.icono += 1
         self.desde = time.time()
         return "cerrado"
+
+    def _deslizar(self, p, o):
+        """Texto largo (flecha amarilla abajo): subirlo para leer el resto (2026-10-29, Bargaining With the Gods)."""
+        y1, y2 = zona_texto(p) or (360, 740)
+        entrada.arrastrar((275, y2 - 30), (275, y1 + 80), o, duracion=0.6)
+        control.esperar(0.8)
+        return "leer_mas"
+
+    def leer_mas(self, p, o):
+        rect = CERRAR.buscar(p, 0.85)
+        banda = zona_texto(p)
+        if rect is None or banda is None:
+            return "cerrado"
+        x1, x2 = COLUMNAS_TEXTO
+        nuevas = [l.strip() for l in leer_texto(p[banda[0]:banda[1], x1:x2]) if l.strip()]
+        ventana = self.leidas[-1]
+        ventana["lineas"] = juntar(ventana["lineas"], nuevas)
+        ventana["texto"] = unir(ventana["lineas"])
+        self.paginas += 1
+        if MAS_TEXTO.esta(p, 0.85) and self.paginas < PAGINAS_MAX:
+            return self._deslizar(p, o)
+        return self._cerrar(rect, o)
 
     def cerrado(self, p, o):
         rect = CERRAR.buscar(p, 0.85)

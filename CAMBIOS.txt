@@ -29,6 +29,10 @@ Etapas previstas:
 
 CAMBIOS
 -------
+0.9.1-alpha
+  - Capturar pasivas: los textos largos tienen una flecha amarilla abajo y hay que deslizar. El bot desliza,
+    vuelve a leer y junta los trozos sin repetir lineas (Bargaining With the Gods perdia su ultima linea).
+
 0.9.0-alpha
   - IA: nuevo boton "4. Capturar pasivas" (administrador, Heroes capturados). En cada ficha toca la Gracia,
     la pasiva unica (Unique) y la Reliquia, lee el nombre y el texto de cada ventana, la cierra y pasa al
