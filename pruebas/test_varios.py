@@ -254,3 +254,29 @@ class Aprender(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class Artworks(unittest.TestCase):
+    def test_cara_arriba_y_centrada_en_la_figura(self):
+        from lumen.modos import captura_artworks as A
+
+        ilu = np.full((800, 540, 3), (150, 200, 220), np.uint8)  # fondo liso
+        cv2.circle(ilu, (380, 120), 40, (40, 40, 160), -1)  # cabeza a la derecha
+        cv2.rectangle(ilu, (330, 160), (430, 600), (60, 120, 60), -1)  # cuerpo
+        cara = A.recorte_cara(ilu)
+        self.assertEqual(cara.shape[:2], (270, 270))
+        figura = (np.abs(cara.astype(int) - (150, 200, 220)).sum(2) > 60)
+        ys, xs = np.nonzero(figura)
+        self.assertLess(abs(xs.mean() - 135), 40, "la figura queda en el centro")
+        self.assertLess(ys.min(), 30, "la cabeza arriba")
+
+    def test_el_retrato_prefiere_el_artwork(self):
+        from lumen import personajes as P
+
+        with tempfile.TemporaryDirectory() as d, mock.patch.object(P, "CARPETA", Path(d)):
+            pj = P.Personaje("prueba_artwork", "Prueba")
+            (pj.carpeta).mkdir(parents=True)
+            cv2.imwrite(str(pj.carpeta / "icono.png"), np.zeros((8, 8, 3), np.uint8))
+            self.assertEqual(pj.ruta_cara().name, "icono.png")
+            cv2.imwrite(str(pj.carpeta / P.CARA_ARTWORK), np.zeros((8, 8, 3), np.uint8))
+            self.assertEqual(pj.ruta_cara().name, P.CARA_ARTWORK)

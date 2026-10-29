@@ -29,6 +29,12 @@ Etapas previstas:
 
 CAMBIOS
 -------
+0.8.0-alpha
+  - Retratos con la ilustracion de cada heroe (su Artwork del juego): cabeza y hombros, en Personajes,
+    Equipos, Inicio y el asistente. Nuevo boton "3. Capturar artworks" (administrador, Heroes capturados):
+    desde la ficha de un heroe toca su figura, abre Artwork, guarda la ilustracion y pasa al siguiente.
+    Si un heroe aun no tiene artwork, se ve su icono como antes.
+
 0.7.7-alpha
   - Nidhoggr: sus casillas vacias son semitransparentes y el bot no las reconocia (0.52-0.65): no veia su
     turno y se quedaba quieto. 6 casillas suyas sacadas de las capturas de logs/sin_turno; en las 323
