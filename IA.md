@@ -20,13 +20,30 @@ sus propias peleas**, probando variantes de vez en cuando y siempre dentro de ju
 | # | Pieza | Qué hace | Estado |
 |---|---|---|---|
 | 1 | **Lector de efectos** (`lumen/ia/efectos.py`) | Texto de una habilidad o de un patrón de jefe (inglés, el del cliente de PC) → efectos y mecánicas que el bot entiende: daño 220 % a uno, baja ataque 20 % 1 turno, quita postura, cura, limpia… y para jefes: Inmortalidad, Torrent, reducción de daño por atributo… con su **contramedida**. | **Empezado (0.6.1)** |
-| 2 | **Lectura en el juego** | La captura de héroes ya guarda el texto de cada carta (`capturas/heroes/catalogo.yaml`). Falta: pasiva, talento, unidad y gracia de cada héroe, y la "Enemy Info" de cada jefe (Basic Info, Phase 1-4: Pattern Description e iconos de Unique Info). | Pendiente (PC) |
+| 2 | **Lectura en el juego** | La captura de héroes ya guarda el texto de cada carta (`capturas/heroes/catalogo.yaml`). Falta: pasiva, talento, unidad y gracia de cada héroe, sus **reliquias** (ver abajo), y la "Enemy Info" de cada jefe (Basic Info, Phase 1-4: Pattern Description e iconos de Unique Info). | Pendiente (PC) |
 | 3 | **Estado en vivo** | Reconocer en la pelea los iconos que importan: Inmortalidad (y cuántas), Evasión, postura, Torrent, bloqueo de habilidades, fase, orbes de la ulti. AutoFarming ya tiene imágenes de varios (`immortality.png`, `evasion.png`, `stance_active.png`, `block_skill_debuff.png`). | Pendiente (PC) |
 | 4 | **Decidir** | El juego inteligente (`lumen/inteligencia.py`) puntúa cada jugada; con 1-3 la puntuación suma lo que pide el jefe ahora (si tiene postura, valen más las cartas que la quitan; con Inmortalidad, las de varios golpes; si el patrón pide un color, ese color). Los guiones (`lumen/guiones.py`) quedan para reglas exactas que dicte el jugador. | Pendiente |
 | 5 | **Diario de peleas** | Cada decisión con su contexto (fase, turno, mano, estado del jefe) y cómo acabó la pelea (victoria, tiempo, fase de la derrota). "Aprender de mí" ya graba las peleas del jugador así. | Parcial |
 | 6 | **Aprender solo** | Con el diario: casi siempre juega lo que mejor ha ido; de vez en cuando (p. ej. 1 de cada 10 peleas) prueba una variante razonable. Si gana más rápido, la adopta; si pierde, la descarta. Por jefe y equipo. | Pendiente |
-| 7 | **Equipos** | Propone equipos con los héroes que tiene el jugador (por lo que hacen sus cartas y pasivas frente a las mecánicas del jefe), los prueba unas peleas, descarta los que fallan, deja los que funcionan como opción y el más rápido como recomendado (ya existe la medición: `equipos.mas_rapido`). Con un héroe nuevo, lo lee (pieza 2) y lo prueba en los equipos donde encaje. | Pendiente |
+| 7 | **Equipos** | Propone equipos con los héroes **y reliquias** que tiene el jugador (por lo que hacen sus cartas, pasivas y reliquias frente a las mecánicas del jefe), los prueba unas peleas, descarta los que fallan, deja los que funcionan como opción y el más rápido como recomendado (ya existe la medición: `equipos.mas_rapido`). Con un héroe o una reliquia nuevos, los lee (pieza 2) y los prueba en los equipos donde encajen. | Pendiente |
 | 8 | **Analista (opcional)** | Claude por API (necesita clave y tiene coste): lee la Enemy Info de un jefe nuevo y propone un guion inicial; revisa el diario y sugiere cambios. El bot sigue jugando local, sin internet en cada turno. | Idea |
+
+## Reliquias (Holy Relics)
+
+Una reliquia cambia cómo rinde un héroe: sube sus stats y a veces le da un efecto propio (como una
+pasiva más). **Un héroe puede tener más de una reliquia distinta** (ya hay un personaje con 2), así que
+"tener el héroe" no basta: el equipo puede necesitar una reliquia concreta.
+
+- **Base del bot:** cada personaje lleva sus reliquias posibles (`reliquias:` en personajes.yaml, ver
+  Formatos) con su nombre y el texto de su efecto; el lector de efectos (pieza 1) lo entiende igual que
+  una pasiva.
+- **El jugador marca qué reliquias tiene** (igual que marca los héroes que tiene, en Personajes).
+- **Equipos:** cada equipo dice qué reliquia lleva cada héroe, si la necesita (`reliquias:` en
+  equipos.yaml). Inicio y Farmear lo muestran junto al retrato ("con reliquia X") y "te falta" cuenta
+  también las reliquias. Hoy solo está como texto en las notas de algunos equipos ("Freyja con reliquia").
+- **Medición:** el mismo equipo con otra reliquia cuenta como otro equipo (puede ganar más o menos rápido).
+- **Equipos que propone el bot (pieza 7):** solo con las reliquias que tiene el jugador; si una reliquia
+  que no tiene haría mucho mejor un equipo, lo dice como sugerencia.
 
 ## Formatos
 
@@ -36,6 +53,9 @@ sus propias peleas**, probando variantes de vez en cuando y siempre dentro de ju
 - **Mecánica** (de un jefe): `tipo` (inmortalidad, evasion, postura, torrent, reduccion_dano_atributo,
   curacion_jefe, proteccion, bloqueo...), `detalle` y `contra`: lo que la vence (efectos o acciones:
   "ulti", "mismo_atributo", "secuencia_atributos", "quitar_postura", "limpiar"...).
+- **Reliquia** (en personajes.yaml, dentro de su héroe): `reliquias: [{id, nombre, efecto}]`, donde
+  `efecto` es el texto del juego. En equipos.yaml, opcional por equipo: `reliquias: {heroe: id_reliquia}`
+  (o `true` si ese héroe solo tiene una).
 - Lo que el lector no entiende se lista (`efectos.no_entendido`) para ir ampliándolo con textos reales.
 
 ## Fuentes de texto reales
