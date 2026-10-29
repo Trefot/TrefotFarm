@@ -32,7 +32,8 @@ sus propias peleas**, probando variantes de vez en cuando y siempre dentro de ju
 
 Una reliquia cambia cómo rinde un héroe: sube sus stats y a veces le da un efecto propio (como una
 pasiva más). **Un héroe puede tener más de una reliquia distinta** (ya hay un personaje con 2), así que
-"tener el héroe" no basta: el equipo puede necesitar una reliquia concreta.
+"tener el héroe" no basta: el equipo puede necesitar una reliquia concreta. Caso real (2026-10-29):
+**Freyja tiene 2 reliquias** (sus textos, pendientes de captura: el juego estaba en mantenimiento).
 
 - **Base del bot:** cada personaje lleva sus reliquias posibles (`reliquias:` en personajes.yaml, ver
   Formatos) con su nombre y el texto de su efecto; el lector de efectos (pieza 1) lo entiende igual que
