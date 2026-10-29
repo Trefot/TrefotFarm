@@ -21,6 +21,7 @@ ORDENES = {
     "plan ver": "las tareas del plan y por cual va",
     "saltar": "deja la tarea del plan en curso y pasa a la siguiente",
     "prueba": "prueba rapida: 1 victoria de cada modo listo y un informe",
+    "diario": "resumen del diario de peleas del modo elegido (para el analista)",
     "pausar": "pausa el bot",
     "reanudar": "sigue despues de una pausa",
     "detener": "detiene el bot",

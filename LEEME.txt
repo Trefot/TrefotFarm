@@ -128,6 +128,7 @@ desde la app ntfy. El bot contesta en el mismo canal:
   plan ver   las tareas del plan y por cual va
   saltar     deja la tarea del plan en curso y pasa a la siguiente
   prueba     prueba rapida (ver PRUEBAS)
+  diario     resumen del diario de peleas del modo elegido (para pasarselo al analista)
   pausar / reanudar / detener
   captura    foto de la pantalla del juego
   ayuda      la lista de ordenes

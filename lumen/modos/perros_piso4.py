@@ -24,6 +24,7 @@ from lumen import cartas as C
 from lumen import botin, entrada, juego
 from lumen.cartas import Carta, Rango, TipoCarta
 from lumen.control import control
+from lumen.ia.diario import Diario
 from lumen.equipo import Equipo, Puesto
 from lumen.motor import Modo, Opcion, TerminarModo
 
@@ -233,6 +234,7 @@ class PerrosPiso4(Modo):
         self.victorias = self.derrotas = self.reinicios = self.pociones = self.extras = 0
         self.derrotas_por_fase = defaultdict(int)
         self.equipo_verificado = False
+        self.diario = Diario(self.id)  # cada decision y como acabo la pelea (IA.md, pieza 5)
         self._nueva_pelea()
 
     def estado_inicial(self):
@@ -333,6 +335,8 @@ class PerrosPiso4(Modo):
         self.clic_si(juego.empezar, p, o)
         if juego.carga_bestias.esta(p) or juego.carga_taberna.esta(p):
             self._nueva_pelea()
+            self.diario.terminar("abandonada")  # la anterior acabo sin verse el final
+            self.diario.empezar(equipo=getattr(self.equipo, "orden", None), estrategia=self.stats.get("estrategia", ""))
             self.log("¡A pelear!", "ok")
             return "pelea"
         return None
@@ -461,11 +465,14 @@ class PerrosPiso4(Modo):
                 idx, objetivo, talento = self.estrategia.decidir(self.fase, self.turno_fase, accion, mano, self.huecos_turno)
             except Reiniciar as motivo:
                 self.log(f"Reinicio: {motivo}", "aviso")
+                self.diario.nota(f"Reinicio: {motivo}")
                 self.turno_abierto = False
                 return "rendirse"
             if talento and not self.talento_usado:
                 self._activar_talento_odin()
                 self.talento_usado = True
+            self.diario.decision(self.fase, self.turno_fase, accion, mano, idx,
+                                 getattr(getattr(self.estrategia, "jugador", None), "razones", None))
             if objetivo:
                 self._apuntar(objetivo)
             if isinstance(idx, tuple):  # mover una carta sobre otra (gasta el hueco sin atacar)
@@ -574,6 +581,7 @@ class PerrosPiso4(Modo):
                 self.guardar_recompensa(self.ultima_pantalla_victoria, self.victorias + 1)
                 self.foto_recompensa = True
             self.victorias += 1
+            self.diario.terminar("victoria", self.fase)
             minutos = (time.time() - self.inicio_pelea) / 60
             self.log(f"¡VICTORIA #{self.victorias}! ({minutos:.1f} min)", "ok")
             self._stats()
@@ -590,6 +598,7 @@ class PerrosPiso4(Modo):
         self.clic_si(juego.ok, p, o)
         self.clic_si(juego.cerrar, p, o)
         if self._volvio_a_pisos(p):
+            self.diario.terminar("reinicio" if self.reinicio_pedido else "derrota", self.fase)
             if self.reinicio_pedido:
                 self.reinicios += 1
             else:
@@ -616,6 +625,7 @@ class PerrosPiso4(Modo):
         return None
 
     def al_terminar(self):
+        self.diario.terminar("abandonada", self.fase)  # se paro el bot a media pelea
         total = self.victorias + self.derrotas + self.reinicios
         self.log(
             f"Resumen: {self.victorias} victorias, {self.derrotas} derrotas, {self.reinicios} reinicios "

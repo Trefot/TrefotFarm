@@ -42,6 +42,10 @@ metas._vincular = lambda: None  # las pruebas no tocan el catalogo del botin
 TEMPORAL = Path(tempfile.mkdtemp(prefix="lumen_pruebas_"))  # archivos que escriben las pruebas (se borra al acabar)
 atexit.register(shutil.rmtree, TEMPORAL, True)
 
+from lumen.ia import diario  # noqa: E402
+
+diario.CARPETA = TEMPORAL / "diario"  # el diario de peleas de las pruebas no se mezcla con el real
+
 
 def ajustes() -> dict:
     """Los ajustes en memoria (para prepararlos o mirarlos en una prueba)."""
