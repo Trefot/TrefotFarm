@@ -227,6 +227,25 @@ class Navegacion(ConPantallaSimulada):
         m.pelea(set(), (0, 0))
         self.assertEqual(empezados, [2])
 
+    def test_talento_en_el_turno_1(self):
+        """El talento del equipo se toca al empezar el turno 1 de cada pelea, y solo entonces."""
+        m = self.modo(B.SerpientePisos1a3, bestia=3)
+        self._parchear(m, "_jugar_turno", lambda: None)
+        self._parchear(m, "_detectar_fase", lambda p, h: None)
+        self._parchear(m, "esperar_corto", lambda s: None)
+        self._parchear(m, "capturar", lambda: (set(), (0, 0)))
+        for n in ("mano_bloqueada",):
+            self._parchear(juego, n, PlantillaFalsa(n))
+        m._empezar_turno(set(), 4)
+        self.assertEqual(self.clics, [juego.COORD["talento"]])
+        m._empezar_turno(set(), 4)
+        self.assertEqual(len(self.clics), 1, "en el turno 2 ya no")
+        sin = self.modo(B.SerpientePisos1a3, {"talento": False}, bestia=3)
+        self._parchear(sin, "_jugar_turno", lambda: None)
+        self._parchear(sin, "_detectar_fase", lambda p, h: None)
+        sin._empezar_turno(set(), 4)
+        self.assertEqual(len(self.clics), 1, "con la opcion apagada no lo toca")
+
     def test_pasada_completa_acaba_con_reset(self):
         """Victorias cumplidas tras el Floor 3: pulsa Reset, confirma y para (antes paraba sin mas)."""
         from lumen import config

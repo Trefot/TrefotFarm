@@ -87,6 +87,8 @@ class BestiaPisos1a3(PerrosPiso4):
         Opcion("aprender", "Aprender solo", "si_no", True,
                ayuda="1 de cada 10 peleas prueba una variante pequeña del juego inteligente y se queda con lo que "
                      "gane más rápido. Apagado: juega siempre con lo ya aprendido."),
+        Opcion("talento", "Activar el talento en el turno 1", "si_no", True,
+               ayuda="Toca el talento del equipo (el boton redondo sobre las casillas) antes de jugar el primer turno."),
         Opcion("pociones", "Usar pociones de stamina", "si_no", True),
         Opcion("max_pociones", "Máximo de pociones (0 = sin límite)", "entero", 0, maximo=999),
     ]
@@ -98,6 +100,8 @@ class BestiaPisos1a3(PerrosPiso4):
         if isinstance(self.estrategia, EstrategiaInteligente):
             self.estrategia.fases_area = self.fases_area
         self.pedir_reset = False  # tras el Floor 3 hay que pulsar Reset para volver a abrir el Floor 1
+        # Lo pidio el usuario en la prueba de la 0.7.5: el talento se activa siempre en el turno 1, antes de las cartas.
+        self.talento_turno_1 = bool(self.valores.get("talento", True))
         self.reset_desde: float | None = None
         if self.objetivos:  # la estrategia no elige enemigo: se le pone el de la fase
             decidir = self.estrategia.decidir

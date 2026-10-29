@@ -229,6 +229,7 @@ class PerrosPiso4(Modo):
     ]
     pausa_entre_pasos = 0.45
     rendirse_si_bloqueada = True  # mano bloqueada al empezar un turno: rendirse y repetir
+    talento_turno_1 = False  # activar el talento del equipo al empezar la pelea (las bestias Floor 1-3, opcion)
 
     def __init__(self, valores: dict):
         super().__init__(valores)
@@ -265,6 +266,7 @@ class PerrosPiso4(Modo):
         self.reinicio_pedido = False
         self.objetivo_actual: str | None = None
         self.talento_usado = False
+        self.talento_inicial_usado = False
         self.inicio_pelea = time.time()
         self.ultimo_turno = time.time()  # para guardar una captura si no llega ningun turno
         self.foto_sin_turno_hecha = False
@@ -399,7 +401,9 @@ class PerrosPiso4(Modo):
             return "rendirse"
 
         talento = self._talento_visible(p)
-        huecos = C.contar_huecos(p, 0.8)
+        # 0.75 y no 0.8: el boton del talento tapa un poco la 2.a casilla y con Nidhoggr (fase 2) el ultimo hueco
+        # libre daba 0.79; el bot no veia su turno y se quedaba quieto (captura de la prueba de la 0.7.5).
+        huecos = C.contar_huecos(p, 0.75)
         if self.turno_abierto:
             return self._jugar_turno() if huecos > 0 else None
         # El boton del talento de Odin solo vale si tambien hay huecos: con Nidhoggr (prueba de la 0.4.0) se veia
@@ -458,6 +462,11 @@ class PerrosPiso4(Modo):
         if self.rendirse_si_bloqueada and self.fase != 3 and juego.mano_bloqueada.esta(p, 0.6):
             self.log("Mano bloqueada desde el inicio: reinicio.", "aviso")
             return "rendirse"
+        if self.talento_turno_1 and self.fase == 1 and self.turno_fase == 1 and not self.talento_inicial_usado:
+            self.talento_inicial_usado = True
+            self.log("Turno 1: activo el talento antes de jugar.")
+            entrada.clic(juego.COORD["talento"], self.capturar()[1], espera=0.1)
+            self.esperar_corto(2.5)  # la animacion del talento
         return self._jugar_turno()
 
     def _jugar_turno(self):

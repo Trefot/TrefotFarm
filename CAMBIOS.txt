@@ -29,6 +29,12 @@ Etapas previstas:
 
 CAMBIOS
 -------
+0.7.6-alpha
+  - Bestias Floor 1-3: en el turno 1 de cada pelea activa el talento del equipo antes de jugar las cartas
+    (opcion "Activar el talento en el turno 1", encendida por defecto).
+  - Peleas: el ultimo hueco libre tapado en parte por el boton del talento ya se ve (umbral 0.75). Con
+    Nidhoggr (fase 2) el bot no veia que aun le quedaba una carta y se quedaba quieto.
+
 0.7.5-alpha
   - Peleas de bestias: un turno empieza con 1 o 2 huecos libres (3 lecturas seguidas para no confundirlo
     con una animacion). Con Nidhoggr (fase 2) y Ratatoskr el bot jugaba el primer turno y luego no veia los
