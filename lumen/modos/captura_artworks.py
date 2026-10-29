@@ -95,9 +95,9 @@ class CapturaArtworks(Modo):
     def estados(self):
         return {"ficha": self.ficha, "perfil": self.perfil, "artwork": self.artwork, "volver": self.volver}
 
-    def _quieta(self, p) -> bool:
-        x1, y1, x2, y2 = ILUSTRACION
-        actual = cv2.resize(p[y1:y2, x1:x2], (135, 207)).astype(np.int16)
+    def _quieta(self, p, zona=ILUSTRACION) -> bool:
+        x1, y1, x2, y2 = zona
+        actual = cv2.resize(p[y1:y2, x1:x2], (64, 64)).astype(np.int16)
         quieta = self.previa is not None and float(np.abs(actual - self.previa).mean()) < DIF_QUIETA
         self.previa = actual
         return quieta
@@ -127,7 +127,9 @@ class CapturaArtworks(Modo):
                 self.log("No veo la ficha de un héroe (la de Skills). Ábrela en el juego y vuelve a empezar.", "error")
                 raise TerminarModo()
             return None
-        if not self._quieta(p):
+        # En la ficha la figura del heroe se mueve todo el rato: se espera solo a que quede quieta la fila de
+        # cartas (como la Captura de heroes). Con toda la ilustracion nunca quedaba quieta y no capturaba nada.
+        if not self._quieta(p, C.ZONAS_ESTABLES[0]):
             return None
         pid = self._quien(p)
         if pid is None or pid == self.anterior_id:
