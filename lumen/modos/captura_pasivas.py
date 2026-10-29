@@ -69,8 +69,12 @@ def leer_ventana(pantalla, x_cerrar: tuple[int, int, int, int]) -> dict | None:
     else:
         # El orden de los iconos cambia (Nemesis Meliodas: sin Gracia, Unique y Talent): manda el titulo
         tipo = next((t for clave, t in TITULOS if titulo.lower().startswith(clave)), "otra")
+        # La gracia lleva encima el titulo del heroe ("[Advent of Flash]"), a veces medio tapado y leido como
+        # "(Advent of FhcN": esa linea no es el nombre (Ludociel, 2026-10-29).
+        while cuerpo and re.match(r"^[\[(]", cuerpo[0]) and len(cuerpo) > 1:
+            cuerpo = cuerpo[1:]
         nombre, cuerpo = (cuerpo[0], cuerpo[1:]) if cuerpo else ("", [])
-        nombre = re.sub(r"^\[.*?\]\s*", "", nombre)  # la gracia lleva el titulo del heroe encima
+        nombre = re.sub(r"^\[.*?\]\s*", "", nombre)
     return {"tipo": tipo, "titulo": titulo, "nombre": nombre, "lineas": cuerpo, "texto": unir(cuerpo)}
 
 
