@@ -57,9 +57,39 @@ class Heroes(unittest.TestCase):
                 self.assertEqual(efectos(texto), esperado)
 
     def test_cobertura_y_pendientes(self):
-        inf = cobertura([RAINING_BLADES, "Taunts all enemies for 2 turn(s)."])
-        self.assertEqual((inf.entendidas, inf.total), (2, 3))
-        self.assertEqual(inf.pendientes, ["Taunts all enemies for 2 turn(s)"])
+        inf = cobertura([RAINING_BLADES, "Sings a lullaby to the moon.", "Lv", "3/5 2", "(Can be stacked up to 3 times)"])
+        self.assertEqual((inf.entendidas, inf.total), (2, 3), "los restos del lector de texto y las notas no cuentan")
+        self.assertEqual(inf.pendientes, ["Sings a lullaby to the moon"])
+
+    def test_cartas_reales(self):
+        # Textos tal cual de la captura de heroes (2026-10-27), con los fallos del lector de texto incluidos.
+        casos = {
+            # Captain Meliodas, Moonlight Divide
+            "Cancels Buffs and Stances on one enemy, inflicts damage equal to 490% of Attack, then Stuns for turn(s). "
+            "*Stun: Prohibits all actions. LV. 1/6 4": {"dano", "quitar_postura", "quitar_buffs", "aturdir"},
+            # Guardian Guila, Shot Bombs
+            "Inflicts damage equal to 180% of Attack on one enemy. Ignites for 3 turn(s). *Ignite: Damage taken by "
+            "target(s) +10% (Can be stacked).": {"dano", "dano_tiempo"},
+            # Fraudrin of Selflessness, Shadow Barrage (texto desordenado: el % quedo al final)
+            "Inflicts damage equal to of Attack on one enemy 945% and depletes 3 Ultimate Move Gauge orb(s).":
+                {"dano", "quitar_orbes"},
+            # Covenant of Light Sariel, Slashing Wind
+            "Assumes a Stance for I turn(s) which Taunts enemies and inflicts damage equal to 240% of Attack when "
+            "taking damage. *Taunt: Directs all attacks to self.": {"postura", "provocar", "dano"},
+            # Monspeet of Reticence, Scarlet Blaze Shot
+            "Inflicts Weak Point damage equal to 90% of Attack on all enemies. *Weak Point: 3x damage against "
+            "Debuffed enemies.": {"dano", "dano_extra"},
+        }
+        for texto, tipos in casos.items():
+            with self.subTest(texto=texto[:40]):
+                self.assertEqual({e.tipo for e in efectos(texto)}, tipos)
+        guila = efectos("Inflicts damage equal to 180% of Attack on one enemy. Ignites for 3 turn(s).")
+        self.assertEqual((guila[0].valor, guila[0].objetivo, guila[1].turnos, guila[1].detalle), (180.0, "uno", 3, "ignite"))
+        fraudrin = efectos("Inflicts damage equal to of Attack on one enemy 945% and depletes 3 Ultimate Move Gauge orb(s).")
+        self.assertEqual(fraudrin[0].valor, 945.0)
+        self.assertEqual(efectos("Assumes a Stance for I turn(s)")[0].turnos, 1, "el lector de texto lee 1 como I")
+        drole = efectos("damage equal to 160% of Attack on one Inflicts Detonate enemy.")
+        self.assertEqual((drole[0].tipo, drole[0].valor, drole[0].objetivo), ("dano", 160.0, "uno"))
 
 
 class Jefes(unittest.TestCase):

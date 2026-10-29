@@ -29,6 +29,13 @@ Etapas previstas:
 
 CAMBIOS
 -------
+0.8.2-alpha
+  - IA, lector de efectos: entiende el 97,5 % de las frases de las 1.083 cartas capturadas (antes el 39 %).
+    Nuevo: el glosario del juego (*Pierce, *Bleed, *Taunt, *Weak Point...), danos por turno (sangrado,
+    veneno, descarga, ignicion), quitar buffs, quitar orbes, bajar rangos, bloquear habilidades, posturas,
+    provocar, inmunidad, robar stats... y los fallos del lector de texto ("for I turn(s)", el % al final).
+    Los restos del lector ("Lv", "3/5 2") y las notas entre parentesis ya no cuentan como frases.
+
 0.8.1-alpha
   - Captura de artworks: no capturaba nada. Esperaba a que la ficha quedara quieta mirando la figura del
     heroe, que se mueve siempre; ahora mira la fila de cartas, como la Captura de heroes.
