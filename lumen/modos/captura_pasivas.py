@@ -6,7 +6,9 @@ volver al primero). En cada ficha toca los iconos de la fila "Grace / Unique": l
 cierra con la X y sigue. Medido con Covenant of Light Ludociel (capturas del 2026-10-29).
 
 Se guarda en capturas/heroes/catalogo.yaml, en cada heroe: ``gracia`` y ``pasiva`` ({nombre, texto}),
-``reliquias`` ([{nombre, efecto}]) y ``otras`` (ventanas con otro titulo).
+``reliquias`` ([{nombre, efecto}]), ``talento`` y ``unidad`` si los tiene, y ``otras`` (ventanas con otro
+titulo). El orden de los iconos cambia segun el heroe (Nemesis Meliodas no tiene Gracia y si Talent): cada
+ventana se reconoce por su titulo.
 """
 
 import re
@@ -27,6 +29,7 @@ PAGINAS_MAX = 6  # "The Final Battle" de Meliodas necesita varias
 # Iconos de la fila "Grace / Unique" (ficha de 550x940): Gracia, Unique, Reliquia y un hueco mas por si acaso
 ICONOS = ((80, 785), (157, 785), (240, 785), (320, 785))
 COLUMNAS_TEXTO = (70, 480)
+TITULOS = (("grac", "gracia"), ("uniq", "pasiva"), ("talent", "talento"), ("unity", "unidad"))
 ESPERA_VENTANA = 2.5  # sin ventana tras tocar un icono: ese hueco esta vacio y no hay mas
 
 
@@ -64,7 +67,8 @@ def leer_ventana(pantalla, x_cerrar: tuple[int, int, int, int]) -> dict | None:
         nombre = next((l for l in reversed(cabecera) if "holy relic" not in l.lower()), "")
         cuerpo = [l for l in cuerpo if "holy relic effect" not in l.lower()]
     else:
-        tipo = "gracia" if titulo.lower().startswith("grac") else "pasiva" if titulo.lower().startswith("uniq") else "otra"
+        # El orden de los iconos cambia (Nemesis Meliodas: sin Gracia, Unique y Talent): manda el titulo
+        tipo = next((t for clave, t in TITULOS if titulo.lower().startswith(clave)), "otra")
         nombre, cuerpo = (cuerpo[0], cuerpo[1:]) if cuerpo else ("", [])
         nombre = re.sub(r"^\[.*?\]\s*", "", nombre)  # la gracia lleva el titulo del heroe encima
     return {"tipo": tipo, "titulo": titulo, "nombre": nombre, "lineas": cuerpo, "texto": unir(cuerpo)}
@@ -180,7 +184,7 @@ class CapturaPasivas(CapturaArtworks):
                 reliquias = h.setdefault("reliquias", [])
                 if not any(r.get("nombre") == v["nombre"] for r in reliquias):
                     reliquias.append({"nombre": v["nombre"], "efecto": v["texto"]})
-            elif v["tipo"] in ("gracia", "pasiva"):
+            elif v["tipo"] in ("gracia", "pasiva", "talento", "unidad"):
                 h[v["tipo"]] = {"nombre": v["nombre"], "texto": v["texto"]}
             else:
                 h.setdefault("otras", []).append({"titulo": v["titulo"], "nombre": v["nombre"], "texto": v["texto"]})
