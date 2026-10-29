@@ -453,9 +453,12 @@ class PaginaFarmear(Pagina):
         if not self._preparar_ventana(remoto):
             return
         valores = self._valores()
-        opciones = dict(config.obtener("opciones_modos") or {})
-        opciones[cls.id] = valores
-        config.guardar({"opciones_modos": opciones, "ultimo_modo": cls.id})
+        if self.plan_paso is None:
+            # Lo que elige el jugador se recuerda; lo de un plan o de la prueba rapida no: la prueba pone 1
+            # victoria a cada modo y luego Inicio mostraba "1" en todos (el Floor 1-3 paraba tras un piso).
+            opciones = dict(config.obtener("opciones_modos") or {})
+            opciones[cls.id] = valores
+            config.guardar({"opciones_modos": opciones, "ultimo_modo": cls.id})
         for cifra in self.cifras.values():
             cifra.setText("0")
         self.cifras["tiempo"].setText("0:00:00")

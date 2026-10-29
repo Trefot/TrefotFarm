@@ -29,6 +29,11 @@ Etapas previstas:
 
 CAMBIOS
 -------
+0.7.2-alpha
+  - La prueba rapida y el plan del dia ya no cambian las victorias que eliges en Inicio. La prueba ponia
+    1 victoria a cada modo y se quedaba guardada: el Floor 1-3 paraba tras un solo piso.
+  - Inicio: chip "3" de victorias. Los Floor 1-3 empiezan en 3 (los 3 pisos de una vez) si no elegiste otra cosa.
+
 0.7.1-alpha
   - Botin: el "3" sobre fondo azul claro se leia como 1 (Hraesvelgr Floor 3: 2 gemas x3 contadas como 2).
     Referencias de digitos rehechas con las fotos del 29-10: 80 de 81 casillas bien. Las fotos se
