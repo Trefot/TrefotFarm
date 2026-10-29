@@ -29,6 +29,10 @@ Etapas previstas:
 
 CAMBIOS
 -------
+0.9.3-alpha
+  - Capturar pasivas: tambien el Talento (y la Unidad si la hay). Cada ventana se reconoce por su titulo,
+    porque el orden de los iconos cambia (Nemesis Meliodas: sin Gracia, con Unique y Talent).
+
 0.9.2-alpha
   - Capturar pasivas: hasta 6 deslizamientos por texto (las pasivas como "The Final Battle" son muy largas).
 
