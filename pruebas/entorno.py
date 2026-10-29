@@ -34,6 +34,11 @@ config.guardar = lambda cambios: _ajustes.update(cambios)
 config.todo = lambda: dict(_ajustes)
 
 
+from lumen import metas  # noqa: E402
+
+metas._vincular = lambda: None  # las pruebas no tocan el catalogo del botin
+
+
 TEMPORAL = Path(tempfile.mkdtemp(prefix="lumen_pruebas_"))  # archivos que escriben las pruebas (se borra al acabar)
 atexit.register(shutil.rmtree, TEMPORAL, True)
 

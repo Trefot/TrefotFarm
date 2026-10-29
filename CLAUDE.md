@@ -25,13 +25,9 @@ Reglas completas en CAMBIOS.txt. Resumen:
   thor_the_god_of_thunder_azul, sun_god_freyr_rojo (es LR en el juego) y god_of_war_tyr_verde, y las
   capturas de sus cartas. Los orbes de la ulti se cuentan, no se leen de pantalla.
 
-- **Metas de material** (diseño aprobado por el usuario): datos, lógica (`lumen/metas.py`) y diálogos
-  (`lumen/gui/metas.py`) están en el commit 944477b, deshecho en 487831b para sacar antes un arreglo.
-  Para seguir: `git revert 487831b` (choca con la 0.3.0, que ya puso `galeria:` en premios.yaml:
-  quedarse con lo de la 0.3.0). Falta: botón "Metas x/y" y progreso en "Puedes conseguir" de Inicio,
-  chip "Meta" en la barra de Empezar (parar al cumplirla; en el plan, saltar a la siguiente tarea),
-  quitar la línea "Hoy", y pruebas. 36 materiales tienen ficha de galería en premios.yaml y se cuentan
-  solos; esencia negra, piedra del despertar, cartas y escenas no (se ajustan a mano).
+- **Metas de material** (0.5.0, hecho y sin probar con el juego): `lumen/metas.py` (cuenta el botin por el
+  campo `premio` del catalogo, tras `recompensas.vincular_premios`), `lumen/gui/metas.py` (fila "Metas" de Inicio
+  y Farmear y la franja para editar bajo la fila de Inicio). El usuario NO quiere ventanas nuevas: todo va integrado en Inicio y Farmear.
 - **Probar con el juego**: la prueba rápida (Farmear → Plan) aún no ha pasado entera. En la prueba de
   la 0.2.1 (Perros Floor 1-3) el bot creía estar en los pisos sin haber entrado a la bestia (contaba
   "Obtain Floor N First Clear Reward") y no veía el Floor 1 (el OCR lee "Floor I"): arreglado en 0.2.2

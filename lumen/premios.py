@@ -93,3 +93,11 @@ def donde_sale(objeto: str) -> list[str]:
 def todos() -> list[str]:
     """Ids de todos los objetos de las tablas."""
     return list(_datos().get("objetos") or {})
+
+
+def esperado(id_destino: str, objeto: str) -> float:
+    """Cuantos da de media cada victoria: lo garantizado mas cada linea de la tabla por su probabilidad."""
+    destino = _datos().get(id_destino) or {}
+    total = sum(int(l.get("cantidad", 1)) for l in destino.get("garantizados") or [] if l["objeto"] == objeto)
+    return total + sum(float(l.get("prob", 0)) / 100 * int(l.get("cantidad", 1))
+                       for l in destino.get("premios") or [] if l["objeto"] == objeto)
