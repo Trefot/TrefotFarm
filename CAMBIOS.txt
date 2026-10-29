@@ -29,6 +29,12 @@ Etapas previstas:
 
 CAMBIOS
 -------
+0.9.10-alpha
+  - Artworks: la cara se busca mejor. Si en lo alto de la figura no hay piel (un dragon, alas, destellos),
+    se centra en la mancha de piel mas alta (Lillia, Sun God Freyr). Sin la sombra de la barra del juego.
+  - Heroes capturados: boton "Cara" en cada heroe con artwork: se toca la cara en su ilustracion y el
+    retrato se recorta ahi (para los pocos que salgan mal). La fila muestra ya la cara del artwork.
+
 0.9.9-alpha
   - Capturar pasivas: las ventanas de "Costume Set" (bonus de conjunto de atuendos) se leen y se guardan
     aparte (conjuntos: nombre, piezas y bonus). Tienen fondo claro y el bot las daba por ilegibles: los 10

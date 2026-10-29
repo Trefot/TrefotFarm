@@ -356,3 +356,15 @@ class CapturasCompletas(unittest.TestCase):
         self.assertEqual((v["tipo"], v["nombre"]), ("conjunto", "Twilight Hunter Costume"))
         self.assertEqual(v["piezas"], ["Twilight Hunter", "Mark of Twilight"])
         self.assertIn("Transcendent Skoll and Hati", v["texto"])
+
+    def test_cara_por_la_piel_si_arriba_hay_otra_cosa(self):
+        from lumen.modos import captura_artworks as A
+
+        ilu = np.full((800, 540, 3), (200, 200, 200), np.uint8)  # fondo liso
+        cv2.rectangle(ilu, (20, 40), (200, 300), (40, 30, 30), -1)  # un dragon oscuro arriba a la izquierda
+        cv2.circle(ilu, (400, 330), 45, (150, 190, 250), -1)  # la cara (piel) mas abajo, a la derecha
+        cara = A.recorte_cara(ilu)
+        piel = cv2.inRange(cara, (140, 180, 240), (160, 200, 255))
+        self.assertGreater(int(piel.sum() // 255), 2000, "el recorte va a la cara, no al dragon")
+        manual = A.cara_en(ilu, 400, 330)
+        self.assertEqual(manual.shape[:2], (270, 270))

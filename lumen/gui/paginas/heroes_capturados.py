@@ -6,6 +6,8 @@ revisar y deja corregirlo o quitarlo antes de publicarlo en la base del bot.
 
 import os
 
+import cv2
+
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtWidgets import (
@@ -30,6 +32,14 @@ from lumen.gui import iconos, tema
 from lumen.gui.comun import Pagina, tarjeta
 from lumen.modos import captura_heroes as C
 from lumen.vision import guardar_imagen, leer_imagen
+
+
+def a_pixmap(imagen) -> QPixmap:
+    from PyQt5.QtGui import QImage
+
+    rgb = cv2.cvtColor(imagen, cv2.COLOR_BGR2RGB)
+    alto, ancho = rgb.shape[:2]
+    return QPixmap.fromImage(QImage(rgb.data, ancho, alto, 3 * ancho, QImage.Format_RGB888).copy())
 
 COLOR_ATRIBUTO = {"rojo": "#e05a4f", "verde": "#4cc38a", "azul": "#4f8fe0", "claro": "#e6c84c", "oscuro": "#a06ad8"}
 ATRIBUTOS = ["Strength", "Speed", "HP", "Light", "Dark"]
@@ -61,6 +71,9 @@ def avisos_de(h: dict) -> list[str]:
 def retrato(pid: str) -> QPixmap:
     """Cara del heroe: el icono de la lista de Heroes si se capturo; si no, el de su habilidad Unique
     (las capturas de antes del retrato lo sacan ahora de su ficha.jpg)."""
+    artwork = C.CARPETA / pid / P.CARA_ARTWORK  # la cara de su Artwork, si ya se capturo
+    if artwork.is_file():
+        return QPixmap(str(artwork))
     icono = C.CARPETA / pid / "icono.png"
     if icono.is_file():
         return QPixmap(str(icono))
@@ -150,6 +163,34 @@ class DialogoHeroe(QDialog):
         self.accept()
 
 
+class DialogoCara(QDialog):
+    """El Artwork del heroe: se toca su cara y el retrato se recorta ahi."""
+
+    ANCHO = 380
+
+    def __init__(self, padre, pid: str, catalogo: dict):
+        super().__init__(padre)
+        from lumen.modos import captura_artworks as A
+
+        self.A, self.pid, self.catalogo = A, pid, catalogo
+        self.ilustracion = leer_imagen(C.CARPETA / pid / "artwork.jpg")
+        self.setWindowTitle(f"Cara de {catalogo[pid].get('nombre', pid)}")
+        capa = QVBoxLayout(self)
+        capa.addWidget(QLabel("Toca la cara del héroe.", objectName="tenue"))
+        self.imagen = QLabel()
+        self.escala = self.ANCHO / self.ilustracion.shape[1]
+        self.imagen.setPixmap(a_pixmap(self.ilustracion).scaledToWidth(self.ANCHO, Qt.SmoothTransformation))
+        self.imagen.mousePressEvent = self._tocar
+        capa.addWidget(self.imagen)
+
+    def _tocar(self, evento):
+        x, y = int(evento.pos().x() / self.escala), int(evento.pos().y() / self.escala)
+        self.A.guardar_cara(self.pid, self.A.cara_en(self.ilustracion, x, y), self.catalogo)
+        self.catalogo[self.pid]["cara_a_mano"] = True  # "rehacer caras" no la vuelve a tocar
+        C.guardar_catalogo(self.catalogo)
+        self.accept()
+
+
 class FilaHeroe(QFrame):
     def __init__(self, pagina, pid: str, h: dict):
         super().__init__(objectName="tarjeta_equipo")
@@ -217,6 +258,12 @@ class FilaHeroe(QFrame):
         b_quitar.setIcon(iconos.icono("mdi6.delete-outline", tema.TEXTO))
         b_quitar.clicked.connect(lambda: pagina.quitar(pid))
         botones.addWidget(b_editar)
+        if (C.CARPETA / pid / "artwork.jpg").is_file():
+            b_cara = QPushButton(" Cara", objectName="chico")
+            b_cara.setIcon(iconos.icono("mdi6.face-man-outline", tema.TEXTO))
+            b_cara.setToolTip("Elegir dónde está la cara en su Artwork (para el retrato)")
+            b_cara.clicked.connect(lambda: pagina.ajustar_cara(pid))
+            botones.addWidget(b_cara)
         botones.addWidget(b_quitar)
         botones.addStretch()
         fila.addLayout(botones)
@@ -315,6 +362,11 @@ class PaginaHeroesCapturados(Pagina):
     def editar(self, pid: str):
         if DialogoHeroe(self, self.catalogo[pid]).exec_():
             C.guardar_catalogo(self.catalogo)
+            self._pintar()
+
+    def ajustar_cara(self, pid: str):
+        if DialogoCara(self, pid, self.catalogo).exec_():
+            self.app.paginas["personajes"].al_mostrar()
             self._pintar()
 
     def quitar(self, pid: str):
