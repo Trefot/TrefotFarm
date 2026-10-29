@@ -342,12 +342,6 @@ class PaginaInicio(Pagina):
         self.fila_destinos.addStretch()
 
     def _cargar_opciones(self):
-        if not config.obtener("victorias_de_prueba_limpias"):
-            # Hasta la 0.7.1 la prueba rapida dejaba guardada 1 victoria en cada modo que probaba, como si la
-            # hubiera elegido el jugador (el Floor 1-3 paraba tras un piso). Se borra una vez.
-            opciones = {m: {k: v for k, v in o.items() if not (k == "victorias" and v == 1)}
-                        for m, o in (config.obtener("opciones_modos") or {}).items()}
-            config.guardar({"opciones_modos": opciones, "victorias_de_prueba_limpias": True})
         guardadas = (config.obtener("opciones_modos") or {}).get(self.modo_id, {})
         # Sin nada elegido, los Floor 1-3 hacen una vuelta entera (los 3 pisos); lo demas, sin limite.
         victorias = int(guardadas.get("victorias", 3 if self.modo_id.endswith("_pisos1a3") else 0))

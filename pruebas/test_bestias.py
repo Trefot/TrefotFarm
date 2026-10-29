@@ -209,6 +209,32 @@ class Navegacion(ConPantallaSimulada):
         self.assertEqual(self.modo(B.CiervoPisos1a3, bestia=1).piso, 1, "cada bestia lleva su cuenta")
         config.guardar({"pisos_bestias": {}})
 
+    def test_pasada_completa_acaba_con_reset(self):
+        """Victorias cumplidas tras el Floor 3: pulsa Reset, confirma y para (antes paraba sin mas)."""
+        from lumen import config
+        from lumen.motor import TerminarModo
+        from lumen.modos.perros_piso4 import PerrosPiso4
+
+        config.guardar({"pisos_bestias": {}})
+
+        def meta_cumplida(*a):
+            raise TerminarModo()
+
+        self._parchear(PerrosPiso4, "victoria", meta_cumplida)
+        m = self.modo(B.PajaroPisos1a3, bestia=0)
+        m.piso = 3
+        self.assertEqual(m.victoria(set(), (0, 0)), "elegir_piso")
+        self.assertTrue(m.pedir_reset and m.terminar_tras_reset)
+        m.pedir_reset = False  # Reset ya pulsado
+        with self.assertRaises(TerminarModo):
+            m.elegir_piso({"ok"}, (0, 0))
+        m2 = self.modo(B.PajaroPisos1a3, bestia=0)
+        m2.piso, m2.pedir_reset = 1, False
+        with self.assertRaises(TerminarModo, msg="a mitad de pasada para sin Reset"):
+            m2.victoria(set(), (0, 0))
+        self.assertEqual(self.modo(B.PajaroPisos1a3, bestia=0).piso, 2, "y apunta el piso siguiente")
+        config.guardar({"pisos_bestias": {}})
+
     def test_piso_superado_se_salta(self):
         """Un piso ya superado no se abre: tras 3 toques pasa al siguiente (prueba de la 0.4.0: 40 s perdidos)."""
         self.texto[:] = ["Twilight Temple Floor 2", "Twilight Temple Floor 1"]

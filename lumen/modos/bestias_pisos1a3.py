@@ -79,7 +79,8 @@ class BestiaPisos1a3(PerrosPiso4):
     nombres_estados = {**PerrosPiso4.nombres_estados, "ir_a_perros": "Entrando a Demonic Beasts",
                        "elegir_piso": "Eligiendo el piso"}
     opciones = [
-        Opcion("victorias", "Victorias (0 = sin límite)", "entero", 0, maximo=9999),
+        Opcion("victorias", "Victorias (0 = sin límite)", "entero", 3, maximo=9999,
+               ayuda="3 = una pasada: Floor 1, 2 y 3, Reset y para."),
         Opcion("primer_piso", "Empezar en el Floor", "lista", "1", opciones=["1", "2", "3"]),
         Opcion("jugar", "Cómo jugar", "lista", "Inteligente", opciones=["Inteligente", "Simple"],
                ayuda="Inteligente: piensa el turno entero y las fusiones. Simple: ulti y luego la de más rango."),
@@ -122,6 +123,8 @@ class BestiaPisos1a3(PerrosPiso4):
         self._desplazamientos = 0  # veces que se deslizo la lista buscando el piso que toca
         self._ultimo_desplazamiento = 0.0
         self._toques_piso = 0  # veces que se toco el piso que toca sin que se abriera
+        self.terminar_tras_reset = False  # pasada completa: pulsar Reset y parar
+        self.fin_desde: float | None = None
         self.stats.update(piso=self.piso, vuelta=self.vuelta)
 
     def _siguiente_piso(self):
@@ -145,7 +148,18 @@ class BestiaPisos1a3(PerrosPiso4):
         super()._stats()
 
     def victoria(self, p, o):
-        siguiente = super().victoria(p, o)  # cuenta la victoria al volver a los pisos
+        try:
+            siguiente = super().victoria(p, o)  # cuenta la victoria al volver a los pisos
+        except TerminarModo:
+            # Llego a las victorias pedidas: apuntar el piso que toca (para la proxima vez) y, si acaba de
+            # superar el Floor 3, pulsar Reset antes de parar: una pasada es Floor 1, 2, 3 y Reset (lo pidio el
+            # usuario tras la prueba de la 0.7.3, en la que paraba sin apuntar nada).
+            self._siguiente_piso()
+            if not self.pedir_reset:
+                raise
+            self.log("Pasada completa: pulso Reset y termino.", "ok")
+            self.terminar_tras_reset = True
+            return "elegir_piso"
         if siguiente == "elegir_piso":
             self._siguiente_piso()
             self.log(f"Siguiente: Floor {self.piso}.", "ok")
@@ -195,6 +209,8 @@ class BestiaPisos1a3(PerrosPiso4):
         self.equipo_verificado = True  # cualquier equipo vale
 
     def elegir_piso(self, p, o):
+        if self.terminar_tras_reset:
+            return self._reset_y_terminar(p, o)
         if juego.empezar.esta(p):
             self.buscando_piso_desde = None
             self._toques_piso = 0
@@ -243,6 +259,18 @@ class BestiaPisos1a3(PerrosPiso4):
             antes = self.piso
             self._siguiente_piso()
             self.log(f"No encuentro el Floor {antes}: paso al Floor {self.piso}.", "aviso")
+        return None
+
+    def _reset_y_terminar(self, p, o):
+        """Fin de la pasada: Reset, su OK de confirmacion y parar (como mucho 5 s esperando el OK)."""
+        if self.pedir_reset:
+            self._pulsar_reset(p, o)
+            return None
+        if self.clic_si(juego.ok, p, o, espera=1.0):
+            raise TerminarModo()
+        self.fin_desde = self.fin_desde or time.time()
+        if time.time() - self.fin_desde > 5:
+            raise TerminarModo()
         return None
 
     def _pulsar_reset(self, p, o) -> bool:
