@@ -135,7 +135,8 @@ PALABRAS_CLAVE = {
     "despair": "curar", "reflect": "reflejar", "expel": "expulsar", "transformation": "transformar",
     "extort": "robar_stats", "stun": "aturdir", "petrify": "aturdir", "freeze": "aturdir", "silence": "bloquear",
 }
-_GLOSARIO = re.compile(r"^\*\s*(?P<clave>[a-z][a-z' ]{1,30}?)\s*:\s*(?P<definicion>.+)$", re.I)
+# "*Pierce: ..." en las cartas; en las pasivas tambien "• Darkness: ..." y "Applicable Ally: ..."
+_GLOSARIO = re.compile(r"^(?:\*|•|e\s)?\s*(?P<clave>[a-z][a-z' ]{1,30}?)\s*:\s*(?P<definicion>.+)$", re.I)
 # Restos del lector de texto que no son frases: "Lv", "3/5 2", "220%", "to 150%", "enemies", "(limit 3)"...
 _RUIDO = re.compile(r"^(?:lv\.?\s*\d*|[\d/ .%]+|n%|(?:to|of|from|by)\s+[\w%. ]{0,12}|\(?limit \d+\)?"
                     r"|[a-z']+|\d+%\s*lv|[a-z]+ [a-z]+)$", re.I)
@@ -143,7 +144,8 @@ _RUIDO = re.compile(r"^(?:lv\.?\s*\d*|[\d/ .%]+|n%|(?:to|of|from|by)\s+[\w%. ]{0
 
 def es_ruido(frase: str) -> bool:
     """Trozos que no son una frase (los deja el lector de texto al partir la descripcion de la carta)."""
-    if frase.lstrip().startswith("(") or re.match(r"effect is removed when", frase.strip(), re.I):
+    if frase.lstrip().startswith("(") or re.match(r"(?:the )?effect is removed", frase.strip(), re.I) \
+            or re.match(r"stacks \d+ times|does not (?:stack|trigger)", frase.strip(), re.I):
         return True  # notas: "(excludes stance and recovery skills)", "(can be stacked up to 3 times)"
     f = frase.strip(" .,;()*")
     return bool(_RUIDO.match(f)) and not _GLOSARIO.match(frase) and not re.search(
@@ -168,7 +170,7 @@ REGLAS_HEROE: list[tuple[re.Pattern, Callable[[re.Match, str], list[Efecto]]]] =
                 r"|deletes? all enemy skills", re.I),
      _simple("quitar_buffs")),
     (re.compile(r"(?:removes?|cleanses?)\b.*\bdebuffs?", re.I), _simple("limpiar")),
-    (re.compile(r"(?:restores?|recovers?|heals?)\s+(?:\w+\s+)*?hp\b(?:.*?(?P<pct>\d+)\s*%)?"
+    (re.compile(r"(?:restores?|recovers?|heals?|healed)\s+(?:[\w%']+\s+)*?hp\b(?:.*?(?P<pct>\d+)\s*%)?"
                 r"|\brejuvenates?\b|\bheals? for\b", re.I), _simple("curar", True)),
     (re.compile(r"\b(?:barrier|shield)\b", re.I), _simple("escudo")),
     (re.compile(r"\bstuns?\b|\bpetrif|\bfreezes?\b", re.I), _simple("aturdir")),
@@ -201,6 +203,20 @@ REGLAS_HEROE: list[tuple[re.Pattern, Callable[[re.Match, str], list[Efecto]]]] =
                 r"|\+\s*(?P<pct2>\d+)\s*%\s*(?P<stat2>damage dealt)", re.I), _cambio_suelto("buff")),
     (re.compile(r"(?P<stat>damage dealt[\w -]*?)\s*-\s*(?P<pct>\d+)\s*%", re.I), _cambio_suelto("debuff")),
     (re.compile(r"takes damage only from basic stats", re.I), _simple("defensa")),
+    # Pasivas y reliquias (captura del 2026-10-29)
+    (re.compile(r"(?:will|does) not exceed\s+(?P<pct>\d+)\s*%|not exceed", re.I), _simple("tope_dano", True)),
+    (re.compile(r"damage taken\s*(?:-\s*(?P<pct>\d+)\s*%|suppression|decrease)|(?P<pct2>\d+)\s*%\s*damage taken suppression",
+                re.I), _simple("reduccion_dano")),
+    (re.compile(r"\bfills?\b.*\bgauges?\b|\bsteals?\b.*\borb", re.I), _simple("orbes")),
+    (re.compile(r"additional race", re.I), _simple("raza_extra")),
+    (re.compile(r"only \d+ debuffs? can be", re.I), _simple("inmunidad")),
+    (re.compile(r"\bafflicted with\b|\bapplied on\b|\binflicts? [\w' ]+? on (?:all )?enem|\bis given\b"
+                r"|\b(?:are|is) inflicted with\b|\bgains? [\w' ]+? (?:at the start|for \d+|when)|\bis upgraded\b"
+                r"|\brendered defenseless\b", re.I), _simple("aplica_estado")),
+    (re.compile(r"\bevade\b|\bevasion\b", re.I), _simple("evasion")),
+    (re.compile(r"recovers? \d+\s*% of the damage", re.I), _simple("curar")),
+    (re.compile(r"do(?:es)? not fall below", re.I), _simple("inmunidad")),
+    (re.compile(r"chance to take critical strike damage", re.I), _simple("reduccion_dano")),
 ]
 
 # Solo si no salio nada mas de la frase: "increases attack-related stats" sin "by N%" (el lector de texto a
@@ -212,7 +228,7 @@ REGLAS_SUELTAS: list[tuple[re.Pattern, Callable[[re.Match, str], list[Efecto]]]]
     (re.compile(r"\bapplies\b|\bgains?\b.*\beffect", re.I), _simple("aplica_estado")),
     (re.compile(r"\bdecreases?\s+(?P<stat>[\w'\-]+(?:[ -]related)?(?: stats| stat| damage[\w ]*)?)", re.I),
      _cambio("debuff")),
-    (re.compile(r"\bincreases?\s+(?P<stat>[\w'\-]+(?:[ -]related)?(?: stats| stat| damage[\w ]*)?)", re.I),
+    (re.compile(r"\bincreases?\s+\"?(?P<stat>[\w'\-]+(?:[ -]related)?(?: stats| stat| damage[\w ]*)?)", re.I),
      _cambio("buff")),
 ]
 

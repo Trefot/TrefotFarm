@@ -29,6 +29,12 @@ Etapas previstas:
 
 CAMBIOS
 -------
+0.9.7-alpha
+  - IA, lector de efectos: entiende el 90 % de las frases de pasivas, gracias, talentos, mandamientos y
+    reliquias capturadas (666 textos de 354 heroes) y el 97,9 % de las cartas. Nuevo: tope de dano
+    ("does not exceed 40% of Max HP"), reduccion de dano, llenar y robar orbes, raza extra, esquiva,
+    estados con nombre ("is inflicted with...", "gains... at the start") y definiciones con "•".
+
 0.9.6-alpha
   - Capturar pasivas, con la captura completa (354 de 361 heroes): los Mandamientos (Commandment) tienen
     su apartado y no se repiten; las reliquias con "Holy Relic Effect" mal leido ya no quedan en "otras";
