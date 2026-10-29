@@ -6,7 +6,7 @@ volver al primero). En cada ficha toca los iconos de la fila "Grace / Unique": l
 cierra con la X y sigue. Medido con Covenant of Light Ludociel (capturas del 2026-10-29).
 
 Se guarda en capturas/heroes/catalogo.yaml, en cada heroe: ``gracia`` y ``pasiva`` ({nombre, texto}),
-``reliquias`` ([{nombre, efecto}]), ``talento`` y ``unidad`` si los tiene, y ``otras`` (ventanas con otro
+``reliquias`` ([{nombre, efecto}]), ``talento``, ``unidad`` y ``mandamiento`` si los tiene, y ``otras`` (con otro
 titulo). El orden de los iconos cambia segun el heroe (Nemesis Meliodas no tiene Gracia y si Talent): cada
 ventana se reconoce por su titulo.
 """
@@ -29,7 +29,15 @@ PAGINAS_MAX = 6  # "The Final Battle" de Meliodas necesita varias
 # Iconos de la fila "Grace / Unique" (ficha de 550x940): Gracia, Unique, Reliquia y un hueco mas por si acaso
 ICONOS = ((80, 785), (157, 785), (240, 785), (320, 785))
 COLUMNAS_TEXTO = (70, 480)
-TITULOS = (("grac", "gracia"), ("uniq", "pasiva"), ("talent", "talento"), ("unity", "unidad"))
+TITULOS = (("grac", "gracia"), ("uniq", "pasiva"), ("talent", "talento"), ("unity", "unidad"),
+           ("command", "mandamiento"))
+TIPOS_UNICOS = ("gracia", "pasiva", "talento", "unidad", "mandamiento")  # uno por heroe
+
+
+def es_marca_reliquia(linea: str) -> bool:
+    """"Holy Relic Effect", tambien mal leido ("HotyRer•Cffect", "Holy kenc Effect"; captura del 2026-10-29)."""
+    l = linea.lower().strip()
+    return "holy relic" in l or "relic effect" in l or (l.startswith("ho") and re.search(r"[ce]ffect$", l) is not None)
 ESPERA_VENTANA = 2.5  # sin ventana tras tocar un icono: ese hueco esta vacio y no hay mas
 
 
@@ -60,15 +68,15 @@ def leer_ventana(pantalla, x_cerrar: tuple[int, int, int, int]) -> dict | None:
     x1, x2 = COLUMNAS_TEXTO
     cabecera = [l.strip() for l in ocr.leer(pantalla[max(0, x_cerrar[1] - 10):y1, 60:490]) if len(l.strip()) > 1]
     cuerpo = [l.strip() for l in leer_texto(pantalla[y1:y2, x1:x2]) if l.strip()]
-    todo = " ".join(cabecera + cuerpo).lower()
     titulo = cabecera[0] if cabecera else ""
-    if "holy relic" in todo:
+    # El orden de los iconos cambia (Nemesis Meliodas: sin Gracia, Unique y Talent): manda el titulo. "Unique"
+    # gana aunque el texto hable de reliquias (la pasiva de Mage of Infinity Merlin las nombra).
+    tipo = next((t for clave, t in TITULOS if titulo.lower().startswith(clave)), "otra")
+    if tipo == "otra" and any(es_marca_reliquia(l) for l in cabecera + cuerpo[:2]):
         tipo = "reliquia"
-        nombre = next((l for l in reversed(cabecera) if "holy relic" not in l.lower()), "")
-        cuerpo = [l for l in cuerpo if "holy relic effect" not in l.lower()]
+        nombre = next((l for l in reversed(cabecera) if not es_marca_reliquia(l)), "")
+        cuerpo = [l for l in cuerpo if not es_marca_reliquia(l)]
     else:
-        # El orden de los iconos cambia (Nemesis Meliodas: sin Gracia, Unique y Talent): manda el titulo
-        tipo = next((t for clave, t in TITULOS if titulo.lower().startswith(clave)), "otra")
         # La gracia lleva encima el titulo del heroe ("[Advent of Flash]"), a veces medio tapado y leido como
         # "(Advent of FhcN": esa linea no es el nombre (Ludociel, 2026-10-29).
         while cuerpo and re.match(r"^[\[(]", cuerpo[0]) and len(cuerpo) > 1:
@@ -93,6 +101,46 @@ def juntar(previas: list[str], nuevas: list[str]) -> list[str]:
         if all(_igual(a, b) for a, b in zip(previas[-k:], nuevas[:k])):
             return previas + nuevas[k:]
     return previas + [n for n in nuevas if not any(_igual(n, a) for a in previas)]
+
+
+def normalizar(h: dict) -> bool:
+    """Ordena lo leido de un heroe (tambien lo capturado antes de estas reglas). Devuelve si cambio algo:
+    - "otras" con titulo Commandment -> ``mandamiento``; con la marca de reliquia mal leida -> ``reliquias``
+      (su nombre es el titulo); repetidas -> una vez;
+    - una "reliquia" llamada "Unique" era la pasiva (Mage of Infinity Merlin);
+    - sin pasiva, la ventana con el titulo ilegible es la pasiva (Captain Hawk: "I'll Eat You Up!")."""
+    antes = repr(h)
+    otras, vistas = [], set()
+    for o in h.get("otras") or []:
+        clave = (o.get("nombre", ""), o.get("texto", "")[:60])
+        if clave in vistas:
+            continue
+        vistas.add(clave)
+        titulo = (o.get("titulo") or "").lower()
+        if titulo.startswith("command"):
+            h.setdefault("mandamiento", {"nombre": o.get("nombre", ""), "texto": o.get("texto", "")})
+        elif es_marca_reliquia(o.get("nombre", "")) or es_marca_reliquia(
+                " ".join([o.get("nombre", "")] + o.get("texto", "").split()[:2])):  # "Holy" + "Rellc affect ..."
+            texto = re.sub(r"^\S*\s+[ae]ffect\s+", "", o.get("texto", "")) if not es_marca_reliquia(o.get("nombre", "")) \
+                else o.get("texto", "")
+            h.setdefault("reliquias", []).append({"nombre": o.get("titulo", ""), "efecto": texto})
+        else:
+            otras.append(o)
+    reliquias = []
+    for r in h.get("reliquias") or []:
+        if r.get("nombre", "").lower().startswith("uniq") and not h.get("pasiva"):
+            h["pasiva"] = {"nombre": "", "texto": r.get("efecto", "")}
+        elif not any(x.get("nombre") == r.get("nombre") for x in reliquias):
+            reliquias.append(r)
+    if not h.get("pasiva") and otras:
+        o = otras.pop(0)
+        h["pasiva"] = {"nombre": o.get("nombre", ""), "texto": o.get("texto", "")}
+    for clave, valor in (("reliquias", reliquias), ("otras", otras)):
+        if valor:
+            h[clave] = valor
+        else:
+            h.pop(clave, None)
+    return repr(h) != antes
 
 
 class CapturaPasivas(CapturaArtworks):
@@ -188,10 +236,11 @@ class CapturaPasivas(CapturaArtworks):
                 reliquias = h.setdefault("reliquias", [])
                 if not any(r.get("nombre") == v["nombre"] for r in reliquias):
                     reliquias.append({"nombre": v["nombre"], "efecto": v["texto"]})
-            elif v["tipo"] in ("gracia", "pasiva", "talento", "unidad"):
+            elif v["tipo"] in TIPOS_UNICOS:
                 h[v["tipo"]] = {"nombre": v["nombre"], "texto": v["texto"]}
             else:
                 h.setdefault("otras", []).append({"titulo": v["titulo"], "nombre": v["nombre"], "texto": v["texto"]})
+        normalizar(h)
         h["pasivas_capturadas"] = time.strftime("%Y-%m-%d %H:%M")
         C.guardar_catalogo(self.catalogo)
         self.hechos += 1

@@ -29,6 +29,12 @@ Etapas previstas:
 
 CAMBIOS
 -------
+0.9.6-alpha
+  - Capturar pasivas, con la captura completa (354 de 361 heroes): los Mandamientos (Commandment) tienen
+    su apartado y no se repiten; las reliquias con "Holy Relic Effect" mal leido ya no quedan en "otras";
+    "Unique" gana aunque el texto nombre reliquias (Mage of Infinity Merlin); sin pasiva, la ventana con el
+    titulo ilegible es la pasiva (Captain Hawk). Se aplica tambien a lo ya capturado.
+
 0.9.5-alpha
   - Capturar pasivas: el nombre de la Gracia ya no se confunde con el titulo del heroe que va encima
     ("[Advent of Flash]" medio tapado).
