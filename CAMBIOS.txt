@@ -34,7 +34,10 @@ CAMBIOS
     de una habilidad o pasiva (dano 220 % a uno, baja el ataque 20 % 1 turno, quita postura, cura,
     limpia...) y el de un jefe (Torrent, Inmortalidad, reduccion de dano por atributo...) en efectos y
     mecanicas con su contramedida. Probado con Raining Blades y las 4 fases del Floor 4 del ciervo.
-    Aun no cambia como juega el bot.
+  - Decidir (lumen/ia/decidir.py): el juego inteligente puede subir o bajar el valor de cada carta segun
+    lo que pide el jefe en la fase (quitar postura x3, ultis contra el Torrent x2, mismo color x1.5...) y
+    apunta el motivo. Enemy Info por fase en lumen/datos/jefes.yaml (ya esta el ciervo F4).
+    Aun no cambia como juega el bot: falta que cada modo le pase las mecanicas de su fase.
 
 0.6.0-alpha
   - Plan del dia con metas: las victorias de una tarea bajan hasta "Meta" = farmear hasta completar

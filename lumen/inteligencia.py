@@ -150,7 +150,11 @@ class Jugador:
         self.enemigos = enemigos
         self.arrastrar = arrastrar
         self.solo_area = False  # True: las cartas de un objetivo casi no valen (todos los enemigos a la vez)
-        self._indice = self._tasador = None  # se cargan en la primera jugada (tardan ~1 s)
+        # Lo que pide el jefe en esta fase (lumen/ia/decidir.py): mecanicas_de(destino, fase). Vacio = como siempre.
+        self.mecanicas: list = []
+        self.color_turno: str | None = None  # color que ya se esta jugando este turno ("mismo atributo")
+        self.razones: dict[str, list[str]] = {}  # por que valio mas o menos cada carta (para el diario)
+        self._indice = self._tasador = self._lector = None  # se cargan en la primera jugada (tardan ~1 s)
 
     def _identificar(self, carta: Carta) -> str | None:
         if self._indice is None:
@@ -168,6 +172,14 @@ class Jugador:
             # Fase en que todos los enemigos tienen que caer a la vez (fase 3 de los perros de Floor 1-3):
             # areas y ultis primero; las de un objetivo solo si no queda otra cosa.
             valores = {n: v if self._tasador.es_area(n) else v * SOLO_AREA_RESTO for n, v in valores.items()}
+        self.razones = {}
+        if self.mecanicas and valores:
+            from lumen.ia import decidir
+
+            if self._lector is None:
+                self._lector = decidir.LectorCartas()
+            valores, self.razones = decidir.ajustar(valores, self.mecanicas, self._lector.efectos_de,
+                                                    self._lector.color_de, self.color_turno)
         _, plan = planear(mano, acciones, valores, self.arrastrar)
         if not plan:
             return None
