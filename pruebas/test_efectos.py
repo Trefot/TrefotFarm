@@ -112,3 +112,19 @@ class Jefes(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class Pasivas(unittest.TestCase):
+    def test_pasivas_y_reliquias_reales(self):
+        # Textos de la captura de pasivas (2026-10-29), tal cual.
+        casos = {
+            "Increases allies' HP-related stats by 15%.": {"buff"},  # reliquia de Princess Elizabeth
+            "The hero's damage taken from skills during the enemy's turn does not exceed 40% of Max HP.": {"tope_dano"},
+            "Fills the heros utimate Move Gauge by 1 orb(s) phen an ally dies.": {"orbes"},
+            "Applicable allies damage taken -20%.": {"reduccion_dano"},
+            "The hero is given the additional race Demon.": {"raza_extra", "aplica_estado"},
+            "Grants Human allies I Evade for I turn at the start of the allies' turn.": {"evasion"},
+        }
+        for texto, tipos in casos.items():
+            with self.subTest(texto=texto[:40]):
+                self.assertEqual({e.tipo for e in efectos(texto)}, tipos)
