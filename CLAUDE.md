@@ -18,9 +18,17 @@ Reglas completas en CAMBIOS.txt. Resumen:
 
 ## Trabajo a medias
 
+- **Floor 4 del ciervo con guion** (0.4.2): el motor `lumen/guiones.py` (EstrategiaGuion, misma forma
+  que la Estrategia de perros_piso4) y el guion `lumen/datos/guiones/ciervo_piso4.yaml` estan hechos y
+  probados con manos simuladas (pruebas/test_guiones.py). Falta el modo: navegar al Floor 4 de
+  Eikthyrnir, detectar sus 4 fases (capturas de F3 y F4), un Equipo con freyja_roja,
+  thor_the_god_of_thunder_azul, sun_god_freyr_rojo (es LR en el juego) y god_of_war_tyr_verde, y las
+  capturas de sus cartas. Los orbes de la ulti se cuentan, no se leen de pantalla.
+
 - **Metas de material** (diseño aprobado por el usuario): datos, lógica (`lumen/metas.py`) y diálogos
   (`lumen/gui/metas.py`) están en el commit 944477b, deshecho en 487831b para sacar antes un arreglo.
-  Para seguir: `git revert 487831b`. Falta: botón "Metas x/y" y progreso en "Puedes conseguir" de Inicio,
+  Para seguir: `git revert 487831b` (choca con la 0.3.0, que ya puso `galeria:` en premios.yaml:
+  quedarse con lo de la 0.3.0). Falta: botón "Metas x/y" y progreso en "Puedes conseguir" de Inicio,
   chip "Meta" en la barra de Empezar (parar al cumplirla; en el plan, saltar a la siguiente tarea),
   quitar la línea "Hoy", y pruebas. 36 materiales tienen ficha de galería en premios.yaml y se cuentan
   solos; esencia negra, piedra del despertar, cartas y escenas no (se ajustan a mano).

@@ -1,0 +1,51 @@
+# Guion: Eikthyrnir Floor 4 (Transcendent) con Freyja roja, Thor, Freyr LR rojo y Tyr verde.
+# Lo dicto el jugador (2026-10-29). Lo ejecuta lumen/guiones.py: ver alli que significa cada paso.
+#
+# Mecanicas: F1 se cura con el Torrent (aqui muere en 1 turno). F2 quita su defensa a un atributo
+# si se le pega seguido con el que le gana (rojo -> quita la del verde; luego verde pega fuerte).
+# F3: golpes del mismo atributo dan proteccion contra "Fierce Rush". F4: Inmortalidad que se quita
+# con una secuencia de atributos: el "semaforo" verde -> azul -> rojo (el verde de Tyr quita
+# ventajas y asi no se cura).
+#
+# Cada turno es una lista de acciones (una por hueco). Cada accion es un paso o una lista de
+# alternativas ("o"): se usa la primera que se pueda. Pasos:
+#   carta: <alias>          esa carta (alias abajo)
+#   color: rojo|verde|azul  una carta de ese color (la de mas rango)
+#   color: el_que_mas       la del color del que mas cartas hay (fija el color del turno)
+#   color: igual            del mismo color que la anterior de este turno
+#   ulti: <heroe>           su ulti
+#   cualquiera              cualquier carta jugable (respetando "guardar")
+#   mover                   mover una carta del heroe con menos orbes (gasta el hueco sin atacar)
+# Si no se puede ninguna alternativa: fusionar moviendo y esperar; si tampoco, rendirse y reiniciar.
+
+nombre: Eikthyrnir · Floor 4
+equipo: [freyja_roja, thor_the_god_of_thunder_azul, sun_god_freyr_rojo, god_of_war_tyr_verde]
+alias:
+  desventaja_freyr: sun_god_freyr_rojo.skill_2   # Raining Blades: baja el ataque 20 % 1 turno
+  single_freyja: freyja_roja.normal_1            # Elegant Leopard
+  lightning_shift: thor_the_god_of_thunder_azul.skill_1   # primero
+  thunderstorm: thor_the_god_of_thunder_azul.skill_2      # despues
+  ulti_freyr: sun_god_freyr_rojo.ulti
+
+fases:
+  1:
+    turnos:
+      1: [{carta: desventaja_freyr}, {carta: single_freyja}, {carta: lightning_shift}, {carta: thunderstorm}]
+      resto: [cualquiera, cualquiera, cualquiera, cualquiera]   # si no murio en el turno 1
+  2:
+    turnos:
+      1: [{color: rojo}, {color: rojo}, [{color: rojo}, mover], mover]
+      2: [{color: verde}, {color: verde}, {color: verde}, [{color: verde}, mover]]
+      resto: [[{color: verde}, cualquiera], [{color: verde}, cualquiera], [{color: verde}, cualquiera], [{color: verde}, mover]]
+  3:
+    turnos:
+      1: [{color: el_que_mas}, {color: igual}, {color: igual}, [{color: igual}, mover]]
+      resto: [[cualquiera, mover], [cualquiera, mover], [cualquiera, mover], [cualquiera, mover]]
+    guardar: semaforo   # matar sin gastar la ultima verde, azul o roja: hacen falta en la F4
+  4:
+    turnos:
+      1: [{color: verde}, {color: azul}, {color: rojo}, mover]
+      2: [{color: verde}, {color: azul}, {color: rojo}, mover]
+      3: [{color: verde}, {color: azul}, {carta: ulti_freyr}, [{color: verde}, {ulti: freyja_roja}, mover]]
+      resto: [{color: verde}, {color: azul}, [{carta: ulti_freyr}, {color: rojo}], [{color: verde}, {ulti: freyja_roja}, mover]]
+    guardar: [ulti_freyr]   # la ulti de Freyr no cuenta como "roja" del semaforo: se guarda para el turno 3
