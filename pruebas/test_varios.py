@@ -318,3 +318,30 @@ class Pasivas(unittest.TestCase):
         self.assertEqual(h["pasiva"]["texto"], "no es una reliquia", "la 'reliquia' Unique era la pasiva")
         self.assertEqual(h["otras"][0]["nombre"], "I'll Eat You Up!", "con pasiva ya puesta, la otra se queda")
         self.assertFalse(CP.normalizar(h), "ordenar dos veces no cambia nada")
+
+
+class CapturasCompletas(unittest.TestCase):
+    CATALOGO = {
+        "old_fart_king_verde": {"clave": "[Protector of Dolis] Old Fart King", "atributo": "HP", "color": "verde",
+                                "cartas": [{"nombre": "a", "texto": "x"}] * 3},
+        "old_fart_king_azul": {"clave": "[The Seven Deadly] Old Fart King", "atributo": "Speed", "color": "azul",
+                               "cartas": [{"nombre": "a", "texto": ""}] * 3},
+        "sh_kusakabe_azul": {"clave": "[Frozen Time] Shō Kusakabe", "atributo": "Speed", "color": "azul"},
+    }
+
+    def test_reconoce_nombres_mal_leidos(self):
+        from lumen.modos import captura_heroes as C
+
+        # lecturas reales del lector de texto (captura de pasivas, 2026-10-29)
+        self.assertEqual(C.id_por_clave(self.CATALOGO, "[Protector óf Dolis] Old Farf Kin"), "old_fart_king_verde")
+        self.assertEqual(C.id_por_clave(self.CATALOGO, "[Frozen Time] Shõ Kusakabe"), "sh_kusakabe_azul")
+        self.assertIsNone(C.id_por_clave(self.CATALOGO, "[Sunshine] Escanor"), "uno que no esta: nuevo")
+
+    def test_que_esta_completo(self):
+        from lumen.modos import captura_heroes as C
+
+        self.assertTrue(C.ficha_completa(self.CATALOGO["old_fart_king_verde"]))
+        self.assertFalse(C.ficha_completa(self.CATALOGO["old_fart_king_azul"]), "una carta sin texto: se repite")
+        self.assertFalse(C.pasivas_completas({"pasivas_capturadas": "hoy", "pasiva": {"texto": "x"},
+                                              "pasivas_incompletas": True}))
+        self.assertTrue(C.pasivas_completas({"pasivas_capturadas": "hoy", "pasiva": {"texto": "x"}}))

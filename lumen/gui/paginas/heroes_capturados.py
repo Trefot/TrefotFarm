@@ -51,6 +51,10 @@ def avisos_de(h: dict) -> list[str]:
         avisos.append("sin atributo")
     if any(c.get("tipo") == "otro" for c in h.get("cartas") or []):
         avisos.append("carta de tipo dudoso")
+    if any(not c.get("texto") for c in h.get("cartas") or []):
+        avisos.append("carta sin texto")
+    if h.get("pasivas_capturadas") and not C.pasivas_completas(h):
+        avisos.append("pasivas incompletas")
     return avisos
 
 
@@ -245,6 +249,7 @@ class PaginaHeroesCapturados(Pagina):
         self.cifras = {}
         for clave, titulo, ic in (("caras", "Caras de la lista (fase 1)", "foto"),
                                   ("heroes", "Héroes capturados (fase 2)", "personajes"), ("cartas", "Cartas", "cartas"),
+                                  ("artworks", "Artworks (fase 3)", "foto"), ("pasivas", "Pasivas (fase 4)", "jugar"),
                                   ("revisar", "Para revisar", "falta")):
             marco, cifra = tarjeta(titulo, icono=ic)
             self.cifras[clave] = cifra
@@ -291,6 +296,8 @@ class PaginaHeroesCapturados(Pagina):
         self.cifras["caras"].setText(str(len(list(C.CARAS.glob("[0-9][0-9][0-9].png")))))
         self.cifras["heroes"].setText(str(len(heroes)))
         self.cifras["cartas"].setText(str(sum(len(h.get("cartas") or []) for _, h in heroes)))
+        self.cifras["artworks"].setText(f"{sum((C.CARPETA / pid / 'artwork.jpg').is_file() for pid, _ in heroes)}/{len(heroes)}")
+        self.cifras["pasivas"].setText(f"{sum(C.pasivas_completas(h) for _, h in heroes)}/{len(heroes)}")
         self.cifras["revisar"].setText(str(len(para_revisar)))
         texto = self.buscar.text().strip().lower()
         solo_revisar = self.filtro.checkedId() == 1
@@ -364,7 +371,8 @@ class PaginaHeroesCapturados(Pagina):
                 return
             texto = (f"FASE 2 · Fichas ({caras} caras guardadas)\n\nDeja el juego en la lista de Heroes (o en una ficha: "
                      "el bot vuelve a la lista). Abre el primer héroe y recorre todos con la flecha, leyendo datos y "
-                     "cartas. Termina solo al volver al primero. F10 para parar.")
+                     "cartas. Los héroes ya completos se saltan (solo se leen los nuevos y los incompletos). "
+                     "Termina solo al volver al primero. F10 para parar.")
         if QMessageBox.question(self, "Captura de héroes", texto) == QMessageBox.Yes:
             self.app.farmear.ejecutar_herramienta(C.CapturaHeroes({"fase": fase}))
 
@@ -400,7 +408,7 @@ class PaginaHeroesCapturados(Pagina):
         texto = ("FASE 4 · Gracias, pasivas y reliquias\n\nAbre en el juego la ficha de un héroe (la de Skills) y no "
                  "toques el ratón. En cada héroe el bot toca los iconos de la fila Grace / Unique (Gracia, pasiva "
                  "única y Reliquia), lee cada ventana, la cierra y pasa al siguiente con la flecha. Termina solo al "
-                 "volver al primero. Los ya leídos se saltan. F10 para parar.")
+                 "volver al primero. Los ya completos se saltan y los incompletos se repiten. F10 para parar.")
         if QMessageBox.question(self, "Capturar pasivas", texto) == QMessageBox.Yes:
             self.app.farmear.ejecutar_herramienta(CapturaPasivas({}))
 

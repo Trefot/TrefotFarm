@@ -29,6 +29,14 @@ Etapas previstas:
 
 CAMBIOS
 -------
+0.9.8-alpha
+  - Captura de heroes: las 4 capturas saltan lo que ya esta completo y repiten solo lo incompleto. Al salir
+    heroes nuevos se capturan esos, y lo mal leido se corrige volviendo a lanzar la captura. "2. Fichas" ya
+    no vuelve a leer las cartas de los heroes completos (lo lento).
+  - Los heroes con el nombre leido algo distinto se reconocen ("Ludociel of Flash)", "Sho Kusakabe"): en la
+    captura de pasivas se quedaron 7 sin capturar.
+  - Heroes capturados: cifras de artworks y pasivas, y avisos "carta sin texto" y "pasivas incompletas".
+
 0.9.7-alpha
   - IA, lector de efectos: entiende el 90 % de las frases de pasivas, gracias, talentos, mandamientos y
     reliquias capturadas (666 textos de 354 heroes) y el 97,9 % de las cartas. Nuevo: tope de dano

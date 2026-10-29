@@ -153,6 +153,7 @@ class CapturaPasivas(CapturaArtworks):
     def __init__(self, valores: dict):
         super().__init__(valores)
         self.icono = 0
+        self.fallos = 0  # ventanas sin leer del heroe actual
         self.leidas: list[dict] = []
         self.paginas = 0
 
@@ -161,10 +162,10 @@ class CapturaPasivas(CapturaArtworks):
                 "volver": self.volver}
 
     def _ya_hecho(self, pid: str) -> bool:
-        return bool(self.catalogo.get(pid, {}).get("pasivas_capturadas"))
+        return C.pasivas_completas(self.catalogo.get(pid, {}))
 
     def _empezar_heroe(self, p, o):
-        self.icono, self.leidas = 0, []
+        self.icono, self.leidas, self.fallos = 0, [], 0
         return self._abrir(o)
 
     def _abrir(self, o):
@@ -188,6 +189,7 @@ class CapturaPasivas(CapturaArtworks):
             if MAS_TEXTO.esta(p, 0.85):
                 return self._deslizar(p, o)
         else:
+            self.fallos += 1  # el heroe queda incompleto: la proxima captura lo repite
             guardar_imagen(C.CARPETA / "sin_leer" / f"pasiva_{time.strftime('%H%M%S')}.jpg", p)
             self.log("No pude leer esta ventana (guardo la captura en capturas/heroes/sin_leer).", "aviso")
         return self._cerrar(rect, o)
@@ -242,6 +244,10 @@ class CapturaPasivas(CapturaArtworks):
                 h.setdefault("otras", []).append({"titulo": v["titulo"], "nombre": v["nombre"], "texto": v["texto"]})
         normalizar(h)
         h["pasivas_capturadas"] = time.strftime("%Y-%m-%d %H:%M")
+        if self.fallos or not h.get("pasiva"):
+            h["pasivas_incompletas"] = True
+        else:
+            h.pop("pasivas_incompletas", None)
         C.guardar_catalogo(self.catalogo)
         self.hechos += 1
         self._stats()
