@@ -303,3 +303,18 @@ class Pasivas(unittest.TestCase):
         despues = ["The hero's Crit Damage increases by 60%.", "When the hero uses a skill, Attack-related stats increase",
                    "by 2% for every 4% of remaining HP", "(Applies before skill activation)"]
         self.assertEqual(CP.juntar(antes, despues), antes + despues[2:], "sin repetir lo que se ve en los dos trozos")
+
+    def test_ordenar_lo_leido(self):
+        from lumen.modos import captura_pasivas as CP
+
+        h = {"otras": [{"titulo": "Commandment", "nombre": "Commandment of Love", "texto": "Decreases..."},
+                       {"titulo": "Commandment", "nombre": "Commandment of Love", "texto": "Decreases..."},
+                       {"titulo": "Hvergelmir's Dark Snake Decoration", "nombre": "HotyRer•Cffect", "texto": "Stats up"},
+                       {"titulo": "", "nombre": "I'll Eat You Up!", "texto": "Increase all stats"}],
+             "reliquias": [{"nombre": "Unique", "efecto": "no es una reliquia"}]}
+        self.assertTrue(CP.normalizar(h))
+        self.assertEqual(h["mandamiento"]["nombre"], "Commandment of Love")
+        self.assertEqual([r["nombre"] for r in h["reliquias"]], ["Hvergelmir's Dark Snake Decoration"])
+        self.assertEqual(h["pasiva"]["texto"], "no es una reliquia", "la 'reliquia' Unique era la pasiva")
+        self.assertEqual(h["otras"][0]["nombre"], "I'll Eat You Up!", "con pasiva ya puesta, la otra se queda")
+        self.assertFalse(CP.normalizar(h), "ordenar dos veces no cambia nada")

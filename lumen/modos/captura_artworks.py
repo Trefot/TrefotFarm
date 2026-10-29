@@ -141,7 +141,7 @@ class CapturaArtworks(Modo):
                 return self._siguiente(o)
             return None
         if pid == self.primero:
-            self.log(f"Vuelvo al primer héroe: terminado ({self.hechos} artworks).", "ok")
+            self.log(f"Vuelvo al primer héroe: terminado ({self.hechos} héroes).", "ok")
             raise TerminarModo()
         self.primero = self.primero or pid
         self.actual = pid
