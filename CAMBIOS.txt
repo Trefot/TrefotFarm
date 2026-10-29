@@ -29,6 +29,11 @@ Etapas previstas:
 
 CAMBIOS
 -------
+0.9.9-alpha
+  - Capturar pasivas: las ventanas de "Costume Set" (bonus de conjunto de atuendos) se leen y se guardan
+    aparte (conjuntos: nombre, piezas y bonus). Tienen fondo claro y el bot las daba por ilegibles: los 10
+    heroes que las tienen (Wanderer Thonar, Princess Elizabeth...) se quedaban siempre incompletos.
+
 0.9.8-alpha
   - Captura de heroes: las 4 capturas saltan lo que ya esta completo y repiten solo lo incompleto. Al salir
     heroes nuevos se capturan esos, y lo mal leido se corrige volviendo a lanzar la captura. "2. Fichas" ya
