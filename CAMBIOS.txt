@@ -29,6 +29,11 @@ Etapas previstas:
 
 CAMBIOS
 -------
+0.7.1-alpha
+  - Botin: el "3" sobre fondo azul claro se leia como 1 (Hraesvelgr Floor 3: 2 gemas x3 contadas como 2).
+    Referencias de digitos rehechas con las fotos del 29-10: 80 de 81 casillas bien. Las fotos se
+    vuelven a leer solas al abrir Botin.
+
 0.7.0-alpha
   - Empieza la IA del bot (plan en IA.md): lector de efectos (lumen/ia/efectos.py). Convierte el texto
     de una habilidad o pasiva (dano 220 % a uno, baja el ataque 20 % 1 turno, quita postura, cura,

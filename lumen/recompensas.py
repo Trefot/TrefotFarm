@@ -20,8 +20,8 @@ CARPETA = RAIZ / "recompensas"
 INDICE = CARPETA / "indice.jsonl"
 _lock = threading.Lock()
 # Version de la lectura del botin: al subirla, las fotos leidas con una anterior se vuelven a leer solas
-# (2: cantidades con los digitos del juego y fotos sin boton OK fuera, 0.3.0).
-LECTURA = 2
+# (2: cantidades con los digitos del juego y fotos sin boton OK fuera, 0.3.0; 3: el "3" sobre fondo claro, 0.7.1).
+LECTURA = 3
 
 
 def _analizar(pantalla) -> dict:
