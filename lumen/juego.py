@@ -78,7 +78,10 @@ recompensa_garantizada = P("demonic_beasts/guaranteed_reward.png")
 # ------------------------------------------------------------------- perros
 perro_izq_seleccionado = P("dogs/left_target_sel.png", "dogs/p1targetleft.png", nombre="perro_izq_sel")
 perro_der_seleccionado = P("dogs/right_target_sel.png", "dogs/right_target_sel2.png", nombre="perro_der_sel")
-espacio_vacio = P(*[f"dogs/empty_slot_{i}.png" for i in range(1, 19)], nombre="espacio_vacio")
+# Las 6 "nidhoggr": casillas vacias semitransparentes de Nidhoggr (capturas de la prueba de la 0.7.6); con las
+# demas daban 0.52-0.65 y el bot no veia su turno.
+espacio_vacio = P(*[f"dogs/empty_slot_{i}.png" for i in range(1, 19)],
+                  *[f"dogs/empty_slot_nidhoggr_{i}.png" for i in range(1, 7)], nombre="espacio_vacio")
 
 # ------------------------------------------------------------------- cartas
 rango_bronce = P("bronze_card.png")
