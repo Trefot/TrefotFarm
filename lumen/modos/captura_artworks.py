@@ -108,14 +108,7 @@ class CapturaArtworks(Modo):
         if not nombre:
             return None
         clave = f"[{titulo}] {nombre}" if titulo else nombre
-        atributo = C.atributo_por_icono(p)
-        iguales = [pid for pid, h in self.catalogo.items() if (h or {}).get("clave") == clave]
-        if len(iguales) > 1 and atributo:
-            iguales = [pid for pid in iguales if self.catalogo[pid].get("atributo") == atributo] or iguales
-        if iguales:
-            return iguales[0]
-        parecida = C.parecida(clave, [h.get("clave", "") for h in self.catalogo.values()], 0.85)
-        return next((pid for pid, h in self.catalogo.items() if h.get("clave") == parecida), None) if parecida else None
+        return C.id_por_clave(self.catalogo, clave, C.atributo_por_icono(p))
 
     def _stats(self):
         self.publicar_stats(victorias=self.hechos, artworks=self.hechos, saltados=self.saltados)

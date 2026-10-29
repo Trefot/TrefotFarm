@@ -533,6 +533,33 @@ def pasar_a_biblioteca(catalogo: dict) -> tuple[int, int]:
     return nuevos, existentes
 
 
+# ------------------------------------------------------------------ que esta completo
+# Las capturas saltan lo completo y repiten lo incompleto: al salir heroes nuevos se capturan solo esos, y lo
+# que se leyo mal se puede corregir volviendo a lanzar la captura (pedido del usuario, 2026-10-29).
+def ficha_completa(h: dict) -> bool:
+    cartas = (h or {}).get("cartas") or []
+    return (len(cartas) >= 3 and all(c.get("nombre") and c.get("texto") for c in cartas)
+            and (h or {}).get("color", "sin definir") != "sin definir")
+
+
+def pasivas_completas(h: dict) -> bool:
+    return bool((h or {}).get("pasivas_capturadas") and (h or {}).get("pasiva") and not (h or {}).get("pasivas_incompletas"))
+
+
+def id_por_clave(catalogo: dict, clave: str, atributo: str = "", minimo: float = 0.75) -> str | None:
+    """El heroe del catalogo con esa clave ("[titulo] nombre"): exacta o, si el lector de texto la leyo algo
+    distinta, la mas parecida (desde 0.75: "Ludociel of Flash)", "Sho Kusakabe"). Con varias, manda el atributo."""
+    iguales = [pid for pid, h in catalogo.items() if (h or {}).get("clave") == clave]
+    if not iguales:
+        puntos = sorted(((difflib.SequenceMatcher(None, clave.lower(), (h or {}).get("clave", "").lower()).ratio(), pid)
+                         for pid, h in catalogo.items()), reverse=True)
+        mejor = puntos[0][0] if puntos else 0.0
+        iguales = [pid for r, pid in puntos if r >= minimo and r >= mejor - 0.02]
+    if len(iguales) > 1 and atributo:
+        iguales = [pid for pid in iguales if catalogo[pid].get("atributo") == atributo] or iguales
+    return iguales[0] if iguales else None
+
+
 def cargar_catalogo() -> dict:
     if not CATALOGO.is_file():
         return {}
@@ -570,6 +597,7 @@ class CapturaHeroes(Modo):
         self.catalogo = cargar_catalogo()
         self.vistos: set[str] = set()
         self.capturados = 0
+        self.saltados = 0
         self.actual: dict | None = None
         self.anterior = None
         self.esperando_desde = time.time()
@@ -780,6 +808,14 @@ class CapturaHeroes(Modo):
             self.log(f"Volví a {clave}: ya recorrí todos.", "ok")
             raise TerminarModo()
         self.vistos.add(clave)
+        existente = id_por_clave(self.catalogo, clave, atributo, minimo=0.9)
+        if self.valores.get("solo_nuevos", True) and existente and ficha_completa(self.catalogo[existente]):
+            # Ya esta completo: no se vuelven a leer sus cartas (lo lento, ~10 s por heroe)
+            self.fichas_vistas += 1
+            self.saltados += 1
+            self.log(f"{nombre} ya está completo: lo salto.", "debug")
+            self.publicar_stats(victorias=self.capturados, saltados=self.saltados)
+            return "siguiente"
         color = COLOR.get(atributo.lower().strip(), "sin definir")
         self.actual = {
             "clave": clave, "titulo": titulo, "nombre": nombre, "atributo": atributo, "color": color,
