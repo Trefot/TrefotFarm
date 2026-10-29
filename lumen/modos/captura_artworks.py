@@ -18,6 +18,7 @@ import numpy as np
 from lumen import entrada
 from lumen import personajes as P
 from lumen.motor import Modo, TerminarModo
+from lumen.rutas import ASSETS
 from lumen.modos import captura_heroes as C
 from lumen.vision import Plantilla, guardar_imagen, leer_imagen
 
@@ -52,7 +53,37 @@ def cara_en(ilustracion: np.ndarray, cx: int, cy: int) -> np.ndarray:
     return ilu[y0:y0 + lado, x0:x0 + lado].copy()
 
 
+# Detector de caras de anime: lbpcascade_animeface de nagadomi (licencia MIT, dentro del propio archivo;
+# github.com/nagadomi/lbpcascade_animeface). En los primeros 25 artworks encontro la cara de 20.
+DETECTOR_CARAS = ASSETS / "modelos" / "lbpcascade_animeface.xml"
+_detector = None
+
+
+def buscar_cara(ilustracion: np.ndarray) -> tuple[int, int] | None:
+    """Centro de la cara (la mas grande) en la ilustracion, con el detector de caras de anime; None si no hay."""
+    global _detector
+    if _detector is None:
+        _detector = cv2.CascadeClassifier(str(DETECTOR_CARAS)) if DETECTOR_CARAS.is_file() else False
+    if not _detector or _detector.empty():
+        return None
+    gris = cv2.equalizeHist(cv2.cvtColor(_zona_cara(ilustracion), cv2.COLOR_BGR2GRAY))
+    caras = _detector.detectMultiScale(gris, scaleFactor=1.03, minNeighbors=3, minSize=(36, 36))
+    if len(caras) == 0:
+        return None
+    x, y, w, h = max(caras, key=lambda r: r[2] * r[3])
+    return int(x + w / 2), int(y + h / 2) + BORDE_ARRIBA
+
+
 def recorte_cara(ilustracion: np.ndarray) -> np.ndarray:
+    """Cabeza y hombros, centrado en la cara que encuentra el detector de caras de anime. Si no la encuentra
+    (armaduras, criaturas: Galland, Captain Hawk), se estima como antes: """
+    centro = buscar_cara(ilustracion)
+    if centro is not None:
+        return cara_en(ilustracion, *centro)
+    return _cara_estimada(ilustracion)
+
+
+def _cara_estimada(ilustracion: np.ndarray) -> np.ndarray:
     """Cabeza y hombros. Primero, un cuadrado centrado en lo mas alto de la figura (separada del fondo liso por
     color). Si dentro no hay ninguna mancha de piel grande (la cara), se centra en la mancha de piel mas alta
     de la mitad de arriba: con dragones, alas o destellos arriba (Lillia, Sun God Freyr) salia otra cosa.

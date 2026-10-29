@@ -29,6 +29,11 @@ Etapas previstas:
 
 CAMBIOS
 -------
+0.9.11-alpha
+  - Artworks: el retrato se centra en la cara que encuentra un detector de caras de anime
+    (lbpcascade_animeface de nagadomi, licencia MIT; assets/modelos). En los primeros 25 artworks encontro
+    20 caras (Gloxinia, Roxy, Gowther y Freyr ya salen centrados). Si no encuentra cara, se estima como antes.
+
 0.9.10-alpha
   - Artworks: la cara se busca mejor. Si en lo alto de la figura no hay piel (un dragon, alas, destellos),
     se centra en la mancha de piel mas alta (Lillia, Sun God Freyr). Sin la sombra de la barra del juego.
