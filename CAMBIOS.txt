@@ -29,6 +29,12 @@ Etapas previstas:
 
 CAMBIOS
 -------
+0.9.0-alpha
+  - IA: nuevo boton "4. Capturar pasivas" (administrador, Heroes capturados). En cada ficha toca la Gracia,
+    la pasiva unica (Unique) y la Reliquia, lee el nombre y el texto de cada ventana, la cierra y pasa al
+    siguiente heroe. Los numeros naranjas que el lector de texto se saltaba ("8%") se recuperan leyendo
+    tambien en gris. Queda en capturas/heroes/catalogo.yaml (gracia, pasiva, reliquias).
+
 0.8.2-alpha
   - IA, lector de efectos: entiende el 97,5 % de las frases de las 1.083 cartas capturadas (antes el 39 %).
     Nuevo: el glosario del juego (*Pierce, *Bleed, *Taunt, *Weak Point...), danos por turno (sangrado,

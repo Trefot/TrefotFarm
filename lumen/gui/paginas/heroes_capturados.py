@@ -231,6 +231,7 @@ class PaginaHeroesCapturados(Pagina):
             ("1. Capturar caras", "foto", lambda: self._capturar("caras"), False),
             ("2. Capturar fichas", "jugar", lambda: self._capturar("fichas"), False),
             ("3. Capturar artworks", "foto", self._capturar_artworks, False),
+            ("4. Capturar pasivas", "jugar", self._capturar_pasivas, False),
             ("Pasar a Personajes", "personajes", self._pasar, True),
             ("Abrir carpeta", "carpeta", self._abrir_carpeta, False),
             ("Recargar", "actualizar", self.al_mostrar, False),
@@ -384,6 +385,24 @@ class PaginaHeroesCapturados(Pagina):
                  "Al terminar, la cara de cada ilustración pasa a los retratos de Personajes, Equipos e Inicio.")
         if QMessageBox.question(self, "Captura de artworks", texto) == QMessageBox.Yes:
             self.app.farmear.ejecutar_herramienta(CapturaArtworks({}))
+
+    def _capturar_pasivas(self):
+        from lumen import ocr
+        from lumen.modos.captura_pasivas import CapturaPasivas
+
+        if not ocr.disponible():
+            QMessageBox.warning(self, "Capturar pasivas", "Falta el lector de texto de Windows (paquetes winrt).")
+            return
+        if not self.catalogo:
+            QMessageBox.information(self, "Capturar pasivas", "Antes captura las fichas (paso 2): el bot reconoce "
+                                    "a cada héroe por lo capturado.")
+            return
+        texto = ("FASE 4 · Gracias, pasivas y reliquias\n\nAbre en el juego la ficha de un héroe (la de Skills) y no "
+                 "toques el ratón. En cada héroe el bot toca los iconos de la fila Grace / Unique (Gracia, pasiva "
+                 "única y Reliquia), lee cada ventana, la cierra y pasa al siguiente con la flecha. Termina solo al "
+                 "volver al primero. Los ya leídos se saltan. F10 para parar.")
+        if QMessageBox.question(self, "Capturar pasivas", texto) == QMessageBox.Yes:
+            self.app.farmear.ejecutar_herramienta(CapturaPasivas({}))
 
     def _abrir_carpeta(self):
         C.CARPETA.mkdir(parents=True, exist_ok=True)

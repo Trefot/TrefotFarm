@@ -280,3 +280,17 @@ class Artworks(unittest.TestCase):
             self.assertEqual(pj.ruta_cara().name, "icono.png")
             cv2.imwrite(str(pj.carpeta / P.CARA_ARTWORK), np.zeros((8, 8, 3), np.uint8))
             self.assertEqual(pj.ruta_cara().name, P.CARA_ARTWORK)
+
+
+class Pasivas(unittest.TestCase):
+    def test_tipo_de_ventana_por_su_texto(self):
+        from lumen.modos import captura_pasivas as CP
+
+        pantalla = np.full((940, 550, 3), 220, np.uint8)
+        pantalla[450:640, 60:490] = (90, 90, 90)  # la banda gris del texto
+        lecturas = {"cabecera": ["Unique"], "cuerpo": ["Distorted Holiness", "Increases Goddess allies' basic stats by 8%"]}
+        with mock.patch.object(CP.ocr, "leer", side_effect=lambda img, escala=2.0: lecturas["cabecera"]
+                               if img.shape[0] < 300 and img.shape[1] > 420 else lecturas["cuerpo"]):
+            v = CP.leer_ventana(pantalla, (456, 233, 44, 42))
+        self.assertEqual((v["tipo"], v["nombre"]), ("pasiva", "Distorted Holiness"))
+        self.assertIn("8%", v["texto"])

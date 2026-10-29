@@ -144,9 +144,16 @@ class CapturaArtworks(Modo):
             raise TerminarModo()
         self.primero = self.primero or pid
         self.actual = pid
-        if self.valores.get("solo_nuevos", True) and (C.CARPETA / pid / ARTWORK).is_file():
-            self.log(f"{self.catalogo[pid].get('nombre', pid)} ya tiene artwork: lo salto.", "debug")
+        if self.valores.get("solo_nuevos", True) and self._ya_hecho(pid):
+            self.log(f"{self.catalogo[pid].get('nombre', pid)} ya está capturado: lo salto.", "debug")
             return self._siguiente(o)
+        return self._empezar_heroe(p, o)
+
+    # Lo que cambia en otras capturas que recorren las fichas igual (captura_pasivas.py)
+    def _ya_hecho(self, pid: str) -> bool:
+        return (C.CARPETA / pid / ARTWORK).is_file()
+
+    def _empezar_heroe(self, p, o):
         self.toques = 0
         return self._tocar_figura(o)
 
