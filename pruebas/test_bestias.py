@@ -406,8 +406,26 @@ class DemoniosYFuerte(ConPantallaSimulada):
         m = F.MonedasSA({"cofre": "Plata"})
         self._parchear(m, "_cofre", lambda p: "Bronce")
         self.assertIsNone(m.pelea(set(), (0, 0)), "sin jefe todavia no mira el cofre")
-        self.assertEqual(m.pelea({"VIDA_JEFE", "pausa"}, (0, 0)), "reiniciar")
+        self.assertEqual(m.pelea({"VIDA_JEFE", "pausa"}, (0, 0)), "reintentar")
         self.assertEqual(m.reinicios, 1)
         self._parchear(m, "_cofre", lambda p: "Oro")
         self.assertIsNone(m.pelea({"VIDA_JEFE", "pausa"}, (0, 0)))
         self.assertEqual(m.cofres["Oro"], 1)
+
+    def test_monedas_sa_repite_con_try_again(self):
+        from lumen.modos import fuerte_solgres as F
+
+        self._parchear(F, "REINTENTAR", PlantillaFalsa("try_again"))
+        self._parchear(juego, "pausa", PlantillaFalsa("pausa"))
+        self._parchear(juego, "ok", PlantillaFalsa("ok"))
+        m = F.MonedasSA({"cofre": "Oro"})
+        m._repetir()
+        self.assertIsNone(m.reintentar({"pausa"}, (0, 0)), "abre la pausa")
+        self.assertIsNone(m.reintentar({"try_again"}, (0, 0)), "toca Try Again")
+        self.assertEqual(len(self.clics), 2)
+        self.assertEqual(m.reintentar({"pausa"}, (0, 0)), "pelea", "la pelea vuelve a empezar")
+        otro = F.MonedasSA({"cofre": "Oro"})
+        otro._repetir()
+        for _ in range(F.INTENTOS_REINTENTAR):
+            otro.reintentar({"pausa"}, (0, 0))
+        self.assertEqual(otro.reintentar({"pausa"}, (0, 0)), "reiniciar", "sin Try Again: se rinde como antes")
