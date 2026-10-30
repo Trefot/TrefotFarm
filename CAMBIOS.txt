@@ -29,6 +29,12 @@ Etapas previstas:
 
 CAMBIOS
 -------
+0.9.16-alpha
+  - Monedas SA: el cofre se busca desde el principio de la pelea, no solo con el jefe. Si sale el jefe y en
+    5 s (opcion) no hay cofre, repite enseguida: sin cofre se pierde material. Antes esperaba 20 s, el piso
+    terminaba solo mientras tanto y el bot se quedaba pegado. Si la pelea termina mientras intenta repetir,
+    la cobra y sigue farmeando.
+
 0.9.15-alpha
   - Monedas SA: al acabarse la repeticion se quedaba mas de un minuto pulsando ESC sin salir de la pantalla.
     Ya no usa ESC (en el menu principal abre "salir del juego"): pulsa OK, el resultado y la flecha de volver.
