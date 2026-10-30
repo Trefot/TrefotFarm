@@ -173,6 +173,10 @@ serpiente:
       Vida del equipo. Enlaces: Roxy en Jinwoo, Escanor UR o Skuld en Nasiens, Tarmiel rojo en Cha,
       Sabunak en Urek.
 
+  - nombre: Ragnarok
+    nivel: recomendado
+    personajes: [odin, freyja_roja, sun_god_freyr_rojo, god_of_war_tyr_verde]
+
 rata:
   - nombre: Liz, Valenti y Jormungand
     nivel: recomendado
