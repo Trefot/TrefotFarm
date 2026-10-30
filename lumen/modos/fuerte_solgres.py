@@ -198,9 +198,9 @@ class MonedasSA(FuerteSolgres):
     opciones = _opciones_comunes() + [
         Opcion("cofre", "Cofre mínimo del jefe", "lista", "Bronce", opciones=ORDEN_COFRES,
                ayuda="Si el jefe deja un cofre peor, el bot rinde la pelea y la repite."),
-        Opcion("segundos_cofre", "Segundos tras salir el jefe sin cofre antes de repetir", "entero", 5, minimo=1,
-               maximo=60, ayuda="El cofre se busca desde el principio de la pelea. Si sale el jefe y no hay cofre, "
-                                "se repite: sin cofre se pierde material."),
+        Opcion("segundos_cofre", "Segundos de pelea sin cofre antes de repetir", "entero", 12, minimo=5, maximo=60,
+               ayuda="El cofre sale a los 8-9 s de empezar la pelea, arriba a la izquierda. Si no sale, se repite: "
+                     "sin cofre se pierde material."),
     ]
 
     def __init__(self, valores: dict):
@@ -214,6 +214,7 @@ class MonedasSA(FuerteSolgres):
     def _nueva_vuelta(self):
         self.jefe_visto = self.cofre_visto = False
         self.jefe_desde: float | None = None
+        self.pelea_desde: float | None = None  # cuando se vio la interfaz de esta pelea
 
     def estado_inicial(self):
         return "ir"
@@ -315,6 +316,10 @@ class MonedasSA(FuerteSolgres):
         # El cofre se busca desde el principio de la pelea (lo pidio el usuario: esperar al jefe dejaba poco tiempo
         # y el piso terminaba antes de repetir). Si llega el jefe y en unos segundos no hay cofre, se repite: sin
         # cofre se pierde material, que vale mas que la stamina.
+        # Grabacion de 8 runs (2026-10-29): el cofre sale siempre 8-9 s despues de verse la interfaz de la pelea,
+        # arriba a la izquierda. Si a los segundos_cofre (12) no ha salido, no va a salir: se repite ya.
+        if juego.pausa.esta(p, 0.7):
+            self.pelea_desde = self.pelea_desde or time.time()
         if VIDA_JEFE.esta(p, 0.7) and juego.pausa.esta(p, 0.7):
             self.jefe_visto = True
             self.jefe_desde = self.jefe_desde or time.time()
@@ -323,11 +328,11 @@ class MonedasSA(FuerteSolgres):
         tipo = self._cofre(p)
         minimo = self.valores["cofre"]
         if tipo is None:
-            if not self.jefe_visto or time.time() - self.jefe_desde < int(self.valores["segundos_cofre"]):
+            if self.pelea_desde is None or time.time() - self.pelea_desde < int(self.valores["segundos_cofre"]):
                 return None
             self.sin_ver += 1
             self.publicar_stats(cofres_sin_ver=self.sin_ver)
-            self.log("Llegó el jefe y no hay cofre: repito la pelea.", "aviso")
+            self.log(f"A los {self.valores['segundos_cofre']} s no hay cofre: repito la pelea.", "aviso")
             return self._repetir()
         self.cofre_visto = True
         if ORDEN_COFRES.index(tipo) < ORDEN_COFRES.index(minimo):

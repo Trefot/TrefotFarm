@@ -29,6 +29,11 @@ Etapas previstas:
 
 CAMBIOS
 -------
+0.9.17-alpha
+  - Monedas SA: decide antes si no hay cofre. En una grabacion de 8 runs el cofre salio siempre a los 8-9 s
+    de empezar la pelea; ahora, si a los 12 s (opcion) no ha salido, repite. Antes esperaba al jefe y tardaba
+    unos 35 s en decidirlo.
+
 0.9.16-alpha
   - Monedas SA: el cofre se busca desde el principio de la pelea, no solo con el jefe. Si sale el jefe y en
     5 s (opcion) no hay cofre, repite enseguida: sin cofre se pierde material. Antes esperaba 20 s, el piso
