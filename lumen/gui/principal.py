@@ -28,7 +28,6 @@ from lumen.gui.arranque import EMBLEMA
 from lumen.gui.paginas.actualizaciones import PantallaBloqueo
 from lumen.gui.paginas.ajustes import PaginaAjustes
 from lumen.gui.paginas.ayuda import PaginaAyuda
-from lumen.gui.paginas.editor_personajes import PaginaEditorPersonajes
 from lumen.gui.paginas.farmear import PaginaFarmear
 from lumen.gui.paginas.heroes_capturados import PaginaHeroesCapturados
 from lumen.gui.paginas.equipos import PaginaEquipos
@@ -50,17 +49,16 @@ MENU = [
     # Solo con el modo administrador (Ajustes): herramientas para mantener la base del bot.
     ("equipos", "Equipos"),
     ("recompensas", "Botín"),
-    ("editor", "Editor"),
     ("capturados", "Héroes"),
 ]
-SOLO_ADMIN = {"editor", "capturados", "equipos", "recompensas"}  # lo demas esta en Farmear
+SOLO_ADMIN = {"capturados", "equipos", "recompensas"}  # lo demas esta en Farmear
 
 
 class _Senales(QObject):
     revision = pyqtSignal(object)  # actualizador.Estado
     progreso = pyqtSignal(str)
     fin_update = pyqtSignal(bool, str)
-    publicado = pyqtSignal(int, str)  # equipos subidos, error
+    publicado = pyqtSignal(object, str)  # publicar.Resultado, error
 
 
 class VentanaPrincipal(QMainWindow):
@@ -110,7 +108,7 @@ class VentanaPrincipal(QMainWindow):
         for clave, texto in MENU:
             b = QToolButton(objectName="menu", checkable=True, text=texto)
             b.setToolButtonStyle(Qt.ToolButtonTextUnderIcon)
-            b.setIcon(iconos.icono("mdi6.database-edit" if clave == "editor" else clave, tema.TENUE, tema.ACENTO))
+            b.setIcon(iconos.icono(clave, tema.TENUE, tema.ACENTO))
             b.setIconSize(QSize(24, 24))
             b.setCursor(Qt.PointingHandCursor)
             b.clicked.connect(lambda _, c=clave: self.navegar(c))
@@ -131,7 +129,6 @@ class VentanaPrincipal(QMainWindow):
             "inicio": PaginaInicio(self),
             "farmear": self.farmear,
             "personajes": PaginaPersonajes(self),
-            "editor": PaginaEditorPersonajes(self),
             "capturados": PaginaHeroesCapturados(self),
             "equipos": PaginaEquipos(self),
             "recompensas": PaginaRecompensas(self),
@@ -178,7 +175,7 @@ class VentanaPrincipal(QMainWindow):
         self._barra()
         self.farmear.escribir("LumenFarm listo.", "ok")
         QTimer.singleShot(300, self.buscar_updates)
-        QTimer.singleShot(SEGUNDOS_PUBLICAR * 1000, self.publicar_equipos)  # los que no se pudieron subir antes
+        QTimer.singleShot(SEGUNDOS_PUBLICAR * 1000, self.publicar)  # lo que no se pudo subir antes
         accesos.migrar_viejos()
         if not config.obtener("asistente_visto"):
             QTimer.singleShot(700, self.abrir_asistente)
@@ -277,32 +274,32 @@ class VentanaPrincipal(QMainWindow):
 
         threading.Thread(target=revisar, daemon=True).start()
 
-    def publicar_equipos(self):
-        """Modo administrador: sube solos a la base de todos los equipos que creaste (sin pasar por el chat)."""
+    def publicar(self):
+        """Modo administrador: sube solos a la base de todos los equipos, heroes nuevos y retratos de artwork
+        de este PC (sin pasar por el chat)."""
         if not config.obtener("modo_admin") or self.publicando or self.actualizando or self.revisando:
             return
-        from lumen import publicar_equipos
-        from lumen.gui.paginas.equipos import PROPIOS, _leer
+        from lumen import publicar
 
-        propios = _leer(PROPIOS)
-        if not propios:
+        local = publicar.leer_local()
+        if local.vacio():
             return
         self.publicando = True
 
         def correr():
             try:
-                self.senales.publicado.emit(publicar_equipos.publicar(propios), "")
+                self.senales.publicado.emit(publicar.publicar(local), "")
             except Exception as e:  # sin permiso, sin internet...: se reintenta la proxima vez
-                self.senales.publicado.emit(0, str(e))
+                self.senales.publicado.emit(None, str(e))
 
         threading.Thread(target=correr, daemon=True).start()
 
-    def _fin_publicar(self, n: int, error: str):
+    def _fin_publicar(self, hecho, error: str):
         self.publicando = False
         if error:
-            self.farmear.escribir(f"No pude publicar los equipos (lo reintento al abrir Lumen): {error}", "aviso")
-        elif n:
-            self.farmear.escribir(f"Publicados {n} equipos para todos. Llegan con la próxima actualización.", "ok")
+            self.farmear.escribir(f"No pude publicar para todos (lo reintento al abrir Lumen): {error}", "aviso")
+        elif hecho:
+            self.farmear.escribir(f"Publicado para todos: {hecho.texto()}. Llega con la próxima actualización.", "ok")
             self.buscar_updates()
 
     def _resultado_revision(self, estado):

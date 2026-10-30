@@ -40,6 +40,9 @@ def es_marca_reliquia(linea: str) -> bool:
     l = linea.lower().strip()
     return "holy relic" in l or "relic effect" in l or (l.startswith("ho") and re.search(r"[ce]ffect$", l) is not None)
 ESPERA_VENTANA = 2.5  # sin ventana tras tocar un icono: ese hueco esta vacio y no hay mas
+# Heroe ya leido: se toca solo el hueco de despues de su ultimo icono. Si se abre una ventana, recibio algo nuevo
+# (talento, pasiva, reliquia) y se relee entero; si no, se salta. Antes se saltaba sin mirar (2026-10-29).
+ESPERA_COMPROBAR = 1.8
 
 
 def zona_texto(pantalla) -> tuple[int, int] | None:
@@ -173,17 +176,43 @@ class CapturaPasivas(CapturaArtworks):
         self.fallos = 0  # ventanas sin leer del heroe actual
         self.leidas: list[dict] = []
         self.paginas = 0
+        self.releidos = 0  # heroes ya leidos que tenian algo nuevo
 
     def estados(self):
         return {"ficha": self.ficha, "leer": self.leer, "leer_mas": self.leer_mas, "cerrado": self.cerrado,
-                "volver": self.volver}
+                "volver": self.volver, "comprobar": self.comprobar}
 
     def _ya_hecho(self, pid: str) -> bool:
-        return C.pasivas_completas(self.catalogo.get(pid, {}))
+        # Completo y con todos los huecos llenos: no puede tener nada nuevo. Si queda un hueco, se comprueba.
+        h = self.catalogo.get(pid, {})
+        return C.pasivas_completas(h) and C.iconos_conocidos(h) >= len(ICONOS)
 
     def _empezar_heroe(self, p, o):
         self.icono, self.leidas, self.fallos = 0, [], 0
+        h = self.catalogo.get(self.actual, {})
+        if self.valores.get("solo_nuevos", True) and C.pasivas_completas(h):
+            entrada.clic(ICONOS[C.iconos_conocidos(h)], o, espera=0.6)
+            self.desde = time.time()
+            return "comprobar"
         return self._abrir(o)
+
+    def comprobar(self, p, o):
+        """Tras tocar el hueco de despues del ultimo icono conocido."""
+        rect = CERRAR.buscar(p, 0.85)
+        nombre = self.catalogo[self.actual].get("nombre", self.actual)
+        if rect is None:
+            if time.time() - self.desde < ESPERA_COMPROBAR:
+                return None
+            self.saltados += 1
+            self._stats()
+            self.log(f"{nombre}: sin cambios, lo salto.", "debug")
+            return self._siguiente(o)
+        self.releidos += 1
+        self.log(f"{nombre} tiene algo nuevo (talento, pasiva o reliquia): lo vuelvo a leer.", "ok")
+        entrada.clic((int(rect[0] + rect[2] // 2), int(rect[1] + rect[3] // 2)), o, espera=0.8)
+        self.icono = 0  # al volver a la ficha, "cerrado" abre el primer icono y se lee todo
+        self.desde = time.time()
+        return "cerrado"
 
     def _abrir(self, o):
         if self.icono >= len(ICONOS):
@@ -265,6 +294,7 @@ class CapturaPasivas(CapturaArtworks):
                 h.setdefault("otras", []).append({"titulo": v["titulo"], "nombre": v["nombre"], "texto": v["texto"]})
         normalizar(h)
         h["pasivas_capturadas"] = time.strftime("%Y-%m-%d %H:%M")
+        h["iconos"] = self.icono  # ventanas abiertas = iconos de la fila (para notar uno nuevo la proxima vez)
         if self.fallos or not h.get("pasiva"):
             h["pasivas_incompletas"] = True
         else:
@@ -277,4 +307,5 @@ class CapturaPasivas(CapturaArtworks):
         return self._siguiente(o)
 
     def al_terminar(self):
-        self.log(f"Gracias, pasivas y reliquias: {self.hechos} héroes leídos, {self.saltados} saltados.", "ok")
+        self.log(f"Gracias, pasivas y reliquias: {self.hechos} héroes leídos ({self.releidos} tenían algo nuevo), "
+                 f"{self.saltados} sin cambios.", "ok")

@@ -364,6 +364,45 @@ class Pasivas(unittest.TestCase):
         self.assertEqual(h["otras"][0]["nombre"], "I'll Eat You Up!", "con pasiva ya puesta, la otra se queda")
         self.assertFalse(CP.normalizar(h), "ordenar dos veces no cambia nada")
 
+    def _modo(self, h):
+        from lumen.modos import captura_pasivas as CP
+
+        with mock.patch.object(CP.C, "cargar_catalogo", lambda: {"heroe": h}):
+            modo = CP.CapturaPasivas({"solo_nuevos": True})
+        modo.actual = "heroe"
+        modo.log = lambda *a, **k: None
+        modo.publicar_stats = lambda **k: None
+        return modo
+
+    def test_heroe_ya_leido_se_comprueba_tocando_el_hueco_siguiente(self):
+        """Un heroe completo que recibe un talento, pasiva o reliquia nueva ya no se salta sin mirar."""
+        from lumen.modos import captura_pasivas as CP
+
+        h = {"pasivas_capturadas": "x", "pasiva": {"nombre": "U"}, "reliquias": [{"nombre": "R"}]}
+        self.assertEqual(CP.C.iconos_conocidos(h), 2)
+        modo = self._modo(h)
+        self.assertFalse(modo._ya_hecho("heroe"), "le queda un hueco: hay que mirarlo")
+        pantalla = np.zeros((940, 550, 3), np.uint8)
+        with mock.patch.object(CP.entrada, "clic") as clic:
+            self.assertEqual(modo._empezar_heroe(pantalla, None), "comprobar")
+            self.assertEqual(clic.call_args[0][0], CP.ICONOS[2], "toca el hueco de despues de sus 2 iconos")
+            # Se abre una ventana: tiene algo nuevo y se relee entero
+            with mock.patch.object(CP.CERRAR, "buscar", lambda p, u: (450, 230, 40, 40)):
+                self.assertEqual(modo.comprobar(pantalla, None), "cerrado")
+            self.assertEqual((modo.icono, modo.releidos), (0, 1))
+            # Otro heroe sin cambios: no se abre nada y se pasa al siguiente
+            modo = self._modo(h)
+            modo._empezar_heroe(pantalla, None)
+            modo.desde -= CP.ESPERA_COMPROBAR + 1
+            with mock.patch.object(CP.CERRAR, "buscar", lambda p, u: None), \
+                    mock.patch.object(modo, "_siguiente", lambda o: "siguiente"):
+                self.assertEqual(modo.comprobar(pantalla, None), "siguiente")
+            self.assertEqual(modo.saltados, 1)
+
+    def test_con_los_cuatro_huecos_llenos_se_salta(self):
+        h = {"pasivas_capturadas": "x", "pasiva": {"nombre": "U"}, "iconos": 4}
+        self.assertTrue(self._modo(h)._ya_hecho("heroe"))
+
 
 class CapturasCompletas(unittest.TestCase):
     CATALOGO = {
@@ -449,7 +488,7 @@ class PublicarEquipos(unittest.TestCase):
     def test_insertar_conserva_el_archivo_y_los_comentarios(self):
         import yaml
 
-        from lumen import publicar_equipos as PE
+        from lumen import publicar as PE
         from lumen.gui.paginas.equipos import ARCHIVO
 
         texto = ARCHIVO.read_text(encoding="utf-8")
@@ -463,21 +502,22 @@ class PublicarEquipos(unittest.TestCase):
         self.assertTrue(nuevo.startswith(texto.splitlines()[0]), "los comentarios del principio siguen")
 
     def test_pendientes_solo_los_que_no_estan(self):
-        from lumen import publicar_equipos as PE
+        from lumen import publicar as PE
 
         base = {"x": [{"nombre": "Viejo", "personajes": ["d", "c", "b", "a"]}]}
         propios = {"x": [self.NUEVO, {"nombre": "Otro", "personajes": ["e", "f", "g", "h"]}], "y": [self.NUEVO]}
-        faltan = PE.pendientes(base, propios)
+        faltan = PE.equipos_pendientes(base, propios)
         self.assertEqual([d["nombre"] for d in faltan["x"]], ["Otro"], "mismos personajes = ya publicado")
         self.assertEqual(len(faltan["y"]), 1)
 
     def test_publicar_sube_a_la_rama_sin_tocar_la_carpeta(self):
-        """Con un repositorio de prueba: sube el equipo una vez, y la segunda vez no hay nada nuevo."""
+        """Con un repositorio de prueba: sube el equipo, el heroe nuevo (con sus imagenes) y los retratos una vez;
+        la segunda vez no hay nada nuevo."""
         import subprocess
 
         import yaml
 
-        from lumen import actualizador, publicar_equipos as PE
+        from lumen import actualizador, publicar as PE
 
         def git(*args, cwd):
             subprocess.run(["git", *args], cwd=cwd, check=True, capture_output=True)
@@ -488,20 +528,44 @@ class PublicarEquipos(unittest.TestCase):
             git("init", "--bare", "-b", "master", str(remoto), cwd=d)
             git("clone", str(remoto), str(local), cwd=d)
             (local / "lumen" / "datos").mkdir(parents=True)
-            (local / PE.BASE_EN_REPO).write_text("# equipos\nx:\n  - nombre: Viejo\n    personajes: [a, b, c, e]\n",
-                                                encoding="utf-8")
+            (local / PE.EQUIPOS_EN_REPO).write_text("# equipos\nx:\n  - nombre: Viejo\n    personajes: [a, b, c, e]\n",
+                                                   encoding="utf-8")
+            (local / PE.HEROES_EN_REPO).write_text("# heroes\n\nodin:\n  nombre: Odin\n  color: claro\n", encoding="utf-8")
             git("add", ".", cwd=local)
             git("-c", "user.name=t", "-c", "user.email=t@t", "commit", "-qm", "base", cwd=local)
             git("push", "-q", "origin", "HEAD:master", cwd=local)
-            with mock.patch.object(actualizador, "RAIZ", local), mock.patch.object(PE, "COPIA", d / "copia"), \
-                    mock.patch.dict("os.environ", {"GIT_AUTHOR_NAME": "t", "GIT_AUTHOR_EMAIL": "t@t",
+            mias = d / "personajes"  # personajes/<id>/ de este PC
+            for pid, nombres in (("violet_rojo", ("icono.png", "skill_1_ficha.png", "icono_anterior.png")),
+                                 ("odin", ("cara_artwork.jpg",))):
+                (mias / pid).mkdir(parents=True)
+                for n in nombres:
+                    (mias / pid / n).write_bytes(n.encode())
+            heroes = {"violet_rojo": {"nombre": "Violet", "color": "rojo", "tengo": True,
+                                      "cartas": {"skill_1": {"descripcion": "Un objetivo"}}},
+                      "odin": {"tengo": True}}
+            mio = PE.Local(equipos={"x": [self.NUEVO]}, heroes=heroes, carpeta=mias,
+                           claves={"violet_rojo": "[Cumbre] Violet"})
+            with mock.patch.object(actualizador, "RAIZ", local), mock.patch.object(PE, "COPIA", d / "copia"),                     mock.patch.dict("os.environ", {"GIT_AUTHOR_NAME": "t", "GIT_AUTHOR_EMAIL": "t@t",
                                                    "GIT_COMMITTER_NAME": "t", "GIT_COMMITTER_EMAIL": "t@t"}):
-                self.assertEqual(PE.publicar({"x": [self.NUEVO]}), 1)
-                self.assertEqual(PE.publicar({"x": [self.NUEVO]}), 0, "ya estaba publicado")
-            texto = subprocess.run(["git", "show", "master:lumen/datos/equipos.yaml"], cwd=remoto, capture_output=True,
-                                   text=True, check=True).stdout
-            self.assertEqual([e["nombre"] for e in yaml.safe_load(texto)["x"]], ["Viejo", "Prueba: rara"])
-            self.assertNotIn("Prueba", (local / PE.BASE_EN_REPO).read_text(encoding="utf-8"), "la carpeta no se toca")
+                hecho = PE.publicar(mio)
+                self.assertEqual((hecho.equipos, hecho.heroes, hecho.retratos), (1, 1, 1))
+                self.assertFalse(PE.publicar(mio), "ya estaba todo publicado")
+
+            def remoto_(ruta):
+                return subprocess.run(["git", "show", f"master:{ruta}"], cwd=remoto, capture_output=True, text=True,
+                                      check=True).stdout
+
+            self.assertEqual([e["nombre"] for e in yaml.safe_load(remoto_("lumen/datos/equipos.yaml"))["x"]],
+                             ["Viejo", "Prueba: rara"])
+            base = yaml.safe_load(remoto_("lumen/datos/personajes.yaml"))
+            self.assertEqual(base["violet_rojo"]["clave"], "[Cumbre] Violet")
+            self.assertNotIn("tengo", base["violet_rojo"], "lo que tiene cada uno no va a la base")
+            self.assertEqual(remoto_("assets/personajes/violet_rojo/skill_1_ficha.png"), "skill_1_ficha.png")
+            self.assertEqual(remoto_("assets/personajes/odin/cara_artwork.jpg"), "cara_artwork.jpg")
+            archivos = subprocess.run(["git", "ls-tree", "-r", "--name-only", "master"], cwd=remoto, capture_output=True,
+                                      text=True, check=True).stdout
+            self.assertNotIn("_anterior", archivos, "las copias de deshacer no se publican")
+            self.assertNotIn("Prueba", (local / PE.EQUIPOS_EN_REPO).read_text(encoding="utf-8"), "la carpeta no se toca")
             self.assertFalse((d / "copia").exists(), "la copia temporal se borra")
 
 

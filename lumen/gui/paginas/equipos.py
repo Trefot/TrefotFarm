@@ -566,7 +566,7 @@ class PaginaEquipos(Pagina):
         guardar_propio(clave, nuevo, (clave_vieja, datos["_indice"]) if datos else None)
         self._construir_selector(clave)
         self.al_mostrar()
-        self.app.publicar_equipos()
+        self.app.publicar()
 
     def _aprender(self):
         from PyQt5.QtWidgets import QInputDialog

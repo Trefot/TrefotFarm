@@ -278,12 +278,13 @@ class PaginaHeroesCapturados(Pagina):
         super().__init__()
         self.app = app
         self.catalogo: dict = {}
+        # El orden para agregar heroes nuevos (lo pidio el usuario, 2026-10-29): las caras de la lista ya no hacen
+        # falta, los retratos salen del artwork.
         for texto, ic, funcion, primario in (
-            ("1. Capturar caras", "foto", lambda: self._capturar("caras"), False),
-            ("2. Capturar fichas", "jugar", lambda: self._capturar("fichas"), False),
+            ("1. Capturar fichas", "jugar", self._capturar_fichas, False),
+            ("2. Capturar pasivas", "jugar", self._capturar_pasivas, False),
             ("3. Capturar artworks", "foto", self._capturar_artworks, False),
-            ("4. Capturar pasivas", "jugar", self._capturar_pasivas, False),
-            ("Pasar a Personajes", "personajes", self._pasar, True),
+            ("4. Pasar a Personajes", "personajes", self._pasar, True),
             ("Abrir carpeta", "carpeta", self._abrir_carpeta, False),
             ("Recargar", "actualizar", self.al_mostrar, False),
         ):
@@ -294,9 +295,8 @@ class PaginaHeroesCapturados(Pagina):
 
         fila = QHBoxLayout()
         self.cifras = {}
-        for clave, titulo, ic in (("caras", "Caras de la lista (fase 1)", "foto"),
-                                  ("heroes", "Héroes capturados (fase 2)", "personajes"), ("cartas", "Cartas", "cartas"),
-                                  ("artworks", "Artworks (fase 3)", "foto"), ("pasivas", "Pasivas (fase 4)", "jugar"),
+        for clave, titulo, ic in (("heroes", "Héroes capturados (paso 1)", "personajes"), ("cartas", "Cartas", "cartas"),
+                                  ("pasivas", "Pasivas (paso 2)", "jugar"), ("artworks", "Artworks (paso 3)", "foto"),
                                   ("revisar", "Para revisar", "falta")):
             marco, cifra = tarjeta(titulo, icono=ic)
             self.cifras[clave] = cifra
@@ -340,7 +340,6 @@ class PaginaHeroesCapturados(Pagina):
                 item.widget().setParent(None)
         heroes = sorted(self.catalogo.items(), key=lambda kv: (kv[1].get("nombre") or "").lower())
         para_revisar = [pid for pid, h in heroes if avisos_de(h)]
-        self.cifras["caras"].setText(str(len(list(C.CARAS.glob("[0-9][0-9][0-9].png")))))
         self.cifras["heroes"].setText(str(len(heroes)))
         self.cifras["cartas"].setText(str(sum(len(h.get("cartas") or []) for _, h in heroes)))
         self.cifras["artworks"].setText(f"{sum((C.CARPETA / pid / 'artwork.jpg').is_file() for pid, _ in heroes)}/{len(heroes)}")
@@ -401,32 +400,22 @@ class PaginaHeroesCapturados(Pagina):
         QMessageBox.information(
             self, "Pasar a Personajes",
             f"Listo: {nuevos} héroes nuevos y {existentes} que ya estaban, ahora en Personajes y marcados como tuyos.\n\n"
-            "Por ahora solo los ves tú. Para que les lleguen a todos con la próxima actualización, avísame y los "
-            "publico en la base del bot.")
+            "Lumen los publica solo para todos (con sus retratos): les llegan con la próxima actualización.")
+        self.app.publicar()
         self.app.navegar("personajes")
 
-    def _capturar(self, fase: str):
+    def _capturar_fichas(self):
         from lumen import ocr
 
-        if fase == "fichas" and not ocr.disponible():
+        if not ocr.disponible():
             QMessageBox.warning(self, "Capturar fichas", "Falta el lector de texto de Windows (paquetes winrt).")
             return
-        if fase == "caras":
-            texto = ("FASE 1 · Caras\n\nDeja el juego en la lista de Heroes y no toques el ratón. El bot sube la lista, "
-                     "recorta el icono de cada héroe en orden y la baja hasta el final.\n\nAl terminar verás cuántas "
-                     "caras guardó; revisa capturas\\heroes\\iconos\\hoja.jpg (botón Abrir carpeta).")
-        else:
-            caras = len(list(C.CARAS.glob("[0-9][0-9][0-9].png")))
-            if not caras and QMessageBox.question(
-                    self, "Capturar fichas", "Aún no hay caras guardadas (fase 1). ¿Capturar las fichas sin caras?"
-            ) != QMessageBox.Yes:
-                return
-            texto = (f"FASE 2 · Fichas ({caras} caras guardadas)\n\nDeja el juego en la lista de Heroes (o en una ficha: "
-                     "el bot vuelve a la lista). Abre el primer héroe y recorre todos con la flecha, leyendo datos y "
-                     "cartas. Los héroes ya completos se saltan (solo se leen los nuevos y los incompletos). "
-                     "Termina solo al volver al primero. F10 para parar.")
+        texto = ("PASO 1 · Fichas\n\nDeja el juego en la lista de Heroes (o en una ficha: el bot vuelve a la lista). "
+                 "Abre el primer héroe y recorre todos con la flecha, leyendo datos y cartas. Los héroes ya completos "
+                 "se saltan (solo se leen los nuevos y los incompletos). Termina solo al volver al primero. "
+                 "F10 para parar.")
         if QMessageBox.question(self, "Captura de héroes", texto) == QMessageBox.Yes:
-            self.app.farmear.ejecutar_herramienta(C.CapturaHeroes({"fase": fase}))
+            self.app.farmear.ejecutar_herramienta(C.CapturaHeroes({"fase": "fichas"}))
 
     def _capturar_artworks(self):
         from lumen import ocr
@@ -436,10 +425,10 @@ class PaginaHeroesCapturados(Pagina):
             QMessageBox.warning(self, "Capturar artworks", "Falta el lector de texto de Windows (paquetes winrt).")
             return
         if not self.catalogo:
-            QMessageBox.information(self, "Capturar artworks", "Antes captura las fichas (paso 2): el bot reconoce "
+            QMessageBox.information(self, "Capturar artworks", "Antes captura las fichas (paso 1): el bot reconoce "
                                     "a cada héroe por lo capturado.")
             return
-        texto = ("FASE 3 · Artworks\n\nAbre en el juego la ficha de un héroe (la de Skills) y no toques el ratón. "
+        texto = ("PASO 3 · Artworks\n\nAbre en el juego la ficha de un héroe (la de Skills) y no toques el ratón. "
                  "El bot toca la figura, abre Artwork, guarda la ilustración, vuelve y pasa al siguiente con la "
                  "flecha. Termina solo al volver al primero. Los que ya tienen artwork se saltan. F10 para parar.\n\n"
                  "Al terminar, la cara de cada ilustración pasa a los retratos de Personajes, Equipos e Inicio.")
@@ -454,13 +443,14 @@ class PaginaHeroesCapturados(Pagina):
             QMessageBox.warning(self, "Capturar pasivas", "Falta el lector de texto de Windows (paquetes winrt).")
             return
         if not self.catalogo:
-            QMessageBox.information(self, "Capturar pasivas", "Antes captura las fichas (paso 2): el bot reconoce "
+            QMessageBox.information(self, "Capturar pasivas", "Antes captura las fichas (paso 1): el bot reconoce "
                                     "a cada héroe por lo capturado.")
             return
-        texto = ("FASE 4 · Gracias, pasivas y reliquias\n\nAbre en el juego la ficha de un héroe (la de Skills) y no "
+        texto = ("PASO 2 · Gracias, pasivas y reliquias\n\nAbre en el juego la ficha de un héroe (la de Skills) y no "
                  "toques el ratón. En cada héroe el bot toca los iconos de la fila Grace / Unique (Gracia, pasiva "
                  "única y Reliquia), lee cada ventana, la cierra y pasa al siguiente con la flecha. Termina solo al "
-                 "volver al primero. Los ya completos se saltan y los incompletos se repiten. F10 para parar.")
+                 "volver al primero. Los incompletos se repiten; en los ya leídos solo mira si recibieron algo nuevo "
+                 "(talento, pasiva o reliquia) y, si es así, los vuelve a leer. F10 para parar.")
         if QMessageBox.question(self, "Capturar pasivas", texto) == QMessageBox.Yes:
             self.app.farmear.ejecutar_herramienta(CapturaPasivas({}))
 
