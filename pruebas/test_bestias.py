@@ -404,6 +404,9 @@ class DemoniosYFuerte(ConPantallaSimulada):
         self._parchear(juego, "pausa", PlantillaFalsa("pausa"))
         self._parchear(juego, "pocion_stamina", PlantillaFalsa("pocion"))
         m = F.MonedasSA({"cofre": "Plata"})
+        self._parchear(m, "_cofre", lambda p: None)
+        self.assertIsNone(m.pelea({"VIDA_JEFE", "pausa"}, (0, 0)), "el cofre aun no sale: espera, no repite")
+        m._nueva_vuelta()
         self._parchear(m, "_cofre", lambda p: "Bronce")
         self.assertIsNone(m.pelea(set(), (0, 0)), "sin jefe todavia no mira el cofre")
         self.assertEqual(m.pelea({"VIDA_JEFE", "pausa"}, (0, 0)), "reintentar")
@@ -416,6 +419,7 @@ class DemoniosYFuerte(ConPantallaSimulada):
         from lumen.modos import fuerte_solgres as F
 
         self._parchear(F, "REINTENTAR", PlantillaFalsa("try_again"))
+        self._parchear(F, "CONFIRMAR_REINTENTAR", PlantillaFalsa("confirmar"))
         self._parchear(juego, "pausa", PlantillaFalsa("pausa"))
         self._parchear(juego, "ok", PlantillaFalsa("ok"))
         m = F.MonedasSA({"cofre": "Oro"})
@@ -423,6 +427,8 @@ class DemoniosYFuerte(ConPantallaSimulada):
         self.assertIsNone(m.reintentar({"pausa"}, (0, 0)), "abre la pausa")
         self.assertIsNone(m.reintentar({"try_again"}, (0, 0)), "toca Try Again")
         self.assertEqual(len(self.clics), 2)
+        self.assertIsNone(m.reintentar({"confirmar"}, (0, 0)), "confirma en la ventana que pregunta")
+        self.assertEqual(len(self.clics), 3)
         self.assertEqual(m.reintentar({"pausa"}, (0, 0)), "pelea", "la pelea vuelve a empezar")
         otro = F.MonedasSA({"cofre": "Oro"})
         otro._repetir()

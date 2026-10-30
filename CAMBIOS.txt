@@ -29,6 +29,10 @@ Etapas previstas:
 
 CAMBIOS
 -------
+0.9.13-alpha
+  - Monedas SA: tras "Try Again" confirma en la ventana que pregunta (el bot se quedaba quieto ahi). El cofre
+    del jefe se busca hasta 20 s (opcion) desde que aparece el jefe; antes repetia a los 1-2 s sin verlo.
+
 0.9.12-alpha
   - Monedas SA: si el cofre del jefe es peor que el elegido, repite la pelea con "Try Again" del menu de
     pausa en vez de rendirse, salir y volver a abrir la torre. Si no ve "Try Again", se rinde como antes.
