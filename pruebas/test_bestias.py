@@ -399,9 +399,10 @@ class DemoniosYFuerte(ConPantallaSimulada):
     def test_monedas_sa_repite_si_el_cofre_es_peor(self):
         from lumen.modos import fuerte_solgres as F
 
-        for n in ("VIDA_JEFE", "EMPEZAR", "REPETICION_TERMINADA", "VUELTA_TERMINADA"):
+        for n in ("VIDA_JEFE", "EMPEZAR", "REPETICION_TERMINADA", "VUELTA_TERMINADA", "MAZMORRA_FS", "ATRAS"):
             self._parchear(F, n, PlantillaFalsa(n))
-        self._parchear(juego, "pausa", PlantillaFalsa("pausa"))
+        for n in ("pausa", "menu_batalla", "derrota"):
+            self._parchear(juego, n, PlantillaFalsa(n))
         self._parchear(juego, "pocion_stamina", PlantillaFalsa("pocion"))
         m = F.MonedasSA({"cofre": "Plata"})
         self._parchear(m, "_cofre", lambda p: None)
@@ -420,6 +421,10 @@ class DemoniosYFuerte(ConPantallaSimulada):
 
         self._parchear(F, "REINTENTAR", PlantillaFalsa("try_again"))
         self._parchear(F, "CONFIRMAR_REINTENTAR", PlantillaFalsa("confirmar"))
+        for n in ("MAZMORRA_FS", "ATRAS"):
+            self._parchear(F, n, PlantillaFalsa(n))
+        for n in ("menu_batalla", "derrota"):
+            self._parchear(juego, n, PlantillaFalsa(n))
         self._parchear(juego, "pausa", PlantillaFalsa("pausa"))
         self._parchear(juego, "ok", PlantillaFalsa("ok"))
         m = F.MonedasSA({"cofre": "Oro"})
