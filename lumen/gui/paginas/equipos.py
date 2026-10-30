@@ -13,7 +13,6 @@ from pathlib import Path
 
 import yaml
 from PyQt5.QtCore import Qt
-from PyQt5.QtGui import QPixmap
 from PyQt5.QtWidgets import (
     QButtonGroup,
     QComboBox,
@@ -202,7 +201,8 @@ def _nombre(pid: str, biblioteca: dict, nombres: dict) -> str:
 
 def _retrato(pj: P.Personaje | None, nombre: str, tengo: bool, tam=(68, 68), extra: str = "",
              detalle: str = "", margen: int = 40) -> QWidget:
-    caja = QWidget()
+    caja = QWidget(objectName="caja_retrato")
+    caja.setStyleSheet("QWidget#caja_retrato { background: transparent; }")  # sin el fondo oscuro detras de cada cara
     caja.setFixedWidth(tam[0] + margen)
     if detalle:
         caja.setToolTip(detalle)
@@ -212,11 +212,12 @@ def _retrato(pj: P.Personaje | None, nombre: str, tengo: bool, tam=(68, 68), ext
     foto = QLabel(alignment=Qt.AlignCenter)
     foto.setFixedSize(*tam)
     foto.setObjectName("foto_pj")
-    ruta = pj.ruta_cara() if pj else None  # el icono de la lista de Heroes (o el retrato del equipo)
-    if ruta and ruta.is_file():
-        pix = QPixmap(str(ruta)).scaled(tam[0], tam[1], Qt.KeepAspectRatioByExpanding, Qt.SmoothTransformation)
-        pix = pix.copy((pix.width() - tam[0]) // 2, 0, tam[0], tam[1])
+    # Como en Inicio: cuadro con la cara del artwork pegada al rostro (sin artwork, la del icono sin nivel ni sello)
+    ruta, rostro = pj.rostro() if pj else (None, None)
+    pix = iconos.cuadrado(ruta, tam[0], tema.ACENTO if tengo else tema.BORDE, rostro=rostro, radio=10)
+    if pix:
         foto.setPixmap(pix if tengo else _en_gris(pix))
+        foto.setStyleSheet("background: transparent;")  # el cuadro ya trae sus esquinas y su borde
     else:
         foto.setPixmap(iconos.pixmap("mdi6.account-question", 34, tema.TENUE))
     foto.setProperty("tengo", tengo)
