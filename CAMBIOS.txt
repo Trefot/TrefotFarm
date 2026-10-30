@@ -29,6 +29,11 @@ Etapas previstas:
 
 CAMBIOS
 -------
+0.10.1-alpha
+  - Fuerte Solgres (Oro y Monedas SA): el bot lee el nombre del equipo en la pantalla de preparacion
+    ("Farm.Oro") y lo guarda con la sesion. Inicio recomienda el equipo tuyo que hace las vueltas mas
+    rapido (desde 5 vueltas).
+
 0.10.0-alpha
   - Equipo mas rapido: en las bestias Floor 1-3 (cualquier equipo) el bot deduce con que equipo jugaste por
     las cartas que reconoce y lo guarda con la sesion. Inicio recomienda el mas rapido de tus equipos medidos

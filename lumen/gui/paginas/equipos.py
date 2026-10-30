@@ -129,7 +129,10 @@ def mas_rapido(id_destino: str) -> dict | None:
                 continue
             minutos = 60 / m["por_hora"]
             if mejor is None or minutos < mejor["minutos"]:
-                mejor = {"datos": {"nombre": "Tu equipo", "personajes": sorted(ids)}, "minutos": minutos, "fuente": "tuyo"}
+                por_nombre = [i for i in ids if i.startswith("equipo:")]  # Fuerte Solgres: el nombre del juego
+                datos = ({"nombre": por_nombre[0].split(":", 1)[1], "personajes": []} if por_nombre
+                         else {"nombre": "Tu equipo", "personajes": sorted(ids)})
+                mejor = {"datos": datos, "minutos": minutos, "fuente": "tuyo"}
     return mejor
 
 
