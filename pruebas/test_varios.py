@@ -375,3 +375,15 @@ class CapturasCompletas(unittest.TestCase):
         self.assertTrue(A.DETECTOR_CARAS.is_file())
         self.assertIsNone(A.buscar_cara(np.full((800, 540, 3), 200, np.uint8)), "sin cara: None (se estima)")
         self.assertFalse(A._detector.empty(), "el detector se carga")
+
+
+class EquipoMasRapido2(unittest.TestCase):
+    def test_equipo_de_fuerte_solgres_por_su_nombre(self):
+        from lumen.modos import fuerte_solgres as F
+
+        m = F.MonedasSA({})
+        lineas = [("Clock Tower of Eternity", (0, 0, 1, 1)), ("- 3rd Floor -", (0, 0, 1, 1)),
+                  ("Farm.Oro", (0, 0, 1, 1)), ("Team List 15/15", (0, 0, 1, 1))]
+        with mock.patch("lumen.ocr.disponible", lambda: True), mock.patch("lumen.ocr.lineas_con_posicion", lambda img: lineas):
+            m.leer_equipo(np.zeros((940, 550, 3), np.uint8))
+        self.assertEqual(m.equipo_de_la_sesion(), ["equipo:Farm.Oro"])

@@ -486,6 +486,8 @@ class PaginaInicio(Pagina):
                 foto.setAlignment(Qt.AlignCenter)
                 foto.setObjectName("iniciales")
             fila.addWidget(foto)
+        if not datos.get("personajes"):  # equipo por su nombre del juego (Fuerte Solgres): sin caras
+            return tarjeta
         estado = QLabel("Lo tienes" if not faltan else f"Te faltan {faltan}")
         estado.setStyleSheet(f"color: {tema.OK if not faltan else tema.AVISO}; font-weight: 700;")
         fila.addSpacing(4)

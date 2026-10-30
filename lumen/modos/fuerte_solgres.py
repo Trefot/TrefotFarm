@@ -57,6 +57,7 @@ MIN_SEGUNDOS_COFRE = 10  # el cofre sale a los 8-9 s: con 7 s el bot casi repite
 
 DESLIZAR_DESDE, DESLIZAR_HASTA = (276, 800), (275, 650)  # lista de mazmorras de la especial (AutoFarming)
 CENTRO_X = juego.COORD["centro"][0]
+EQUIPO_POR_NOMBRE = "equipo:"  # en el historial: el equipo se guarda por su nombre del juego, no por sus heroes
 # Flecha amarilla de volver (arriba a la izquierda), no la tecla ESC (como AutoFarming): en la prueba del
 # 2026-10-29, al acabarse la repeticion, el bot paso mas de un minuto pulsando ESC sin salir de esa pantalla, y
 # en el menu principal ESC abre "salir del juego".
@@ -74,6 +75,24 @@ class FuerteSolgres(Modo):
         super().__init__(valores)
         self.vueltas = self.pociones = 0
         self.vuelta_contada_hasta = 0.0
+        self.nombre_equipo = ""  # el de la pantalla de preparacion ("Farm.Oro"): para saber que equipo es mas rapido
+
+    def leer_equipo(self, p) -> None:
+        """El nombre del equipo, en la pantalla de preparacion (la del boton Start): entre "- 3rd Floor -" y
+        "Team List 15/15" (captura del 2026-10-29). Una vez por sesion."""
+        if self.nombre_equipo:
+            return
+        from lumen import ocr
+
+        lineas = [t.strip() for t, _ in ocr.lineas_con_posicion(p[120:240, 60:490])] if ocr.disponible() else []
+        for i, linea in enumerate(lineas):
+            if linea.lower().startswith("team list") and i > 0 and "floor" not in lineas[i - 1].lower():
+                self.nombre_equipo = lineas[i - 1]
+                self.log(f"Equipo: {self.nombre_equipo}.", "ok")
+                return
+
+    def equipo_de_la_sesion(self) -> list[str] | None:
+        return [EQUIPO_POR_NOMBRE + self.nombre_equipo] if self.nombre_equipo else None
 
     def _stats(self, **mas):
         self.publicar_stats(victorias=self.vueltas, pociones=self.pociones, **mas)
@@ -148,6 +167,7 @@ class Oro(FuerteSolgres):
 
     def ir(self, p, o):
         if AUTO_CLEAR.esta(p) or EMPEZAR.esta(p):
+            self.leer_equipo(p)
             self.log("En el 6.º piso de la mazmorra de oro.", "ok")
             return "pelea"
         self.clic_si(PISO_6, p, o, espera=1.0)
@@ -277,6 +297,8 @@ class MonedasSA(FuerteSolgres):
         return None
 
     def preparar(self, p, o):
+        if EMPEZAR.esta(p):
+            self.leer_equipo(p)
         if self.clic_si(REPETIR_APAGADO, p, o, umbral=0.8):
             return None
         if EMPEZAR.esta(p):
