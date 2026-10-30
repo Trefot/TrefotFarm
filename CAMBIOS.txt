@@ -29,6 +29,13 @@ Etapas previstas:
 
 CAMBIOS
 -------
+0.10.5-alpha
+  - Fuerte Solgres: el nombre del equipo no se guardaba (el lector de texto pega un icono delante de
+    "Team List") y no habia nada que recomendar. Arreglado; Inicio muestra el equipo de la lista que tenga
+    ese nombre ("nombre_juego"), con sus caras.
+  - Publicados los equipos del administrador: "Escalin" (Monedas SA, en el juego "Farm.Oro") y
+    "Desconocidos" (Hraesvelgr Floor 4). Un equipo propio que ya esta en la base no sale repetido.
+
 0.10.4-alpha
   - Equipo mas rapido: Inicio lo recomienda desde la primera victoria medida, aunque sea el unico equipo
     visto, y dice con cuantas peleas esta medido ("aun pocas" si son menos de 5).
