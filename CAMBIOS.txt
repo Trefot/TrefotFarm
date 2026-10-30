@@ -29,6 +29,10 @@ Etapas previstas:
 
 CAMBIOS
 -------
+0.10.3-alpha
+  - Menus mas rapidos en todos los modos: la espera tras tocar un boton de menu es un 40 % mas corta.
+    Fuerte Solgres mira la pantalla cada 0,3 s y vuelve atras con menos pausa. Las peleas no cambian.
+
 0.10.2-alpha
   - Monedas SA: al acabarse la repeticion automatica se quedaba pulsando OK sin fin. Tras ese OK el juego
     vuelve a la pantalla del equipo (la del Start); ahora el bot sigue desde ahi y vuelve a empezar.
