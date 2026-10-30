@@ -33,8 +33,11 @@ COLOR_ATRIBUTO = {"rojo": "#e05a4f", "verde": "#4cc38a", "azul": "#4f8fe0", "cla
 
 
 def _en_gris(pix: QPixmap) -> QPixmap:
-    img = pix.toImage().convertToFormat(QImage.Format_Grayscale8)
-    return QPixmap.fromImage(img)
+    """En gris, conservando la transparencia (las esquinas redondeadas de los cuadros de Inicio y Equipos)."""
+    original = pix.toImage().convertToFormat(QImage.Format_ARGB32)
+    gris = original.convertToFormat(QImage.Format_Grayscale8).convertToFormat(QImage.Format_ARGB32)
+    gris.setAlphaChannel(original.convertToFormat(QImage.Format_Alpha8))
+    return QPixmap.fromImage(gris)
 
 
 def _firma(pj: P.Personaje) -> tuple:

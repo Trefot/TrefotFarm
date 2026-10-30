@@ -29,6 +29,11 @@ Etapas previstas:
 
 CAMBIOS
 -------
+0.12.1-alpha
+  - Equipos (y la lista de equipos de Farmear): las caras son los mismos cuadros de Inicio, con la cara del
+    artwork, y sin el fondo oscuro detras de cada una. En gris (no lo tienes) se mantienen las esquinas
+    redondeadas, tambien en Inicio.
+
 0.12.0-alpha
   - Personajes abre mucho mas rapido y sin las ventanitas sueltas que salian al cargar: cada imagen se
     lee cuando la tarjeta se ve (no las 400 de golpe) y las tarjetas se reutilizan entre visitas.
