@@ -288,6 +288,44 @@ class Artworks(unittest.TestCase):
             cv2.imwrite(str(pj.carpeta / P.CARA_ARTWORK), np.zeros((8, 8, 3), np.uint8))
             self.assertEqual(pj.ruta_cara().name, P.CARA_ARTWORK)
 
+    def test_rostro_para_inicio(self):
+        """Inicio usa un cuadro pegado al rostro: el de la cara del artwork o el del icono sin nivel ni sello."""
+        from lumen import personajes as P
+
+        with tempfile.TemporaryDirectory() as d, mock.patch.object(P, "CARPETA", Path(d)),                 mock.patch.object(P, "CARPETA_BASE", Path(d) / "base"):
+            pj = P.Personaje("prueba_rostro", "Prueba")
+            pj.carpeta.mkdir(parents=True)
+            self.assertIsNone(pj.rostro()[1], "sin imagenes: el retrato entero")
+            cv2.imwrite(str(pj.carpeta / "icono.png"), np.zeros((88, 88, 3), np.uint8))
+            self.assertEqual(pj.rostro()[1], P.ROSTRO_ICONO)
+            cv2.imwrite(str(pj.carpeta / P.CARA_ARTWORK), np.zeros((8, 8, 3), np.uint8))
+            self.assertEqual(pj.rostro(), (pj.carpeta / P.CARA_ARTWORK, P.ROSTRO_ARTWORK))
+
+    def test_cuadrado_recorta_el_rostro(self):
+        entorno.app_qt()
+        from lumen.gui import iconos
+
+        with tempfile.TemporaryDirectory() as d:
+            img = np.zeros((100, 100, 3), np.uint8)
+            img[10:70, 20:80] = (0, 0, 255)  # el "rostro", en rojo
+            ruta = Path(d) / "cara.png"
+            cv2.imwrite(str(ruta), img)
+            pix = iconos.cuadrado(ruta, 48, rostro=(0.2, 0.1, 0.6))
+            self.assertEqual((pix.width(), pix.height()), (48, 48))
+            self.assertEqual(pix.toImage().pixelColor(24, 24).red(), 255, "el centro es el rostro")
+            self.assertIsNone(iconos.cuadrado(Path(d) / "no_existe.png", 48))
+
+    def test_pasar_caras_copia_tambien_el_artwork(self):
+        from lumen import personajes as P
+        from lumen.modos import captura_artworks as A, captura_heroes as C
+
+        with tempfile.TemporaryDirectory() as d, mock.patch.object(P, "CARPETA", Path(d) / "pj"),                 mock.patch.object(C, "CARPETA", Path(d) / "cap"),                 mock.patch.object(C, "_existente", lambda *a: "heroe_rojo"):
+            (Path(d) / "cap" / "h1").mkdir(parents=True)
+            for nombre in (P.CARA_ARTWORK, P.ARTWORK):
+                cv2.imwrite(str(Path(d) / "cap" / "h1" / nombre), np.zeros((8, 8, 3), np.uint8))
+            self.assertEqual(A.pasar_caras({"h1": {"nombre": "Heroe"}}), 1)
+            self.assertTrue((Path(d) / "pj" / "heroe_rojo" / P.ARTWORK).is_file())
+
 
 class Pasivas(unittest.TestCase):
     def test_tipo_de_ventana_por_su_texto(self):

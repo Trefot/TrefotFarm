@@ -29,6 +29,13 @@ Etapas previstas:
 
 CAMBIOS
 -------
+0.11.0-alpha
+  - Personajes: cada tarjeta muestra el artwork entero del personaje (sin el texto del juego de abajo), en
+    una tarjeta mas grande. Los que aun no tienen artwork siguen con su icono.
+  - Inicio: las caras del equipo mas rapido son cuadros mas grandes con la cara del artwork, pegada al
+    rostro. Sin artwork, la cara del icono sin el nivel ni el sello LR.
+  - Capturar artworks copia tambien la ilustracion entera a cada personaje.
+
 0.10.5-alpha
   - Fuerte Solgres: el nombre del equipo no se guardaba (el lector de texto pega un icono delante de
     "Team List") y no habia nada que recomendar. Arreglado; Inicio muestra el equipo de la lista que tenga

@@ -28,6 +28,7 @@ from lumen.gui.rueda import Rueda
 from lumen.modos import MODOS
 from lumen.modos.catalogo import CATALOGO, GRUPOS, contenido_de, foto_de
 
+TAM_CARA = 48  # caras del equipo mas rapido: cuadro con la cara del artwork (elegido 2026-10-29)
 OPCIONES_VICTORIAS = [("1", 1), ("3", 3), ("5", 5), ("10", 10), ("25", 25), ("∞", 0)]
 
 
@@ -479,9 +480,12 @@ class PaginaInicio(Pagina):
             tengo = bool(pj and pj.tengo)
             faltan += not tengo
             foto = QLabel()
-            foto.setFixedSize(40, 40)
+            foto.setFixedSize(TAM_CARA, TAM_CARA)
             foto.setToolTip((pj.nombre if pj else pid) + ("" if tengo else " (no lo tienes)"))
-            pix = iconos.redondo(pj.ruta_cara(), 40, tema.ACENTO if tengo else tema.BORDE) if pj else None
+            pix = None
+            if pj:
+                ruta, rostro = pj.rostro()
+                pix = iconos.cuadrado(ruta, TAM_CARA, tema.ACENTO if tengo else tema.BORDE, rostro=rostro)
             if pix:
                 foto.setPixmap(pix if tengo else en_gris(pix))
             else:

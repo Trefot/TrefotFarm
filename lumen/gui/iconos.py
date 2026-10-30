@@ -81,6 +81,38 @@ def pixmap(nombre: str, tam: int = 20, color: str | None = None) -> QPixmap:
     return ic.pixmap(tam, tam) if not ic.isNull() else QPixmap()
 
 
+def cuadrado(ruta: Path | str | None, tam: int, borde: str | None = None, rostro=None,
+             radio: int = 8) -> QPixmap | None:
+    """La imagen en un cuadro de esquinas redondeadas (retratos de Inicio). 'rostro' = (izquierda, arriba, lado)
+    en partes del ancho: solo ese trozo. None si no existe."""
+    if not ruta or not Path(ruta).is_file():
+        return None
+    original = QPixmap(str(ruta))
+    if original.isNull():
+        return None
+    if rostro:
+        w = original.width()
+        x, y, lado = (int(v * w) for v in rostro)
+        original = original.copy(x, y, lado, min(lado, original.height() - y))
+    original = original.scaled(tam, tam, Qt.KeepAspectRatioByExpanding, Qt.SmoothTransformation)
+    resultado = QPixmap(tam, tam)
+    resultado.fill(Qt.transparent)
+    p = QPainter(resultado)
+    p.setRenderHint(QPainter.Antialiasing)
+    camino = QPainterPath()
+    camino.addRoundedRect(QRectF(1, 1, tam - 2, tam - 2), radio, radio)
+    p.setClipPath(camino)
+    p.drawPixmap((tam - original.width()) // 2, 0, original)
+    p.setClipping(False)
+    if borde:
+        from PyQt5.QtGui import QColor, QPen
+
+        p.setPen(QPen(QColor(borde), 2))
+        p.drawRoundedRect(QRectF(1, 1, tam - 2, tam - 2), radio, radio)
+    p.end()
+    return resultado
+
+
 def redondo(ruta: Path | str | None, tam: int, borde: str | None = None) -> QPixmap | None:
     """La imagen recortada en circulo (para retratos y emblemas). None si no existe."""
     if not ruta or not Path(ruta).is_file():
