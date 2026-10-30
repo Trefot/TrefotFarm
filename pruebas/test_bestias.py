@@ -407,7 +407,7 @@ class DemoniosYFuerte(ConPantallaSimulada):
         m = F.MonedasSA({"cofre": "Plata"})
         self._parchear(m, "_cofre", lambda p: None)
         self.assertIsNone(m.pelea({"VIDA_JEFE", "pausa"}, (0, 0)), "el cofre aun no sale: espera, no repite")
-        m.jefe_desde -= 999  # salio el jefe hace rato y no hay cofre
+        m.pelea_desde -= 999  # la pelea empezo hace rato y no hay cofre
         self.assertEqual(m.pelea({"VIDA_JEFE", "pausa"}, (0, 0)), "reintentar", "sin cofre se pierde material: repite")
         self.assertEqual((m.reinicios, m.sin_ver), (1, 1))
         m.reinicios = 0
