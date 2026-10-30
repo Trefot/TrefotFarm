@@ -95,11 +95,15 @@ def medidas(clave: str) -> dict[frozenset, dict]:
     return historial.por_equipo(historial.leer(limite=1_000_000), clave, equipo.orden if equipo else ())
 
 
-def minutos_por_victoria(datos: dict, medido: dict[frozenset, dict]) -> tuple[float, str] | None:
+def _peleas(m: dict) -> int:
+    return m["victorias"] + m["derrotas"] + m["reinicios"]
+
+
+def minutos_por_victoria(datos: dict, medido: dict[frozenset, dict], minimo: int = MIN_PELEAS) -> tuple[float, str] | None:
     """Lo rapido que es un equipo: (minutos por victoria, de donde sale). Manda lo que midio el bot en esta
-    PC (con al menos MIN_PELEAS peleas); si no, lo medido en las pruebas y publicado en equipos.yaml."""
+    PC (con al menos ``minimo`` peleas); si no, lo medido en las pruebas y publicado en equipos.yaml."""
     m = medido.get(frozenset(datos.get("personajes") or []))
-    if m and m["victorias"] + m["derrotas"] + m["reinicios"] >= MIN_PELEAS and m["por_hora"] > 0:
+    if m and _peleas(m) >= minimo and m["por_hora"] > 0:
         return 60 / m["por_hora"], "tuyo"
     if datos.get("minutos"):
         return float(datos["minutos"]), "pruebas"
@@ -107,8 +111,10 @@ def minutos_por_victoria(datos: dict, medido: dict[frozenset, dict]) -> tuple[fl
 
 
 def mas_rapido(id_destino: str) -> dict | None:
-    """El equipo mas rapido medido para un destino: {"datos", "minutos", "fuente"}, o None si no hay
-    ninguno medido. Si el modo juega con un equipo fijo, solo cuentan los que el bot sabe jugar."""
+    """El equipo mas rapido medido para un destino: {"datos", "minutos", "fuente", "peleas"}, o None si no hay
+    ninguno medido. Si el modo juega con un equipo fijo, solo cuentan los que el bot sabe jugar.
+    Se recomienda desde la primera victoria medida (lo pidio el usuario, 2026-10-29: mejor el mejor que hay
+    ahora, aunque sea el unico, que nada); "peleas" dice cuanto fiarse."""
     todos = cargar_equipos()
     clave = clave_de_equipos(id_destino, todos)
     fijo = getattr(MODOS.get(id_destino), "equipo", None) is not None
@@ -117,22 +123,24 @@ def mas_rapido(id_destino: str) -> dict | None:
     for datos in todos.get(clave, []):
         if fijo and not datos.get("bot"):
             continue
-        rapidez = minutos_por_victoria(datos, medido)
+        rapidez = minutos_por_victoria(datos, medido, minimo=1)
         if rapidez and (mejor is None or rapidez[0] < mejor["minutos"]):
-            mejor = {"datos": datos, "minutos": rapidez[0], "fuente": rapidez[1]}
+            m = medido.get(frozenset(datos.get("personajes") or []))
+            mejor = {"datos": datos, "minutos": rapidez[0], "fuente": rapidez[1],
+                     "peleas": _peleas(m) if m and rapidez[1] == "tuyo" else 0}
     if not fijo:
         # Tambien tus equipos medidos que no estan en la lista (en los modos de cualquier equipo el bot sabe con
         # cuales jugaste por sus cartas): el mas rapido se recomienda aunque nadie lo haya publicado.
         conocidos = {frozenset(d.get("personajes") or []) for d in todos.get(clave, [])}
         for ids, m in medidas(id_destino).items():
-            if ids in conocidos or m["victorias"] + m["derrotas"] + m["reinicios"] < MIN_PELEAS or m["por_hora"] <= 0:
+            if ids in conocidos or m["por_hora"] <= 0:
                 continue
             minutos = 60 / m["por_hora"]
             if mejor is None or minutos < mejor["minutos"]:
                 por_nombre = [i for i in ids if i.startswith("equipo:")]  # Fuerte Solgres: el nombre del juego
                 datos = ({"nombre": por_nombre[0].split(":", 1)[1], "personajes": []} if por_nombre
                          else {"nombre": "Tu equipo", "personajes": sorted(ids)})
-                mejor = {"datos": datos, "minutos": minutos, "fuente": "tuyo"}
+                mejor = {"datos": datos, "minutos": minutos, "fuente": "tuyo", "peleas": _peleas(m)}
     return mejor
 
 

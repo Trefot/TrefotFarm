@@ -171,8 +171,15 @@ class EquipoMasRapido(unittest.TestCase):
         self.medido[frozenset(["a", "b"])] = {"victorias": 10, "derrotas": 0, "reinicios": 0, "por_hora": 30.0}
         r = self.E.mas_rapido("perros_piso4")
         self.assertEqual((r["datos"]["nombre"], r["minutos"], r["fuente"]), ("Lento", 2.0, "tuyo"))
-        self.medido[frozenset(["a", "b"])]["victorias"] = 2  # pocas peleas: no cuenta
-        self.assertEqual(self.E.mas_rapido("perros_piso4")["datos"]["nombre"], "Rapido")
+        self.medido[frozenset(["a", "b"])]["victorias"] = 2  # pocas peleas: cuenta igual (lo pidio el usuario)
+        r = self.E.mas_rapido("perros_piso4")
+        self.assertEqual((r["datos"]["nombre"], r["fuente"], r["peleas"]), ("Lento", "tuyo", 2))
+
+    def test_tu_equipo_aunque_sea_el_unico(self):
+        self.base = {}
+        self.medido[frozenset(["equipo:Farm.Oro"])] = {"victorias": 1, "derrotas": 0, "reinicios": 1, "por_hora": 40.0}
+        r = self.E.mas_rapido("monedas_sa")
+        self.assertEqual((r["datos"]["nombre"], r["minutos"], r["peleas"]), ("Farm.Oro", 1.5, 2))
 
     def test_texto(self):
         self.assertEqual(self.E.texto_minutos(2.5), "2,5 min por victoria")
