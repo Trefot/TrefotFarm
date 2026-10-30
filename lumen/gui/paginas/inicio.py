@@ -466,7 +466,10 @@ class PaginaInicio(Pagina):
         textos.setSpacing(0)
         titulo = QLabel(f"Más rápido · <b>{datos.get('nombre', '')}</b>")
         textos.addWidget(titulo)
-        fuente = "medido por ti" if rapido["fuente"] == "tuyo" else "medido en pruebas"
+        fuente = "medido en pruebas"
+        if rapido["fuente"] == "tuyo":
+            peleas = rapido.get("peleas", 0)
+            fuente = f"medido por ti en {peleas} peleas" + (" (aún pocas)" if peleas < 5 else "")
         textos.addWidget(QLabel(f"{texto_minutos(rapido['minutos'])} · {fuente}", objectName="tenue"))
         fila.addLayout(textos)
         fila.addSpacing(6)
