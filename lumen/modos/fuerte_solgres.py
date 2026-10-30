@@ -4,8 +4,8 @@ Los dos se juegan con la repeticion automatica del juego ("Auto Repeat"): el bot
 pulsa Start y cuenta las vueltas. Flujo de AutoFarming (GoldFarmer y SADungeonFarmer, MIT), con sus
 imagenes en assets/imagenes (gold_dungeon/, sa_coin_dungeon/ y otras sueltas).
 
-Monedas SA ademas mira el cofre que deja el jefe: si es peor que el elegido, rinde la pelea y la repite
-(como AutoFarming), para no gastar la vuelta en un cofre de bronce.
+Monedas SA ademas mira el cofre que deja el jefe: si es peor que el elegido, repite la pelea con "Try Again"
+del menu de pausa (sin salir de la torre), para no gastar la vuelta en un cofre de bronce.
 """
 
 import time
@@ -48,6 +48,9 @@ COFRE = P("sa_coin_dungeon/chest.png")
 COFRES = {"Bronce": P("sa_coin_dungeon/chest_bronze.png"), "Plata": P("sa_coin_dungeon/chest_silver.png"),
           "Oro": P("sa_coin_dungeon/chest_gold.png")}
 ORDEN_COFRES = ["Bronce", "Plata", "Oro"]
+# "Try Again" del menu de pausa (captura del 2026-10-29): repite la pelea sin rendirse ni salir de la torre
+REINTENTAR = P("sa_coin_dungeon/try_again.png")
+INTENTOS_REINTENTAR = 4  # pausas sin ver "Try Again": se rinde como antes
 
 DESLIZAR_DESDE, DESLIZAR_HASTA = (276, 800), (275, 650)  # lista de mazmorras de la especial (AutoFarming)
 CENTRO_X = juego.COORD["centro"][0]
@@ -183,7 +186,8 @@ class MonedasSA(FuerteSolgres):
     imagen = "sa_coin.png"
     nombres_estados = {"ir": "Entrando a Fuerte Solgres", "abrir": "Abriendo la Torre del reloj",
                        "piso": "Eligiendo el piso", "preparar": "Preparando", "pelea": "Farmeando",
-                       "reiniciar": "Repitiendo (cofre peor)", "fin": "Vuelta terminada"}
+                       "reintentar": "Repitiendo (Try Again)", "reiniciar": "Repitiendo (cofre peor)",
+                       "fin": "Vuelta terminada"}
     opciones = _opciones_comunes() + [
         Opcion("cofre", "Cofre mínimo del jefe", "lista", "Bronce", opciones=ORDEN_COFRES,
                ayuda="Si el jefe deja un cofre peor, el bot rinde la pelea y la repite."),
@@ -193,6 +197,7 @@ class MonedasSA(FuerteSolgres):
     def __init__(self, valores: dict):
         super().__init__(valores)
         self.reinicios = 0
+        self.pausas, self.reintentado_en = 0, None
         self.cofres = {nombre: 0 for nombre in ORDEN_COFRES}
         self._nueva_vuelta()
 
@@ -205,7 +210,7 @@ class MonedasSA(FuerteSolgres):
 
     def estados(self):
         return {"ir": self.ir, "abrir": self.abrir, "piso": self.piso, "preparar": self.preparar,
-                "pelea": self.pelea, "reiniciar": self.reiniciar, "fin": self.fin}
+                "pelea": self.pelea, "reintentar": self.reintentar, "reiniciar": self.reiniciar, "fin": self.fin}
 
     def en_zona_segura(self) -> bool:
         return self.estado in ("ir", "abrir", "piso")
@@ -320,7 +325,29 @@ class MonedasSA(FuerteSolgres):
         self.reinicios += 1
         self._nueva_vuelta()
         self.publicar_stats(reinicios=self.reinicios)
-        return "reiniciar"
+        self.pausas, self.reintentado_en = 0, None
+        return "reintentar"
+
+    def reintentar(self, p, o):
+        """Pausa -> "Try Again": la pelea vuelve a empezar sin salir de la torre (lo enseno el usuario: ya no
+        hace falta rendirse como en AutoFarming). Si "Try Again" no aparece, se rinde como antes."""
+        if REINTENTAR.esta(p, 0.85):
+            self.clic_si(REINTENTAR, p, o, umbral=0.85, espera=1.5)
+            self.reintentado_en = time.time()
+            return None
+        if self.reintentado_en is not None:
+            if self.clic_si(juego.ok, p, o, espera=1.0):  # por si pide confirmar
+                return None
+            if juego.pausa.esta(p, 0.7) or time.time() - self.reintentado_en > 15:
+                self.log("Pelea repetida con «Try Again».", "ok")
+                return "pelea"
+            return None
+        if self.pausas >= INTENTOS_REINTENTAR:
+            self.log("No veo «Try Again»: me rindo y vuelvo a abrir la torre.", "aviso")
+            return "reiniciar"
+        if self.clic_si(juego.pausa, p, o, umbral=0.7, espera=1.0):
+            self.pausas += 1
+        return None
 
     def reiniciar(self, p, o):
         """Rendirse y volver a abrir la torre (como AutoFarming: OK, Forfeit o ESC hasta la Taberna)."""

@@ -29,6 +29,10 @@ Etapas previstas:
 
 CAMBIOS
 -------
+0.9.12-alpha
+  - Monedas SA: si el cofre del jefe es peor que el elegido, repite la pelea con "Try Again" del menu de
+    pausa en vez de rendirse, salir y volver a abrir la torre. Si no ve "Try Again", se rinde como antes.
+
 0.9.11-alpha
   - Artworks: el retrato se centra en la cara que encuentra un detector de caras de anime
     (lbpcascade_animeface de nagadomi, licencia MIT; assets/modelos). En los primeros 25 artworks encontro
