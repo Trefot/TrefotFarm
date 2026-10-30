@@ -37,13 +37,26 @@ def _en_gris(pix: QPixmap) -> QPixmap:
     return QPixmap.fromImage(img)
 
 
+def _firma(pj: P.Personaje) -> tuple:
+    """Lo que cambia la tarjeta de un personaje (si no cambia, se reutiliza la de la visita anterior)."""
+    def fecha(ruta):
+        try:
+            return ruta.stat().st_mtime
+        except OSError:
+            return 0
+
+    return pj.nombre, pj.color, pj.tiene_datos, fecha(pj.ruta_artwork()), fecha(pj.ruta_cara())
+
+
 class TarjetaPersonaje(QFrame):
     """Retrato con nombre y atributo. Clic = lo tengo / no lo tengo."""
 
     cambiado = pyqtSignal(str, bool)
 
-    def __init__(self, pj: P.Personaje, usado_en: list[str]):
-        super().__init__(objectName="tarjeta_pj")
+    def __init__(self, pj: P.Personaje, usado_en: list[str], padre=None):
+        # Con padre desde el principio: una tarjeta sin padre que se hace visible es una ventana suelta
+        # (eso eran las "ventanitas" que salian al abrir la pagina).
+        super().__init__(padre, objectName="tarjeta_pj")
         self.pj = pj
         self.setCursor(Qt.PointingHandCursor)
         self.setFixedSize(ANCHO_TARJETA, FOTO[1] + 92)  # sitio para nombres largos en 2-3 lineas
@@ -56,23 +69,7 @@ class TarjetaPersonaje(QFrame):
         self.foto.setFixedSize(*FOTO)
         self.foto.setObjectName("foto_pj")
         self.pix = None
-        w, h = FOTO
-        artwork = pj.ruta_artwork()
-        ruta = pj.ruta_cara()
-        if artwork.is_file():  # la ilustracion entera, sin el texto del juego de abajo
-            pix = QPixmap(str(artwork))
-            pix = pix.copy(0, 0, int(pix.width() * P.ANCHO_SIN_BORDE), int(pix.height() * P.ALTO_SIN_TEXTO))
-            self.pix = pix.scaled(w, h, Qt.KeepAspectRatio, Qt.SmoothTransformation)
-        elif ruta.is_file():
-            pix = QPixmap(str(ruta))
-            if pix.width() >= pix.height():  # icono cuadrado de la lista de Heroes: entero
-                pix = pix.scaled(w, h, Qt.KeepAspectRatio, Qt.SmoothTransformation)
-            else:  # retrato alargado de la pantalla del equipo: recortado al centro
-                pix = pix.scaled(w, h, Qt.KeepAspectRatioByExpanding, Qt.SmoothTransformation)
-                pix = pix.copy((pix.width() - w) // 2, 0, w, h)
-            self.pix = pix
-        else:
-            self.foto.setPixmap(iconos.pixmap("mdi6.account-question", 56, tema.TENUE))
+        self.cargada = False  # la imagen se lee al verse la tarjeta por primera vez (ver paintEvent)
         capa.addWidget(self.foto, 0, Qt.AlignHCenter)
 
         nombre = QLabel(pj.nombre, alignment=Qt.AlignCenter, wordWrap=True)
@@ -91,11 +88,43 @@ class TarjetaPersonaje(QFrame):
             capa.addWidget(QLabel("Sin datos aún", objectName="tenue", alignment=Qt.AlignCenter))
         self.poner_tengo(pj.tengo)
 
+    def _cargar_foto(self):
+        self.cargada = True
+        w, h = FOTO
+        artwork = self.pj.ruta_artwork()
+        ruta = self.pj.ruta_cara()
+        if artwork.is_file():  # la ilustracion entera, sin el texto del juego de abajo
+            pix = QPixmap(str(artwork))
+            pix = pix.copy(0, 0, int(pix.width() * P.ANCHO_SIN_BORDE), int(pix.height() * P.ALTO_SIN_TEXTO))
+            self.pix = pix.scaled(w, h, Qt.KeepAspectRatio, Qt.SmoothTransformation)
+        elif ruta.is_file():
+            pix = QPixmap(str(ruta))
+            if pix.width() >= pix.height():  # icono cuadrado de la lista de Heroes: entero
+                pix = pix.scaled(w, h, Qt.KeepAspectRatio, Qt.SmoothTransformation)
+            else:  # retrato alargado de la pantalla del equipo: recortado al centro
+                pix = pix.scaled(w, h, Qt.KeepAspectRatioByExpanding, Qt.SmoothTransformation)
+                pix = pix.copy((pix.width() - w) // 2, 0, w, h)
+            self.pix = pix
+        else:
+            self.foto.setPixmap(iconos.pixmap("mdi6.account-question", 56, tema.TENUE))
+        self._poner_foto()
+
+    def paintEvent(self, evento):
+        # Solo se pintan las tarjetas que se ven en la pagina: asi se leen unas pocas imagenes al abrirla y
+        # el resto al bajar, en vez de las mas de 400 de golpe.
+        if not self.cargada:
+            self._cargar_foto()
+        super().paintEvent(evento)
+
+    def _poner_foto(self):
+        if self.pix is not None:
+            self.foto.setPixmap(self.pix if self.pj.tengo else _en_gris(self.pix))
+
     def poner_tengo(self, tengo: bool):
         """A color si lo tienes, en gris si no (sin rehacer la tarjeta)."""
         self.pj.tengo = tengo
-        if self.pix is not None:
-            self.foto.setPixmap(self.pix if tengo else _en_gris(self.pix))
+        if self.cargada:
+            self._poner_foto()
         self.setToolTip(("Lo tienes. " if tengo else "No lo tienes. ") + "Clic para cambiar."
                         + (f"\nSe usa en: {', '.join(self.usado_en)}" if self.usado_en else ""))
         self.setProperty("tengo", tengo)
@@ -170,20 +199,31 @@ class PaginaPersonajes(Pagina):
         self._pintar()
 
     def _construir(self):
-        """Una tarjeta por personaje (se hacen una vez; filtrar solo las coloca o las esconde)."""
-        for t in self.tarjetas.values():
-            t.deleteLater()
+        """Una tarjeta por personaje. Se guardan entre visitas: solo se rehace la de un personaje nuevo o que
+        cambio (nombre, atributo, datos o sus imagenes); filtrar solo las coloca o las esconde."""
         from lumen.gui.paginas.equipos import cargar_equipos
 
         self.en_equipos = {pid for clave, lista in cargar_equipos().items() if not clave.startswith("_")
                            for datos in lista or [] for pid in (datos.get("personajes") or [])}
-        self.tarjetas = {}
+        anteriores, self.tarjetas = self.tarjetas, {}
         for pj in self.biblioteca.values():
-            usado = [m.titulo_juego or m.nombre for m in MODOS.values() if getattr(m, "equipo", None) and pj.id in m.equipo.orden]
-            t = TarjetaPersonaje(pj, usado)
-            t.cambiado.connect(self._cambiar)
-            t.hide()
+            firma = _firma(pj)
+            t = anteriores.pop(pj.id, None)
+            if t is not None and t.firma == firma:
+                t.pj = pj
+                t.poner_tengo(pj.tengo)
+            else:
+                if t is not None:
+                    t.deleteLater()
+                usado = [m.titulo_juego or m.nombre for m in MODOS.values()
+                         if getattr(m, "equipo", None) and pj.id in m.equipo.orden]
+                t = TarjetaPersonaje(pj, usado, self.zona)
+                t.firma = firma
+                t.cambiado.connect(self._cambiar)
+                t.hide()
             self.tarjetas[pj.id] = t
+        for t in anteriores.values():  # personajes que ya no estan
+            t.deleteLater()
         self.orden = sorted(self.biblioteca.values(), key=lambda p: (not p.tengo, not p.tiene_datos, p.nombre.lower()))
 
     def _columnas_que_caben(self) -> int:
@@ -203,16 +243,18 @@ class PaginaPersonajes(Pagina):
         colores = {b.property("color") for b in self.atributos.buttons() if b.isChecked()}
         self.columnas = self._columnas_que_caben()
         n = 0
+        self.zona.setUpdatesEnabled(False)  # se recoloca todo de una vez, sin repintar tarjeta a tarjeta
         for pj in self.orden:
             t = self.tarjetas[pj.id]
             visible = (not texto or texto in pj.nombre.lower()) \
                 and not (filtro == 1 and not pj.tengo) and not (filtro == 2 and pj.tengo) \
                 and not (filtro == 3 and pj.id not in self.en_equipos) \
                 and (not colores or pj.color in colores)
-            t.setVisible(visible)
             if visible:
                 self.rejilla.addWidget(t, n // self.columnas, n % self.columnas)
                 n += 1
+            t.setVisible(visible)
+        self.zona.setUpdatesEnabled(True)
         tengo = sum(1 for p in self.biblioteca.values() if p.tengo)
         self.contador.setText(f"Tienes {tengo} de {len(self.biblioteca)}")
 

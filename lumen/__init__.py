@@ -1,3 +1,3 @@
 """Lumen Farm: autofarming propio para 7DS Grand Cross."""
 
-__version__ = "0.11.0-alpha"
+__version__ = "0.12.0-alpha"

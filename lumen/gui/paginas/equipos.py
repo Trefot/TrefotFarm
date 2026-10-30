@@ -57,7 +57,7 @@ def _leer(ruta: Path) -> dict:
     if not ruta.is_file():
         return {}
     with ruta.open(encoding="utf-8") as f:
-        return yaml.safe_load(f) or {}
+        return yaml.load(f, Loader=P.CARGADOR_YAML) or {}
 
 
 def cargar_equipos() -> dict:
@@ -272,9 +272,9 @@ class TarjetaEquipo(QFrame):
             bot.setStyleSheet(f"color: {tema.ACENTO}; font-weight: 700;")
             cab.addWidget(bot)
         if datos.get("propio"):
-            tuyo = QLabel("  Tuyo · sin publicar")
+            tuyo = QLabel("  Tuyo · publicándose")
             tuyo.setStyleSheet(f"color: {tema.TENUE}; font-style: italic;")
-            tuyo.setToolTip("Lo creaste tú: solo está en esta PC hasta que se publique en la base.")
+            tuyo.setToolTip("Lo creaste tú: Lumen lo sube solo a la base de todos y llega con la próxima actualización.")
             cab.addWidget(tuyo)
         cab.addStretch()
         estado = QLabel()
@@ -565,6 +565,7 @@ class PaginaEquipos(Pagina):
         guardar_propio(clave, nuevo, (clave_vieja, datos["_indice"]) if datos else None)
         self._construir_selector(clave)
         self.al_mostrar()
+        self.app.publicar_equipos()
 
     def _aprender(self):
         from PyQt5.QtWidgets import QInputDialog

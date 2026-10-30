@@ -441,14 +441,10 @@ class PaginaFarmear(Pagina):
                 self._problema("Faltan capturas", "\n".join(f"• {d.descripcion}" for d in faltan), True)
                 return
             if faltan:
-                r = QMessageBox.warning(
+                QMessageBox.warning(
                     self, "Faltan capturas",
-                    "Antes de farmear saca estas capturas:\n\n" + "\n".join(f"• {d.descripcion}" for d in faltan)
-                    + "\n\n¿Ir a la pagina Capturas?",
-                    QMessageBox.Yes | QMessageBox.No,
-                )
-                if r == QMessageBox.Yes:
-                    self.app.navegar("capturas")
+                    "Faltan las imágenes de estas cartas:\n\n" + "\n".join(f"• {d.descripcion}" for d in faltan)
+                    + "\n\nCaptura sus héroes en Héroes (modo administrador) para sacarlas de su ficha.")
                 return
         if not self._preparar_ventana(remoto):
             return

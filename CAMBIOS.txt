@@ -29,6 +29,13 @@ Etapas previstas:
 
 CAMBIOS
 -------
+0.12.0-alpha
+  - Personajes abre mucho mas rapido y sin las ventanitas sueltas que salian al cargar: cada imagen se
+    lee cuando la tarjeta se ve (no las 400 de golpe) y las tarjetas se reutilizan entre visitas.
+  - Quitada la pagina Capturas (ya no se usaba: las cartas salen de la ficha de cada heroe).
+  - Modo administrador: los equipos que creas en Equipos se publican solos para todos (al guardarlos y al
+    abrir Lumen, si antes no se pudo), con la cuenta de GitHub de este PC. Llegan con la actualizacion.
+
 0.11.0-alpha
   - Personajes: cada tarjeta muestra el artwork entero del personaje (sin el texto del juego de abajo), en
     una tarjeta mas grande. Los que aun no tienen artwork siguen con su icono.

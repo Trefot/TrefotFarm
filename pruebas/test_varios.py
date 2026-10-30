@@ -441,3 +441,83 @@ class EquipoMasRapido2(unittest.TestCase):
         with mock.patch.object(E, "cargar_equipos", lambda: lista), mock.patch.object(E, "medidas", lambda c: medido):
             r = E.mas_rapido("monedas_sa")
         self.assertEqual((r["datos"]["nombre"], r["datos"]["personajes"], r["minutos"]), ("Escalin", ["a", "b", "c", "d"], 2.0))
+
+
+class PublicarEquipos(unittest.TestCase):
+    NUEVO = {"nombre": "Prueba: rara", "nivel": "bueno", "personajes": ["a", "b", "c", "d"], "notas": "Uno.\nDos."}
+
+    def test_insertar_conserva_el_archivo_y_los_comentarios(self):
+        import yaml
+
+        from lumen import publicar_equipos as PE
+        from lumen.gui.paginas.equipos import ARCHIVO
+
+        texto = ARCHIVO.read_text(encoding="utf-8")
+        nuevo = PE.insertar(PE.insertar(texto, "pajaro_piso4", self.NUEVO), "contenido_nuevo", self.NUEVO)
+        antes, despues = yaml.safe_load(texto), yaml.safe_load(nuevo)
+        self.assertEqual(despues["pajaro_piso4"][:-1], antes["pajaro_piso4"])
+        self.assertEqual(despues["pajaro_piso4"][-1]["nombre"], "Prueba: rara")
+        self.assertEqual(despues["contenido_nuevo"][0]["personajes"], ["a", "b", "c", "d"])
+        self.assertEqual({k: v for k, v in despues.items() if k not in ("pajaro_piso4", "contenido_nuevo")},
+                         {k: v for k, v in antes.items() if k != "pajaro_piso4"})
+        self.assertTrue(nuevo.startswith(texto.splitlines()[0]), "los comentarios del principio siguen")
+
+    def test_pendientes_solo_los_que_no_estan(self):
+        from lumen import publicar_equipos as PE
+
+        base = {"x": [{"nombre": "Viejo", "personajes": ["d", "c", "b", "a"]}]}
+        propios = {"x": [self.NUEVO, {"nombre": "Otro", "personajes": ["e", "f", "g", "h"]}], "y": [self.NUEVO]}
+        faltan = PE.pendientes(base, propios)
+        self.assertEqual([d["nombre"] for d in faltan["x"]], ["Otro"], "mismos personajes = ya publicado")
+        self.assertEqual(len(faltan["y"]), 1)
+
+    def test_publicar_sube_a_la_rama_sin_tocar_la_carpeta(self):
+        """Con un repositorio de prueba: sube el equipo una vez, y la segunda vez no hay nada nuevo."""
+        import subprocess
+
+        import yaml
+
+        from lumen import actualizador, publicar_equipos as PE
+
+        def git(*args, cwd):
+            subprocess.run(["git", *args], cwd=cwd, check=True, capture_output=True)
+
+        with tempfile.TemporaryDirectory() as d:
+            d = Path(d)
+            remoto, local = d / "remoto.git", d / "local"
+            git("init", "--bare", "-b", "master", str(remoto), cwd=d)
+            git("clone", str(remoto), str(local), cwd=d)
+            (local / "lumen" / "datos").mkdir(parents=True)
+            (local / PE.BASE_EN_REPO).write_text("# equipos\nx:\n  - nombre: Viejo\n    personajes: [a, b, c, e]\n",
+                                                encoding="utf-8")
+            git("add", ".", cwd=local)
+            git("-c", "user.name=t", "-c", "user.email=t@t", "commit", "-qm", "base", cwd=local)
+            git("push", "-q", "origin", "HEAD:master", cwd=local)
+            with mock.patch.object(actualizador, "RAIZ", local), mock.patch.object(PE, "COPIA", d / "copia"), \
+                    mock.patch.dict("os.environ", {"GIT_AUTHOR_NAME": "t", "GIT_AUTHOR_EMAIL": "t@t",
+                                                   "GIT_COMMITTER_NAME": "t", "GIT_COMMITTER_EMAIL": "t@t"}):
+                self.assertEqual(PE.publicar({"x": [self.NUEVO]}), 1)
+                self.assertEqual(PE.publicar({"x": [self.NUEVO]}), 0, "ya estaba publicado")
+            texto = subprocess.run(["git", "show", "master:lumen/datos/equipos.yaml"], cwd=remoto, capture_output=True,
+                                   text=True, check=True).stdout
+            self.assertEqual([e["nombre"] for e in yaml.safe_load(texto)["x"]], ["Viejo", "Prueba: rara"])
+            self.assertNotIn("Prueba", (local / PE.BASE_EN_REPO).read_text(encoding="utf-8"), "la carpeta no se toca")
+            self.assertFalse((d / "copia").exists(), "la copia temporal se borra")
+
+
+class PaginaPersonajesRapida(unittest.TestCase):
+    def test_tarjetas_con_padre_e_imagenes_al_verse(self):
+        entorno.app_qt()
+        from lumen import personajes as P
+        from lumen.gui.paginas import personajes as G
+
+        with tempfile.TemporaryDirectory() as d, mock.patch.object(P, "CARPETA", Path(d)), \
+                mock.patch.object(P, "USUARIO", Path(d) / "usuario.yaml"):
+            pagina = G.PaginaPersonajes(mock.Mock())
+            self.assertTrue(pagina.tarjetas)
+            for t in pagina.tarjetas.values():
+                self.assertIsNotNone(t.parentWidget(), "sin padre seria una ventana suelta")
+                self.assertFalse(t.cargada, "sin mostrarse no se lee ninguna imagen")
+            antes = dict(pagina.tarjetas)
+            pagina.al_mostrar()
+            self.assertTrue(all(pagina.tarjetas[k] is antes[k] for k in antes), "se reutilizan entre visitas")
