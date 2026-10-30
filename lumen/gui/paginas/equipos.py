@@ -8,6 +8,7 @@ juega, que te falta, como se juega y, si el bot ya jugo con el, lo que se midio.
 el primero es el que sale en Inicio.
 """
 
+import re
 from pathlib import Path
 
 import yaml
@@ -60,12 +61,20 @@ def _leer(ruta: Path) -> dict:
 
 
 def cargar_equipos() -> dict:
-    """La base y, detras de los de cada contenido, los del admin (marcados con 'propio')."""
+    """La base y, detras de los de cada contenido, los del admin (marcados con 'propio'). Un equipo del admin
+    que ya esta en la base (ya publicado: los mismos personajes) no se repite."""
     equipos = _leer(ARCHIVO)
     for clave, lista in _leer(PROPIOS).items():
+        en_base = {frozenset(d.get("personajes") or []) for d in equipos.get(clave, []) if isinstance(d, dict)}
         for i, datos in enumerate(lista or []):
+            if frozenset(datos.get("personajes") or []) in en_base:
+                continue
             equipos.setdefault(clave, []).append({**datos, "propio": True, "_indice": i})
     return equipos
+
+
+def _mismo_nombre(a: str, b: str) -> bool:
+    return bool(a) and re.sub(r"\W", "", a.lower()) == re.sub(r"\W", "", b.lower())
 
 
 def guardar_propio(clave: str, datos: dict, anterior: tuple[str, int] | None = None) -> None:
@@ -138,8 +147,13 @@ def mas_rapido(id_destino: str) -> dict | None:
             minutos = 60 / m["por_hora"]
             if mejor is None or minutos < mejor["minutos"]:
                 por_nombre = [i for i in ids if i.startswith("equipo:")]  # Fuerte Solgres: el nombre del juego
-                datos = ({"nombre": por_nombre[0].split(":", 1)[1], "personajes": []} if por_nombre
-                         else {"nombre": "Tu equipo", "personajes": sorted(ids)})
+                datos = {"nombre": "Tu equipo", "personajes": sorted(ids)}
+                if por_nombre:
+                    juego_nombre = por_nombre[0].split(":", 1)[1]
+                    # Si un equipo de la lista tiene ese nombre (o "nombre_juego"), se muestra ese, con sus caras
+                    datos = next((d for d in todos.get(clave, []) if _mismo_nombre(d.get("nombre_juego", ""), juego_nombre)
+                                  or _mismo_nombre(d.get("nombre", ""), juego_nombre)),
+                                 {"nombre": juego_nombre, "personajes": []})
                 mejor = {"datos": datos, "minutos": minutos, "fuente": "tuyo", "peleas": _peleas(m)}
     return mejor
 

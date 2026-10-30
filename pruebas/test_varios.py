@@ -394,3 +394,12 @@ class EquipoMasRapido2(unittest.TestCase):
         with mock.patch("lumen.ocr.disponible", lambda: True), mock.patch("lumen.ocr.lineas_con_posicion", lambda img: lineas):
             m.leer_equipo(np.zeros((940, 550, 3), np.uint8))
         self.assertEqual(m.equipo_de_la_sesion(), ["equipo:Farm.Oro"])
+
+    def test_equipo_de_la_lista_por_su_nombre_del_juego(self):
+        from lumen.gui.paginas import equipos as E
+
+        lista = {"monedas_sa": [{"nombre": "Escalin", "nombre_juego": "Farm.Oro", "personajes": ["a", "b", "c", "d"]}]}
+        medido = {frozenset(["equipo:Farm.Oro"]): {"victorias": 3, "derrotas": 0, "reinicios": 1, "por_hora": 30.0}}
+        with mock.patch.object(E, "cargar_equipos", lambda: lista), mock.patch.object(E, "medidas", lambda c: medido):
+            r = E.mas_rapido("monedas_sa")
+        self.assertEqual((r["datos"]["nombre"], r["datos"]["personajes"], r["minutos"]), ("Escalin", ["a", "b", "c", "d"], 2.0))

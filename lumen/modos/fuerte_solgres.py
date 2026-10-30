@@ -87,7 +87,8 @@ class FuerteSolgres(Modo):
 
         lineas = [t.strip() for t, _ in ocr.lineas_con_posicion(p[120:240, 60:490])] if ocr.disponible() else []
         for i, linea in enumerate(lineas):
-            if linea.lower().startswith("team list") and i > 0 and "floor" not in lineas[i - 1].lower():
+            # "in" y no "startswith": el lector de texto pega a veces el icono delante ("'Z Team List 15/15")
+            if "team list" in linea.lower() and i > 0 and "floor" not in lineas[i - 1].lower():
                 self.nombre_equipo = lineas[i - 1]
                 self.log(f"Equipo: {self.nombre_equipo}.", "ok")
                 return

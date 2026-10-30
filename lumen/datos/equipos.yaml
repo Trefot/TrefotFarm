@@ -10,6 +10,7 @@
 #   la necesita. Un heroe puede tener varias reliquias distintas. Hoy solo se nombran en las notas.
 # minutos: minutos por victoria medidos en las pruebas (con menus y cargas). El mas rapido sale en Inicio
 #   y primero en Farmear. Lo que mida el bot en cada PC (5 peleas o mas) manda sobre este numero.
+# nombre_juego: el nombre del equipo en el juego (Fuerte Solgres lo lee antes del Start para medirlo)
 # alternativas: personaje -> otros que pueden ocupar su lugar (mejor no usarlo: cada opcion va como
 #   un equipo aparte, asi se ve de un vistazo cual puedes armar)
 #
@@ -115,6 +116,12 @@ pajaro_piso4:
     notas: >-
       El mismo equipo con Tyr verde en lugar de Meliodas Traidor.
 
+  - nombre: Desconocidos
+    nivel: recomendado
+    personajes: [thor_the_god_of_thunder_azul, god_of_war_tyr_verde, predator_beru_azul, shion_verde]
+    notas: >-
+      Equipo del administrador (2026-10-29): ganó el Floor 4 jugado a mano con "Aprender de mí".
+
 ciervo_piso4:
   - nombre: Thor, Jormungand y Freyr
     nivel: recomendado
@@ -178,3 +185,12 @@ rata:
     personajes: [princess_elizabeth_rojo, valenti_of_obsession_azul, world_serpent_jormungand_rojo, merlin_escanor_verde]
     notas: >-
       El mismo equipo con Escalin en lugar de King & Diane.
+
+monedas_sa:
+  - nombre: Escalin
+    nombre_juego: Farm.Oro
+    nivel: recomendado
+    personajes: [merlin_escanor_verde, roxy_of_madness_azul, nightmare_sabunak_rojo, knight_of_danafor_liz_rojo]
+    notas: >-
+      Equipo del administrador para la Torre del reloj (2026-10-29). En el juego se llama "Farm.Oro": el bot
+      lee ese nombre antes del Start para medir lo rapido que va.
