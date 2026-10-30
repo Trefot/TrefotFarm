@@ -29,6 +29,19 @@ Etapas previstas:
 
 CAMBIOS
 -------
+0.13.0-alpha
+  - Modo administrador: Lumen publica solo, ademas de los equipos, los heroes nuevos que pasas a Personajes
+    (con su icono y sus cartas) y los retratos de artwork de todos los heroes. Les llega a todos con la
+    actualizacion; ya no hace falta pedirlo.
+  - Quitada la pagina Editor: lo que hacia ya lo hacen Heroes (capturar y corregir) y Personajes.
+  - Heroes: sin "Capturar caras" (los retratos salen del artwork). Pasos para agregar heroes nuevos:
+    1 Capturar fichas, 2 Capturar pasivas, 3 Capturar artworks, 4 Pasar a Personajes.
+
+0.12.2-alpha
+  - Captura de pasivas: los heroes ya leidos ya no se saltan sin mirar. El bot toca el hueco de despues de su
+    ultimo icono: si se abre una ventana (recibio un talento, una pasiva o una reliquia nueva) lo vuelve a
+    leer entero; si no, lo salta (un par de segundos por heroe). Guarda cuantos iconos tiene cada uno.
+
 0.12.1-alpha
   - Equipos (y la lista de equipos de Farmear): las caras son los mismos cuadros de Inicio, con la cara del
     artwork, y sin el fondo oscuro detras de cada una. En gris (no lo tienes) se mantienen las esquinas

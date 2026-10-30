@@ -546,6 +546,16 @@ def pasivas_completas(h: dict) -> bool:
     return bool((h or {}).get("pasivas_capturadas") and (h or {}).get("pasiva") and not (h or {}).get("pasivas_incompletas"))
 
 
+def iconos_conocidos(h: dict) -> int:
+    """Iconos de la fila "Grace / Unique" que tenia el heroe al leerlo. Las capturas de antes no lo guardaban: se
+    cuenta lo leido (gracia, pasiva, talento, unidad, mandamiento y cada reliquia), sin los conjuntos de atuendos,
+    para no pasarse: si se queda corto, el heroe se relee una vez y desde entonces queda guardado."""
+    h = h or {}
+    if h.get("iconos"):
+        return int(h["iconos"])
+    return sum(1 for k in ("gracia", "pasiva", "talento", "unidad", "mandamiento") if h.get(k)) + len(h.get("reliquias") or [])
+
+
 def id_por_clave(catalogo: dict, clave: str, atributo: str = "", minimo: float = 0.75) -> str | None:
     """El heroe del catalogo con esa clave ("[titulo] nombre"): exacta o, si el lector de texto la leyo algo
     distinta, la mas parecida (desde 0.75: "Ludociel of Flash)", "Sho Kusakabe"). Con varias, manda el atributo."""

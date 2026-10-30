@@ -19,7 +19,6 @@ from PyQt5.QtWidgets import (
     QWidget,
 )
 
-from lumen import config
 from lumen import personajes as P
 from lumen.gui import iconos, tema
 from lumen.gui.comun import Pagina
@@ -147,11 +146,6 @@ class PaginaPersonajes(Pagina):
     def __init__(self, app):
         super().__init__()
         self.app = app
-        self.b_editar = QPushButton("  Editar base", objectName="chico")
-        self.b_editar.setIcon(iconos.icono("mdi6.database-edit", tema.TEXTO))
-        self.b_editar.clicked.connect(lambda: app.navegar("editor"))
-        self.acciones.addWidget(self.b_editar)
-
         barra = QHBoxLayout()
         self.buscar = QLineEdit(placeholderText="Buscar personaje...")
         self.buscar.setClearButtonEnabled(True)
@@ -196,7 +190,6 @@ class PaginaPersonajes(Pagina):
         self.al_mostrar()
 
     def al_mostrar(self):
-        self.b_editar.setVisible(bool(config.obtener("modo_admin")))
         self.biblioteca = P.cargar()
         self._construir()
         self._pintar()
