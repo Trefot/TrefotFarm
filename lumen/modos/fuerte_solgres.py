@@ -53,6 +53,7 @@ REINTENTAR = P("sa_coin_dungeon/try_again.png")
 # y el boton verde de su confirmacion ("You will not be able to receive the current rewards...")
 CONFIRMAR_REINTENTAR = P("sa_coin_dungeon/try_again_confirmar.png")
 INTENTOS_REINTENTAR = 4  # pausas sin ver "Try Again": se rinde como antes
+MIN_SEGUNDOS_COFRE = 10  # el cofre sale a los 8-9 s: con 7 s el bot casi repite con un cofre de oro (2026-10-29)
 
 DESLIZAR_DESDE, DESLIZAR_HASTA = (276, 800), (275, 650)  # lista de mazmorras de la especial (AutoFarming)
 CENTRO_X = juego.COORD["centro"][0]
@@ -198,7 +199,8 @@ class MonedasSA(FuerteSolgres):
     opciones = _opciones_comunes() + [
         Opcion("cofre", "Cofre mínimo del jefe", "lista", "Bronce", opciones=ORDEN_COFRES,
                ayuda="Si el jefe deja un cofre peor, el bot rinde la pelea y la repite."),
-        Opcion("segundos_cofre", "Segundos de pelea sin cofre antes de repetir", "entero", 12, minimo=5, maximo=60,
+        Opcion("segundos_cofre", "Segundos de pelea sin cofre antes de repetir", "entero", 12, minimo=MIN_SEGUNDOS_COFRE,
+               maximo=60,
                ayuda="El cofre sale a los 8-9 s de empezar la pelea, arriba a la izquierda. Si no sale, se repite: "
                      "sin cofre se pierde material."),
     ]
@@ -328,11 +330,12 @@ class MonedasSA(FuerteSolgres):
         tipo = self._cofre(p)
         minimo = self.valores["cofre"]
         if tipo is None:
-            if self.pelea_desde is None or time.time() - self.pelea_desde < int(self.valores["segundos_cofre"]):
+            espera = max(MIN_SEGUNDOS_COFRE, int(self.valores["segundos_cofre"]))
+            if self.pelea_desde is None or time.time() - self.pelea_desde < espera:
                 return None
             self.sin_ver += 1
             self.publicar_stats(cofres_sin_ver=self.sin_ver)
-            self.log(f"A los {self.valores['segundos_cofre']} s no hay cofre: repito la pelea.", "aviso")
+            self.log(f"A los {espera} s no hay cofre: repito la pelea.", "aviso")
             return self._repetir()
         self.cofre_visto = True
         if ORDEN_COFRES.index(tipo) < ORDEN_COFRES.index(minimo):
@@ -358,6 +361,10 @@ class MonedasSA(FuerteSolgres):
             self.log("La pelea terminó antes de repetirla: sigo farmeando.", "aviso")
             self._nueva_vuelta()
             return "pelea"
+        # Ultimo vistazo antes de abrir la pausa (con la pausa abierta el cofre queda oscurecido): si aparecio un
+        # cofre bueno (uno de oro casi se pierde, 2026-10-29), no se repite.
+        if self.pausas == 0 and self.reintentado_en is None and self._cofre_que_sirve(p):
+            return "pelea"
         if REINTENTAR.esta(p, 0.85):
             self.clic_si(REINTENTAR, p, o, umbral=0.85, espera=1.5)
             self.reintentado_en = time.time()
@@ -379,6 +386,18 @@ class MonedasSA(FuerteSolgres):
         if self.clic_si(juego.pausa, p, o, umbral=0.7, espera=1.0):
             self.pausas += 1
         return None
+
+    def _cofre_que_sirve(self, p) -> bool:
+        """Si a ultima hora se ve un cofre igual o mejor que el minimo, se cancela la repeticion y se cobra."""
+        tipo = self._cofre(p)
+        if tipo is None or ORDEN_COFRES.index(tipo) < ORDEN_COFRES.index(self.valores["cofre"]):
+            return False
+        self.reinicios -= 1  # al final no se repitio
+        self.cofre_visto = True
+        self.cofres[tipo] += 1
+        self.log(f"¡Cofre de {tipo.lower()} justo a tiempo! No repito: me lo quedo.", "ok")
+        self._stats(reinicios=self.reinicios, **{f"cofres_{k.lower()}": v for k, v in self.cofres.items()})
+        return True
 
     def _fuera_de_la_pelea(self, p) -> bool:
         """La pelea ya termino (el equipo murio, 2026-10-29) y el juego volvio a un menu: no hay pausa que tocar.
