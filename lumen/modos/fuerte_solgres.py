@@ -198,13 +198,14 @@ class MonedasSA(FuerteSolgres):
     opciones = _opciones_comunes() + [
         Opcion("cofre", "Cofre mínimo del jefe", "lista", "Bronce", opciones=ORDEN_COFRES,
                ayuda="Si el jefe deja un cofre peor, el bot rinde la pelea y la repite."),
-        Opcion("segundos_cofre", "Segundos buscando el cofre antes de repetir", "entero", 20, minimo=3, maximo=120,
-               ayuda="Desde que aparece el jefe. Con 1-2 s repetia antes de que saliera el cofre."),
+        Opcion("segundos_cofre", "Segundos tras salir el jefe sin cofre antes de repetir", "entero", 5, minimo=1,
+               maximo=60, ayuda="El cofre se busca desde el principio de la pelea. Si sale el jefe y no hay cofre, "
+                                "se repite: sin cofre se pierde material."),
     ]
 
     def __init__(self, valores: dict):
         super().__init__(valores)
-        self.reinicios = self.derrotas = 0
+        self.reinicios = self.derrotas = self.sin_ver = 0
         self.ultimo_volver = 0.0
         self.pausas, self.reintentado_en = 0, None
         self.cofres = {nombre: 0 for nombre in ORDEN_COFRES}
@@ -311,18 +312,22 @@ class MonedasSA(FuerteSolgres):
         if self.vueltas != antes:
             self._nueva_vuelta()
         self.clic_si(EMPEZAR, p, o, espera=1.0)
-        # El cofre se mira cuando ya esta el jefe (con la interfaz a la vista) y hasta encontrarlo.
+        # El cofre se busca desde el principio de la pelea (lo pidio el usuario: esperar al jefe dejaba poco tiempo
+        # y el piso terminaba antes de repetir). Si llega el jefe y en unos segundos no hay cofre, se repite: sin
+        # cofre se pierde material, que vale mas que la stamina.
         if VIDA_JEFE.esta(p, 0.7) and juego.pausa.esta(p, 0.7):
             self.jefe_visto = True
             self.jefe_desde = self.jefe_desde or time.time()
-        if not self.jefe_visto or self.cofre_visto:
+        if self.cofre_visto:
             return None
         tipo = self._cofre(p)
         minimo = self.valores["cofre"]
         if tipo is None:
-            if time.time() - (self.jefe_desde or time.time()) < int(self.valores["segundos_cofre"]):
+            if not self.jefe_visto or time.time() - self.jefe_desde < int(self.valores["segundos_cofre"]):
                 return None
-            self.log("No veo el cofre del jefe: repito la pelea.", "aviso")
+            self.sin_ver += 1
+            self.publicar_stats(cofres_sin_ver=self.sin_ver)
+            self.log("Llegó el jefe y no hay cofre: repito la pelea.", "aviso")
             return self._repetir()
         self.cofre_visto = True
         if ORDEN_COFRES.index(tipo) < ORDEN_COFRES.index(minimo):
@@ -343,6 +348,11 @@ class MonedasSA(FuerteSolgres):
     def reintentar(self, p, o):
         """Pausa -> "Try Again": la pelea vuelve a empezar sin salir de la torre (lo enseno el usuario: ya no
         hace falta rendirse como en AutoFarming). Si "Try Again" no aparece, se rinde como antes."""
+        if VUELTA_TERMINADA.esta(p) or REPETICION_TERMINADA.esta(p, 0.8):
+            # La pelea termino sola antes de repetirla: se cobra la vuelta y se sigue
+            self.log("La pelea terminó antes de repetirla: sigo farmeando.", "aviso")
+            self._nueva_vuelta()
+            return "pelea"
         if REINTENTAR.esta(p, 0.85):
             self.clic_si(REINTENTAR, p, o, umbral=0.85, espera=1.5)
             self.reintentado_en = time.time()

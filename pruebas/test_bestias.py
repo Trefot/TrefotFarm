@@ -407,11 +407,16 @@ class DemoniosYFuerte(ConPantallaSimulada):
         m = F.MonedasSA({"cofre": "Plata"})
         self._parchear(m, "_cofre", lambda p: None)
         self.assertIsNone(m.pelea({"VIDA_JEFE", "pausa"}, (0, 0)), "el cofre aun no sale: espera, no repite")
+        m.jefe_desde -= 999  # salio el jefe hace rato y no hay cofre
+        self.assertEqual(m.pelea({"VIDA_JEFE", "pausa"}, (0, 0)), "reintentar", "sin cofre se pierde material: repite")
+        self.assertEqual((m.reinicios, m.sin_ver), (1, 1))
+        m.reinicios = 0
         m._nueva_vuelta()
         self._parchear(m, "_cofre", lambda p: "Bronce")
-        self.assertIsNone(m.pelea(set(), (0, 0)), "sin jefe todavia no mira el cofre")
+        self.assertEqual(m.pelea(set(), (0, 0)), "reintentar", "el cofre se mira desde el principio: bronce, repite")
+        m._nueva_vuelta()
         self.assertEqual(m.pelea({"VIDA_JEFE", "pausa"}, (0, 0)), "reintentar")
-        self.assertEqual(m.reinicios, 1)
+        self.assertEqual(m.reinicios, 2)
         self._parchear(m, "_cofre", lambda p: "Oro")
         self.assertIsNone(m.pelea({"VIDA_JEFE", "pausa"}, (0, 0)))
         self.assertEqual(m.cofres["Oro"], 1)
@@ -421,7 +426,7 @@ class DemoniosYFuerte(ConPantallaSimulada):
 
         self._parchear(F, "REINTENTAR", PlantillaFalsa("try_again"))
         self._parchear(F, "CONFIRMAR_REINTENTAR", PlantillaFalsa("confirmar"))
-        for n in ("MAZMORRA_FS", "ATRAS"):
+        for n in ("MAZMORRA_FS", "ATRAS", "VUELTA_TERMINADA", "REPETICION_TERMINADA"):
             self._parchear(F, n, PlantillaFalsa(n))
         for n in ("menu_batalla", "derrota"):
             self._parchear(juego, n, PlantillaFalsa(n))
@@ -444,7 +449,7 @@ class DemoniosYFuerte(ConPantallaSimulada):
     def test_monedas_sa_equipo_muerto(self):
         from lumen.modos import fuerte_solgres as F
 
-        for n in ("REINTENTAR", "CONFIRMAR_REINTENTAR", "MAZMORRA_FS", "ATRAS", "REPETICION_TERMINADA"):
+        for n in ("REINTENTAR", "CONFIRMAR_REINTENTAR", "MAZMORRA_FS", "ATRAS", "REPETICION_TERMINADA", "VUELTA_TERMINADA"):
             self._parchear(F, n, PlantillaFalsa(n))
         for n in ("pausa", "menu_batalla", "derrota"):
             self._parchear(juego, n, PlantillaFalsa(n))
@@ -452,3 +457,6 @@ class DemoniosYFuerte(ConPantallaSimulada):
         m._repetir()
         self.assertEqual(m.reintentar({"menu_batalla"}, (0, 0)), "ir", "ya en el menu: vuelve a entrar a la torre")
         self.assertEqual(m.derrotas, 1)
+        sola = F.MonedasSA({"cofre": "Oro"})
+        sola._repetir()
+        self.assertEqual(sola.reintentar({"REPETICION_TERMINADA"}, (0, 0)), "pelea", "acabo sola: sigue farmeando")
