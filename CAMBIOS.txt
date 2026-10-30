@@ -29,6 +29,10 @@ Etapas previstas:
 
 CAMBIOS
 -------
+0.10.2-alpha
+  - Monedas SA: al acabarse la repeticion automatica se quedaba pulsando OK sin fin. Tras ese OK el juego
+    vuelve a la pantalla del equipo (la del Start); ahora el bot sigue desde ahi y vuelve a empezar.
+
 0.10.1-alpha
   - Fuerte Solgres (Oro y Monedas SA): el bot lee el nombre del equipo en la pantalla de preparacion
     ("Farm.Oro") y lo guarda con la sesion. Inicio recomienda el equipo tuyo que hace las vueltas mas
