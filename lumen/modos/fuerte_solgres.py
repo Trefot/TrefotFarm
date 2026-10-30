@@ -50,6 +50,8 @@ COFRES = {"Bronce": P("sa_coin_dungeon/chest_bronze.png"), "Plata": P("sa_coin_d
 ORDEN_COFRES = ["Bronce", "Plata", "Oro"]
 # "Try Again" del menu de pausa (captura del 2026-10-29): repite la pelea sin rendirse ni salir de la torre
 REINTENTAR = P("sa_coin_dungeon/try_again.png")
+# y el boton verde de su confirmacion ("You will not be able to receive the current rewards...")
+CONFIRMAR_REINTENTAR = P("sa_coin_dungeon/try_again_confirmar.png")
 INTENTOS_REINTENTAR = 4  # pausas sin ver "Try Again": se rinde como antes
 
 DESLIZAR_DESDE, DESLIZAR_HASTA = (276, 800), (275, 650)  # lista de mazmorras de la especial (AutoFarming)
@@ -191,7 +193,8 @@ class MonedasSA(FuerteSolgres):
     opciones = _opciones_comunes() + [
         Opcion("cofre", "Cofre mínimo del jefe", "lista", "Bronce", opciones=ORDEN_COFRES,
                ayuda="Si el jefe deja un cofre peor, el bot rinde la pelea y la repite."),
-        Opcion("intentos_cofre", "Veces que busca el cofre antes de repetir", "entero", 3, minimo=1, maximo=20),
+        Opcion("segundos_cofre", "Segundos buscando el cofre antes de repetir", "entero", 20, minimo=3, maximo=120,
+               ayuda="Desde que aparece el jefe. Con 1-2 s repetia antes de que saliera el cofre."),
     ]
 
     def __init__(self, valores: dict):
@@ -203,7 +206,7 @@ class MonedasSA(FuerteSolgres):
 
     def _nueva_vuelta(self):
         self.jefe_visto = self.cofre_visto = False
-        self.intentos = 0
+        self.jefe_desde: float | None = None
 
     def estado_inicial(self):
         return "ir"
@@ -302,13 +305,13 @@ class MonedasSA(FuerteSolgres):
         # El cofre se mira cuando ya esta el jefe (con la interfaz a la vista) y hasta encontrarlo.
         if VIDA_JEFE.esta(p, 0.7) and juego.pausa.esta(p, 0.7):
             self.jefe_visto = True
+            self.jefe_desde = self.jefe_desde or time.time()
         if not self.jefe_visto or self.cofre_visto:
             return None
         tipo = self._cofre(p)
         minimo = self.valores["cofre"]
         if tipo is None:
-            self.intentos += 1
-            if self.intentos <= int(self.valores["intentos_cofre"]):
+            if time.time() - (self.jefe_desde or time.time()) < int(self.valores["segundos_cofre"]):
                 return None
             self.log("No veo el cofre del jefe: repito la pelea.", "aviso")
             return self._repetir()
@@ -336,9 +339,11 @@ class MonedasSA(FuerteSolgres):
             self.reintentado_en = time.time()
             return None
         if self.reintentado_en is not None:
-            if self.clic_si(juego.ok, p, o, espera=1.0):  # por si pide confirmar
+            # El juego pide confirmar (prueba del 2026-10-29: el bot se quedo quieto en esta ventana)
+            if self.clic_si(CONFIRMAR_REINTENTAR, p, o, umbral=0.85, espera=2.0) or self.clic_si(juego.ok, p, o, espera=1.0):
+                self.reintentado_en = time.time()
                 return None
-            if juego.pausa.esta(p, 0.7) or time.time() - self.reintentado_en > 15:
+            if (juego.pausa.esta(p, 0.7) and not CONFIRMAR_REINTENTAR.esta(p, 0.85)) or time.time() - self.reintentado_en > 30:
                 self.log("Pelea repetida con «Try Again».", "ok")
                 return "pelea"
             return None
