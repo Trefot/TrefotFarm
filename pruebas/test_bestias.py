@@ -435,3 +435,15 @@ class DemoniosYFuerte(ConPantallaSimulada):
         for _ in range(F.INTENTOS_REINTENTAR):
             otro.reintentar({"pausa"}, (0, 0))
         self.assertEqual(otro.reintentar({"pausa"}, (0, 0)), "reiniciar", "sin Try Again: se rinde como antes")
+
+    def test_monedas_sa_equipo_muerto(self):
+        from lumen.modos import fuerte_solgres as F
+
+        for n in ("REINTENTAR", "CONFIRMAR_REINTENTAR", "MAZMORRA_FS", "ATRAS", "REPETICION_TERMINADA"):
+            self._parchear(F, n, PlantillaFalsa(n))
+        for n in ("pausa", "menu_batalla", "derrota"):
+            self._parchear(juego, n, PlantillaFalsa(n))
+        m = F.MonedasSA({"cofre": "Oro"})
+        m._repetir()
+        self.assertEqual(m.reintentar({"menu_batalla"}, (0, 0)), "ir", "ya en el menu: vuelve a entrar a la torre")
+        self.assertEqual(m.derrotas, 1)

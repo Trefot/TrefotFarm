@@ -199,7 +199,7 @@ class MonedasSA(FuerteSolgres):
 
     def __init__(self, valores: dict):
         super().__init__(valores)
-        self.reinicios = 0
+        self.reinicios = self.derrotas = 0
         self.pausas, self.reintentado_en = 0, None
         self.cofres = {nombre: 0 for nombre in ORDEN_COFRES}
         self._nueva_vuelta()
@@ -295,6 +295,9 @@ class MonedasSA(FuerteSolgres):
         if REPETICION_TERMINADA.esta(p, 0.8):
             self.log("Se acabó la repetición: vuelvo a abrir la torre.", "aviso")
             return "fin"
+        if juego.derrota.esta(p) or juego.menu_batalla.esta(p, 0.6):
+            if self._fuera_de_la_pelea(p):
+                return "ir"
         if self._estamina(p, o):
             return None
         antes = self.vueltas
@@ -347,12 +350,25 @@ class MonedasSA(FuerteSolgres):
                 self.log("Pelea repetida con «Try Again».", "ok")
                 return "pelea"
             return None
+        if self._fuera_de_la_pelea(p):
+            return "ir"
         if self.pausas >= INTENTOS_REINTENTAR:
             self.log("No veo «Try Again»: me rindo y vuelvo a abrir la torre.", "aviso")
             return "reiniciar"
         if self.clic_si(juego.pausa, p, o, umbral=0.7, espera=1.0):
             self.pausas += 1
         return None
+
+    def _fuera_de_la_pelea(self, p) -> bool:
+        """La pelea ya termino (el equipo murio, 2026-10-29) y el juego volvio a un menu: no hay pausa que tocar.
+        Se cuenta como derrota y se vuelve a entrar a la torre."""
+        if not (juego.menu_batalla.esta(p, 0.6) or MAZMORRA_FS.esta(p) or ATRAS.esta(p) or juego.derrota.esta(p)):
+            return False
+        self.derrotas += 1
+        self.log(f"La pelea terminó sin el cofre (¿el equipo murió?). Vuelvo a la torre. Derrotas: {self.derrotas}.", "aviso")
+        self.publicar_stats(derrotas=self.derrotas)
+        self._nueva_vuelta()
+        return True
 
     def reiniciar(self, p, o):
         """Rendirse y volver a abrir la torre (como AutoFarming: OK, Forfeit o ESC hasta la Taberna)."""
@@ -373,7 +389,7 @@ class MonedasSA(FuerteSolgres):
 
     def al_terminar(self):
         cofres = ", ".join(f"{v} de {k.lower()}" for k, v in self.cofres.items() if v)
-        self.log(f"Monedas SA: {self.vueltas} vueltas, {self.reinicios} repetidas"
+        self.log(f"Monedas SA: {self.vueltas} vueltas, {self.reinicios} repetidas, {self.derrotas} derrotas"
                  + (f"; cofres: {cofres}" if cofres else "") + ".", "ok")
 
 

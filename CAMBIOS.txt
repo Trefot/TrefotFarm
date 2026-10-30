@@ -29,6 +29,10 @@ Etapas previstas:
 
 CAMBIOS
 -------
+0.9.14-alpha
+  - Monedas SA: si el equipo muere y el juego vuelve a un menu, cuenta la derrota y vuelve a entrar a la
+    torre. Antes se quedaba esperando un boton de pausa que ya no estaba.
+
 0.9.13-alpha
   - Monedas SA: tras "Try Again" confirma en la ventana que pregunta (el bot se quedaba quieto ahi). El cofre
     del jefe se busca hasta 20 s (opcion) desde que aparece el jefe; antes repetia a los 1-2 s sin verlo.
