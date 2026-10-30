@@ -90,6 +90,7 @@ class FuerteSolgres(Modo):
                 self.nombre_equipo = lineas[i - 1]
                 self.log(f"Equipo: {self.nombre_equipo}.", "ok")
                 return
+        self.log("No leí el nombre del equipo: " + " | ".join(lineas), "debug")
 
     def equipo_de_la_sesion(self) -> list[str] | None:
         return [EQUIPO_POR_NOMBRE + self.nombre_equipo] if self.nombre_equipo else None
@@ -450,6 +451,12 @@ class MonedasSA(FuerteSolgres):
         return None
 
     def fin(self, p, o):
+        if EMPEZAR.esta(p):
+            # Tras el OK del final de la repeticion el juego vuelve a la pantalla del equipo (la del Start): se
+            # sigue desde ahi. Antes el bot buscaba la lista de mazmorras y se quedaba pulsando OK (2026-10-29).
+            self._nueva_vuelta()
+            self.log("Vuelvo a empezar la repetición.", "ok")
+            return "preparar"
         if ATRAS.esta(p) or MONEDA_SA.esta(p) or juego.menu_batalla.esta(p, 0.6):
             self._nueva_vuelta()
             return "ir"
