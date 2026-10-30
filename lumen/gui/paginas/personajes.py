@@ -25,7 +25,8 @@ from lumen.gui import iconos, tema
 from lumen.gui.comun import Pagina
 from lumen.modos import MODOS
 
-ANCHO_TARJETA = 138
+ANCHO_TARJETA = 178
+FOTO = (160, 185)  # el artwork entero (sin el texto del juego) cabe casi justo: lo eligio el usuario (2026-10-29)
 HUECO = 12
 COLOR_ATRIBUTO = {"rojo": "#e05a4f", "verde": "#4cc38a", "azul": "#4f8fe0", "claro": "#e6c84c", "oscuro": "#a06ad8",
                   "sin definir": tema.TENUE}
@@ -45,24 +46,30 @@ class TarjetaPersonaje(QFrame):
         super().__init__(objectName="tarjeta_pj")
         self.pj = pj
         self.setCursor(Qt.PointingHandCursor)
-        self.setFixedSize(ANCHO_TARJETA, 222)
+        self.setFixedSize(ANCHO_TARJETA, FOTO[1] + 92)  # sitio para nombres largos en 2-3 lineas
         self.usado_en = usado_en
         capa = QVBoxLayout(self)
         capa.setContentsMargins(8, 8, 8, 8)
         capa.setSpacing(4)
 
         self.foto = QLabel(alignment=Qt.AlignCenter)
-        self.foto.setFixedSize(120, 140)
+        self.foto.setFixedSize(*FOTO)
         self.foto.setObjectName("foto_pj")
         self.pix = None
+        w, h = FOTO
+        artwork = pj.ruta_artwork()
         ruta = pj.ruta_cara()
-        if ruta.is_file():
+        if artwork.is_file():  # la ilustracion entera, sin el texto del juego de abajo
+            pix = QPixmap(str(artwork))
+            pix = pix.copy(0, 0, int(pix.width() * P.ANCHO_SIN_BORDE), int(pix.height() * P.ALTO_SIN_TEXTO))
+            self.pix = pix.scaled(w, h, Qt.KeepAspectRatio, Qt.SmoothTransformation)
+        elif ruta.is_file():
             pix = QPixmap(str(ruta))
             if pix.width() >= pix.height():  # icono cuadrado de la lista de Heroes: entero
-                pix = pix.scaled(120, 140, Qt.KeepAspectRatio, Qt.SmoothTransformation)
+                pix = pix.scaled(w, h, Qt.KeepAspectRatio, Qt.SmoothTransformation)
             else:  # retrato alargado de la pantalla del equipo: recortado al centro
-                pix = pix.scaled(120, 140, Qt.KeepAspectRatioByExpanding, Qt.SmoothTransformation)
-                pix = pix.copy((pix.width() - 120) // 2, 0, 120, 140)
+                pix = pix.scaled(w, h, Qt.KeepAspectRatioByExpanding, Qt.SmoothTransformation)
+                pix = pix.copy((pix.width() - w) // 2, 0, w, h)
             self.pix = pix
         else:
             self.foto.setPixmap(iconos.pixmap("mdi6.account-question", 56, tema.TENUE))

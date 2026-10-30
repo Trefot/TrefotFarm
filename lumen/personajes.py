@@ -42,6 +42,14 @@ ROLES = {
 RETRATO = "retrato"  # captura de la cara en la pantalla del equipo (no es una carta)
 ICONO = "icono"  # icono del heroe en la lista de Heroes del juego: es lo que se muestra en la interfaz
 CARA_ARTWORK = "cara_artwork.jpg"  # cabeza y hombros de su ilustracion (Artwork): si esta, se muestra antes
+ARTWORK = "artwork.jpg"  # la ilustracion entera (pagina Personajes)
+ALTO_SIN_TEXTO = 0.755  # parte de arriba del artwork sin el texto del juego (sello LR, nombre, Combat Class, voz)
+ANCHO_SIN_BORDE = 0.99  # sin la franja de la derecha que queda fuera del pergamino
+# Cuadro pegado al rostro (izquierda, arriba, lado; en partes del ancho) para los retratos pequenos de Inicio.
+# Elegido con el usuario (2026-10-29) sobre la maqueta: la cara del artwork mas cerca, y en el icono del
+# juego la cara sin el "Lv. 100" de arriba ni el sello LR de abajo.
+ROSTRO_ARTWORK = (0.2, 0.08, 0.6)
+ROSTRO_ICONO = (0.16, 0.14, 0.68)
 
 # Cartas sacadas de la ficha del heroe (Heroes -> personaje -> fila "Skills"). Medido con capturas
 # reales: la carta de la ficha es mas pequena que en la mano (x1.22 de ancho, x1.26 de alto) y,
@@ -97,6 +105,16 @@ class Personaje:
             return artwork
         icono = self.ruta(ICONO)
         return icono if icono.is_file() else self.ruta(RETRATO)
+
+    def ruta_artwork(self) -> Path:
+        return self._archivo(ARTWORK)
+
+    def rostro(self) -> tuple[Path, tuple[float, float, float] | None]:
+        """Imagen y cuadro del rostro para un retrato pequeno (None = la imagen entera)."""
+        ruta = self.ruta_cara()
+        if ruta.name == CARA_ARTWORK:
+            return ruta, ROSTRO_ARTWORK
+        return ruta, ROSTRO_ICONO if ruta.name == f"{ICONO}.png" else None
 
     def ruta_ficha(self, carta: str) -> Path:
         """Carta sacada de la ficha del heroe (ya reescalada al tamano de la mano)."""

@@ -132,7 +132,8 @@ def rehacer_caras(catalogo: dict) -> int:
 
 
 def pasar_caras(catalogo: dict) -> int:
-    """Copia cara_artwork.jpg de cada heroe capturado a su personaje (pagina Personajes). Devuelve cuantas."""
+    """Copia cara_artwork.jpg (Inicio) y artwork.jpg (pagina Personajes) de cada heroe capturado a su personaje.
+    Devuelve cuantas caras."""
     biblioteca = P.cargar()
     base = P._leer_yaml(P.BASE)
     capturados = list(catalogo.values())
@@ -144,6 +145,8 @@ def pasar_caras(catalogo: dict) -> int:
         destino = C._existente(h, biblioteca, base, capturados) or pid_captura
         (P.CARPETA / destino).mkdir(parents=True, exist_ok=True)
         shutil.copyfile(cara, P.CARPETA / destino / P.CARA_ARTWORK)
+        if (C.CARPETA / pid_captura / ARTWORK).is_file():
+            shutil.copyfile(C.CARPETA / pid_captura / ARTWORK, P.CARPETA / destino / P.ARTWORK)
         hechas += 1
     return hechas
 
