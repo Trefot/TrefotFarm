@@ -426,7 +426,7 @@ class DemoniosYFuerte(ConPantallaSimulada):
 
         self._parchear(F, "REINTENTAR", PlantillaFalsa("try_again"))
         self._parchear(F, "CONFIRMAR_REINTENTAR", PlantillaFalsa("confirmar"))
-        for n in ("MAZMORRA_FS", "ATRAS", "VUELTA_TERMINADA", "REPETICION_TERMINADA"):
+        for n in ("MAZMORRA_FS", "ATRAS", "VUELTA_TERMINADA", "REPETICION_TERMINADA", "COFRE"):
             self._parchear(F, n, PlantillaFalsa(n))
         for n in ("menu_batalla", "derrota"):
             self._parchear(juego, n, PlantillaFalsa(n))
@@ -449,7 +449,8 @@ class DemoniosYFuerte(ConPantallaSimulada):
     def test_monedas_sa_equipo_muerto(self):
         from lumen.modos import fuerte_solgres as F
 
-        for n in ("REINTENTAR", "CONFIRMAR_REINTENTAR", "MAZMORRA_FS", "ATRAS", "REPETICION_TERMINADA", "VUELTA_TERMINADA"):
+        for n in ("REINTENTAR", "CONFIRMAR_REINTENTAR", "MAZMORRA_FS", "ATRAS", "REPETICION_TERMINADA", "VUELTA_TERMINADA",
+                  "COFRE"):
             self._parchear(F, n, PlantillaFalsa(n))
         for n in ("pausa", "menu_batalla", "derrota"):
             self._parchear(juego, n, PlantillaFalsa(n))
@@ -460,3 +461,8 @@ class DemoniosYFuerte(ConPantallaSimulada):
         sola = F.MonedasSA({"cofre": "Oro"})
         sola._repetir()
         self.assertEqual(sola.reintentar({"REPETICION_TERMINADA"}, (0, 0)), "pelea", "acabo sola: sigue farmeando")
+        buena = F.MonedasSA({"cofre": "Oro"})
+        buena._repetir()
+        self._parchear(buena, "_cofre", lambda p: "Oro")
+        self.assertEqual(buena.reintentar({"pausa"}, (0, 0)), "pelea", "a ultima hora sale oro: no repite")
+        self.assertEqual((buena.reinicios, buena.cofres["Oro"]), (0, 1))

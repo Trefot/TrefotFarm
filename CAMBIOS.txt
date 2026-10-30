@@ -29,6 +29,10 @@ Etapas previstas:
 
 CAMBIOS
 -------
+0.9.18-alpha
+  - Monedas SA: con la opcion en 7 s casi repitio con un cofre de oro (sale a los 8-9 s). Ahora espera como
+    minimo 10 s, y justo antes de tocar "Try Again" mira el cofre otra vez: si es bueno, no repite.
+
 0.9.17-alpha
   - Monedas SA: decide antes si no hay cofre. En una grabacion de 8 runs el cofre salio siempre a los 8-9 s
     de empezar la pelea; ahora, si a los 12 s (opcion) no ha salido, repite. Antes esperaba al jefe y tardaba
