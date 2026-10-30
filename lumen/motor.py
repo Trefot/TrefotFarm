@@ -31,6 +31,9 @@ class Opcion:
     maximo: int = 9999
 
 
+FACTOR_ESPERA_MENUS = 0.6  # de la espera que pide cada toque en un menu (clic_si)
+
+
 class TerminarModo(Exception):
     """El modo termino su trabajo (p. ej. llego al numero de victorias)."""
 
@@ -99,7 +102,9 @@ class Modo:
         rect = plantilla.buscar(pantalla, umbral)
         if rect is None:
             return False
-        entrada.clic(punto or tuple(rect), origen, espera=espera)
+        # Las esperas tras tocar un menu, un 40 % mas cortas (pedido del usuario, 2026-10-29): el bot mira la
+        # pantalla en cada paso antes de actuar, asi que no hace falta dejar tanto margen.
+        entrada.clic(punto or tuple(rect), origen, espera=espera * FACTOR_ESPERA_MENUS)
         control.log(f"Clic en '{plantilla.nombre}'", "debug")
         return True
 

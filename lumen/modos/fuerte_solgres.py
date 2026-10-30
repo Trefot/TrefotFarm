@@ -62,7 +62,7 @@ EQUIPO_POR_NOMBRE = "equipo:"  # en el historial: el equipo se guarda por su nom
 # 2026-10-29, al acabarse la repeticion, el bot paso mas de un minuto pulsando ESC sin salir de esa pantalla, y
 # en el menu principal ESC abre "salir del juego".
 VOLVER = (38, 62)
-CADA_VOLVER_S = 2.5
+CADA_VOLVER_S = 1.5
 
 
 class FuerteSolgres(Modo):
@@ -70,6 +70,7 @@ class FuerteSolgres(Modo):
 
     subtitulo_juego = "Fuerte Solgres"
     duracion = "según la mazmorra"
+    pausa_entre_pasos = 0.3  # menus y repeticiones: mirar la pantalla mas seguido
 
     def __init__(self, valores: dict):
         super().__init__(valores)
@@ -436,7 +437,7 @@ class MonedasSA(FuerteSolgres):
     def _volver(self, o):
         """Un paso atras con la flecha de volver (como mucho cada CADA_VOLVER_S, para dar tiempo a la pantalla)."""
         if time.time() - self.ultimo_volver >= CADA_VOLVER_S:
-            entrada.clic(VOLVER, o, espera=1.0)
+            entrada.clic(VOLVER, o, espera=0.6)
             self.ultimo_volver = time.time()
 
     def reiniciar(self, p, o):
