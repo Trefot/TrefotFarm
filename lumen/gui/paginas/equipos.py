@@ -120,6 +120,16 @@ def mas_rapido(id_destino: str) -> dict | None:
         rapidez = minutos_por_victoria(datos, medido)
         if rapidez and (mejor is None or rapidez[0] < mejor["minutos"]):
             mejor = {"datos": datos, "minutos": rapidez[0], "fuente": rapidez[1]}
+    if not fijo:
+        # Tambien tus equipos medidos que no estan en la lista (en los modos de cualquier equipo el bot sabe con
+        # cuales jugaste por sus cartas): el mas rapido se recomienda aunque nadie lo haya publicado.
+        conocidos = {frozenset(d.get("personajes") or []) for d in todos.get(clave, [])}
+        for ids, m in medidas(id_destino).items():
+            if ids in conocidos or m["victorias"] + m["derrotas"] + m["reinicios"] < MIN_PELEAS or m["por_hora"] <= 0:
+                continue
+            minutos = 60 / m["por_hora"]
+            if mejor is None or minutos < mejor["minutos"]:
+                mejor = {"datos": {"nombre": "Tu equipo", "personajes": sorted(ids)}, "minutos": minutos, "fuente": "tuyo"}
     return mejor
 
 
