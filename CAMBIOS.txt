@@ -29,6 +29,10 @@ Etapas previstas:
 
 CAMBIOS
 -------
+0.9.15-alpha
+  - Monedas SA: al acabarse la repeticion se quedaba mas de un minuto pulsando ESC sin salir de la pantalla.
+    Ya no usa ESC (en el menu principal abre "salir del juego"): pulsa OK, el resultado y la flecha de volver.
+
 0.9.14-alpha
   - Monedas SA: si el equipo muere y el juego vuelve a un menu, cuenta la derrota y vuelve a entrar a la
     torre. Antes se quedaba esperando un boton de pausa que ya no estaba.

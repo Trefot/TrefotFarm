@@ -56,6 +56,11 @@ INTENTOS_REINTENTAR = 4  # pausas sin ver "Try Again": se rinde como antes
 
 DESLIZAR_DESDE, DESLIZAR_HASTA = (276, 800), (275, 650)  # lista de mazmorras de la especial (AutoFarming)
 CENTRO_X = juego.COORD["centro"][0]
+# Flecha amarilla de volver (arriba a la izquierda), no la tecla ESC (como AutoFarming): en la prueba del
+# 2026-10-29, al acabarse la repeticion, el bot paso mas de un minuto pulsando ESC sin salir de esa pantalla, y
+# en el menu principal ESC abre "salir del juego".
+VOLVER = (38, 62)
+CADA_VOLVER_S = 2.5
 
 
 class FuerteSolgres(Modo):
@@ -200,6 +205,7 @@ class MonedasSA(FuerteSolgres):
     def __init__(self, valores: dict):
         super().__init__(valores)
         self.reinicios = self.derrotas = 0
+        self.ultimo_volver = 0.0
         self.pausas, self.reintentado_en = 0, None
         self.cofres = {nombre: 0 for nombre in ORDEN_COFRES}
         self._nueva_vuelta()
@@ -231,7 +237,7 @@ class MonedasSA(FuerteSolgres):
                                    (TORRE_ROTA, "la Torre rota")):
             if equivocada.esta(p, 0.85):  # salir sin gastar una llave en otra mazmorra
                 self.log(f"Abrí {nombre} por error: vuelvo atrás.", "aviso")
-                entrada.tecla("esc")
+                self._volver(o)
                 return None
         if SIN_LLAVES.esta(p, 0.9):
             self.log("No quedan llaves de la mazmorra. Termino.", "aviso")
@@ -370,21 +376,32 @@ class MonedasSA(FuerteSolgres):
         self._nueva_vuelta()
         return True
 
+    def _volver(self, o):
+        """Un paso atras con la flecha de volver (como mucho cada CADA_VOLVER_S, para dar tiempo a la pantalla)."""
+        if time.time() - self.ultimo_volver >= CADA_VOLVER_S:
+            entrada.clic(VOLVER, o, espera=1.0)
+            self.ultimo_volver = time.time()
+
     def reiniciar(self, p, o):
-        """Rendirse y volver a abrir la torre (como AutoFarming: OK, Forfeit o ESC hasta la Taberna)."""
-        if juego.carga_taberna.esta(p):
+        """Rendirse y volver a abrir la torre (OK, Forfeit o la flecha de volver hasta la lista de mazmorras)."""
+        if juego.carga_taberna.esta(p) or ATRAS.esta(p) or MONEDA_SA.esta(p):
             return "abrir"
         if self.clic_si(juego.ok, p, o, espera=1.0) or self.clic_si(juego.rendirse, p, o, espera=1.0):
             return None
-        entrada.tecla("esc")
+        if self.clic_si(juego.pausa, p, o, umbral=0.7, espera=1.0):  # en la pelea: el Forfeit esta en la pausa
+            return None
+        self._volver(o)
         return None
 
     def fin(self, p, o):
-        if ATRAS.esta(p) or MONEDA_SA.esta(p):
+        if ATRAS.esta(p) or MONEDA_SA.esta(p) or juego.menu_batalla.esta(p, 0.6):
             self._nueva_vuelta()
             return "ir"
-        if not CARGA_FS.esta(p):
-            entrada.tecla("esc")
+        if CARGA_FS.esta(p):
+            return None
+        if self.clic_si(juego.ok, p, o, espera=1.0) or self.clic_si(RESULTADO, p, o, espera=1.0):
+            return None
+        self._volver(o)
         return None
 
     def al_terminar(self):
