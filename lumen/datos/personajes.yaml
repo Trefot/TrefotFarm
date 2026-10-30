@@ -5448,3 +5448,69 @@ captain_meliodas_rojo:
       descripcion: Área (Blood Beat)
     ulti:
       descripcion: Un objetivo (Moonlight Divide)
+
+violet_rojo:
+  clave: '[The Phantoms] Violet'
+  nombre: Violet
+  color: rojo
+  raza: humano
+  roles:
+  - dano_single
+  - dano_area
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Midnight Pirouette)
+    skill_2:
+      descripcion: Área (Vorpal Blade)
+    ulti:
+      descripcion: Un objetivo (Sword Dance)
+
+joker_oscuro:
+  clave: '[The Phantoms] Joker'
+  nombre: Joker
+  color: oscuro
+  raza: humano
+  roles:
+  - dano_single
+  - dano_area
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Thiers Mischief)
+    skill_2:
+      descripcion: Área (Eiha)
+    ulti:
+      descripcion: Área (Take Your Heart)
+
+queen_azul:
+  clave: '[The Phantoms] Queen'
+  nombre: Queen
+  color: azul
+  raza: humano
+  roles:
+  - dano_single
+  - dano_area
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Megaton Raid)
+    skill_2:
+      descripcion: Un objetivo (Drift Blow)
+    ulti:
+      descripcion: Área (Dimension Flare)
+
+mona_azul:
+  clave: '[The Phantoms] Mona'
+  nombre: Mona
+  color: azul
+  raza: desconocida
+  roles:
+  - dano_single
+  - dano_area
+  - debuff
+  - buff
+  cartas:
+    skill_1:
+      descripcion: Un objetivo (Gentlemanly Combo)
+    skill_2:
+      descripcion: Área (Masukunda)
+    ulti:
+      descripcion: Apoyo (Salvation)
