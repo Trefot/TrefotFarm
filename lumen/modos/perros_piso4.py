@@ -199,6 +199,9 @@ def _misma_imagen(a, b) -> bool:
     return a.shape == b.shape and float(cv2.absdiff(a, b).mean()) < 12
 
 
+VECES_HEROE = 5  # cartas de un heroe vistas en la sesion para contarlo en el equipo
+
+
 class PerrosPiso4(Modo):
     id = "perros_piso4"
     nombre = "Skollandhati & Hati · Floor 4"
@@ -235,6 +238,7 @@ class PerrosPiso4(Modo):
         super().__init__(valores)
         self.estrategia = Estrategia()
         self.victorias = self.derrotas = self.reinicios = self.pociones = self.extras = 0
+        self.heroes_vistos: dict[str, int] = {}  # heroe -> cartas suyas vistas (para saber el equipo)
         self.derrotas_por_fase = defaultdict(int)
         self.equipo_verificado = False
         self.diario = Diario(self.id)  # cada decision y como acabo la pelea (IA.md, pieza 5)
@@ -443,6 +447,22 @@ class PerrosPiso4(Modo):
             return 1
         return None
 
+    def _anotar_heroes(self, mano):
+        """Cuenta de que heroe es cada carta reconocida ("thor_the_god_of_thunder_azul.skill_1@4" -> el heroe):
+        con eso se sabe con que equipo se jugo aunque el modo valga para cualquiera (bestias Floor 1-3)."""
+        for c in mano:
+            if c.nombre and "." in c.nombre:
+                heroe = c.nombre.split(".")[0]
+                self.heroes_vistos[heroe] = self.heroes_vistos.get(heroe, 0) + 1
+
+    def equipo_de_la_sesion(self) -> list[str] | None:
+        fijo = super().equipo_de_la_sesion()
+        if fijo:
+            return fijo
+        # Los 4 heroes cuyas cartas mas se vieron (al menos VECES_HEROE veces: no una carta mal reconocida)
+        vistos = sorted(((n, h) for h, n in self.heroes_vistos.items() if n >= VECES_HEROE), reverse=True)[:4]
+        return sorted(h for _, h in vistos) if len(vistos) == 4 else None
+
     def _empezar_turno(self, p, huecos: int):
         self.ultimo_turno = time.time()
         detectada = self._detectar_fase(p, huecos)
@@ -508,6 +528,7 @@ class PerrosPiso4(Modo):
             self.log("Mano: " + " ".join(str(c) for c in mano), "debug")
             try:
                 idx, objetivo, talento = self.estrategia.decidir(self.fase, self.turno_fase, accion, mano, self.huecos_turno)
+                self._anotar_heroes(mano)
             except Reiniciar as motivo:
                 self.log(f"Reinicio: {motivo}", "aviso")
                 self.diario.nota(f"Reinicio: {motivo}")

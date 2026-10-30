@@ -29,6 +29,11 @@ Etapas previstas:
 
 CAMBIOS
 -------
+0.10.0-alpha
+  - Equipo mas rapido: en las bestias Floor 1-3 (cualquier equipo) el bot deduce con que equipo jugaste por
+    las cartas que reconoce y lo guarda con la sesion. Inicio recomienda el mas rapido de tus equipos medidos
+    (desde 5 peleas), aunque no este en la lista de equipos recomendados.
+
 0.9.18-alpha
   - Monedas SA: con la opcion en 7 s casi repitio con un cofre de oro (sale a los 8-9 s). Ahora espera como
     minimo 10 s, y justo antes de tocar "Try Again" mira el cofre otra vez: si es bueno, no repite.

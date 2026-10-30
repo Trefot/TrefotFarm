@@ -179,11 +179,17 @@ class Modo:
             self.al_terminar()
             sesion = {k: v for k, v in self.stats.items() if isinstance(v, (int, float, str))}
             sesion.update(modo=self.id, nombre=self.nombre, fin=time.time(), version=lumen.__version__)
-            equipo = getattr(self, "equipo", None)
-            if equipo is not None:  # para medir que equipo rinde mas (pagina Equipos)
-                sesion["equipo"] = list(equipo.orden)
+            equipo = self.equipo_de_la_sesion()
+            if equipo:  # para medir que equipo rinde mas (pagina Equipos e Inicio)
+                sesion["equipo"] = equipo
             if self.guardar_historial and sesion["fin"] - sesion.get("inicio", sesion["fin"]) > 30:  # no guardar arranques en falso
                 historial.registrar(sesion)
+
+    def equipo_de_la_sesion(self) -> list[str] | None:
+        """Los personajes con que se jugo (para medir que equipo es mas rapido): el equipo fijo del modo, si
+        tiene; los modos con cualquier equipo lo deducen de las cartas que ven."""
+        equipo = getattr(self, "equipo", None)
+        return list(equipo.orden) if equipo is not None else None
 
     # ------------------------------------------------------------- juego cerrado
     MINUTOS_SIN_JUEGO = 10
