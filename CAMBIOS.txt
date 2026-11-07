@@ -29,6 +29,11 @@ Etapas previstas:
 
 CAMBIOS
 -------
+0.13.1-alpha
+  - PC lentos (por ejemplo una maquina virtual): el bot empezaba el turno antes de que salieran todos los
+    huecos de cartas, contaba 2 en vez de 4 y acababa reiniciando la pelea. Ahora espera a que la cantidad
+    de huecos se quede quieta un momento. En un PC normal empieza igual de rapido que antes.
+
 0.13.0-alpha
   - Modo administrador: Lumen publica solo, ademas de los equipos, los heroes nuevos que pasas a Personajes
     (con su icono y sus cartas) y los retratos de artwork de todos los heroes. Les llega a todos con la

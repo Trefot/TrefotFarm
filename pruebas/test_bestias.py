@@ -209,23 +209,46 @@ class Navegacion(ConPantallaSimulada):
         self.assertEqual(self.modo(B.CiervoPisos1a3, bestia=1).piso, 1, "cada bestia lleva su cuenta")
         config.guardar({"pisos_bestias": {}})
 
-    def test_turno_con_pocos_huecos(self):
-        """Nidhoggr y Ratatoskr dejan menos de 3 huecos: el turno empieza igual, tras 3 lecturas seguidas."""
+    def _pelea_con_huecos(self, lecturas):
+        """Prepara una pelea donde cada lectura de pantalla da (huecos, segundos desde el inicio)."""
         from lumen import cartas as C
+        from lumen.modos import perros_piso4 as P4
 
         m = self.modo(B.SerpientePisos1a3, bestia=3)
         empezados = []
+        actual = {"huecos": 0, "t": 1000.0}
         self._parchear(m, "_empezar_turno", lambda p, h: empezados.append(h))
         self._parchear(m, "_talento_visible", lambda p: False)
-        self._parchear(C, "contar_huecos", lambda p, u=0.8: 2)
+        self._parchear(C, "contar_huecos", lambda p, u=0.8: actual["huecos"])
+        self._parchear(P4.time, "time", lambda: actual["t"])
         for juego_falso in ("derrota", "cerrar", "victoria", "criatura_destruida", "piso3_superado", "saltar",
                             "mision_semanal", "info_mision"):
             self._parchear(juego, juego_falso, PlantillaFalsa(juego_falso))
-        m.pelea(set(), (0, 0))
-        m.pelea(set(), (0, 0))
-        self.assertEqual(empezados, [], "con 2 huecos no basta con 2 lecturas")
-        m.pelea(set(), (0, 0))
-        self.assertEqual(empezados, [2])
+        m._nueva_pelea()
+        resultados = []
+        for huecos, segundos in lecturas:
+            actual["huecos"], actual["t"] = huecos, 1000.0 + segundos
+            m.pelea(set(), (0, 0))
+            resultados.append(list(empezados))
+        return resultados
+
+    def test_turno_con_pocos_huecos(self):
+        """Nidhoggr y Ratatoskr dejan menos de 3 huecos: el turno empieza igual, tras 3 lecturas seguidas."""
+        r = self._pelea_con_huecos([(2, 0), (2, 0.5), (2, 1.0)])
+        self.assertEqual(r[1], [], "con 2 huecos no basta con 2 lecturas")
+        self.assertEqual(r[2], [2])
+
+    def test_turno_espera_a_que_salgan_todos_los_huecos(self):
+        """PC lento (maquina virtual): los huecos aparecen poco a poco. No empieza con 2 si luego salen 4."""
+        r = self._pelea_con_huecos([(2, 0), (2, 0.5), (4, 0.9), (4, 1.2), (4, 1.6)])
+        self.assertEqual(r[2], [], "la cuenta cambio: vuelve a empezar a contar")
+        self.assertEqual(r[3], [], "2 lecturas iguales, pero aun no lleva quieta el tiempo minimo")
+        self.assertEqual(r[4], [4], "empieza con los 4 huecos")
+
+    def test_turno_rapido_en_pc_normal(self):
+        """En un PC normal (lecturas cada ~0,6 s) empieza a la 2.a lectura igual que antes."""
+        r = self._pelea_con_huecos([(4, 0), (4, 0.6)])
+        self.assertEqual(r[1], [4])
 
     def test_talento_en_el_turno_1(self):
         """El talento del equipo se toca al empezar el turno 1 de cada pelea, y solo entonces."""

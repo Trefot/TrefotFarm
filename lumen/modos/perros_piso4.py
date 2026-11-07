@@ -54,6 +54,7 @@ THONAR_OTRA = ("thonar_azul.otra",)
 PROTEGIDAS_FASE2 = ("gawain.area", "odin.area", "freyja_roja.ulti", "thonar_azul.postura")
 TURNOS_MAXIMOS = {1: 2, 2: 1, 3: 1}
 PAUSA_ENTRE_CARTAS = 0.5  # tras colocarse una carta, antes de la siguiente (animacion)
+HUECOS_QUIETOS = 0.6  # segundos con la misma cantidad de huecos antes de empezar un turno (PC lentos)
 
 
 class Reiniciar(Exception):
@@ -267,6 +268,8 @@ class PerrosPiso4(Modo):
         self.turno_abierto = False
         self.huecos_turno = 0
         self.lecturas_turno = 0
+        self.huecos_leidos = 0  # huecos de la lectura anterior (el turno empieza cuando la cuenta se queda quieta)
+        self.huecos_quietos_desde = 0.0
         self.reinicio_pedido = False
         self.objetivo_actual: str | None = None
         self.talento_usado = False
@@ -414,15 +417,25 @@ class PerrosPiso4(Modo):
         # sin huecos y el bot "empezaba" un turno por segundo sin jugar nada durante toda la fase 2.
         talento = talento and huecos > 0
         if talento or huecos >= 1:
+            # En un PC lento (maquina virtual, prueba de la 0.13.0) los huecos aparecen poco a poco y el bot
+            # empezaba el turno con 2 de 4: solo cuentan las lecturas con la misma cantidad que la anterior.
+            if huecos != self.huecos_leidos:
+                self.huecos_leidos = huecos
+                self.huecos_quietos_desde = time.time()
+                self.lecturas_turno = 0
             self.lecturas_turno += 1
             # Lecturas seguidas antes de empezar (evita arrancar en una animacion): 2 con 3 o mas huecos y 3 con
             # menos. Antes hacian falta 3 huecos: con Nidhoggr (fase 2) y Ratatoskr, que dejan menos, el bot jugaba
-            # el primer turno y se quedaba quieto hasta rendirse (prueba de la 0.7.4).
-            if talento or self.lecturas_turno >= (2 if huecos >= 3 else 3):
+            # el primer turno y se quedaba quieto hasta rendirse (prueba de la 0.7.4). Ademas la cuenta tiene que
+            # llevar quieta un momento: en un PC normal ya lo esta al llegar a esas lecturas.
+            quieta = time.time() - self.huecos_quietos_desde >= HUECOS_QUIETOS
+            if talento or (quieta and self.lecturas_turno >= (2 if huecos >= 3 else 3)):
                 self.lecturas_turno = 0
+                self.huecos_leidos = 0
                 return self._empezar_turno(p, max(huecos, 4) if talento else huecos)
         else:
             self.lecturas_turno = 0
+            self.huecos_leidos = 0
         self._foto_sin_turno(p)
         return None
 
