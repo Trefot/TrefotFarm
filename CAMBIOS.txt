@@ -29,6 +29,11 @@ Etapas previstas:
 
 CAMBIOS
 -------
+0.13.2-alpha
+  - Demonios en tiempo real (Indura y los demas) en PC lentos: el bot veia la invitacion tarde y tocaba Accept
+    despues de los 9.3 s. Ahora mide cuanto tarda en mirar la pantalla y toca antes lo que haga falta (lo dice
+    en el registro: "PC lento: ... toco X s antes"). En un PC normal toca igual que antes.
+
 0.13.1-alpha
   - PC lentos (por ejemplo una maquina virtual): el bot empezaba el turno antes de que salieran todos los
     huecos de cartas, contaba 2 en vez de 4 y acababa reiniciando la pelea. Ahora espera a que la cantidad

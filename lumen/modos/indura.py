@@ -26,7 +26,7 @@ import time
 
 import cv2
 
-from lumen import avisos, botin, cartas, entrada, estrategias, inteligencia, juego
+from lumen import avisos, botin, cartas, entrada, estrategias, inteligencia, juego, ventana
 from lumen.control import Detenido, control
 from lumen.motor import Modo, Opcion, TerminarModo
 from lumen.vision import Plantilla
@@ -47,6 +47,25 @@ DESTRUIDO = P("demons/demons_destroyed.png")
 
 PESTANA_INDURA = (490, 258)  # la ultima pestana de la ventana de union (medido)
 OK_UNION = (277, 869)
+
+# PC lentos (maquina virtual, prueba de la 0.13.1): mirar la pantalla tarda tanto que el bot veia la invitacion
+# tarde y tocaba despues de los 9.3 s. Lo que pase de lo normal en un PC rapido se descuenta de la espera.
+RETRASO_NORMAL = 0.3  # s desde que sale la invitacion hasta que el bot la reconoce, en un PC normal
+COSTO_NORMAL = 0.15  # s de mirar la pantalla y buscar Accept (se repite justo antes del toque), en un PC normal
+ADELANTO_MAX = 2.0
+
+
+def adelanto_por_lentitud(captura_anterior: float, captura: float, reconocida: float) -> float:
+    """Segundos que hay que tocar antes por un PC lento (0 en un PC normal o si no se sabe).
+
+    La invitacion salio entre la captura anterior y la que la vio (se toma la mitad) y se reconocio al acabar de
+    buscarla: ese retraso, y el de volver a mirar antes del toque, se descuentan en lo que pasen de lo normal.
+    """
+    if not captura or not captura_anterior or reconocida < captura:
+        return 0.0
+    costo = reconocida - captura
+    retraso = costo + (captura - captura_anterior) / 2
+    return min(ADELANTO_MAX, max(0.0, retraso - RETRASO_NORMAL) + max(0.0, costo - COSTO_NORMAL))
 
 
 class DemonioTiempoReal(Modo):
@@ -85,6 +104,11 @@ class DemonioTiempoReal(Modo):
         self.avisado_desconocida = False
         self.tocado_en = 0.0
         self.pestana_elegida = False
+        self.t_captura = self.t_captura_anterior = 0.0  # cuando se miraron las dos ultimas pantallas
+
+    def capturar(self):
+        self.t_captura_anterior, self.t_captura = self.t_captura, time.perf_counter()
+        return ventana.capturar()
 
     def estado_inicial(self):
         return "ir_a_indura"
@@ -166,6 +190,10 @@ class DemonioTiempoReal(Modo):
             except ValueError:
                 espera = 9.3
             self.log(f"¡Invitación! La acepto a los {espera:.1f} s.")
+            adelanto = adelanto_por_lentitud(self.t_captura_anterior, self.t_captura, visto)
+            if adelanto >= 0.05:
+                self.log(f"PC lento: la vi con retraso; toco {adelanto:.2f} s antes para no pasarme.")
+                espera -= adelanto
             while (falta := espera - (time.perf_counter() - visto)) > 0:
                 time.sleep(min(falta, 0.05))  # en trozos cortos: F10 y la pausa siguen respondiendo
                 if control.detenido:

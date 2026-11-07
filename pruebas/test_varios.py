@@ -47,6 +47,35 @@ class Indura(unittest.TestCase):
         self.assertIsNone(M.Indura({"espera": "9.3"}).buscar(None, (0, 0)))
         self.assertLess(time.time() - inicio, 1.5)
 
+    def test_pc_normal_no_adelanta(self):
+        """PC rapido: capturas cada ~0,2 s y 0,1 s para buscar Accept. Se toca igual que siempre."""
+        self.assertEqual(M.adelanto_por_lentitud(100.0, 100.2, 100.3), 0.0)
+
+    def test_pc_lento_adelanta_el_toque(self):
+        """Maquina virtual: capturas cada 1,2 s y 0,7 s para buscar. Se ve tarde y el ultimo vistazo tambien
+        tarda: se descuenta lo que pasa de lo normal (0,7 + 0,6 - 0,3) + (0,7 - 0,15) = 1,55 s."""
+        self.assertAlmostEqual(M.adelanto_por_lentitud(100.0, 101.2, 101.9), 1.55)
+
+    def test_adelanto_con_limite_y_sin_datos(self):
+        self.assertEqual(M.adelanto_por_lentitud(100.0, 110.0, 115.0), M.ADELANTO_MAX)
+        self.assertEqual(M.adelanto_por_lentitud(0.0, 0.0, 5.0), 0.0, "sin capturas medidas no se adelanta")
+
+    def test_el_toque_llega_antes_en_un_pc_lento(self):
+        """La espera de 9,3 s se acorta en lo que se adelanta (aqui se espera 0,6 s y se adelantan 0,5)."""
+        ind = M.Indura({"espera": "0.6"})
+        tocado = []
+        for objeto, nombre, valor in ((entrada, "clic_rapido", lambda rect, o: tocado.append(time.perf_counter())),
+                                      (ind, "capturar", lambda: (None, (0, 0))),
+                                      (M, "adelanto_por_lentitud", lambda a, b, c: 0.5),
+                                      (control, "esperar", lambda s: None)):
+            q = mock.patch.object(objeto, nombre, valor)
+            q.start()
+            self.addCleanup(q.stop)
+        inicio = time.perf_counter()
+        ind.buscar(None, (0, 0))
+        self.assertEqual(len(tocado), 1)
+        self.assertLess(tocado[0] - inicio, 0.4, "toca a los ~0,1 s y no a los 0,6")
+
     def test_carta_de_reserva(self):
         m = [Carta(0, tipo=T.NORMAL, rango=Rango.BRONCE), Carta(1, tipo=T.BLOQUEADA, rango=Rango.ORO),
              Carta(2, tipo=T.NORMAL, rango=Rango.PLATA)]
