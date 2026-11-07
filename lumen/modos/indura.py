@@ -52,7 +52,10 @@ OK_UNION = (277, 869)
 # tarde y tocaba despues de los 9.3 s. Lo que pase de lo normal en un PC rapido se descuenta de la espera.
 RETRASO_NORMAL = 0.3  # s desde que sale la invitacion hasta que el bot la reconoce, en un PC normal
 COSTO_NORMAL = 0.15  # s de mirar la pantalla y buscar Accept (se repite justo antes del toque), en un PC normal
-ADELANTO_MAX = 2.0
+ADELANTO_MAX = 3.0
+# En la maquina virtual cada vuelta del bot (captura + ~10 imagenes) tardaba mas de 2 s: la invitacion se veia
+# tan tarde y con tanta duda que se perdia. Mientras se espera, se mira solo Accept, muy seguido, este rato.
+VIGILANCIA = 2.0
 
 
 def adelanto_por_lentitud(captura_anterior: float, captura: float, reconocida: float) -> float:
@@ -181,8 +184,32 @@ class DemonioTiempoReal(Modo):
         self.buscando_desde = time.time()
         return "buscar"
 
+    def _vigilar_aceptar(self):
+        """Mira solo el boton Accept, lo mas seguido posible, durante VIGILANCIA s. Devuelve (rect, origen)."""
+        fin = time.perf_counter() + VIGILANCIA
+        while time.perf_counter() < fin:
+            control.revisar()
+            try:
+                p, o = self.capturar()
+            except ventana.VentanaNoEncontrada:
+                return None, None  # el bucle principal se encarga
+            rect = ACEPTAR.buscar(p, 0.7)
+            if rect is not None:
+                return rect, o
+        return None, None
+
     def buscar(self, p, o):
         rect = ACEPTAR.buscar(p, 0.7)
+        if rect is None:
+            if CARGANDO.esta(p, 0.8) or PREPARACION.esta(p, 0.8):
+                return "preparar"
+            if not CANCELAR_BUSQUEDA.esta(p, 0.8):
+                return "ir_a_indura"  # ya no se esta buscando: volver a pedirlo
+            minutos = float(self.valores["minutos_sin_invitacion"])
+            if minutos and time.time() - self.buscando_desde > minutos * 60:
+                self.log(f"{minutos:.0f} min sin invitaciones (¿se acabó el límite diario?). Termino.", "aviso")
+                raise TerminarModo()
+            rect, o = self._vigilar_aceptar()
         if rect is not None:
             visto = time.perf_counter()  # el reloj cuenta desde que se ve la invitacion
             try:
@@ -192,7 +219,8 @@ class DemonioTiempoReal(Modo):
             self.log(f"¡Invitación! La acepto a los {espera:.1f} s.")
             adelanto = adelanto_por_lentitud(self.t_captura_anterior, self.t_captura, visto)
             if adelanto >= 0.05:
-                self.log(f"PC lento: la vi con retraso; toco {adelanto:.2f} s antes para no pasarme.")
+                self.log(f"PC lento: la vi con retraso (miro cada {self.t_captura - self.t_captura_anterior:.2f} s); "
+                         f"toco {adelanto:.2f} s antes para no pasarme.")
                 espera -= adelanto
             while (falta := espera - (time.perf_counter() - visto)) > 0:
                 time.sleep(min(falta, 0.05))  # en trozos cortos: F10 y la pausa siguen respondiendo
@@ -212,7 +240,7 @@ class DemonioTiempoReal(Modo):
                 self._stats()
                 return None
             entrada.clic_rapido(rect, o)
-            self.log(f"Aceptada a los {time.perf_counter() - visto:.2f} s.", "debug")
+            self.log(f"Aceptada a los {time.perf_counter() - visto:.2f} s de verla.")
             control.esperar(3.0)
             p, _ = self.capturar()
             if ACEPTAR.esta(p, 0.7):
@@ -226,14 +254,6 @@ class DemonioTiempoReal(Modo):
                 self._stats()
                 return "ir_a_indura"
             return "preparar"
-        if CARGANDO.esta(p, 0.8) or PREPARACION.esta(p, 0.8):
-            return "preparar"
-        if not CANCELAR_BUSQUEDA.esta(p, 0.8):
-            return "ir_a_indura"  # ya no se esta buscando: volver a pedirlo
-        minutos = float(self.valores["minutos_sin_invitacion"])
-        if minutos and time.time() - self.buscando_desde > minutos * 60:
-            self.log(f"{minutos:.0f} min sin invitaciones (¿se acabó el límite diario?). Termino.", "aviso")
-            raise TerminarModo()
         return None
 
     def preparar(self, p, o):

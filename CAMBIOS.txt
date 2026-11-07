@@ -29,6 +29,12 @@ Etapas previstas:
 
 CAMBIOS
 -------
+0.13.3-alpha
+  - Demonios en tiempo real en PC lentos: cada vuelta del bot (mirar la pantalla y ~10 imagenes) tardaba mas de
+    2 s en la maquina virtual, asi que la invitacion se veia muy tarde y se perdia. Ahora, mientras espera, mira
+    solo el boton Accept, muy seguido, y la ve casi al salir. El registro dice cada cuanto mira y a que segundo
+    acepto ("Aceptada a los X s de verla").
+
 0.13.2-alpha
   - Demonios en tiempo real (Indura y los demas) en PC lentos: el bot veia la invitacion tarde y tocaba Accept
     despues de los 9.3 s. Ahora mide cuanto tarda en mirar la pantalla y toca antes lo que haga falta (lo dice

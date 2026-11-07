@@ -76,6 +76,42 @@ class Indura(unittest.TestCase):
         self.assertEqual(len(tocado), 1)
         self.assertLess(tocado[0] - inicio, 0.4, "toca a los ~0,1 s y no a los 0,6")
 
+    def _buscando(self, ind, vistas):
+        """Pantalla de busqueda sin invitacion; en la vigilancia, ACEPTAR responde segun 'vistas'."""
+        capturas = []
+        tocado = []
+        no, si = mock.MagicMock(), mock.MagicMock()
+        no.esta.return_value, si.esta.return_value = False, True
+        M.ACEPTAR.buscar.side_effect = vistas
+        M.ACEPTAR.esta.return_value = False  # tras el toque ya no esta
+        for objeto, nombre, valor in ((entrada, "clic_rapido", lambda rect, o: tocado.append(rect)),
+                                      (ind, "capturar", lambda: capturas.append(1) or (None, (0, 0))),
+                                      (M, "CARGANDO", no), (M, "PREPARACION", no), (M, "CANCELAR_BUSQUEDA", si),
+                                      (M, "TIEMPO_REAL", no), (control, "esperar", lambda s: None)):
+            q = mock.patch.object(objeto, nombre, valor)
+            q.start()
+            self.addCleanup(q.stop)
+        return capturas, tocado
+
+    def test_mientras_espera_mira_solo_accept_muy_seguido(self):
+        """En la maquina virtual cada vuelta tardaba mas de 2 s: ahora, sin invitacion, se vigila solo Accept."""
+        ind = M.Indura({"espera": "0", "minutos_sin_invitacion": "0"})
+        rect = (1, 1, 5, 5)
+        capturas, tocado = self._buscando(ind, [None, None, rect, rect])
+        self.assertEqual(ind.buscar("pantalla", (0, 0)), "preparar")
+        self.assertEqual(tocado, [rect])
+        self.assertEqual(len(capturas), 4, "2 vistazos rapidos hasta verla, el de antes del toque y el de despues")
+
+    def test_vigilancia_sin_invitacion_vuelve_al_bucle(self):
+        ind = M.Indura({"espera": "9.3", "minutos_sin_invitacion": "0"})
+        capturas, tocado = self._buscando(ind, lambda *a: None)
+        with mock.patch.object(M, "VIGILANCIA", 0.2):
+            inicio = time.perf_counter()
+            self.assertIsNone(ind.buscar("pantalla", (0, 0)))
+        self.assertLess(time.perf_counter() - inicio, 1.0)
+        self.assertGreater(len(capturas), 1)
+        self.assertEqual(tocado, [])
+
     def test_carta_de_reserva(self):
         m = [Carta(0, tipo=T.NORMAL, rango=Rango.BRONCE), Carta(1, tipo=T.BLOQUEADA, rango=Rango.ORO),
              Carta(2, tipo=T.NORMAL, rango=Rango.PLATA)]
