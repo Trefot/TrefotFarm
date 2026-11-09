@@ -323,7 +323,10 @@ class Aprender(Modo):
         if not anteriores:
             return None
         _, mano, origen = anteriores[-1]
-        x, y = punto_pantalla[0] - origen[0], punto_pantalla[1] - origen[1]
+        if hasattr(origen, "a_ventana"):  # la ventana puede estar reducida (ver ventana.Origen)
+            x, y = origen.a_ventana(*punto_pantalla)
+        else:
+            x, y = punto_pantalla[0] - origen[0], punto_pantalla[1] - origen[1]
         for carta in mano:
             cx, cy, cw, ch = carta.rect
             if cx <= x < cx + cw and cy <= y < cy + ch:

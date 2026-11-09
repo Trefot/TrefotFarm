@@ -29,6 +29,13 @@ Etapas previstas:
 
 CAMBIOS
 -------
+0.16.0-alpha
+  - Pantallas bajas (por ejemplo 1366x768): la ventana del juego de 554x960 no cabia y el bot no funcionaba.
+    Ahora, si no cabe, la ventana se pone mas pequena con la misma forma (tan alta como la pantalla sin la
+    barra de tareas); cada foto se agranda al tamano de siempre y los clics se convierten al punto real. En
+    una prueba con fotos reales, los botones se reconocen casi igual (0,01-0,07 menos de confianza). En
+    pantallas de 1080 o mas no cambia nada.
+
 0.15.1-alpha
   - Equipos: Indura ya tiene equipo recomendado (Enjin, Shō, Roxy y Zanka, el que juega el bot). Sale en
     "Mejores equipos" de Indura y, con 5 peleas medidas, con los minutos por victoria de tu PC.

@@ -27,6 +27,8 @@ def _punto(objetivo, origen) -> tuple[int, int]:
         x, y = x + w // 2, y + h // 2
     else:
         x, y = objetivo
+    if hasattr(origen, "a_pantalla"):  # captura de la ventana del juego (puede estar reducida: ver ventana.Origen)
+        return origen.a_pantalla(x, y)
     return int(x + origen[0]), int(y + origen[1])
 
 
