@@ -68,6 +68,7 @@ BAJO_TITULO = 56  # del centro del titulo del piso al centro de su circulo (lo q
 LIMITE_CIRCULO = 780  # mas abajo lo tapa la barra del equipo
 # Nombres escritos de cada bestia en el carrusel, en su orden (juego.ORDEN_BESTIAS) y Surtr al final.
 NOMBRES_CARRUSEL = (("hraesvelgr",), ("eikthyrnir",), ("skoll", "hati"), ("nidhoggr",), ("ratatoskr",), ("surtr",))
+TITULO_CARRUSEL = (570, 650)  # alto (y) del nombre grande de la bestia del centro, medido con Surtr
 FLECHA_ZONA = (15, 150, 95, 820)  # x1, y1, x2, y2: columna de la izquierda donde sale la flecha del piso abierto
 FLECHA_MIN_PIXELES = 60  # en una captura real la flecha tiene ~210 pixeles cian
 PUNTO_X_PISO = 282  # x del circulo (el retrato de la bestia) de cada piso
@@ -228,11 +229,15 @@ class BestiaPisos1a3(PerrosPiso4):
         actual = next((i for i, b in enumerate(juego.ORDEN_BESTIAS) if b.esta(p)), None)
         if actual is not None or not ocr.disponible():
             return actual
-        for texto, _ in ocr.lineas_con_posicion(p):
-            t = texto.lower()
-            for i, nombres in enumerate(NOMBRES_CARRUSEL):
-                if any(n in t for n in nombres):
-                    return i
+        lineas = ocr.lineas_con_posicion(p)
+        # Primero el titulo grande del centro (a los lados asoman las bestias vecinas con su nombre)
+        centrales = [t for t, (x, y, w, h) in lineas if TITULO_CARRUSEL[0] <= y + h // 2 <= TITULO_CARRUSEL[1]]
+        for grupo in (centrales, [t for t, _ in lineas]):
+            for texto in grupo:
+                t = texto.lower()
+                for i, nombres in enumerate(NOMBRES_CARRUSEL):
+                    if any(n in t for n in nombres):
+                        return i
         return None
 
     def _deslizar_hacia_bestia(self, p, o):
