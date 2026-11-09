@@ -1,0 +1,1590 @@
+# Texto exacto de cada habilidad (nombre en minusculas -> texto), de 7dshub.com con permiso de su dueno
+# (2026-11-08). Lo usa lumen/ia/decidir.py para saber que hace cada carta.
+1,000 divine cuts: 'Inflicts Rupture damage equal to 100% of Attack on all enemies. Rupture: 2x damage against Buffed enemies.'
+'100 shiki: oniyaki': 'Inflicts damage equal to 110% of Attack on all enemies. Infects for 1 turn(s). Infect: Restricts Recovery-related
+  stats.'
+'108 shiki: yamibarai': 'Inflicts Co-destruction damage equal to 170% of Attack on one enemy. Co-destruction: 20% increased
+  damage per Debuff on the target.'
+'115 shiki: dokugami': 'Inflicts Co-destruction damage equal to 170% of Attack on one enemy. Co-destruction: 20% increased
+  damage per Debuff on the target.'
+2nd law of motion: Inflicts damage equal to 180% of Attack on one enemy. Decreases Defense-related stats by 20% for 2 turn(s).
+'[the seven deadly sins] combined attack: "nemesis': 'Inflicts Dark Assault damage equal to 400% of Attack on all enemies.
+  Dark Assault: 3x Pierce Rate and 3x Crit Damage Increase. Additional damage equal to 100% of the hero''s increased Attack.'
+a captain and his buddy: 'Inflicts Pierce damage equal to 200% of Attack on one enemy. Pierce: 3x Pierce Rate Increase.'
+absolute expel: 'Applies Infect on all enemies for 1 turn, then inflicts Revenant Strike damage equal to 9% of the hero duo''s
+  Max HP. Infect: Restricts Recovery-related stats. Revenant Strike: 3x Pierce Rate Increase. Skill damage dealt +50% while
+  Spirit''s Contract is active.'
+absolute surveillance: 'Applies Watch on all enemies for 2 turn(s), additionally inflicting Observer''s Eye if there are 2
+  or more enemies, then inflicts Detection damage equal to 50% of the hero''s Max HP on one enemy. Detection: Additional damage
+  equal to 35% of the target''s remaining HP.'
+absorbing slash: 'Inflicts Pulverize damage equal to 180% of Attack on one enemy. If the hero''s Ultimate Move Gauge has 4
+  orb(s) or more, removes 1 orb from the enemy''s Ultimate Move Gauge. Pulverize: 20% additional damage for each orb in the
+  hero''s Ultimate Move Gauge.'
+abyssal chase: 'Increases own Attack-related stats by 30%, gains the Consume effect, then inflicts Consume damage equal to
+  540% of Attack on one enemy. Consume: 3x Pierce Rate Increase. 2x Crit Damage Increase.'
+abyssal claw: 'Inflicts Spike damage equal to 100% of Attack on all enemies. Spike: 2x Crit Damage Increase.'
+abyssal explosion: Inflicts damage equal to 120% of Attack on one enemy and depletes 1 Ultimate Move Gauge orb(s).
+abyssal strike: 'Inflicts Dark Destruction damage equal to 200% of Attack on one enemy. Dark Destruction: 3x Crit Chance and
+  3x Crit Damage Increase. Damage dealt +70% to enemies affected by "Hell Blaze."'
+accelerando: Inflicts damage equal to 220% of Attack on one enemy.
+acid down: 'Inflicts Rupture damage equal to 350% of Attack on all enemies. Rupture: 2x damage against Buffed enemies.'
+acid tower: Inflicts damage equal to 140% of Attack on all enemies.
+advance front: Inflicts damage equal to 120% of Attack on one enemy and depletes 1 Ultimate Move Gauge orb(s).
+aerial stem: Inflicts damage equal to 140% of Attack on all enemies.
+aesthetic overflow: 'Inflicts Wave damage equal to 725% of Attack on all enemies. The hero gains the Abyss effect for 2 turn(s).
+  Wave: -20% damage dealt for every enemy on the battlefield. Abyss: Additional damage equal to 25% of damage dealt on all
+  enemies at the start of the enemy''s turn. (Only applies the Abyss effect of the last used hero)'
+aether pierce: 'Decreases HP-related stats of all enemies by 30% for 2 turns, then inflicts Flood damage equal to 400% of
+  Attack. Flood: 0.8% additional damage for every percent of remaining HP on self.'
+afterburner: 'Inflicts Pierce damage equal to 200% of Attack on one enemy. Pierce: 3x Pierce Rate Increase.'
+agility of the lightning king: 'Inflicts Detonate damage equal to 100% of Attack on all enemies. Detonate: 20% additional
+  damage per orb in the target''s Ultimate Move Gauge.'
+ah! emergency!: 'Assumes a Stance which Taunts enemies and decreases damage taken by 30% when attacked for 1 turn(s). Taunt:
+  Directs all attacks to self.'
+aimed shot: Inflicts damage equal to 120% of Attack on one enemy and depletes 1 Ultimate Move Gauge orb(s).
+air burst: 'Inflicts damage equal to 110% of Attack on all enemies. Infects for 1 turn(s). Infect: Restricts Recovery-related
+  stats.'
+aisle of flowers: 'Decreases the hero''s Max HP by 2% once for 3 turns, then inflicts Charge damage equal to 250% of Attack
+  on one enemy. (Stacks 5 times) Charge: Ignores Defense'
+al huma: 'Inflicts Frozen Slash damage equal to 400% of Attack on one enemy. Frozen Slash: 5x Pierce Rate Increase. Damage
+  dealt +150% against Frozen targets. Damage dealt +50% for each Ice Brand Arts and Spirit Boost.'
+alignment field: Inflicts damage equal to 350% of Attack on all enemies and depletes 3 Ultimate Move Gauge orb(s).
+all clear: Removes Debuffs from all allies.
+all elemental: Inflicts damage equal to 400% of Attack on all enemies and creates barriers around all allies equal to 5% of
+  damage, taking damage only from basic stats. (Excludes Rupture effect)
+angel assault: Inflicts damage equal to 120% of Attack on one enemy and depletes 1 Ultimate Move Gauge orb(s).
+angel blade: 'Inflicts Detonate damage equal to 160% of Attack on one enemy. Detonate: 20% additional damage per orb in the
+  target''s Ultimate Move Gauge.'
+anger light: Inflicts damage equal to 180% of Attack on one enemy. Decreases Crit Resistance and Crit Defense by 30% for 1
+  turn(s).
+angry attack: Inflicts damage equal to 160% of Attack on one enemy and decreases skill ranks.
+angry slap: 'Increases the hero''s Attack-related stats by 50% for 2 turns, increases one enemy''s damage taken by 50%, then
+  inflicts Sever damage equal to 500% of Attack. Sever: 3x Crit Chance Increase.'
+apocalypse: 'Removes Buffs and Stances from all enemies, then decreases all stats by 5% for 2 turns. Inflicts Cleave damage,
+  which does not result in critical strike, equal to 390% of Attack. Cleave: Additional damage equal to 50% of (Crit Damage
+  - 100%).'
+aqua blade: Removes Buffs from one enemy and inflicts damage equal to 220% of Attack.
+ark: Inflicts damage equal to 420% of Defense on all enemies and restores the HP of all allies by 30% of damage dealt.
+ark beam: Inflicts damage equal to 120% of Attack on one enemy and depletes 1 Ultimate Move Gauge orb(s).
+ark shield: Assumes a Stance for 1 turn(s) which reduces the final damage taken by 40% when an ally is attacked. The hero
+  takes 40% of the reduced damage.
+armored breaker: 'Removes Buffs from one enemy and inflicts Pulverize damage equal to 198% of Attack. If the hero''s Ultimate
+  Move Gauge has 4 orb(s) or more, removes 1 orb from the enemy''s Ultimate Move Gauge. Pulverize: 20% additional damage for
+  each orb in the hero''s Ultimate Move Gauge.'
+arrow shot: Inflicts damage equal to 120% of Attack on all enemies.
+art of hunting: Decreases the hero's Defense by 2% once for 3 turns, then inflicts damage equal to 250% of Attack on one enemy.
+  (Stacks up to 5 times)
+arts of ice: 'Inflicts Frozen Slash damage equal to 200% of Attack on one enemy. Frozen Slash: 5x Pierce Rate Increase. Damage
+  dealt +150% against Frozen targets. Damage dealt +50% for each Ice Brand Arts and Spirit Boost.'
+ascending ground: 'Inflicts Sever damage equal to 630% of Attack on one enemy. Sever: 3x Crit Chance Increase.'
+assassin's strike: 'Inflicts Weak Point damage equal to 120% of Attack on one enemy. Weak Point: 3x damage against Debuffed
+  enemies.'
+assault hunt: 'Inflicts Voracity damage that does not trigger critical strikes equal to 120% of Attack on all enemies. Voracity:
+  3x Pierce Rate Increase. Additional damage equal to 120% of (Crit Damage -100%).'
+asteroid: 'Applies 1 Blazing Inferno effect on all enemies, then inflicts Sever damage equal to 350% of Attack. Sever: 3x
+  Crit Chance Increase.'
+bastard bash: Decreases damage dealt of all enemies by 80% for 1 turn, then inflicts damage equal to 150% of Attack.
+bat hunt: Decreases Attack-related stats of one enemy by 20% and disables everything but Attack Skills for 2 turn(s).
+battle shout: Increases basic stats by 20% for 2 turn(s).
+battlecry: Removes Debuffs from all allies.
+beard of the mountain cat, assemble!: Cancels Stances on one enemy and inflicts damage equal to 700% of Attack.
+beauty of the hunt: 'Applies Mark of Craving on all enemies for 2 turns, then inflicts Craving damage equal to 380% of Attack.
+  Craving: 3x Pierce Rate Increase. Damage dealt to enemies with Mark of Craving +150%.'
+bedrock arise: Inflicts damage equal to 120% of Attack on all enemies.
+beelzebuth: 'Inflicts Flood damage equal to 110% of Attack on all enemies and Infects for 1 turn(s). Flood: 0.8% additional
+  damage for every percent of remaining HP on self. Infect: Restricts Recovery-related stats.'
+beheading: Removes Buffs from one enemy and inflicts damage equal to 220% of Attack.
+bell of truth: 'Inflicts Ripple damage equal to 180% of Attack on all enemies. Ripple: 3x Pierce Rate Increase. Ignores enemy
+  Defense. Attack +50% when using skills. Damage dealt +30% for each Punishing Wave on the target.'
+bind: Removes Stances from one enemy. Inflicts damage equal to 540% of Attack, then disables Stance Skills for 2 turn(s).
+binding roots: Decreases Defense-related stats of all enemies by 20% for 2 turn(s).
+biohazard: 'Inflicts damage equal to 150% of Attack on one enemy. Poisons for 3 turn(s). Poison: Additional damage equal to
+  60% of damage dealt at the end of every turn.'
+biting shadow: 'Inflicts Dark Moon damage equal to 120% of Attack on all enemies. Dark Moon: 3x Pierce Rate Increase. Attack-related
+  stats +50% when using the skill. Damage dealt +20% for each defeated enemy.'
+black fire: Inflicts damage equal to 220% of Attack on one enemy.
+black lightning: Inflicts damage equal to 630% of Attack on one enemy and depletes 3 Ultimate Move Gauge orb(s).
+black road: 'Inflicts Cleave damage, which does not activate Crit Damage, equal to 200% of Attack on one enemy. Cleave: Additional
+  damage equal to 75% of (Crit Damage - 100%).'
+black saw: Inflicts damage equal to 240% of Attack on one enemy.
+blackout: 'Assumes a stance for 1 turn(s) which performs a Preemptive Strike before an ally is attacked, inflicting 300% of
+  Attack and disabling all skills. Preemptive Strike: Becomes immune to Ultimate Move Gauge depletion effects and attacks
+  before the enemy does.'
+blackout arrow: 'Increases the hero''s damage dealt by 100% for 2 turns, inflicts damage equal to 8% of the hero''s Max HP
+  on all enemies, then Deletes 2 skill(s) from the pool of all enemy skills. Delete: Randomly removes skills from the target
+  (Excluding Ultimate Moves). (Deletes Ultimate Moves if there is no other skill to remove)'
+blade blitz: 'Inflicts Pierce damage equal to 100% of Attack on all enemies and heals allies by 30% of the damage dealt. Pierce:
+  3x Pierce Rate Increase.'
+blade dance: Removes Buffs from one enemy and inflicts damage equal to 220% of Attack.
+blade of light: 'Inflicts Power Strike damage equal to 490% of Attack on all enemies. Power Strike: Additional damage equal
+  to enemy Resistance.'
+blade slash: 'Inflicts Spike damage equal to 160% of Attack on one enemy. Spike: 2x Crit Damage Increase.'
+blade symphony: Inflicts damage equal to 120% of Attack on one enemy and depletes 1 Ultimate Move Gauge orb(s).
+blade tempest: 'Inflicts Pierce damage equal to 100% of Attack on all enemies. Pierce: 3x Pierce Rate Increase.'
+blade wave: 'Inflicts damage equal to 180% of Attack on one enemy and Lifesteals 40% of the damage. Lifesteal: Heals for a
+  portion of the damage dealt.'
+blaze burst: Inflicts damage equal to 220% of Attack on one enemy.
+blazing darkness: 'Inflicts Flood damage equal to 110% of Attack on all enemies and Infects them for 1 turn. Flood: 0.8% additional
+  damage for every percent of remaining HP on self. Infect: Restricts Recovery-related stats.'
+blazing sun: 'Inflicts Amplify damage equal to 180% of Attack on one enemy. Amplify: Damage dealt +30% per active Buff on
+  self.'
+blessing light: Removes Debuffs from all allies. Increases Defense-related stats by 30% for 2 turn(s).
+blessing of victory: Removes Debuffs from all allies.
+blessing ribbon: 'Inflicts Shatter damage equal to 180% of Attack on one enemy. Shatter: Ignores Resistance.'
+blitz: 'Inflicts Pierce damage equal to 180% of Attack on one enemy, then applies Mark of Concentration for 2 turns. Pierce:
+  3x Pierce Rate Increase. Mark of Concentration: -100% Crit Chance'
+blitz charge: 'Inflicts Sever damage equal to 264% of Attack on one enemy. Sever: 3x Crit Chance Increase.'
+blizzard axel: Inflicts damage equal to 220% of Attack on one enemy. Disables Recovery Skills for 1 turn(s).
+blizzard rain: 'Inflicts Flood damage equal to 100% of Attack on all enemies. Flood: 0.8% additional damage for every percent
+  of remaining HP on self.'
+blizzard tornado: Decreases Defense-related stats of one enemy by 20% and disables Recovery and Buff Skills for 2 turn(s).
+block shield: Decreases HP of one enemy by 10% for 2 turn(s).
+blockade: Inflicts damage equal to 156% of Attack on all enemies.
+blood beat: 'Inflicts Spike damage equal to 100% of Attack on all enemies. Spike: 2x Crit Damage Increase.'
+blood strike: Inflicts damage equal to 240% of Attack on one enemy.
+blood suck: Inflicts damage equal to 150% of Attack on all enemies.
+blood thorn: Inflicts damage equal to 20% of the hero's remaining HP on all enemies.
+blooming flare: 'Inflicts Spark damage equal to 150% of Attack on all enemies. Spark: Damage dealt +1.5% and Crit Chance +2%
+  per 1% of diminished HP when using skill.'
+blow kiss: 'Applies Taunt to one ally and increases HP-related stats by 10% for 1 turn(s). Taunt: Directs all attacks to self.'
+blue end: 'Decreases Defense-related stats of one enemy by 20% for 2 turns, then inflicts Burst damage equal to 200% of Attack.
+  Burst: 2x Crit Damage Increase. +50% damage dealt when attacking a Debuffed enemy.'
+blue shine blade: Inflicts damage equal to 240% of Attack on one enemy.
+blundering blow: 'Inflicts Power Strike damage equal to 630% of Attack on one enemy. Power Strike: Additional damage equal
+  to enemy Resistance.'
+body charge: 'Inflicts Charge damage equal to 200% of Attack on one enemy. Charge: Ignores Defense.'
+bond with the great spirit: 'Inflicts Secret Technique damage equal to 300% of Attack on all enemies and deals damage with
+  attribute advantage regardless of attribute. Secret Technique: +20% additional damage per hero skill.'
+boost hammer: 'Cancels Buffs and Stances on one enemy, inflicts damage equal to 490% of Attack, then Stuns for 1 turn(s).
+  Stun: Prohibits all actions.'
+boot slash: 'Inflicts Sever damage equal to 180% of Attack on one enemy. Sever: 3x Crit Chance Increase.'
+brandisher stick: 'Inflicts Weak Point damage equal to 120% of Attack on one enemy. Weak Point: 3x damage against Debuffed
+  enemies.'
+break muscle: 'Inflicts Rupture damage equal to 180% of Attack on one enemy. Rupture: 2x damage against Buffed enemies.'
+breakthrough: 'Inflicts Detonate damage equal to 100% of Attack on all enemies. Detonate: 20% additional damage per orb in
+  the target''s Ultimate Move Gauge.'
+breath of bless: Removes Debuffs from all allies. Increases damage dealt to enemies by 30% and decreases damage taken by 20%
+  for 2 turn(s).
+breath of niflheim: 'Inflicts Detonate damage equal to 160% of Attack on one enemy. Detonate: 20% additional damage per orb
+  in the target''s Ultimate Move Gauge.'
+bridesmaid: Inflicts damage equal to 120% of Attack on all enemies.
+bright rush: 'Inflicts Retribution damage equal to 200% of Attack on one enemy. Retribution: 2x Crit Chance Increase. Damage
+  dealt +1.2% for every 1% of the hero''s remaining HP and diminished HP. Additional damage equal to 50% of final damage (random
+  damage when resulting in death).'
+bright shot: Cancels Stances on one enemy and inflicts damage equal to 180% of Attack.
+brillante: Inflicts damage equal to 300% of Attack on all enemies. Decreases Attack-related stats by 30% for 3 turn(s).
+brilliant detonation: 'Removes Stance(s) from all enemies and inflicts damage equal to 280% of Attack. Applies 2 Ignite effects
+  for 4 turn(s). Ignite: Damage taken by target(s) +10% (Can be stacked).'
+brilliant protection: Removes Debuffs from one ally.
+bubble shower: Removes Debuffs from all allies.
+bundle of gifts: Inflicts damage equal to 200% of Attack on one enemy.
+burning lion: 'Removes Buffs and Stances from all enemies and inflicts Flood damage equal to 420% of Attack. Flood: 0.8% additional
+  damage for every percent of remaining HP on self.'
+burning spear: 'Inflicts Scorch damage equal to 200% of Attack on one enemy. Scorch: 1.3% additional damage for every percent
+  of remaining HP on self. Additional damage equal to 30% of final damage to all enemies in battle.'
+burning strike: Inflicts damage equal to 240% of Attack on one enemy.
+burning wind strike: 'Inflicts Sever damage equal to 180% of Attack on one enemy. Sever: 3x Crit Chance Increase.'
+burst combination: 'Inflicts Ruin damage equal to 160% of Attack on one enemy. Ruin: Increases damage dealt by 30% per Debuff
+  on the target and removes Debuffs.'
+burst flare: 'Inflicts Raging Fire damage equal to 180% of Attack on all enemies. Raging Fire: Ignores enemy Defense and Resistance.
+  2x Pierce Rate Increase.'
+bursting with love: 'Inflicts Power Strike damage equal to 140% of Attack on all enemies. Power Strike: Additional damage
+  equal to enemy Resistance.'
+cake bomb: 'Inflicts Corrosion damage equal to 15% of remaining HP on all enemies for 2 turn(s). Corrosion: Additional damage
+  at the end of every turn.'
+cancellation: Inflicts damage equal to 140% of Attack on all enemies.
+cannon show: 'Inflicts Flood damage equal to 200% of Attack on one enemy. Flood: 0.8% additional damage for every percent
+  of remaining HP on self.'
+capital punishment: 'Inflicts damage equal to 25% of the hero''s Max HP on one enemy, then Deletes 1 of their skills. Delete:
+  Randomly removes skills from the target (Excluding Ultimate Moves) (Deletes Ultimate Moves if there is no skill to remove)'
+captivating beauty: 'Applies Mark of Craving on one enemy for 1 turn, then inflicts Craving damage equal to 200% of Attack.
+  Craving: 3x Pierce Rate Increase. Damage dealt to enemies with Mark of Craving +150%.'
+catapult: Inflicts damage equal to 120% of Attack on all enemies.
+celestial rain: 'Applies Peaceful Protection on all allies for 3 turns, then inflicts Pulverize damage equal to 400% of Attack
+  on all enemies. Peaceful Protection: Basic stats +5% Increases the hero''s skill ranks when removed. Pulverize: 10% additional
+  damage for each orb in the hero''s Ultimate Move Gauge.'
+celestial strike: Inflicts damage equal to 180% of Attack on one enemy and disables single-target attacks for 1 turn(s).
+chain blow: Inflicts damage equal to 180% of Attack on one enemy. Prevents Ultimate Move Gauge(s) from filling up for 1 turn(s).
+chain explosion: 'Inflicts Spike damage equal to 350% of Attack on all enemies. Spike: 2x Crit Damage Increase.'
+chain fists: Inflicts damage equal to 120% of Attack on one enemy and depletes 1 Ultimate Move Gauge orb(s).
+chain of command: 'Applies Watch on all enemies for 1 turn(s), then inflicts Detection damage equal to 9% of the hero''s Max
+  HP. Detection: Additional damage equal to 35% of the target''s remaining HP.'
+chain reaction: 'Inflicts Sever damage equal to 120% of Attack on all enemies. Sever: 3x Crit Chance Increase.'
+chain slash: 'Inflicts Slash damage equal to 120% of Attack on all enemies. Slash: Additional damage equal to half of the
+  hero''s Pierce Rate.'
+chain smash: Inflicts damage equal to 240% of Attack on one enemy.
+chain strike: Inflicts damage equal to 120% of Attack on one enemy and depletes 1 Ultimate Move Gauge orb(s).
+chain vertical kick: 'Inflicts damage equal to 180% of Attack on one enemy. Ignites for 3 turn(s). Ignite: Damage taken by
+  target(s) +10% (Can be stacked).'
+chance unwind: 'Assumes a Stance for 1 turn(s), which deals Flying Sword damage equal to 150% of Attack via counter when any
+  ally is attacked, then inflicts additional damage equal to 50% of allies'' damage taken. Flying Sword: 5x Pierce Rate Increase.
+  Attack-related stats +20% for each Blade on the hero.'
+chaos blast: 'Inflicts Weak Point damage equal to 385% of Attack on one enemy. Weak Point: 3x damage against Debuffed enemies.'
+chaos blaze: 'Inflicts damage equal to 110% of Attack on all enemies. Infects for 1 turn(s). Infect: Restricts Recovery-related
+  stats.'
+charge again?!: 'Inflicts damage equal to 660% of Attack on one enemy. If there are 2 or more enemies, Expels the target for
+  1 turn(s). Expel: Excludes from battle and skill targeting. Lowers number of skill uses by 1.'
+charge and fire: Inflicts damage equal to 150% of Attack on all enemies.
+charge assault: Removes Buffs from one enemy and inflicts damage equal to 220% of Attack.
+charge fire: 'Inflicts damage equal to 180% of Attack on one enemy. Ignites for 3 turn(s). Ignite: Damage taken by target(s)
+  +10% (Can be stacked).'
+charge forward!: 'Inflicts Shatter damage equal to 180% of Attack on one enemy. Shatter: Ignores Resistance.'
+charge!: Inflicts damage equal to 180% of Attack on one enemy. Decreases Attack by 30% for 1 turn(s).
+charging body: 'Inflicts Pierce damage equal to 220% of Attack on one enemy. Pierce: 3x Pierce Rate Increase.'
+cheap shot: 'Inflicts damage equal to 150% of Attack on one enemy. Poisons for 3 turn(s). Poison: Additional damage equal
+  to 60% of damage dealt at the end of every turn.'
+cherry blossom in the wind: 'Inflicts Pierce damage equal to 100% of Attack on all enemies. Pierce: 3x Pierce Rate Increase.'
+chou hissatsu shinobi-bachi: Inflicts damage equal to 630% of Attack on one enemy and increases skill ranks.
+'circle dance of nothingness: moon break': Increases all allies' basic stats by 30% for 3 turns, inflicts damage equal to
+  400% of Attack on all enemies, then applies 1 Soul Power effect on the hero.
+'circle dance rupture formation: tortoise shell cracker': 'Inflicts Pierce damage equal to 200% of Attack on one enemy. Pierce:
+  3x Pierce Rate Increase.'
+'circle dance zero formation: reverse snow moon flower': 'Inflicts Soulsteal damage equal to 190% of Attack on one enemy.
+  Soulsteal: Damage dealt +40% for each Soul Power on the hero. 2x Pierce Rate Increase.'
+claws of hellfire: 'Inflicts Black Fire damage equal to 160% of Attack on one enemy. Black Fire: 2x Crit Chance Increase.
+  Damage dealt +80% for each Blazing Inferno effect on the enemy.'
+clumsy delivery: 'Inflicts Pierce damage equal to 200% of Attack on one enemy. Pierce: 3x Pierce Rate Increase.'
+cold gaze: 'Inflicts damage equal to 180% of Attack on one enemy. Extorts 20% Attack and Defense for 1 turn(s). Extort: Decreases
+  the target''s stats and increases own stats by the same amount.'
+colossal toss: 'Inflicts Pierce damage equal to 180% of Attack on one enemy and removes 1 orb(s) from their Ultimate Move
+  Gauge. Pierce: 3x Pierce Rate Increase.'
+combat roar: Removes Debuffs from one ally and grants Debuff Immunity for 1 turn(s).
+combined attack "eternal ember: 'Applies Infinite Space on all allies for 1 turn, then inflicts Radiant Heat damage equal
+  to 500% of Attack on all enemies. Radiant Heat: Increases damage dealt by 80% of the hero duo''s Pierce Rate. Additional
+  damage equal to 25% of the initial HP.'
+'combined attack: "deicide': 'The hero duo gains Blade of Judgment for 2 turns, then inflicts Illumination damage equal to
+  350% of Attack on all enemies. Blade of Judgment: Attack-related stats +20%. Inflicts additional damage equal to 600% of
+  initial Attack. Illumination: 2x Crit Chance Increase. Increases damage dealt by 100% of (Crit Damage -100%). Attack +80%
+  when using a skill while Blade of Judgment is active.'
+'combined attack: "universal judgment': 'Increases the hero duo''s damage dealt by 30% for 3 turns, applies 1 Wrath of the
+  Fairy King effect on the hero duo, then inflicts Lightpoint damage equal to 350% of Attack on all enemies. Lightpoint: 2x
+  Crit Chance, 2x Crit Damage Increase. Hero duo''s Attack +60% when using skill. Damage dealt +30% against targets who have
+  not accumulated the maximum Wrath of the Earth value. Damage dealt +100% against targets who accumulated the maximum Wrath
+  of the Earth value.'
+combo star: 'Inflicts Amplify damage equal to 630% of Attack on one enemy. Amplify: Damage dealt +30% per active Buff on self.'
+coming of spring: Inflicts damage equal to 120% of Attack on one enemy and depletes 1 Ultimate Move Gauge orb(s).
+concentrate fire: 'Inflicts Raid damage equal to 99% of Attack on all enemies. Raid: Attack +80% when using skill. 3x damage
+  against Debuffed enemies.'
+concentrated wind: Inflicts damage equal to 120% of Attack on one enemy and depletes 1 Ultimate Move Gauge orb(s).
+conducting nature: Increases HP-related stats of all allies by 5% for 2 turn(s) and when attacked, instantly recovers 20%
+  of damage taken.
+conflagration: 'Inflicts Shatter damage equal to 180% of Attack on one enemy. Shatter: Ignores Resistance.'
+confusion: Inflicts damage equal to 200% of Attack on one enemy.
+continuous cleaving: 'Inflicts Amplify damage equal to 180% of Attack on one enemy. Amplify: Damage dealt +30% per active
+  Buff on self.'
+converging arrow: 'Inflicts Pierce damage equal to 120% of Attack on all enemies and allows the use of only Rank 1 skills
+  for 1 turn(s). Pierce: 3x Pierce Rate Increase.'
+conviction of light: 'Inflicts damage equal to 76% of Attack on all enemies. Makes target(s) Bleed for 2 turn(s). Bleed: Additional
+  damage equal to 90% of damage dealt at the end of every turn.'
+corna: 'Inflicts Infernal damage equal to 190% of Attack on all enemies. Infernal: 2x Crit Chance Increase. Increases damage
+  dealt by 1.3% for every 1% of the hero''s remaining HP. Attack +80% when using the skill. Damage dealt +50% for each Ignite
+  effect on the target.'
+corrosive bug: Increases damage taken by all enemies by 20% for 2 turn(s).
+count smash: 'Inflicts damage equal to 140% of Attack on one enemy. Makes target(s) Bleed for 2 turn(s). Bleed: Additional
+  damage equal to 90% of damage dealt at the end of every turn.'
+counting on you, puck!: 'Freezes one enemy for 1 turn(s) Freeze: Incapacitates target. Effect is removed when target is attacked.'
+covering fire: Inflicts damage equal to 120% of Attack on all enemies.
+crack shoot: Assumes a Stance for 1 turn(s) which increases damage dealt by 20%, and inflicts damage equal to 180% of Attack
+  via counter when an ally is attacked.
+crashing barrage: 'Inflicts Penetration damage equal to 100% of Attack on all enemies. Penetration: Attack +50% when using
+  skill. Increases damage dealt by half of Pierce Rate.'
+crazy blade: 'Inflicts Flood damage equal to 220% of Attack on one enemy. Flood: 0.8% additional damage for every percent
+  of remaining HP on self.'
+crazy hunt: Inflicts damage equal to 30% of Max HP on all enemies.
+crazy prominence: 'Inflicts Overpower damage equal to 120% of Attack on all enemies. Overpower: 0.8% additional damage for
+  every percent of HP missing from self. Additional damage equal to 35% of (Crit Damage - 100%).'
+crazy rush: 'Decreases HP-related stats of one enemy by 20% for 1 turn, then inflicts Pulverize damage equal to 198% of Attack.
+  If the hero has 4 orb(s) or more in their Ultimate Move Gauge, 1 orb is removed from the enemy''s. Pulverize: 20% additional
+  damage for each orb in the hero''s Ultimate Move Gauge.'
+crazy surfer: Inflicts damage equal to 240% of Attack on one enemy.
+crescent grace: 'Inflicts Insight damage equal to 200% of Attack on one enemy. Insight: 3x Pierce Rate Increase. Inflicts
+  additional damage equal to 40% of the target''s remaining HP. Applies All-Target Attack Disable on the target for 1 turn
+  when dealing damage while Threads of Foresight is active.'
+crimson requiem: Inflicts damage equal to 150% of Attack on all enemies.
+crimson valkyrie: 'Increases all of the hero''s stats by 5% for 2 turns, then inflicts damage equal to 400% of Attack on all
+  enemies and Lifesteals 50% of the damage dealt. Lifesteal: Heals for a portion of the damage dealt.'
+critical over: 'Increases basic stats by 50% for 3 turns, then inflicts Sever damage equal to 420% of Attack on one enemy.
+  Sever: 3x Crit Chance Increase.'
+critical pierce: 'Inflicts Charge damage equal to 200% of Attack on one enemy. Charge: Ignores Defense.'
+cross blade: Inflicts damage equal to 560% of Attack on one enemy. Decreases Defense-related stats by 40% for 2 turn(s).
+cross cut: Inflicts damage equal to 240% of Attack on one enemy.
+cross shot: 'Inflicts Pierce damage equal to 200% of Attack on one enemy. Pierce: 3x Pierce Rate Increase.'
+cruel sun: 'Removes Buffs from one enemy and inflicts damage equal to 180% of Attack. Applies 2 Burn effects for 2 turn(s).
+  Burn: Damage taken +10%. Inflicts additional damage equal to 5% of remaining HP at the end of every turn. (Can be stacked)'
+crushing strike: 'Inflicts Amplify damage equal to 180% of Attack on one enemy. Amplify: Damage dealt +30% per active Buff
+  on self.'
+crystal shoot: Cancels Stances on one enemy and inflicts damage equal to 700% of Attack.
+crystalline javelin: 'Inflicts Ice Explosion damage equal to 200% of Attack on one enemy. Ice Explosion: 5x Pierce Rate Increase.
+  2x damage dealt against targets assuming a Stance. Additional damage equal to 1000% of the initial Attack. Additional damage
+  equal to 70% of the final damage. (Random damage on death)'
+cumulonimbus: Decreases all enemy stats except basic stats by 30% for 2 turns, then inflicts damage equal to 450% of Attack
+  on all enemies.
+curse engage: Inflicts damage equal to 100% of Attack on all enemies and decreases skill ranks.
+cursed strike: 'Inflicts Amplify damage equal to 180% of Attack on one enemy. Amplify: Damage dealt +30% per active Buff on
+  self.'
+cut down: 'Inflicts Pierce damage equal to 100% of Attack on all enemies. Pierce: 3x Pierce Rate Increase.'
+cute water blaster: 'Inflicts Power Strike damage equal to 110% of Attack on all enemies. Power Strike: Additional damage
+  equal to enemy Resistance.'
+cyclone dark: 'Applies Infect for 1 turn and inflicts Dark Brand damage equal to 140% of Attack on all enemies. Infect: Restricts
+  Recovery-related stats. Dark Brand: Additional damage equal to 10% of the target''s remaining HP.'
+damnation: Increases the hero's damage dealt by 10% and damage taken of all enemies by 10% for 2 turns, then inflicts damage
+  equal to 500% of Attack.
+dance break on fire: 'Inflicts Combustion damage equal to 200% of Attack on one enemy. Combustion: 3x Pierce Rate Increase.
+  2x Crit Damage Increase. Damage dealt +150% while Divine Flame is active.'
+dance of duality: 'Inflicts Shadowflare damage equal to 150% of Attack on all enemies. Shadowflare: 2x Pierce Rate Increase,
+  2x Crit Damage Increase. 2x Crit Chance Increase when using a skill while Guardians of Harmony is active.'
+dance with the ripper: 'Cancels Stances on one enemy and inflicts Alteration damage equal to 200% of Attack. Alteration: 4x
+  Pierce Rate and 2x Crit Damage Increase. Damage dealt +50% for each The Ripper on the hero.'
+dancing ray: Removes Debuffs from all allies. Grants Debuff Immunity and increases Defense-related stats by 100% for 4 turns.
+dangerous blocks: 'Inflicts Ablation damage equal to 190% of Attack on one enemy. Ablation: 2x Crit Chance Increase. 2x Crit
+  Damage Increase. 3x damage against Debuffed enemies.'
+dark blade: 'Cancels Stances on one enemy and inflicts Transgression damage equal to 200% of Attack. Transgression: 5x Pierce
+  Rate Increase. Ignores 100% of the enemy''s Crit Defense. 2x damage against Debuffed enemies.'
+dark blaster: Inflicts damage equal to 120% of Attack on all enemies, then decreases their Attack-related stats by 10% for
+  2 turn(s).
+dark condensation: Inflicts damage equal to 140% of Attack on all enemies.
+dark crescent: Inflicts damage equal to 150% of Attack on all enemies.
+dark curse burning: 'Inflicts damage equal to 110% of Defense and applies the Curse effect for 1 turn(s) on all enemies. Curse:
+  Prevents an enemy''s Ultimate Move Gauge from filling up for 2 turns if they have not used a skill.'
+dark energy: 'Inflicts Shatter damage equal to 180% of Attack on one enemy. Shatter: Ignores Resistance.'
+dark nebula: 'Inflicts damage equal to 86% of Attack on all enemies. Shocks for 4 turn(s). Shock: Additional damage equal
+  to 45% of damage dealt at the end of every turn.'
+dark onslaught: 'Inflicts Corruption damage equal to 150% of Attack on one enemy. Corruption: Damage dealt +1.2% per 1% of
+  remaining HP. Crit Chance +50% for each instance of Gram''s Curse on enemies.'
+dark pressure: Increases basic stats by 50% for 3 turns and inflicts damage equal to 350% of Attack on all enemies.
+dark snow: 'Inflicts damage equal to 76% of Attack on all enemies. Makes target(s) Bleed for 2 turn(s). Bleed: Additional
+  damage equal to 90% of damage dealt at the end of every turn.'
+dark sword: 'Inflicts Amplify damage equal to 180% of Attack on one enemy. Amplify: Damage dealt +30% per active Buff on self.'
+dark void buster: Inflicts damage equal to 180% of Attack on one enemy.
+darkness bolt: 'Inflicts damage equal to 180% of Attack on one enemy. Ignites for 3 turn(s). Ignite: Damage taken by target(s)
+  +10% (Can be stacked).'
+darkness flutter: 'Inflicts Corrosion damage equal to 15% of remaining HP on all enemies for 2 turn(s). Corrosion: Additional
+  damage at the end of every turn.'
+darkness hand: Inflicts damage equal to 240% of Attack on one enemy.
+darkness whip: Inflicts damage equal to 220% of Attack on one enemy.
+dead end: 'Inflicts Weak Point damage equal to 385% of Attack on one enemy. Weak Point: 3x damage against Debuffed enemies.'
+dead man's revenge: 'Assumes a Stance for 1 turn(s) and inflicts Corrosion damage equal to 20% of remaining HP on the attacker
+  when taking damage for 1 turn. Corrosion: Additional damage at the end of every turn (Can be stacked).'
+death arrow: Inflicts damage equal to 120% of Attack on all enemies.
+death bat: 'Inflicts damage equal to 150% of Attack on one enemy. Poisons for 3 turn(s). Poison: Additional damage equal to
+  60% of damage dealt at the end of every turn.'
+death blade: Removes Buffs from one enemy and inflicts damage equal to 220% of Attack.
+death quartet: 'Inflicts Verdict damage equal to 200% of Attack on one enemy. Verdict: +50% damage dealt for every Deathbrand
+  on the target.'
+death rain: Inflicts damage equal to 150% of Attack on all enemies.
+death stab: 'Inflicts Capture damage equal to 180% of Attack on one enemy. Capture: 5x Pierce Rate and 3x Crit Chance Increase.
+  3x Crit Damage when used while Brink is active on the hero.'
+deathpecker: 'Inflicts Detonate damage equal to 630% of Attack on one enemy. Detonate: 20% additional damage per orb in the
+  target''s Ultimate Move Gauge.'
+decoy: 'Assumes a Stance which Taunts enemies for 1 turn(s). When an ally is attacked, decreases their final damage taken
+  by 50%, and the hero takes 20% of the reduced damage for them. Final Damage Decrease: The highest value takes effect if
+  there are multiple of the same Buff effect.'
+deep cleaning: 'Inflicts Bane damage equal to 150% of Attack on all enemies. Bane: Attack +250% when using skill.'
+deft strike: 'Inflicts Sever damage equal to 180% of Attack on one enemy. Sever: 3x Crit Chance Increase.'
+demolishing attack: Inflicts damage equal to 120% of Attack on all enemies.
+demon flash: 'Inflicts Detonate damage equal to 100% of Attack on all enemies. Detonate: 20% additional damage per orb in
+  the target''s Ultimate Move Gauge.'
+demonic assault: 'Inflicts Nightmare damage equal to 12% of the hero''s Max HP on one enemy. Nightmare: 3x Pierce Rate Increase.
+  Damage dealt +150% while Rampage is active.'
+demonic blade: 'Inflicts Rend damage that does not trigger critical strikes equal to 220% of Attack on one enemy. Rend: 2x
+  Pierce Rate Increase. Additional damage equal to 100% of (Crit Damage - 100%).'
+demonic eye: Inflicts damage equal to 140% of Attack on all enemies. Decreases Crit Chance by 30% for 1 turn(s).
+demonic judgment: 'Cancels Buffs and Stances on one enemy, inflicts damage equal to 490% of Attack, then Stuns for 1 turn(s).
+  Stun: Prohibits all actions.'
+demonic vanquishment: 'Inflicts Shadowrend damage equal to 200% of Attack on one enemy. Shadowrend: 2x Crit Chance Increase.
+  +20% damage dealt for each Magic Control effect on enemies.'
+demonic zone: Applies an effect which depletes Ultimate Move Gauges by 1 orb(s) at the end of the enemy's turn on all enemies
+  for 1 turn(s).
+despair burn: Inflicts damage equal to 180% of Attack on one enemy. Decreases Attack-related stats by 20% for 1 turn(s).
+destroy four elements: 'Inflicts Shatter damage equal to 630% of Attack on one enemy. Shatter: Ignores Resistance.'
+destroyer's mace: 'Inflicts Pyroclash damage equal to 200% of Attack on one enemy. Pyroclash: 2x Crit Chance +50% Crit Damage
+  dealt for each Hellbrand effect on the target.'
+devil spear: Inflicts damage equal to 135% of Attack on all enemies.
+diabolic coronation: 'Gains a 50% increase to Attack-related stats for 2 turns, then inflicts Transgression damage equal to
+  450% of Attack on all enemies. Transgression: 5x Pierce Rate Increase. Ignores 100% of the enemy''s Crit Defense. 2x damage
+  against Debuffed enemies.'
+diamond shield: 'Assumes a Stance which Taunts enemies and decreases damage taken by 40% when attacked for 2 turn(s). Taunt:
+  Directs all attacks to self.'
+dies irae: Decreases all enemies' HP-related stats by 5% for 2 turns, then inflicts damage equal to 630% of Attack on one
+  enemy.
+digest: 'Applies 1 Solidify effect on one ally. If there are Debuffs, they are removed and 1 additional Solidify effect is
+  applied. Solidify: +30% Resistance for 3 turns (Can be stacked)'
+dimension flare: 'Increases allies'' Defense-related stats by 50% for 3 turn(s), then inflicts Clash damage equal to 500%
+  of Attack on all enemies. Clash: Attack +250% when using skill. Damage dealt +30% for each Defense Master on allies.'
+dismal scatter cut: 'Inflicts Spike damage equal to 84% of Attack on all enemies and makes them Bleed for 2 turn(s). Spike:
+  2x Crit Damage Increase. Bleed: Additional damage equal to 90% of damage dealt at the end of every turn.'
+divine execution: Inflicts damage equal to 500% of Attack on all enemies and prevents own HP from falling below 1 for 1 turn(s).
+divine protection of the master swordsman: 'The hero randomly gains 1 of the following effects other than Unique abilities
+  for 1 turn: Damage dealt +50, All stats +25%, 1 Evade, Debuff Immunity, or Immortality. Then, inflicts Sword Slash damage
+  equal to 20% of the hero''s Max HP on all enemies. Sword Slash: 2x Crit Chance Increase. Increases damage dealt by 1.3%
+  for every 1% of the hero''s remaining HP. Increases damage dealt by 30% for each Buff applied by the hero.'
+divine slash: 'Inflicts Flash damage equal to 200% of Attack on one enemy. Flash: 2x Crit Chance. 2x damage dealt to Debuffed
+  enemies.'
+divine sparkle: 'Inflicts Fury damage equal to 120% of Attack on all enemies. Fury: 1% additional damage for every percent
+  of remaining HP on self. +50% damage dealt when Goddess''s Wrath is at max stacks.'
+divine sword escanor: 'Inflicts damage equal to 720% of Attack on one enemy and inflicts additional Death damage. Death: 20%
+  of final damage as additional damage. (Random damage on death)'
+division impact: 'Inflicts Sever damage equal to 264% of Attack on one enemy. Sever: 3x Crit Chance Increase.'
+do or die: Assumes a Stance which grants Debuff Immunity and Taunts enemies for 1 turn(s). Heals 20% of diminished HP at the
+  start of the next turn.
+don't disturb ram: Inflicts damage equal to 300% of Attack on all enemies. Decreases Attack-related stats by 30% for 3 turn(s).
+double impact: Inflicts damage equal to 120% of Attack on all enemies and depletes 1 Ultimate Move Gauge orb(s) at the end
+  of the enemy's turn for 1 turn(s).
+double mana fusion: 'Inflicts Flood damage equal to 110% of Attack on all enemies and Infects them for 1 turn. Flood: 0.8%
+  additional damage for every percent of remaining HP on self. Infect: Restricts Recovery-related stats.'
+draconic slash: 'Inflicts Pierce damage equal to 200% of Attack on one enemy. Pierce: 3x Pierce Rate Increase.'
+drago nova: 'Removes all Dragon Power from the hero, applies Dragon Rage on the hero for 3 turns, then inflicts Raging Gale
+  damage equal to 350% of Attack on all enemies. While this hero is in the battle, if an ally hero dies due to enemy skill
+  use during the enemy''s turn, or if an enemy hero dies due to the effects of this hero''s skill, this hero gains 1 stack
+  of Dragon Rampage for each fallen hero, up to a maximum of 3 stacks. This effect lasts 3 turns. Raging Gale: 2x Crit Damage
+  Increase and ignores enemy Resistance. Skill damage +50% if the Dragon Rage effect is active on the hero. Dragon Rampage:
+  Single target skill damage +50%. Additional damage equal to 40% of the target''s increased HP. (Does not stack.) Sets all
+  incoming damage from attacks during the enemy''s turn to 1. Stack count decreases by 1 each time this hero uses a skill
+  or this hero takes damage from an enemy''s skill use on the enemy''s turn.'
+dragon buster: 'Inflicts Detonate damage equal to 420% of Attack on all enemies. Detonate: 20% additional damage per orb in
+  the target''s Ultimate Move Gauge.'
+dragon claw: Inflicts damage equal to 160% of Attack on one enemy and blocks all skill effects including those of Ultimate
+  Moves for 1 turn(s). (Excludes Stance and Recovery Skills)
+dragon kick: 'Inflicts Pierce damage equal to 560% of Attack on one enemy. Pierce: 3x Pierce Rate Increase.'
+drain: 'Inflicts Sever damage equal to 200% of Attack on all enemies. Sever: 3x Crit Chance Increase.'
+drifa tornado: 'Inflicts Weak Point damage equal to 90% of Attack on all enemies. Weak Point: 3x damage against Debuffed enemies.'
+drift blow: 'Inflicts Clash damage equal to 200% of Attack on one enemy. Clash: Attack +250% when using skill. Damage dealt
+  +30% for each Defense Master on allies.'
+drop deepen: Assumes a Stance which grants Debuff Immunity and Taunts enemies for 1 turn(s). Heals 20% of diminished HP at
+  the start of the next turn.
+dual providence: 'Gains Twilight Covenant and inflicts Dawn damage equal to 400% of Attack on all enemies. Dawn: 2x Crit Chance
+  Increase. Additional damage equal to 30% of the hero''s Max HP. Damage dealt with skills +100% while Twilight Covenant is
+  active.'
+duo of the holy knights: Inflicts damage equal to 140% of Attack on all enemies.
+dust to dust: 'Inflicts damage equal to 25% of the hero''s Max HP on one enemy and Lifesteals 30% of the damage dealt. Lifesteal:
+  Heals for a portion of the damage dealt.'
+earth charge: 'Inflicts Amplify damage equal to 180% of Attack on one enemy. Amplify: Damage dealt +30% per active Buff on
+  self.'
+earth strike: Inflicts damage equal to 525% of Attack on all enemies.
+eat this: 'Inflicts Rupture damage equal to 100% of Attack on all enemies. Rupture: 2x damage against Buffed enemies.'
+edge grind: 'Inflicts damage equal to 150% of Attack on one enemy. Poisons for 3 turn(s). Poison: Additional damage equal
+  to 60% of damage dealt at the end of every turn.'
+edge of darkness: 'Inflicts Sever damage equal to 120% of Attack on all enemies. Sever: 3x Crit Chance Increase.'
+eight trigrams blade of destiny: 'Inflicts Flood damage equal to 180% of Defense on one enemy. Flood: 0.8% additional damage
+  for every percent of remaining HP on self.'
+eiha: 'Inflicts Follow-Up damage equal to 180% of Attack on all enemies. Follow-Up: 3x Crit Chance and 3x Crit Damage Increase.
+  Additional damage equal to 15% of the hero''s Max HP. Cancels enemy Stances when using skill while Flame of Rebellion is
+  active.'
+elastic stem: Assumes a Stance to Taunt enemies for 1 turn, inflicting damage equal to 90% of HP diminished from max HP via
+  counter when attacked.
+elegant blow: 'Inflicts Blast damage equal to 264% of Attack on one enemy. Blast: +40% damage dealt per Eternal Flame and
+  Burn effect on target.'
+elegant leopard: 'Inflicts Flood damage equal to 200% of Attack on one enemy. Flood: 0.8% additional damage for every percent
+  of remaining HP on self.'
+eliminate spirit: Inflicts damage equal to 120% of Attack on one enemy and depletes 1 Ultimate Move Gauge orb(s).
+emancipation: 'Transforms for 5 turn(s), removing Debuffs from allies and Buffs from enemies, then decreasing enemy Max HP
+  by 4% for each Buff removed for 3 turns. Transformation: The battle state changes. Becomes immune to Incapacitation. Fully
+  restores HP.'
+embrace of death: 'Applies Cursed Chains on all enemies for 1 turn, then inflicts Binding Chain damage equal to 350% of Attack.
+  Binding Chain: 3x Crit Chance and 3x Crit Damage Increase. Attack +70% for each Cursed Chains effect on the target when
+  using the skill.'
+embrace of the lightning god: Inflicts damage equal to 200% of Attack on one enemy.
+emerald tree: 'Inflicts Pierce damage equal to 200% of Attack on one enemy. Pierce: 3x Pierce Rate Increase.'
+'enchant: "hell blaze': Inflicts damage equal to 240% of Attack on one enemy.
+'enchant: "hellbringer': 'Inflicts Dusk damage equal to 180% of Attack on all enemies. Dusk: 5x Pierce Rate Increase. Damage
+  dealt +50% for each Dawn''s Blessing and Shadow''s Dominion.'
+endless pain: 'Inflicts damage equal to 455% of Attack on one enemy. Makes target(s) Bleed for 2 turn(s). Bleed: Additional
+  damage equal to 90% of damage dealt at the end of every turn.'
+eroica: Heals HP of all allies equal to 200% of Attack.
+event horizon: Increases damage dealt by 50% and decreases damage taken by 50% for 3 turns, then inflicts damage equal to
+  350% of Attack on all enemies.
+evil hound: 'Decreases all enemies'' Attack by 20% for 3 turns, then inflicts Resonance damage equal to 380% of Attack on
+  all enemies. Resonance: +5% damage dealt for every Buff, Debuff, and Stance on the target.'
+evil onslaught: 'Inflicts Weak Point damage equal to 385% of Attack on one enemy. Weak Point: 3x damage against Debuffed enemies.'
+evil slayer: Inflicts damage equal to 140% of Attack on all enemies.
+evil spirit: 'Inflicts Sever damage equal to 630% of Attack on one enemy. Sever: 3x Crit Chance Increase.'
+evil sword beam: Inflicts damage equal to 132% of Attack on one enemy and depletes 1 Ultimate Move Gauge orb(s).
+evil touch: 'Inflicts Delusion damage equal to 100% of Attack on all enemies. Delusion: 3x Crit Chance and 3x Crit Damage
+  Increase.'
+exorcise: 'Inflicts Charge damage equal to 200% of Attack on one enemy. Charge: Ignores Defense.'
+exploding hornet: 'Inflicts Charge damage equal to 200% of Attack on one enemy. Charge: Ignores Defense.'
+explosion: 'Removes Buffs and Stances from all enemies, inflicts damage equal to 500% of Attack, removes 1 orb from Ultimate
+  Move Gauges of enemies with 4 or more orbs, then becomes Drained. Drained: Disables skills other than the Ultimate Move.'
+expurgation: 'Inflicts Punishment damage equal to 200% of Attack on one enemy. Punishment: 3x Pierce Rate Increase +20% damage
+  dealt for every Goddess''s Wrath on self.'
+exterminate ray: Inflicts damage equal to 540% of Attack on one enemy. Disables Attack Skills for 2 turn(s).
+extermination strike: 'Inflicts Sever damage equal to 420% of Attack on all enemies. Sever: 3x Crit Chance Increase.'
+extinction order: 'Inflicts Erosion damage equal to 150% of Attack on all enemies. Erosion: Ignores Defense and Resistance.
+  Increases damage dealt by 80% of Pierce Rate.'
+fairy wind: Increases Attack-related stats of all allies by 15% for 2 turn(s).
+faisceau d'eau: 'Inflicts Weak Point damage equal to 120% of Attack on one enemy. Weak Point: 3x damage against Debuffed enemies.'
+falling tornado: Inflicts damage equal to 220% of Attack on one enemy.
+falling valkyrie: Inflicts damage equal to 120% of Attack on one enemy and depletes 1 Ultimate Move Gauge orb(s).
+fangirl chronicle: Removes Debuffs from all allies. Increases Defense-related stats by 30% for 2 turn(s).
+fascination chain: 'Inflicts Pierce damage equal to 100% of Attack on all enemies. Pierce: 3x Pierce Rate Increase.'
+fatal melody: 'Inflicts Sever damage equal to 180% of Attack on one enemy. Sever: 3x Crit Chance Increase.'
+fearless shot: 'Inflicts damage equal to 180% of Attack on one enemy and Lifesteals 40% of the damage. Lifesteal: Heals for
+  a portion of the damage dealt.'
+feline step: 'Inflicts Charge damage equal to 200% of Attack on one enemy. Charge: Ignores Defense.'
+feral stab: Inflicts damage equal to 120% of Attack on one enemy and depletes 1 Ultimate Move Gauge orb(s).
+fierce dance: Removes Buffs from one enemy and inflicts damage equal to 220% of Attack.
+fight fire with fire: Inflicts damage equal to 150% of Attack on all enemies.
+fighting pride: 'Taunts enemies and increases HP-related stats by 10% for 3 turn(s). Taunt: Directs all attacks to self.'
+filolial smash: Decreases all enemies' HP-related stats by 5% for 2 turns, then inflicts damage equal to 630% of Attack on
+  one enemy.
+final combustion: 'Inflicts Radiant Heat damage equal to 180% of Attack on all enemies. Radiant Heat: Increases damage dealt
+  by 80% of the hero duo''s Pierce Rate. Additional damage equal to 25% of the initial HP.'
+final pork stomping: Cancels Stances on one enemy and inflicts damage equal to 700% of Attack.
+final prominence: 'Inflicts Immolation damage equal to 500% of Attack on all enemies. When the hero dies, removes all effects,
+  fully depletes the Ultimate Move Gauge, then applies 1 Final Flame. (Survival from other Unique abilities or skills does
+  not apply when dying.) Immolation: 0.2% additional damage for every percent of the hero''s remaining HP. 0.2% additional
+  damage for every percent of the hero''s diminished HP. Final Flame: The hero''s HP is fixed at 1, becoming immune to all
+  effects. 1 Final Flame is removed when taking damage during the enemy''s turn or when the hero uses a skill, and the hero
+  dies after all Final Flame effects are removed.'
+fire bomb: 'Inflicts Blowout damage equal to 150% of Attack on all enemies, then causes an Explosion after 1 turn. Blowout:
+  2x Crit Chance Increase. Crit Damage +60% for every 1 orb in the target''s Ultimate Move Gauge when using the skill. (Limit
+  5 orbs) Explosion: Additional damage equal to 200% of damage dealt after a certain number of turns.'
+fire breath: 'Inflicts Amplify damage equal to 180% of Attack on one enemy. Amplify: Damage dealt +30% per active Buff on
+  self.'
+fire release: 'Inflicts Weak Point damage equal to 140% of Attack on all enemies. Weak Point: 3x damage against Debuffed enemies.'
+fire slash: 'Inflicts Weak Point damage equal to 120% of Attack on one enemy. Weak Point: 3x damage against Debuffed enemies.'
+fire storm: 'Inflicts Spike damage equal to 160% of Attack on one enemy. Spike: 2x Crit Damage Increase.'
+fire the catapult!: Inflicts damage equal to 150% of Attack on all enemies.
+fire tornado: 'Inflicts Weak Point damage equal to 210% of Attack on all enemies. Weak Point: 3x damage against Debuffed enemies.'
+fireball: Inflicts damage equal to 180% of Attack on one enemy. Prevents Ultimate Move Gauge(s) from filling up for 1 turn(s).
+flame ball: 'Inflicts Weak Point damage equal to 120% of Attack on one enemy. Weak Point: 3x damage against Debuffed enemies.'
+flame focus: 'Inflicts damage equal to 80% of Attack on all enemies. Ignites for 3 turn(s). Ignite: Damage taken by target(s)
+  +10% (Can be stacked).'
+flame grinder: 'Inflicts Cataclysm damage equal to 100% of Attack on all enemies. Cataclysm: +50% Attack and 2x Crit Damage
+  Increase when using skill.'
+flame sonata: 'Grants allies Extraordinary Luck for 1 turn, then inflicts Scorching Strike damage equal to 400% of the hero''s
+  Attack on all enemies. Extraordinary Luck: 60% Damage Suppression, Stat Decrease Immunity. Scorching Strike: Attack +250%
+  while using this skill.'
+flame wave: 'Inflicts damage equal to 180% of Attack on one enemy. Ignites for 3 turn(s). Ignite: Damage taken by target(s)
+  +10% (Can be stacked).'
+flash: Inflicts damage equal to 135% of Attack on all enemies.
+flash arrow: Inflicts damage equal to 120% of Attack on all enemies.
+flash attack: 'Inflicts Weak Point damage equal to 120% of Attack on one enemy. Weak Point: 3x damage against Debuffed enemies.'
+flash lightning: 'Inflicts Shatter damage equal to 120% of Attack on all enemies. Shatter: Ignores Resistance.'
+flash over: Applies 1 Magic Orb on self, increasing damage dealt by 30% for each Magic Orb, then inflicts damage equal to
+  350% of Attack on all enemies.
+flash strike: 'Inflicts damage equal to 140% of Attack on one enemy. Makes target(s) Bleed for 2 turn(s). Bleed: Additional
+  damage equal to 90% of damage dealt at the end of every turn.'
+flawless unity: 'Inflicts Colossal Mountain damage equal to 200% of Attack on one enemy. Decreases enemies'' Ultimate Move
+  Gauges by 1 orb if the hero duo has 4 orbs or more. Colossal Mountain: 2x Pierce Rate Increase. Inflicts additional damage
+  equal to 20% of the hero''s remaining HP. Applies Petrify on the target for 1 turn when using 1 Wrath of the Fairy King
+  effect to deal damage.'
+fleeting claw: 'Increases the hero''s basic stats by 3%, then inflicts Amplify damage equal to 180% of Attack on one enemy.
+  Amplify: Damage dealt +30% per active Buff on self.'
+flickering flame: Removes Debuffs from all allies and increases all stats by 15% for 2 turn(s).
+floral butterfly piercing technique: Decreases Defense-related stats of one enemy by 20% for 2 turns and inflicts damage equal
+  to 200% of Attack.
+flower blast: Inflicts damage equal to 120% of Attack on all enemies and disables Buff Skills for 1 turn(s).
+flowery breeze: Increases Attack-related stats of all allies by 15% for 2 turn(s).
+fog wave: Inflicts damage equal to 132% of Attack on one enemy and depletes 1 Ultimate Move Gauge orb(s).
+fox hunt: 'Inflicts damage equal to 350% of Attack on one enemy. Extorts 50% Attack and Defense for 2 turn(s). Extort: Decreases
+  the target''s stats and increases own stats by the same amount.'
+free shooter: 'Inflicts Pierce damage equal to 220% of Attack on one enemy and heals the ally with the lowest HP percentage
+  by 80% of the damage dealt. Pierce: 3x Pierce Rate Increase.'
+freeze coffin: Disables Ultimate Move(s) of one enemy for 1 turn(s).
+freezing field: 'Freezes one enemy for 1 turn(s). Freeze: Incapacitates target. Effect is removed when target is attacked.'
+frenzy: 'Inflicts Flood damage equal to 200% of Attack on one enemy. Flood: 0.8% additional damage for every percent of remaining
+  HP on self.'
+friends: Inflicts damage equal to 220% of Attack on one enemy.
+frisbee: 'Inflicts Pierce damage equal to 200% of Attack on one enemy. Pierce: 3x Pierce Rate Increase.'
+frost blast: Decreases HP-related stats of all enemies by 30% for 2 turns and inflicts damage equal to 400% of Attack.
+frost slash: 'Inflicts Frost Current damage equal to 190% of Attack on all enemies. Frost Current: 3x Crit Chance Increase.
+  Damage dealt +70% for each Cold Snap on the hero. Attack-related stats +50% when attacking an enemy afflicted with Frostbite
+  or Freeze.'
+frozen factor: 'Freezes one enemy for 1 turn(s). Freeze: Incapacitates target. Effect is removed when target is attacked.'
+fruit shower: Cancels Stances on one enemy and inflicts damage equal to 180% of Attack.
+full bloom: 'Reflects 60% of damage taken for 2 turn(s). Reflect: Returns a portion of damage taken back to the attacker.'
+full counter: 'Assumes a Stance for 1 turn(s) which Taunts enemies and inflicts Quell damage equal to 240% of Attack when
+  taking damage. Taunt: Directs all attacks to self. Quell: Damage dealt +50% per active Stance on self.'
+full potential: Increases Attack of all allies by 30% for 2 turn(s).
+full potion: Heals HP of one ally equal to 300% of Attack.
+full power dropkick: 'Inflicts Charge damage equal to 700% of Attack on one enemy. Charge: Ignores Defense.'
+full unleash: 'Inflicts Secret Technique damage equal to 300% of Attack on all enemies and deals damage with attribute advantage
+  regardless of attribute. Secret Technique: +20% additional damage per hero skill.'
+fura: Inflicts damage equal to 200% of Attack on one enemy.
+furious thorn: Increases the basic stats of one ally by 20% for 2 turn(s).
+fusion reactor: 'Inflicts Elemental Explosion damage equal to 130% of Attack on all enemies. Elemental Explosion: +40% damage
+  dealt for every elemental effect on the target.'
+gale weasel: Inflicts damage equal to 220% of Attack on one enemy.
+gatling jack: Inflicts damage equal to 560% of Attack on one enemy, decreases skill ranks, then depletes the Ultimate Move
+  Gauge by the number of skills that had ranks decreased.
+genesis: Inflicts damage equal to 120% of Attack on all enemies.
+genocide cutter: Inflicts damage equal to 180% of Attack on one enemy. Decreases Attack-related stats by 20% for 1 turn(s).
+gentlemanly combo: 'Inflicts Pierce damage equal to 200% of Attack on one enemy and steals 1 orb(s) from their Ultimate Move
+  Gauge. Pierce: 3x Pierce Rate Increase.'
+geokinesis: Inflicts damage equal to 220% of Attack on one enemy.
+get out of my way or die: 'Inflicts damage equal to 140% of Attack on one enemy. Makes target(s) Bleed for 2 turn(s). Bleed:
+  Additional damage equal to 90% of damage dealt at the end of every turn.'
+get the bad guy!: 'Inflicts Secret Technique damage equal to 300% of Attack on all enemies and deals damage with attribute
+  advantage regardless of attribute. Secret Technique: +20% additional damage per hero skill.'
+ghost chase: Inflicts damage equal to 160% of Attack on one enemy and blocks all skill effects including those of Ultimate
+  Moves for 1 turn(s). (Excludes Stance and Recovery Skills)
+giantize: Increases all allies' damage dealt by 7% for 2 turns and inflicts damage equal to 500% of Attack on all enemies.
+gift: Applies an effect on the hero which restores 20% of diminished HP at the start of the allies' turn for 2 turn(s), and
+  increases Max HP by 10%.
+gift for you: Inflicts damage equal to 240% of Attack on one enemy.
+gift shower: Inflicts damage equal to 120% of Attack on all enemies.
+giga fall: 'Inflicts Charge damage equal to 455% of Attack on all enemies. Charge: Ignores Defense.'
+giga pick: 'Inflicts Detonate damage equal to 160% of Attack on one enemy. Detonate: 20% additional damage per orb in the
+  target''s Ultimate Move Gauge.'
+gigantic pressure: 'Inflicts Charge damage equal to 700% of Attack on one enemy. Charge: Ignores Defense.'
+glacial blast: Inflicts damage equal to 360% of Attack on all enemies and restores the HP of all allies by 30% of damage dealt.
+gluttony: 'Cancels Buffs and Stances on one enemy, inflicts damage equal to 490% of Attack, then Stuns for 1 turn(s). Stun:
+  Prohibits all actions.'
+god of thunder: 'Inflicts Thunderbolt damage equal to 500% of Attack on all enemies. When their HP fall to 15% or less in
+  battle, the hero gains Thundergod''s Protection for 1 turn. (Limit once) Thundergod''s Protection: Allies'' damage taken
+  -30%. The hero becomes immune to all damage.'
+god requiem: Increases all stats of allies by 10% for 2 turns, then inflicts damage equal to 450% of Attack on all enemies.
+goddess bless: Creates a barrier around all allies equal to 150% of Attack for 1 turn(s). Takes damage only from basic stats
+  when attacked. (Excludes Rupture)
+goddess holy ark: Inflicts damage equal to 350% of Attack on all enemies and creates a barrier equal to 20% of the damage.
+goddess pattern: 'Recovers HP of all allies equal to 30% of Max HP. Reflects 40% of damage taken over 2 turn(s), then heals
+  for half of the damage reflected. Reflect: Returns a portion of damage taken back to the attacker.'
+godspeed bone cutter: 'Inflicts Sever damage equal to 180% of Attack on one enemy. Sever: 3x Crit Chance Increase.'
+godspeed ten flashes: 'Inflicts damage equal to 455% of Attack on one enemy. Makes target(s) Bleed for 2 turn(s). Bleed: Additional
+  damage equal to 90% of damage dealt at the end of every turn.'
+golden allure: 'Inflicts Power Strike damage equal to 200% of Attack on one enemy. Power Strike: Additional damage equal to
+  enemy Resistance.'
+golden cataclysm: 'Inflicts Brilliance damage equal to 180% of Attack on all enemies. Brilliance: 3x Crit Chance and 3x Crit
+  Damage Increase. When used while the hero has Brilliance, it cancels the enemy''s Stances and they are Stunned for 1 turn(s).'
+golden needle of mystery island: 'Inflicts Light Spear damage equal to 150% of Attack on one enemy. Light Spear: 3x Pierce
+  Rate Increase. Hero Attack +40% when using a skill.'
+gorgon fist: 'Increases all stats of the hero by 5% for 2 turns, applies Shinsu Barrier on allies for 2 turns, then inflicts
+  damage equal to 350% of Attack on all enemies. Shinsu Barrier: Creates a barrier equal to 300% of the hero''s initial Attack,
+  damage taken -80%.'
+gradient slash: Inflicts damage equal to 180% of Defense on one enemy and depletes 1 Ultimate Move Gauge orb(s).
+gravity smash: 'Inflicts Pierce damage equal to 100% of Attack on all enemies. Pierce: 3x Pierce Rate Increase.'
+gravity x10: Decreases Defense of all enemies by 30% for 3 turn(s).
+grazioso: 'Inflicts Shatter damage equal to 180% of Attack on one enemy. Shatter: Ignores Resistance.'
+ground detection: Increases all allies' damage dealt by 7% for 2 turns and inflicts damage equal to 630% of Attack on one
+  enemy.
+ground gladius: 'Inflicts Rupture damage equal to 100% of Attack on all enemies. Rupture: 2x damage against Buffed enemies.'
+ground strike: 'Inflicts Shatter damage equal to 180% of Attack on one enemy. Shatter: Ignores Resistance.'
+grudge blade: Cancels Stances on one enemy and inflicts damage equal to 180% of Attack.
+guardian attack: Inflicts damage equal to 560% of Attack on one enemy. Decreases Defense-related stats by 40% for 2 turn(s).
+guardian punch: 'Inflicts damage equal to 180% of Attack on one enemy and Releases 80%. Release: Deals additional damage using
+  remaining damage in Shock, Poison, and Bleed Debuffs.'
+guardian slash: 'Inflicts damage equal to 120% of Attack on all enemies. Extorts 10% Attack and Defense for 2 turn(s). Extort:
+  Decreases the target''s stats and increases own stats by the same amount.'
+guillotine: Increases basic stats by 50% for 3 turns and inflicts damage equal to 350% of Attack on all enemies.
+hailing arrows: 'Inflicts Weak Point damage equal to 90% of Attack on all enemies. Weak Point: 3x damage against Debuffed
+  enemies.'
+halloween darkness: Inflicts damage equal to 120% of Attack on all enemies and depletes 1 Ultimate Move Gauge orb(s) at the
+  end of the enemy's turn for 1 turn(s).
+happy holidays: 'Inflicts Co-destruction damage equal to 187% of Attack on one enemy, then removes 1 orb(s) from the Ultimate
+  Move Gauge. Co-destruction: 20% increased damage per Debuff on the target.'
+hawk night rush: Inflicts damage equal to 220% of Attack on one enemy.
+healing fox: 'Removes Debuffs from all allies, heals them for 150% of Attack, then Rejuvenates for 2 turn(s). Rejuvenate:
+  Additional Recovery equal to 60% of recovered HP at the beginning of the turn.'
+healing grace: Heals HP of all allies equal to 200% of Attack.
+healing mist: Heals HP of all allies equal to 200% of Attack.
+healing zone: 'Removes Debuffs from all allies, heals them for 150% of Attack, then Rejuvenates for 2 turn(s). Rejuvenate:
+  Additional Recovery equal to 60% of recovered HP at the beginning of the turn.'
+heart crusher: 'Inflicts Detonate damage equal to 9% of the hero''s Max HP on all enemies. Detonate: 20% additional damage
+  per orb in the target''s Ultimate Move Gauge.'
+heart grip: 'Inflicts Verdict damage equal to 650% of Attack on one enemy. If the hero is participating in battle in PVP,
+  each Deathbrand on an enemy decreases that enemy''s damage dealt and the final damage of that enemy''s all-target Ultimate
+  Move by 2%. Verdict: +50% damage dealt for every Deathbrand on the target.'
+heavenfall: 'Inflicts Heaven''s Will damage equal to 180% of Attack on all enemies. Heaven''s Will: 3x Crit Chance and 2x
+  Crit Damage Increase. Hero''s Attack +30% for each hero on the battlefield when using skill.'
+heavenly demon slash: 'Inflicts Obliteration damage equal to 200% of Attack on one enemy. Obliteration: 3x Pierce Rate Increase
+  and ignores enemy Defense. Upon skill use, Crit Chance +50% per each stack of Dragon Power on self. Damage dealt increases
+  by 30% for each stack of Dragon Power on self.'
+heavenly strike: Inflicts damage equal to 150% of Attack on all enemies.
+heavenly taste: Increases damage dealt of all allies by 30% for 2 turn(s).
+heavy assault: Inflicts damage equal to 200% of Attack on one enemy.
+heavy hammer: 'Cancels Buffs and Stances on one enemy, inflicts damage equal to 490% of Attack, then Stuns for 1 turn(s).
+  Stun: Prohibits all actions.'
+heavy impact: Removes Buffs from one enemy and inflicts damage equal to 220% of Attack.
+heavy metal: 'Taunts enemies, increases HP-related stats by 15%, and becomes immune to Petrify for 1 turn(s). Taunt: Directs
+  all attacks to self.'
+hectic blow: Inflicts damage equal to 560% of Attack on one enemy. Decreases HP-related stats by 40% for 2 turn(s).
+heightening fear: Inflicts damage equal to 120% of Attack on all enemies.
+hell blaze wave: 'Inflicts damage equal to 560% of Attack on one enemy and Lifesteals 100% of the damage. Lifesteal: Heals
+  for a portion of the damage dealt.'
+hell buster: 'Inflicts Weak Point damage equal to 385% of Attack on one enemy. Weak Point: 3x damage against Debuffed enemies.'
+hell flare: Inflicts damage equal to 560% of Attack on one enemy, decreases skill ranks, then depletes the Ultimate Move Gauge
+  by the number of skills that had ranks decreased.
+hell's phoenix: 'Removes Stance(s) from all enemies and inflicts damage equal to 280% of Attack. Applies 2 Ignite effects
+  for 4 turn(s). Ignite: Damage taken by target(s) +10% (Can be stacked).'
+hellfire: 'Inflicts damage equal to 180% of Attack on one enemy. Ignites for 3 turn(s). Ignite: Damage taken by target(s)
+  +10% (Can be stacked).'
+hello, mr. snowman: Cancels Stances on one enemy and inflicts damage equal to 180% of Attack.
+hemokinesis: 'Inflicts damage equal to 110% of Attack on all enemies. Infects for 1 turn(s). Infect: Restricts Recovery-related
+  stats.'
+hero laser: 'Inflicts Spike damage equal to 160% of Attack on one enemy. Spike: 2x Crit Damage Increase.'
+hind leg: 'Inflicts Power Strike damage equal to 220% of Attack on one enemy and Explodes after 1 turn(s). Power Strike: Additional
+  damage equal to enemy Resistance. Explosion: Additional damage equal to 100% of damage dealt after a certain number of turns.'
+holly jolly glow: Removes Debuffs from all allies.
+holy beam: 'Inflicts Rupture damage equal to 100% of Attack on all enemies. Rupture: 2x damage against Buffed enemies.'
+holy bell: 'Heals HP of all allies equal to 130% of Attack. Rejuvenates for 1 turn(s). Rejuvenate: Additional Recovery equal
+  to 60% of recovered HP at the start of every turn.'
+holy blade: 'Inflicts Charge damage equal to 143% of Attack on all enemies and decreases their Crit Resistance by 20% for
+  1 turn(s). Charge: Ignores Defense.'
+holy light: For 1 turn(s), increases Attack of all allies by 15% and, if taking damage when attacked, applies an effect which
+  decreases damage dealt by all enemies by 5% for 1 turn. (Can be stacked up to 3 times)
+holy strike: Inflicts damage equal to 120% of Attack on one enemy and depletes 1 Ultimate Move Gauge orb(s).
+holy sword: 'Cancels Buffs and Stances on one enemy, inflicts damage equal to 490% of Attack, then Stuns for 1 turn(s). Stun:
+  Prohibits all actions.'
+hook sink: 'Inflicts Pierce damage equal to 100% of Attack on all enemies. Pierce: 3x Pierce Rate Increase.'
+horrible blizzard: Inflicts damage equal to 180% of Attack on all enemies.
+horrific vengeance: 'Increases own Crit Damage by 100% for 2 turns, then inflicts Sever damage equal to 630% of Attack on
+  one enemy. Sever: 3x Crit Chance Increase.'
+hover strike: 'Inflicts Pierce damage equal to 100% of Attack on all enemies. Pierce: 3x Pierce Rate Increase.'
+how interesting: 'Inflicts damage equal to 110% of Attack on all enemies. Infects for 1 turn(s). Infect: Restricts Recovery-related
+  stats.'
+hunter wisp: Cancels Buffs and Stances on all enemies and inflicts damage equal to 280% of Attack.
+hunter's harpoon: 'Cancels Buffs and Stances on one enemy, inflicts damage equal to 490% of Attack, then Stuns for 1 turn(s).
+  Stun: Prohibits all actions.'
+hunting beast: Decreases the hero's Max HP by 2% once for 3 turns, then inflicts damage equal to 250% of Attack on one enemy.
+  (Stacks 5 times)
+hunting master: Increases all allies' damage dealt by 7% for 2 turns and inflicts damage equal to 400% of Attack on all enemies.
+hydrokinesis: Inflicts damage equal to 180% of Attack on one enemy. Prevents Ultimate Move Gauge(s) from filling up for 1
+  turn(s).
+hyper gravity: Decreases Defense-related stats of all enemies by 40% for 3 turn(s).
+hypersonic assault: 'Inflicts Consume damage equal to 200% of Attack on one enemy. Consume: 3x Pierce Rate Increase. 2x Crit
+  Damage Increase.'
+i am atomic: 'Applies Fluidity on the hero for 2 turns, then inflicts Shadowrend damage equal to 350% of Attack on all enemies.
+  Shadowrend: 2x Crit Chance Increase. +20% damage dealt for each Magic Control effect on enemies.'
+i can do it myself: 'Inflicts Despair damage equal to 130% of Attack on all enemies. Despair: Recovers 15% of diminished HP
+  upon successful critical strike.'
+i challenge you: 'Decreases the hero''s damage taken by 50% for 2 turns, then inflicts Dispersion damage on one enemy. Dispersion:
+  The skill results in a miss. (Ignores Block effect)'
+i hated you: 'Inflicts Crush damage equal to 120% of Attack on one enemy. Crush: 2x damage and 2x Crit Damage Increase against
+  Debuffed enemies.'
+i will be the one: Cancels Buffs and Stances on one enemy and inflicts damage equal to 630% of Attack.
+i will exterminate them: 'Inflicts Spike damage equal to 160% of Attack on one enemy. Spike: 2x Crit Damage Increase.'
+i will exterminate them all!: Inflicts damage equal to 240% of Attack on one enemy.
+i will succeed!: Increases basic stats by 20% for 2 turn(s).
+i will win: 'Inflicts Secret Technique damage equal to 120% of Attack on all enemies. Secret Technique: +20% additional damage
+  per hero skill.'
+i will wipe you out!: 'Inflicts Shatter damage equal to 630% of Attack on one enemy. Shatter: Ignores Resistance.'
+i'll keep moving forward: Decreases Defense-related stats of one enemy by 20% for 2 turns and inflicts damage equal to 200%
+  of Attack.
+i'll let you know, i suppose: 'Inflicts Despair damage equal to 130% of Attack on all enemies. Despair: Recovers 15% of diminished
+  HP upon successful critical strike.'
+i'll put an end to this: 'Increases the hero''s Crit Chance by 15% for 2 turns and inflicts Spike damage equal to 300% of
+  Attack on all enemies. Spike: 2x Crit Damage Increase.'
+i'll take you down: 'Inflicts Sure Kill damage equal to 180% of Attack on one enemy. Sure Kill: 2x Pierce Rate Increase. 2x
+  Crit Damage Increase when attacking enemies with Mark of Lethality.'
+i'm a bad witch: Increases the basic stats of allies by 20% and Unknown race allies' damage dealt by 35% for 2 turns, then
+  inflicts damage equal to 400% of Attack on all enemies.
+ice blade: Inflicts damage equal to 220% of Attack on one enemy.
+ice wave: 'Inflicts Detonate damage equal to 160% of Attack on one enemy. Detonate: 20% additional damage per orb in the target''s
+  Ultimate Move Gauge.'
+icicle break: 'Inflicts Pierce damage equal to 100% of Attack on all enemies. Pierce: 3x Pierce Rate Increase.'
+icicle dagger: Removes Buffs from one enemy and inflicts damage equal to 220% of Attack.
+igris: 'Applies Infect for 1 turn and inflicts Weak Point damage equal to 140% of Attack on all enemies. Infect: Restricts
+  Recovery-related stats. Weak Point: 3x damage against Debuffed enemies.'
+illusion sword: 'Inflicts Sever damage equal to 170% of Defense on one enemy. Sever: 3x Crit Chance Increase.'
+immature slash: 'Inflicts Pierce damage equal to 132% of Attack on one enemy and removes 1 orb(s) from their Ultimate Move
+  Gauge. Pierce: 3x Pierce Rate Increase.'
+impact shower: 'Inflicts Charge damage equal to 130% of Attack on all enemies. Charge: Ignores Defense.'
+imperial sword art type 3: Removes Buffs from one enemy and inflicts damage equal to 220% of Attack.
+impulse: 'Inflicts Doom damage equal to 120% of Attack on all enemies. Doom: 2x Crit Chance +20% damage dealt for every Seed
+  of the End on enemies.'
+incense of purity & light jade of love: 'Applies Mark of Retribution on all enemies for 3 turns, then inflicts Smite damage
+  equal to 500% of Attack. Mark of Retribution: Attack-related stats -20% Smite: 2x Crit Chance Increase. 2x Crit Damage Increase.
+  Damage dealt +150% against enemies affected by Mark of Retribution.'
+increase recovery: Removes Debuffs from all allies.
+increasing drops: Decreases HP-related stats of one enemy by 20% for 1 turn and inflicts damage equal to 200% of Attack.
+incursion: 'Decreases all enemies'' Defense-related stats by 10% for 2 turns, inflicts damage equal to 500% of Attack and
+  applies a Lv. 1 Blackout Effect on all enemies for 2 turns. Lv. 1 Blackout Effect: Disables Buffs and Debuffs.'
+indicate abyss: Inflicts damage equal to 120% of Attack on one enemy and depletes 1 Ultimate Move Gauge orb(s).
+indigo flower: 'Inflicts Rupture damage equal to 180% of Attack on one enemy. Rupture: 2x damage against Buffed enemies.'
+inferno: 'Inflicts Inferno damage equal to 100% of Attack on all enemies. Inferno: 3x damage against Debuffed enemies. Damage
+  dealt increases by +50% on enemies affected by Mind Control.'
+ingest: 'Inflicts damage equal to 180% of Attack on one enemy and Lifesteals 40% of the damage. Lifesteal: Heals for a portion
+  of the damage dealt.'
+injection: Increases basic stats by 20% for 2 turn(s).
+interstellar intersection: Removes Debuffs from and increases skill ranks of one ally.
+into the chaos: 'Applies Power of Chaos on all allies for 3 turns, inflicts Sever damage equal to 500% of Attack on all enemies,
+  then applies 1 Call of Chaos effect on the hero. If the hero is participating in battle and has a Power of Chaos effect,
+  the hero''s damage dealt increases by 40% and damage taken decreases by 30%. Power of Chaos: All stats +5%, Ultimate Move
+  damage taken -20%. Sever: 3x Crit Chance Increase.'
+invasion arrow: Increases Skill Ranks of one ally.
+invisible blade: 'Decreases Crit Resistance of all enemies by 20% for 1 turn, then inflicts Despair damage equal to 143% of
+  Attack. Despair: Recovers 15% of diminished HP upon successful critical strike.'
+iron maiden: 'Applies a 5% All Stat Decrease for 2 turns on one enemy, then inflicts Wrath damage equal to 480% of Defense.
+  Wrath: +5% damage dealt for every Mark of Wrath.'
+iron slash: 'Inflicts Sever damage equal to 180% of Attack on one enemy. Sever: 3x Crit Chance Increase.'
+it's simple magic: 'Inflicts Sever damage equal to 120% of Attack on all enemies. Sever: 3x Crit Chance Increase.'
+jack light: For 1 turn(s), Buff Skills of all enemies are disabled and skills which are Rank 2 or higher are disabled. Decreases
+  skill ranks, and decreases Attack by 20%, at the end of the enemy's turn.
+jack-o'-lantern: Inflicts damage equal to 120% of Attack on all enemies.
+jonah's ordeal: 'Inflicts damage equal to 30% of the hero''s Max HP on all enemies, then applies Resurrection on allies for
+  1 turn. Resurrection: Revives with 5% of Max HP when dying. (Effect is removed after reviving, does not revive when dying
+  from reflected damage)'
+kick & shoot: Inflicts damage equal to 200% of Attack on one enemy.
+kill shot: 'Removes Buffs from one enemy and inflicts Flying Sword damage equal to 200% of Attack. Flying Sword: 5x Pierce
+  Rate Increase. Attack-related stats +20% for each Blade on the hero.'
+killer beat: Inflicts damage equal to 120% of Attack on one enemy and depletes 1 Ultimate Move Gauge orb(s).
+killer iceberg: 'Inflicts damage equal to 400% of Attack on one enemy and Freezes them for 1 turn(s). Freeze: Incapacitates
+  target. Effect is removed when target is attacked.'
+killer mines: Removes Buffs from one enemy and inflicts damage equal to 220% of Attack.
+killing storm: 'Decreases HP-related stats of all enemies by 10% for 2 turns, then inflicts Weak Point damage equal to 140%
+  of Attack. Weak Point: 3x damage against Debuffed enemies.'
+'kin 1211 shiki: yaotome': Inflicts damage equal to 630% of Attack on one enemy and depletes 3 Ultimate Move Gauge orb(s).
+kindle mind: Removes Debuffs from all allies. Increases Defense-related stats by 30% for 2 turn(s).
+kinetic & potential: 'Inflicts damage equal to 160% of Attack on one enemy. Shocks for 4 turn(s). Shock: Additional damage
+  equal to 45% of damage dealt at the end of every turn.'
+kiss of thorns: 'The hero gains an effect which increases their damage dealt by 80% for 3 turns, then inflicts Blood Clot
+  damage equal to 350% of Attack on all enemies. Blood Clot: Damage dealt +1% per 1% of the target''s remaining HP. Inflicts
+  additional damage equal to 80% of the accumulated Blood Pact value on the target.'
+knife wind: Inflicts damage equal to 180% of Attack on one enemy, disables Ultimate Moves for 1 turn(s), then depletes 1 Ultimate
+  Move Gauge orb(s) at the end of the enemy's turn.
+knight exemplar: Removes Debuffs from all allies, then grants Debuff Immunity and 30% HP-related Stats Increase for 3 turn(s).
+knight in slime armor: 'Applies Shadow on all allies and increases the hero''s Crit Chance by 150% for 3 turns, then inflicts
+  Spike damage equal to 600% of Attack on one enemy. Shadow: Pierce Rate +80%, damage taken -40%. Spike: 2x Crit Damage Increase.'
+kranos: 'Applies 1 Rose Shinsu effect on one enemy for 4 turns, then inflicts Cleave damage, which does not activate Crit
+  Damage, equal to 500% of Attack. Cleave: Additional damage equal to 75% of (Crit Damage - 100%).'
+la marea: 'Inflicts Pierce damage equal to 180% of Attack on one enemy and removes 1 orb(s) from their Ultimate Move Gauge.
+  Pierce: 3x Pierce Rate Increase.'
+la sed: Increases Attack-related stats of all allies by 15% for 2 turn(s).
+la sylphide: Inflicts damage equal to 180% of Attack on one enemy. Decreases Attack-related stats by 20% for 1 turn(s).
+la traviata: 'Inflicts damage equal to 165% of Attack on all enemies and Infects for 1 turn. Infect: Restricts Recovery-related
+  stats.'
+last attack: 'Inflicts Shatter damage equal to 630% of Attack on one enemy. Shatter: Ignores Resistance.'
+leaf slash: 'Inflicts Amplify damage equal to 630% of Attack on one enemy. Amplify: Damage dealt +30% per active Buff on self.'
+leap shock: Inflicts damage equal to 150% of Attack on all enemies.
+leave none alive: Inflicts damage equal to 180% of Attack on all enemies.
+lecalicus: 'Inflicts Spike damage equal to 100% of Attack on all enemies. Spike: 2x Crit Damage Increase.'
+legendary: 'Inflicts Sever damage equal to 630% of Attack on one enemy. Sever: 3x Crit Chance Increase.'
+let it snow: Removes Debuffs from all allies and increases all stats by 15% for 2 turn(s).
+let there be light: Inflicts damage equal to 200% of Attack on one enemy.
+let's enjoy this!: 'Increases the hero''s Pierce Rate by 15% for 2 turns and inflicts Pierce damage equal to 400% of Attack
+  on all enemies. Pierce: 3x Pierce Rate Increase.'
+leviathan: Removes Buffs from all enemies and inflicts damage equal to 350% of Attack.
+life authority: Heals HP of all allies equal to 420% of Attack and fills the Ultimate Move Gauge by 2 orb(s).
+light barrage: 'Gains 3 Fragments of Glory, then inflicts Lightspeed damage equal to 250% of Attack on all enemies. Lightspeed:
+  2x Crit Chance Increase. Damage dealt +40% for each Fragment of Glory on the hero. 2x Crit Damage Increase when the hero
+  uses a skill while Blade of Glory is active.'
+light of judgment: 'Inflicts Pierce damage equal to 200% of Attack on one enemy. Pierce: 3x Pierce Rate Increase.'
+light pillar: Inflicts damage equal to 220% of Attack on one enemy. Disables Recovery Skills for 1 turn(s).
+light slash: Inflicts damage equal to 220% of Attack on one enemy.
+lightning: 'Inflicts Rupture damage equal to 100% of Attack on all enemies. Rupture: 2x damage against Buffed enemies.'
+lightning beasts chase: 'Inflicts damage equal to 112% of Attack on all enemies. Shocks for 4 turn(s). Shock: Additional damage
+  equal to 45% of damage dealt at the end of every turn.'
+lightning blade: Inflicts damage equal to 120% of Attack on one enemy and depletes 1 Ultimate Move Gauge orb(s).
+lightning field: 'Inflicts damage equal to 86% of Attack on all enemies. Shocks for 4 turn(s). Shock: Additional damage equal
+  to 45% of damage dealt at the end of every turn.'
+lightning god sword: 'Inflicts Charge damage equal to 200% of Attack on one enemy. Charge: Ignores Defense.'
+lightning king decapitation: 'Inflicts damage equal to 560% of Attack on one enemy. Shocks for 4 turn(s). Shock: Additional
+  damage equal to 45% of damage dealt at the end of every turn.'
+lightning king iron hammer: 'Inflicts damage equal to 160% of Attack on one enemy. Shocks for 4 turn(s). Shock: Additional
+  damage equal to 45% of damage dealt at the end of every turn.'
+lightning king sword: 'Inflicts Rupture damage equal to 630% of Attack on one enemy. Rupture: 2x damage against Buffed enemies.'
+lightning king's heavy armor: 'Assumes a Stance which Taunts enemies and decreases damage taken by 40% when attacked for 1
+  turn(s). Taunt: Directs all attacks to self.'
+lightning power: Increases Attack of all allies by 30% for 2 turn(s).
+lightning reaver: 'Inflicts Flash Cut damage equal to 200% of Attack on one enemy. Flash Cut: 3x Pierce Rate Increase. Attack
+  +70% for each Sword of Penetration effect on the hero when using skills.'
+lightning shift: 'Inflicts Lightning Strike damage equal to 200% of Attack on one enemy. Lightning Strike: 2x Crit Chance
+  Increase. Ignores 80% of the enemy''s Crit Defense on skill use.'
+lively combo: 'Inflicts Rush damage equal to 165% of Attack on one enemy. Rush: 2x Crit Chance Increase. +100% damage dealt
+  against enemies affected by Focused Attack.'
+living graveyard: 'Inflicts Pierce damage equal to 100% of Attack on all enemies. Pierce: 3x Pierce Rate Increase.'
+long shield: 'Assumes a Stance which Taunts enemies and decreases damage taken by 30% when attacked for 1 turn(s). Taunt:
+  Directs all attacks to self.'
+look closely: Increases basic stats by 50% for 3 turns and inflicts damage equal to 420% of Attack on one enemy.
+love drive: Inflicts damage equal to 360% of Attack on all enemies. Prevents Ultimate Move Gauge(s) from filling up for 1
+  turn(s).
+lovely assistaff barrage: 'Inflicts Suppression damage equal to 200% of Attack on one enemy. Suppression: 3x Pierce Rate and
+  3x Crit Damage Increase.'
+lovely assistaff resonance: 'Increases allies'' basic stats by 30% for 3 turns, then inflicts Suppression damage equal to
+  450% of Attack on one enemy. Suppression: 3x Pierce Rate and 3x Crit Damage Increase.'
+lovely atmosphere: Creates a barrier around all allies equal to 150% of Attack for 2 turn(s).
+lovely blossom: 'Inflicts Weak Point damage equal to 120% of Attack on one enemy. Weak Point: 3x damage against Debuffed enemies.'
+luminous impact: Inflicts damage equal to 240% of Attack on one enemy.
+lying hand: Heals HP of all allies equal to 200% of Attack.
+macho chief: 'Inflicts Weak Point damage equal to 385% of Attack on one enemy. Weak Point: 3x damage against Debuffed enemies.'
+magic explosion: 'Inflicts Sever damage equal to 420% of Attack on all enemies. Sever: 3x Crit Chance Increase.'
+magic hat: Inflicts damage equal to 150% of Attack on all enemies.
+magic slap: 'Inflicts Pierce damage equal to 150% of Attack on all enemies and heals allies by 30% of the damage dealt. Pierce:
+  3x Pierce Rate Increase.'
+magma break: Removes Buffs from one enemy and inflicts damage equal to 220% of Attack.
+magma swing: 'Inflicts damage equal to 100% of Attack on all enemies and Explodes after 2 turn(s). Explosion: Additional damage
+  equal to 100% of damage dealt after a certain number of turns.'
+mana ballista: 'Inflicts Power Strike damage equal to 209% of Attack on one enemy. Power Strike: Additional damage equal to
+  enemy Resistance.'
+mana collection: 'Inflicts damage equal to 180% of Attack on one enemy and Lifesteals 40% of the damage. Lifesteal: Heals
+  for a portion of the damage dealt.'
+mana drain: Inflicts damage equal to 160% of Attack on one enemy and decreases skill ranks.
+maraca smash: Inflicts damage equal to 120% of Attack on all enemies.
+marriage! blood-stained!: Inflicts damage equal to 180% of Attack on one enemy. Decreases Crit Chance by 30% for 1 turn(s).
+marriage! desire!: 'Applies 1 Solidify effect on one ally. If there are Debuffs, they are removed and 1 additional Solidify
+  effect is applied. Solidify: +30% Resistance for 3 turns (Can be stacked)'
+marriage! possible!: Inflicts damage equal to 490% of Attack on one enemy. Disables Ultimate Moves for 2 turn(s).
+master of games: 'Gains Joker for 2 turns, then inflicts damage equal to 8% of the hero''s Max HP on all enemies, then Deletes
+  all enemy skills. Delete: Randomly removes skills from the target. (Excluding Ultimate Moves) (Deletes Ultimate Moves if
+  there is no skill to remove)'
+masukunda: Decreases Defense-related stats of all enemies by 20% for 2 turn(s).
+max infinity: 'Applies 1 random Elemental Effect(s) without duplicates to all enemies, then deals Elemental Explosion damage
+  equal to 350% of Attack. Elemental Explosion: +5% damage dealt for every elemental effect on the target.'
+maximum magic bullet: Increases basic stats by 50% for 3 turns and inflicts damage equal to 490% of Attack on one enemy.
+maxwell's goblin: 'Inflicts Rupture damage equal to 630% of Attack on one enemy. Rupture: 2x damage against Buffed enemies.'
+megaton raid: 'Cancels Stances on one enemy and inflicts Vicious Strike damage equal to 180% of Attack. Vicious Strike: 3x
+  Crit Chance and 3x Crit Damage Increase. Damage dealt +100% for each Iron Aura and Gaia Pact on the hero.'
+megiddo: 'Inflicts damage equal to 300% of Attack on all enemies. Gains Abyss effect and decreases damage taken by 50% for
+  2 turn(s). Abyss: Inflicts additional damage equal to 30% of damage dealt on all enemies at the start of the enemy''s turn.
+  (Only applies the Abyss effect of the last used hero)'
+memories of summer: Removes Debuffs from all allies and decreases their damage taken from enemies by 20% for 2 turn(s).
+merry slide: 'Removes Buffs from one enemy and inflicts Cold damage equal to 200% of Attack. Cold: 2x Crit Chance Increase
+  +30% damage dealt for every Buff on the battlefield. (Limit 10)'
+metal fist: Inflicts damage equal to 220% of Attack on one enemy.
+metal shock: 'Inflicts Sever damage equal to 180% of Attack on one enemy. Sever: 3x Crit Chance Increase.'
+meteor strike: 'Increases allies'' Attack-related stats by 5% for 2 turns, then inflicts Sever damage equal to 350% of Attack
+  on all enemies. Sever: 3x Crit Chance Increase.'
+meteorworks: 'Inflicts Charge damage equal to 455% of Attack on all enemies. Charge: Ignores Defense.'
+mid-air shot: 'Inflicts Break damage equal to 160% of Attack on one enemy. Break: 2x damage against enemies assuming Stances.'
+midnight pirouette: 'Inflicts Flow damage equal to 200% of Attack on one enemy. Flow: 3x Crit Chance and 3x Crit Damage Increase.
+  Increases damage dealt by 50% of the hero''s Pierce Rate.'
+milky way jail break blade: 'Inflicts Spike damage equal to 560% of Attack on one enemy. Spike: 2x Crit Damage Increase.'
+mini percivals, go!: 'Increases all allies'' HP-related stats by 30% for 2 turn(s), gains Firm Volition for 2 turn(s), then
+  inflicts Power Strike damage equal to 350% of Attack on all enemies. Power Strike: Additional damage equal to enemy Resistance.'
+miracle wave: 'Heals HP of all allies equal to 350% of Attack. Rejuvenates for 3 turn(s). Rejuvenate: Additional Recovery
+  equal to 60% of recovered HP at the start of every turn.'
+mist of recovery: Heals diminished HP of all allies by 20% and removes Debuffs.
+monarch's domain: 'Applies Bloodlust for 2 turns and inflicts Mutilate damage equal to 500% of Attack on all enemies. Bloodlust:
+  All stats -10%, damage taken +15%. Mutilate: 3x Pierce Rate Increase. Additional damage equal to 75% of (Crit Damage -100%).'
+mother earth catastrophe: Inflicts damage equal to 525% of Attack on all enemies.
+multiple cuts: 'Inflicts Shadowgleam damage equal to 180% of Attack on one enemy. Shadowgleam: 2x Crit Chance +20% damage
+  dealt for every Buff on the battlefield. (Limit 10)'
+muscle mania: 'Increases Defense by 100% and Reflects 100% of damage taken for 1 turn(s). Reflect: Returns a portion of damage
+  taken back to the attacker.'
+mutilate: 'Inflicts Mutilate damage that does not trigger critical strikes equal to 200% of Attack on one enemy. Mutilate:
+  3x Pierce Rate Increase. Additional damage equal to 75% of (Crit Damage -100%).'
+mysterious ocean: 'Inflicts Pierce damage equal to 150% of Attack on one enemy, then Freezes them for 1 turn(s). Inflicts
+  damage equal to 20% of remaining HP upon removing it with a Skill, Unique, Commandment, or turns passing. Pierce: 3x Pierce
+  Rate Increase. Freeze: Incapacitates target. Effect is removed when target is attacked.'
+mystic barrier: 'Assumes a Stance which Taunts enemies and decreases damage taken by 40% when attacked for 2 turn(s). Taunt:
+  Directs all attacks to self.'
+nail nuker: 'Removes Stances from all enemies, gains Recycle for 2 turns, then inflicts Reforge damage equal to 350% of Attack.
+  Reforge: 3x Pierce Rate Increase. Removes 1 Buff effect from the target. Damage dealt +50% while Recycle is active.'
+nameless dance: 'Assumes a Stance which Taunts enemies and decreases damage taken by 30% when attacked for 1 turn(s). Depletes
+  the Ultimate Move Gauge of the enemy who used the skill by 1 orb(s). Taunt: Directs all attacks to self.'
+nature's cage: Inflicts damage equal to 140% of Attack on all enemies.
+nekomata falling star: 'Grants all allies Mobility for 1 turn, then inflicts Ruin damage equal to 560% of Attack on one enemy.
+  Ruin: Increases damage dealt by 30% per Debuff on the target and removes Debuffs.'
+nekomata fireball: 'Inflicts Heat Strike damage equal to 180% of Attack on one enemy, then applies 2 Ignite effects for 3
+  turn(s). Heat Strike: 3x Pierce Rate Increase. Ignores enemy Defense and Resistance.'
+night parade of the blue demon: 'Inflicts Shatter damage equal to 420% of Attack on all enemies. Shatter: Ignores Resistance.'
+nightmare illusion: Decreases Attack of all enemies by 30% for 3 turn(s).
+nightmare teller: Decreases Ultimate Move damage of one enemy by 20% for 2 turn(s).
+nimble movement: 'Inflicts Sword Slash damage equal to 14% of the hero''s Max HP on one enemy. Sword Slash: 2x Crit Chance
+  Increase. Increases damage dealt by 1.3% for every 1% of the hero''s remaining HP. Increases damage dealt by 30% for each
+  Buff applied by the hero.'
+nimble shred: Inflicts damage equal to 220% of Attack on one enemy. Disables Recovery Skills for 1 turn(s).
+nimble slash: 'Inflicts Pierce damage equal to 200% of Attack on one enemy. Pierce: 3x Pierce Rate Increase.'
+nimble spear: 'Inflicts Detonate damage equal to 160% of Attack on one enemy. Detonate: 20% additional damage per orb in the
+  target''s Ultimate Move Gauge.'
+nimbus: Inflicts damage equal to 180% of Attack on one enemy. Prevents Ultimate Move Gauge(s) from filling up for 1 turn(s).
+nitro rush: Inflicts damage equal to 180% of Attack on one enemy. Prevents Ultimate Move Gauge(s) from filling up for 1 turn(s).
+now's the time!: Inflicts damage equal to 240% of Attack on one enemy.
+noxious blitz: 'Inflicts Severance damage equal to 150% of Attack on all enemies. Severance: 3x Pierce Rate and 3x Crit Chance
+  Increase. Increases damage dealt by half of Pierce Rate.'
+nurse call: Heals HP of all allies equal to 200% of Attack.
+obliteration: 'Increases all of the hero''s stats by 5%, then applies 1 Seed of the End effect and inflicts Doom damage equal
+  to 300% of Attack on all enemies. If the hero is participating in battle, the associated hero''s Commandment activates.
+  If the hero has the Protection of the Demon King, their Crit Defense increases by 8%. Doom: 2x Crit Chance +20% damage dealt
+  for every Seed of the End effect on enemies.'
+ocean: 'Inflicts Detonate damage equal to 420% of Attack on all enemies. Detonate: 20% additional damage per orb in the target''s
+  Ultimate Move Gauge.'
+offensive dive: 'Inflicts Flood damage equal to 560% of Attack on one enemy. Flood: 0.8% additional damage for every percent
+  of remaining HP on self.'
+ogre guillotine: 'Inflicts Amplify damage equal to 180% of Attack on one enemy. Amplify: Damage dealt +30% per active Buff
+  on self.'
+ogre spirit slash: 'Inflicts Power Strike damage equal to 190% of Attack on one enemy. Power Strike: Additional damage equal
+  to enemy Resistance.'
+ominous nebula: 'Inflicts Weak Point damage equal to 210% of Attack on all enemies. Weak Point: 3x damage against Debuffed
+  enemies.'
+one stroke: 'Inflicts Amplify damage equal to 198% of Attack on one enemy and depletes 1 Ultimate Move Gauge orb(s). Amplify:
+  Damage dealt +30% per active Buff on self.'
+one thousand stabs: 'Inflicts Pierce damage equal to 200% of Attack on one enemy. Pierce: 3x Pierce Rate Increase.'
+opening greeting: 'Inflicts Sever damage equal to 630% of Attack on one enemy. Sever: 3x Crit Chance Increase.'
+outburst counter: Assumes a Stance that triggers 1 time(s) when attacked, inflicting damage equal to 100% of HP diminished
+  from max HP via counter.
+outset light: 'Inflicts Break damage equal to 560% of Attack on one enemy. Break: 2x damage against enemies assuming Stances.'
+overdrive: Inflicts damage equal to 160% of Attack on one enemy and decreases skill ranks.
+overpower: Decreases Attack-related stats of one enemy by 20% and disables everything but Attack Skills for 2 turn(s).
+overturning earth: Inflicts damage equal to 160% of Attack on one enemy and blocks all skill effects including those of Ultimate
+  Moves for 1 turn(s). (Excludes Stance and Recovery Skills)
+pain blade: 'Inflicts Rupture damage equal to 180% of Attack on one enemy. Rupture: 2x damage against Buffed enemies.'
+pain edition: 'Inflicts Weak Point damage equal to 90% of Attack on all enemies. Weak Point: 3x damage against Debuffed enemies.'
+palm strike: 'Inflicts Spike damage equal to 160% of Attack on one enemy. Spike: 2x Crit Damage Increase.'
+pandora: Removes Debuffs from all allies. Grants Debuff Immunity and increases Defense-related stats by 100% for 4 turns.
+panic room: Inflicts damage equal to 300% of Attack on all enemies. Decreases Attack-related stats by 30% for 3 turn(s).
+partners' attack: 'Inflicts Spirit Strike damage equal to 25% of Max HP on one enemy. Spirit Strike: 3x Crit Chance and 3x
+  Crit Damage Increase.'
+pathetique: Inflicts damage equal to 150% of Attack on all enemies.
+peacock wings: 'Inflicts Sever damage equal to 630% of Attack on one enemy, then applies Power of the Thorn on the hero for
+  2 turns. Sever: 3x Crit Chance Increase.'
+penetrating ripper: 'Inflicts Alteration damage equal to 450% of Attack on one enemy. Alteration: 4x Pierce Rate and 2x Crit
+  Damage Increase. Damage dealt +50% for each The Ripper on the hero.'
+perfect cube: Creates a barrier around all allies equal to 150% of Attack for 2 turn(s).
+permeate: 'Inflicts damage equal to 82% of Attack on all enemies. Poisons for 3 turn(s). Poison: Additional damage equal to
+  60% of damage dealt at the end of every turn.'
+phalanx squad: 'Inflicts damage equal to 140% of Attack on all enemies. Applies Oxidize for 1 turn(s). Oxidize: Decreases
+  skill ranks and inflicts damage equal to 10% of Max HP for every skill that had its rank decreased at the end of the enemy''s
+  turn.'
+phantom mist: 'Increase the hero''s Attack-related stats by 50% for 2 turns, then inflicts Flash Cut damage equal to 400%
+  of Attack on all enemies. Flash Cut: 3x Pierce Rate Increase. Attack +70% for each Sword of Penetration effect on the hero
+  when using skills.'
+phantom slash: 'Inflicts Frost Wave damage equal to 200% of Attack on one enemy. Frost Wave: 3x Pierce Rate Increase. 3x Crit
+  Damage Increase. Attack +80% when using the skill while Cold Snap is active.'
+phoenix arrow: Inflicts damage equal to 240% of Attack on one enemy.
+photon eraser: 'Inflicts Weak Point damage equal to 90% of Attack on all enemies. Weak Point: 3x damage against Debuffed enemies.'
+photon volley: 'Inflicts Flood damage equal to 110% of Attack on all enemies and Infects for 1 turn(s). Flood: 0.8% additional
+  damage for every percent of remaining HP on self. Infect: Restricts Recovery-related stats.'
+physical hunt: Inflicts damage equal to 630% of Attack on one enemy and depletes 3 Ultimate Move Gauge orb(s).
+pierce: Inflicts damage equal to 180% of Attack on one enemy. Decreases Attack-related stats by 20% for 1 turn(s).
+pierce and strike: 'Inflicts Frenzy damage equal to 200% of Attack on one enemy. Frenzy: 1% additional damage every hit for
+  every percent of remaining HP on the enemy. 2x Pierce Rate Increase.'
+pierce stick: Inflicts damage equal to 120% of Attack on all enemies.
+piercing gale: 'Decreases Crit Defense of one enemy by 40% for 1 turn, then inflicts Sever damage equal to 200% of Attack.
+  Sever: 3x Crit Chance Increase'
+piercing roots: Cancels Buffs and Stances on one enemy and inflicts damage equal to 630% of Attack.
+piercing spout: 'Inflicts Flood damage equal to 200% of Attack on one enemy. Flood: 0.8% additional damage for every percent
+  of remaining HP on self.'
+piercing stab: Inflicts damage equal to 220% of Attack on one enemy.
+pillar of muspelheim: Inflicts damage equal to 200% of Attack on one enemy, then decreases their damage dealt by 30% for 1
+  turn(s).
+ping pong duo: 'Inflicts damage equal to 140% of Attack on one enemy. Makes target(s) Bleed for 2 turn(s). Bleed: Additional
+  damage equal to 90% of damage dealt at the end of every turn.'
+play in the sand: 'Inflicts Amplify damage equal to 180% of Attack on one enemy. Amplify: Damage dealt +30% per active Buff
+  on self.'
+point light: Removes Debuffs from all allies.
+poison wave: Inflicts damage equal to 220% of Attack on one enemy. Disables Recovery Skills for 1 turn(s).
+poisoning garden: 'Inflicts Ruin damage equal to 160% of Attack on one enemy. Ruin: Increases damage dealt by 30% per Debuff
+  on the target and removes Debuffs.'
+positional energy: 'Inflicts Detonate damage equal to 100% of Attack on all enemies. Detonate: 20% additional damage per orb
+  in the target''s Ultimate Move Gauge.'
+power geyser: 'Inflicts Power Strike damage equal to 490% of Attack on all enemies. Power Strike: Additional damage equal
+  to enemy Resistance.'
+power hunt effect: 'Inflicts Charge damage equal to 700% of Attack on one enemy. Charge: Ignores Defense.'
+powered doping: Removes Debuffs from all allies. Grants Debuff Immunity, and increases Attack-related stats by 25% and Defense-related
+  stats by 50%, for 4 turns.
+powerful punch: 'Inflicts Pierce damage equal to 220% of Attack on one enemy. Pierce: 3x Pierce Rate Increase.'
+prayer of peace: Inflicts damage equal to 120% of Attack on one enemy and depletes 1 Ultimate Move Gauge orb(s).
+press of death: 'Gains 2 Faster Than Light effects for 2 turns then inflicts Infernal damage equal to 450% of Attack on all
+  enemies. Infernal: 2x Crit Chance Increase. Increases damage dealt by 1.3% for every 1% of the hero''s remaining HP. Attack
+  +80% when using the skill. Damage dealt +50% for each Ignite effect on the target.'
+prison grip: Inflicts damage equal to 560% of Attack on one enemy, decreases skill ranks, then depletes the Ultimate Move
+  Gauge by the number of skills that had ranks decreased.
+psychic pressure: Inflicts damage equal to 520% of Attack on one enemy and restores the HP of all allies by 40% of damage
+  dealt.
+psychic wave: 'Inflicts Wave damage equal to 180% of Attack on all enemies. Wave: Damage dealt -4% per enemy on the battlefield.'
+psycho ball: 'Inflicts Detonate damage equal to 160% of Attack on one enemy. Detonate: 20% additional damage per orb in the
+  target''s Ultimate Move Gauge.'
+psychokinesis: 'Inflicts Power Strike damage equal to 190% of Attack on one enemy. Power Strike: Additional damage equal to
+  enemy Resistance.'
+pumpkin basket: Increases Attack of all allies by 30% for 2 turn(s).
+punishing strike: Removes Buffs from one enemy and inflicts damage equal to 220% of Attack.
+punishment: Inflicts damage equal to 840% of Attack on one enemy.
+punishment of the lightning god: 'Inflicts Charge damage equal to 700% of Attack on one enemy. Charge: Ignores Defense.'
+purge: 'Heals HP of all allies equal to 100% of Attack. Rejuvenates for 3 turn(s). Rejuvenate: Additional Recovery equal to
+  60% of recovered HP at the start of every turn.'
+purge of the lightning god: 'Inflicts Shatter damage equal to 120% of Attack on all enemies. Shatter: Ignores Resistance.'
+pyre: 'Applies 3 Hellbrand effects on all enemies for 3 turns, then inflicts Pyroclash damage equal to 600% of Attack on one
+  enemy. Hellbrand: Damage taken +20%, damage dealt -20%. Inflicts additional damage equal to 10% of the target''s Max HP
+  when the effect is removed due to skills, Uniques, Commandments, or elapsed turns. (Stacks 3 times) Pyroclash: 2x Crit Chance
+  +50% Crit Damage dealt for each Hellbrand effect on the target.'
+quantum condensing test: 'Inflicts damage equal to 120% of Attack on all enemies and Releases 80%. Release: Deals additional
+  damage using remaining damage in Shock, Poison, and Bleed Debuffs.'
+quebrar: Inflicts damage equal to 150% of Attack on all enemies.
+queen's amusement: 'Increases the hero''s Attack-related stats by 30% for 2 turns, then inflicts Power Strike damage equal
+  to 630% of Attack on one enemy. Power Strike: Additional damage equal to enemy Resistance.'
+queen's embrace: 'Decreases HP-related stats of all enemies by 30% for 2 turns, inflicts Quell damage equal to 380% of Attack,
+  then restores HP to all allies equal to 3% of damage dealt. Quell: Damage dealt +5% per active Stance on self.'
+quick movement: Inflicts damage equal to 200% of Attack on one enemy.
+quietus: 'Inflicts Eradication damage equal to 200% of Attack on one enemy. Eradication: +60% Attack when using a skill. 2x
+  Crit Chance Increase.'
+radiant explosion: Disables Debuff Skills of all enemies for 1 turn(s).
+rage attack: Inflicts damage equal to 240% of Attack on one enemy.
+raging fist: 'Inflicts Extinction damage equal to 200% of Attack on one enemy. Extinction: 2x Crit Damage 2x Crit Chance when
+  All Creation is active.'
+raging flames: 'Inflicts Weak Point damage equal to 90% of Attack on all enemies. Weak Point: 3x damage against Debuffed enemies.'
+ragnarok break: 'Inflicts Heaven''s Will damage equal to 400% of Attack on all enemies. Heaven''s Will: 3x Crit Chance and
+  2x Crit Damage Increase. Hero''s Attack +30% for each hero on the battlefield when using skill.'
+rain capriccio: 'Inflicts Corrosion damage equal to 20% of max HP on all enemies for 3 turn(s). Corrosion: Additional damage
+  at the end of every turn.'
+raining blades: 'Inflicts Cleave damage, which does not activate Crit Damage, equal to 220% of Attack on one enemy, then decreases
+  their Attack-related stats by 20% for 1 turn(s). Cleave: Additional damage equal to 75% of (Crit Damage - 100%).'
+raining swords of light: 'Inflicts Amplify damage equal to 180% of Attack on one enemy. Amplify: Damage dealt +30% per active
+  Buff on self.'
+raining tricks: 'Inflicts Ethereal damage equal to 160% of Attack on all enemies. Ethereal: 2x Crit Chance Increase. 2x Crit
+  Damage Increase. Damage dealt +100% when the hero has a King, Queen, or Jack.'
+raise blade: Inflicts damage equal to 240% of Attack on one enemy.
+ravenous bash: 'Inflicts Gloom damage equal to 180% of Attack on one enemy. Gloom: 2x Crit Damage Increase. Damage dealt +50%
+  for each Darkness Unleashed on enemies.'
+razing fire: 'Inflicts Firestorm damage equal to 250% of Attack on all enemies, applying 2 Ignite effects for 4 turn(s). Firestorm:
+  2x Crit Chance Increase. 2x Pierce Rate Increase. +30% damage dealt for every Ignite effect on the target. Ignite: Damage
+  taken by target(s) +10% (Can be stacked).'
+realization of justice: 'Inflicts Weak Point damage equal to 385% of Attack on one enemy. Weak Point: 3x damage against Debuffed
+  enemies.'
+reaping death: 'Decreases Attack-related stats of all enemies by 20% for 2 turn(s), then inflicts Weak Point damage equal
+  to 140% of Attack. Weak Point: 3x damage against Debuffed enemies.'
+rebellion: 'Inflicts Co-destruction damage equal to 170% of Attack on one enemy. Co-destruction: 20% increased damage per
+  Debuff on the target.'
+rebellious spirit: 'Inflicts Rampage damage equal to 150% of Attack on one enemy. Rampage: 3x Pierce Rate Increase. Hero Attack
+  +80% when using a skill.'
+reckless line: 'Decreases HP-related stats of all enemies by 5% for 2 turns, then inflicts Spike damage equal to 560% of Attack
+  on one enemy. Spike: 2x Crit Damage Increase.'
+red velvet shot: Inflicts damage equal to 140% of Attack on all enemies.
+reflection halo: 'Assumes a Stance for 1 turn(s), which deals Sever damage equal to 150% of Defense via counter when any ally
+  is attacked. Sever: 3x Crit Chance Increase.'
+rejuvenation: Removes Debuffs from all allies.
+requiem: Increases damage taken by all enemies by 20% for 2 turn(s).
+requiescat: Removes Debuffs from all allies.
+resonant: 'Increases the hero''s damage dealt by 50% for 2 turns, then inflicts Power Strike damage equal to 560% of Attack
+  on one enemy. Power Strike: Additional damage equal to enemy Resistance.'
+reverse blade: Inflicts damage equal to 220% of Attack on one enemy. Disables Recovery Skills for 1 turn(s).
+rewrite light: Inflicts damage equal to 350% of Attack on all enemies and depletes 3 Ultimate Move Gauge orb(s).
+rising bouquet: Inflicts damage equal to 220% of Attack on one enemy.
+rising dragon strike: Decreases Defense-related stats of all enemies by 20% for 2 turn(s).
+rising meteor: Inflicts damage equal to 150% of Attack on all enemies.
+rising nature: Creates a barrier around all allies equal to 380% of Attack and increases HP-related stats by 25%.
+rising rock pillar: Removes Buffs from one enemy and inflicts damage equal to 220% of Attack.
+rising storm: 'Inflicts Pierce damage equal to 130% of Attack on all enemies. Pierce: 3x Pierce Rate Increase.'
+rising sun: 'Removes Stance(s) from all enemies, applies 1 Sunspot for 2 turns, and inflicts Sunspot Explosion damage equal
+  to 500% of Attack. Sunspot Explosion: Damage dealt +5% for every Sunspot applied to the target.'
+rising tackle: Inflicts damage equal to 120% of Attack on one enemy and depletes 1 Ultimate Move Gauge orb(s).
+rising tornado: Inflicts damage equal to 350% of Attack on all enemies, decreases skill ranks, then depletes the Ultimate
+  Move Gauge by the number of skills that had ranks decreased.
+roar of prosperity: Removes Debuffs from all allies. Increases Defense-related stats by 30% for 2 turn(s).
+rock blast: Inflicts damage equal to 220% of Attack on one enemy.
+rocket punch: Inflicts damage equal to 160% of Attack on one enemy and blocks all skill effects including those of Ultimate
+  Moves for 1 turn(s). (Excludes Stance and Recovery Skills)
+rolling ham attack: 'Inflicts Charge damage equal to 200% of Attack on one enemy. Charge: Ignores Defense.'
+rolling ham spike: Inflicts damage equal to 100% of Attack on all enemies and decreases skill ranks.
+rolling macaroons: 'Inflicts Weak Point damage equal to 90% of Attack on all enemies. Weak Point: 3x damage against Debuffed
+  enemies.'
+rough play: 'Inflicts Impact damage equal to 200% of Attack on one enemy. Impact: 3x Pierce Rate Increase. Ignores Resistance.'
+royal dignity: 'Inflicts Flood damage equal to 143% of Attack on all enemies and restores the HP of all allies by 30% of damage
+  dealt. Flood: 0.8% additional damage for every percent of remaining HP on self.'
+royal impact: 'Inflicts damage equal to 180% of Attack on one enemy and Lifesteals 40% of the damage. Lifesteal: Heals for
+  a portion of the damage dealt.'
+royal sword: Increases the basic stats of one ally by 20% for 2 turn(s).
+rubber duck bomb: Inflicts damage equal to 120% of Attack on all enemies.
+ruptured vein: 'Inflicts Blood Clot damage equal to 180% of the hero''s Attack on all enemies. Blood Clot: Damage dealt +1%
+  per 1% of the target''s remaining HP. Inflicts additional damage equal to 80% of the accumulated Blood Pact value on the
+  target.'
+rush hawk: 'Inflicts Charge damage equal to 700% of Attack on one enemy. Charge: Ignores Defense.'
+rush rock: Inflicts damage equal to 220% of Attack on one enemy.
+rush wild: Inflicts damage equal to 120% of Attack on one enemy and depletes 1 Ultimate Move Gauge orb(s).
+ruthless violence: 'Inflicts Sunfire damage equal to 200% of Attack on one enemy. Sunfire: 5x Pierce Rate and 2x Crit Damage
+  Increase. Damage dealt +100% against enemies affected by Fulmination.'
+ryuuembu: 'Inflicts Amplify damage equal to 100% of Attack on all enemies. Amplify: Damage dealt +30% per active Buff on self.'
+'saishuu kessen ougi: mu shiki': 'Inflicts damage equal to 490% of Attack on one enemy. Applies 2 Ignite effects on all enemies
+  for 3 turn(s). Ignite: Damage taken by target(s) +10% (Can be stacked).'
+salvation: Removes Debuffs from all allies and heals HP equal to 350% of Attack, then increases Attack-related stats by 25%
+  and Defense-related stats by 50%, for 4 turns.
+sand whirl: Decreases Defense-related stats of one enemy by 20% and Disables Attack Skills for 2 turn(s).
+sandcastle: Inflicts damage equal to 120% of Attack on all enemies and depletes 1 Ultimate Move Gauge orb(s) at the end of
+  the enemy's turn for 1 turn(s).
+santa in the box: Inflicts damage equal to 200% of Attack on one enemy.
+satellite cannon: 'Inflicts Shatter damage equal to 420% of Attack on all enemies. Shatter: Ignores Resistance.'
+savage movement: Cancels Stances on one enemy and inflicts damage equal to 180% of Attack.
+sawblade: Inflicts damage equal to 220% of Attack on one enemy.
+sawing scythe: 'Inflicts Spike damage equal to 100% of Attack on all enemies. Spike: 2x Crit Damage Increase.'
+scarlet blaze shot: 'Inflicts Weak Point damage equal to 90% of Attack on all enemies. Weak Point: 3x damage against Debuffed
+  enemies.'
+scarlet gatling: Cancels Stances on one enemy and inflicts damage equal to 180% of Attack.
+scarlet tempest: 'Inflicts Bloodstain damage equal to 180% of the hero''s Attack on all enemies. Bloodstain: Additional damage
+  equal to 35% of the target''s remaining HP.'
+scolding chop: 'Inflicts Cleave damage, which does not activate Crit Damage, equal to 140% of Attack on all enemies, then
+  decreases their damage dealt by 20% for 2 turn(s). Cleave: Additional damage equal to 75% of (Crit Damage - 100%).'
+scorching path: 'Inflicts Firestorm damage equal to 200% of Attack on one enemy. Firestorm: 2x Crit Chance Increase. 2x Pierce
+  Rate Increase. +30% damage dealt for every Ignite effect on the target.'
+scraps breath: 'Inflicts Shatter damage equal to 120% of Attack on all enemies. Shatter: Ignores Resistance.'
+scythe of silence: 'Inflicts Smite damage equal to 200% of Attack on one enemy. Smite: 2x Crit Chance Increase. 2x Crit Damage
+  Increase. Damage dealt +150% to enemies affected by Mark of Retribution.'
+second cosmos: 'Increases the hero''s Crit Damage by 50% for 2 turns, inflicts Sever damage equal to 300% of Attack on all
+  enemies, then applies Immortality on the hero for 1 turn. Sever: 3x Crit Chance Increase. Immortality: HP does not fall
+  below 1.'
+sensitive instinct: Increases the basic stats of one ally by 20% for 2 turn(s).
+severed universe: 'Inflicts Frost Wave damage equal to 450% of Attack on one enemy. Frost Wave: 3x Pierce Rate Increase. 3x
+  Crit Damage Increase. Attack +80% when using the skill while Cold Snap is active.'
+shadow assassin: 'Inflicts Spike damage equal to 160% of Attack on one enemy. Spike: 2x Crit Damage Increase.'
+shadow barrage: Inflicts damage equal to 630% of Attack on one enemy and depletes 3 Ultimate Move Gauge orb(s).
+shadow cut: Inflicts damage equal to 120% of Attack on all enemies.
+shadow illusion: Inflicts damage equal to 120% of Attack on all enemies and depletes 1 Ultimate Move Gauge orb(s) at the end
+  of the enemy's turn for 1 turn(s).
+shadow stalker: 'Inflicts Exploit damage equal to 180% of Attack on one enemy. Exploit: 2x damage dealt and 2x Crit Damage
+  against Bleeding targets.'
+shadow thorn: Inflicts damage equal to 140% of Attack on all enemies.
+shakedown: Applies an effect which depletes Ultimate Move Gauges by 1 orb(s) at the end of the enemy's turn on all enemies
+  for 1 turn(s).
+sharp blade: 'Inflicts Detonate damage equal to 160% of Attack on one enemy. Detonate: 20% additional damage per orb in the
+  target''s Ultimate Move Gauge.'
+sharp needle: 'Inflicts Degeneration damage equal to 180% of Attack on one enemy. Degeneration: 2x Crit Chance Increase. Damage
+  dealt +150% against enemies affected by Stab Wound.'
+sharp wind: 'Inflicts Sever damage equal to 120% of Attack on all enemies. Sever: 3x Crit Chance Increase.'
+shattering light: Inflicts damage equal to 200% of Attack on one enemy.
+shell blast: 'Inflicts Detonate damage equal to 160% of Attack on one enemy. Detonate: 20% additional damage per orb in the
+  target''s Ultimate Move Gauge.'
+shield smash: Inflicts damage equal to 240% of Attack on one enemy.
+shield wall: Assumes a Stance which increases HP-related stats by 20% and damage dealt by 30% for 1 turn(s).
+shining judgment: 'Increases the hero''s Defense-related stats by 30% for 2 turns, then inflicts Flood damage equal to 300%
+  of Defense on all enemies. Flood: 0.8% additional damage for every percent of remaining HP on self.'
+shining redemption: Creates a barrier around all allies equal to 150% of Attack for 1 turn(s). Takes damage only from basic
+  stats when attacked. (Excludes Rupture)
+shining road: 'Increases the hero''s Attack-related stats by 50% for 3 turns and grants 3 instances of Piercing Arrow, then
+  inflicts Impact damage equal to 500% of Attack on all enemies. Impact: 3x Pierce Rate Increase. Ignores Resistance.'
+shockwave: Inflicts damage equal to 140% of Attack on all enemies.
+shooting pumpkins: Inflicts damage equal to 120% of Attack on all enemies.
+shooting star shield: 'Assumes a Stance for 1 turn(s) which Taunts enemies and increases Defense-related stats by 30%. Also
+  removes all Debuffs applied to self and applies an effect that limits the number of debuffs applied to self to 1. Taunt:
+  Directs all attacks to self.'
+shot bombs: 'Inflicts damage equal to 180% of Attack on one enemy. Ignites for 3 turn(s). Ignite: Damage taken by target(s)
+  +10% (Can be stacked).'
+silent slash: Inflicts damage equal to 150% of Attack on all enemies.
+silent split: 'Inflicts Spike damage equal to 560% of Attack on one enemy. Spike: 2x Crit Damage Increase.'
+silent strike: 'Inflicts damage equal to 490% of Attack on one enemy. Poisons for 3 turn(s). Poison: Additional damage equal
+  to 60% of damage dealt at the end of every turn.'
+sisters of fate: 'Gains 2 Threads of Foresight for 3 turns, then inflicts Insight damage equal to 500% of Attack on all enemies.
+  Insight: 3x Pierce Rate Increase. Inflicts additional damage equal to 40% of the target''s remaining HP. Applies All-Target
+  Attack Disable on the target for 1 turn when dealing damage while Threads of Foresight is active.'
+slash hack: 'Inflicts Spike damage equal to 176% of Attack on one enemy and removes 1 orb(s) from their Ultimate Move Gauge.
+  Spike: 2x Crit Damage Increase.'
+slashing flurry: 'Inflicts Power Strike damage equal to 110% of Attack on all enemies. Power Strike: Additional damage equal
+  to enemy Resistance.'
+slashing master: 'Inflicts Weak Point damage equal to 90% of Attack on all enemies. Weak Point: 3x damage against Debuffed
+  enemies.'
+slashing wind: 'Assumes a Stance for 1 turn(s) which Taunts enemies and inflicts damage equal to 240% of Attack when taking
+  damage. Taunt: Directs all attacks to self.'
+slay fafnir: 'Inflicts Flood damage equal to 560% of Attack on one enemy. Flood: 0.8% additional damage for every percent
+  of remaining HP on self.'
+slicing winds: Inflicts damage equal to 240% of Attack on one enemy.
+slide serve: Inflicts damage equal to 220% of Attack on one enemy.
+smiling jack o' lantern: Inflicts damage equal to 120% of Attack on all enemies.
+snake whip: Removes Buffs from one enemy and inflicts damage equal to 220% of Attack.
+snatch: 'Extorts 25% Attack and Defense from all enemies for 2 turn(s). Extort: Decreases the target''s stats and increases
+  own stats by the same amount.'
+snow dust: 'Inflicts Power Strike damage equal to 190% of Attack on one enemy. Power Strike: Additional damage equal to enemy
+  Resistance.'
+snowball fight: 'Inflicts Corrosion damage equal to 20% of remaining HP for 1 turn(s), inflicts damage equal to 100% of Attack,
+  and applies Shock on all enemies. Corrosion: Additional damage at the end of every turn. Shock: Additional damage equal
+  to 45% of damage dealt at the end of every turn.'
+snowball impact: Inflicts damage equal to 220% of Attack on one enemy.
+soft fox attack: 'Inflicts Power Strike damage equal to 190% of Attack on one enemy. Power Strike: Additional damage equal
+  to enemy Resistance.'
+solar ray: 'Inflicts Spike damage equal to 100% of Attack and applies 1 Sunspot effect on all enemies for 2 turn(s). Spike:
+  2x Crit Damage Increase. Sunspot: Damage dealt -20% (Can be stacked up to 3 times)'
+song of temptation: Inflicts damage equal to 100% of Attack on all enemies and decreases skill ranks.
+soul drain: 'Inflicts Pain damage equal to 200% of Attack on one enemy. Pain: 2x Crit Chance and 3x Crit Damage Increase.
+  Attack-related stats +12% for each Source of Pain on the target when using skill.'
+soul slaughter: 'The hero gains Retrogression for 1 turn, then inflicts Soul damage equal to 300% of Attack on all enemies.
+  Soul: 2x Crit Chance Increase. 3x Pierce Rate Increase. Damage dealt +120% when an ally has the Retrogression effect. Retrogression:
+  Attack-related stats +20%. HP does not fall below 1. Increases Attack by 30% for 2 turns when removed.'
+spear of wrath: 'Cancels Stances on one enemy, and inflicts Divine Might damage equal to 200% of Attack. Divine Might: 3x
+  Crit Chance and 5x Crit Damage Increase. Damage dealt +100% to enemies afflicted with Huginn and Muninn. Additional damage
+  equal to 50% of the final damage.'
+sphere explosion: Inflicts damage equal to 120% of Attack on one enemy and depletes 1 Ultimate Move Gauge orb(s).
+spinning hammer: 'Assumes a Stance for 2 turn(s) which increases HP-related stats by 20% and Taunts enemies. Taunt: Directs
+  all attacks to self.'
+spinning slash: 'Inflicts Pierce damage equal to 100% of Attack on all enemies. Pierce: 3x Pierce Rate Increase.'
+spinning slicer: 'Inflicts Ignition damage equal to 200% of Attack on one enemy. Ignition: 5x Pierce Rate Increase. Damage
+  dealt +100% while Drive or Overheat is active.'
+spinning wild: 'Inflicts Pierce damage equal to 200% of Attack on one enemy. Pierce: 3x Pierce Rate Increase.'
+spiral light: 'Inflicts Flood damage equal to 200% of Attack on one enemy. Flood: 0.8% additional damage for every percent
+  of remaining HP on self.'
+spiral strike: Inflicts damage equal to 200% of Attack on one enemy.
+spirit consume: 'Inhales 10% of Max HP of all enemies for 2 turn(s). Inhale: Decreases the target''s Max HP and recovers own
+  HP by the amount decreased once.'
+'spirit spear basquias, first form: "basquias': 'Inflicts Ruin damage equal to 560% of Attack on one enemy. Ruin: Increases
+  damage dealt by 30% per Debuff on the target and removes Debuffs.'
+'spirit spear basquias, ninth form: "death thorn': Inflicts damage equal to 132% of Attack on all enemies.
+'spirit spear basquias, seventh form: "moon rose': Removes Debuffs from all allies.
+'spirit spear chastiefol, eighth form: "pollen garden': 'Heals HP of all allies equal to 100% of Attack. Rejuvenates for 3
+  turn(s). Rejuvenate: Additional Recovery equal to 60% of recovered HP at the start of every turn.'
+'spirit spear chastiefol, fifth form: "increase': Assumes a Stance for 1 turn(s) which inflicts damage equal to 160% of Attack
+  via counter when an ally is attacked.
+'spirit spear chastiefol, first form: "chastiefol': 'Inflicts Spike damage equal to 160% of Attack on one enemy. Spike: 2x
+  Crit Damage Increase.'
+'spirit spear chastiefol, fourth form: "sunflower': 'Increases all allies'' Attack-related stats by 5% for 2 turns, then inflicts
+  Shatter damage equal to 420% of Attack on all enemies. Shatter: Ignores Resistance.'
+'spirit spear chastiefol, second form: "guardian': 'Inflicts Charge damage equal to 130% of Attack on all enemies. Charge:
+  Ignores Defense.'
+'spirit spear chastiefol, third form: "fossilization': 'Inflicts Spike damage equal to 220% of Attack on one enemy. Spike:
+  2x Crit Damage Increase.'
+spirited dance of the demon: Inflicts damage equal to 130% of Attack on all enemies. Decreases Ultimate Move damage by 20%
+  for 1 turn(s).
+split spear: Inflicts damage equal to 120% of Attack on all enemies.
+springing power: Increases Attack-related stats of all allies by 15% for 2 turn(s).
+sprout destruction: 'Inflicts Lightpoint damage equal to 180% of Attack on all enemies. Lightpoint: 2x Crit Chance, 2x Crit
+  Damage Increase. Hero duo''s Attack +60% when using skill. Damage dealt +30% against targets who have not accumulated the
+  maximum Wrath of the Earth value. Damage dealt +100% against targets who accumulated the maximum Wrath of the Earth value.'
+stab rush: 'Inflicts Power Strike damage equal to 190% of Attack on one enemy. Power Strike: Additional damage equal to enemy
+  Resistance.'
+staff attack: 'Removes Stances from one enemy and inflicts Power Strike damage equal to 200% of Attack. Power Strike: Additional
+  damage equal to enemy Resistance.'
+star link: Inflicts damage equal to 350% of Attack on all enemies, decreases skill ranks, then depletes the Ultimate Move
+  Gauge by the number of skills that had ranks decreased.
+stay out of my way: 'Inflicts damage equal to 110% of Attack on all enemies. Infects for 1 turn(s). Infect: Restricts Recovery-related
+  stats.'
+stellar strike: 'Inflicts Scorching Strike damage equal to 200% of Attack on one enemy. Scorching Strike: Attack +250% when
+  using skill.'
+stone blast: 'Inflicts Pierce damage equal to 350% of Attack on all enemies. Pierce: 3x Pierce Rate Increase.'
+stone cannon: 'Inflicts Flood damage equal to 200% of Attack on one enemy. Flood: 0.8% additional damage for every percent
+  of remaining HP on self.'
+stone needle: 'Inflicts Sever damage equal to 220% of Attack on one enemy. Sever: 3x Crit Chance Increase.'
+stone strike: Inflicts damage equal to 120% of Attack on one enemy and depletes 1 Ultimate Move Gauge orb(s).
+storm blaze: 'Inflicts Pierce damage equal to 100% of Attack on all enemies. Pierce: 3x Pierce Rate Increase.'
+storm rondo: 'Inflicts damage equal to 82% of Attack on all enemies. Poisons for 3 turn(s). Poison: Additional damage equal
+  to 60% of damage dealt at the end of every turn.'
+stretch chain stick: Inflicts damage equal to 180% of Attack on one enemy. Decreases Defense-related stats by 20% for 2 turn(s).
+strict overseer: 'Inflicts Soul damage equal to 150% of Attack on all enemies. Soul: 2x Crit Chance Increase. 3x Pierce Rate
+  Increase. Damage dealt +120% when an ally has the Retrogression effect.'
+strike decision: Inflicts damage equal to 150% of Attack on all enemies.
+strike preparation "ring: 'Inflicts Pierce damage equal to 350% of Attack on all enemies. Pierce: 3x Pierce Rate Increase.'
+sui chou no mai: Inflicts damage equal to 120% of Attack on one enemy and depletes 1 Ultimate Move Gauge orb(s).
+summer rocket: 'Inflicts Flood damage equal to 200% of Attack on one enemy. Flood: 0.8% additional damage for every percent
+  of remaining HP on self.'
+summon soul: 'Inflicts damage equal to 560% of Attack on one enemy and Lifesteals 100% of the damage. Lifesteal: Heals for
+  a portion of the damage dealt.'
+summon wolf: 'Inflicts Illusion damage equal to 200% of Attack on one enemy. Illusion: 3x Pierce Rate Increase. Damage dealt
+  +50% for each King, Queen, or Jack on allies.'
+sun cutter: 'Inflicts Flare damage equal to 200% of Attack on one enemy. Flare: Damage dealt +30% for every Brilliance of
+  the Sun effect on allies.'
+sunshine burst: 'Inflicts Sunfire damage equal to 450% of Attack on all enemies. Sunfire: 5x Pierce Rate and 2x Crit Damage
+  Increase. Damage dealt +100% against enemies affected by Fulmination.'
+super cyclone: 'Inflicts Sever damage equal to 156% of Attack on all enemies. Sever: 3x Crit Chance Increase.'
+super hawk illusion: 'Inflicts Pierce damage equal to 100% of Attack on all enemies. Pierce: 3x Pierce Rate Increase.'
+'super move: "chorizo strike': Inflicts damage equal to 240% of Attack on one enemy.
+super pork loin illusion: Inflicts damage equal to 180% of Attack on one enemy. Decreases Defense-related stats by 20% for
+  2 turn(s).
+super recovery spell: Heals HP of all allies equal to 10% of max HP.
+super slash: 'Inflicts Flood damage equal to 200% of Attack on one enemy. Flood: 0.8% additional damage for every percent
+  of remaining HP on self.'
+supernova: Inflicts damage equal to 240% of Attack on one enemy.
+surprise fireworks: Decreases Attack-related stats of all enemies by 20% for 2 turn(s).
+surprise jack o' lantern: 'Inflicts Charge damage equal to 130% of Attack on all enemies. Charge: Ignores Defense.'
+sweet fireworks: Removes Buffs from one enemy and inflicts damage equal to 220% of Attack.
+sweet ice flakes: 'Inflicts Extermination damage equal to 150% of Attack on one enemy. Extermination: Ignores 50% of Crit
+  Resistance. 2x Crit Damage Increase. Damage dealt +50%.'
+sweet impact: 'Inflicts Pierce damage equal to 200% of Attack on one enemy. Pierce: 3x Pierce Rate Increase.'
+sweet talker: 'Inflicts damage equal to 76% of Attack on all enemies. Makes target(s) Bleed for 2 turn(s). Bleed: Additional
+  damage equal to 90% of damage dealt at the end of every turn.'
+swift dash: 'Inflicts damage equal to 200% of Attack on one enemy and Explodes after 2 turn(s). Explosion: Additional damage
+  equal to 100% of damage dealt after a certain number of turns.'
+swift rush: Inflicts damage equal to 200% of Attack on one enemy and restores the HP of the ally with the lowest HP ratio
+  by 80% of damage dealt.
+swift slash: 'Inflicts Pierce damage equal to 200% of Attack on one enemy. Pierce: 3x Pierce Rate Increase.'
+swift smash: Inflicts damage equal to 140% of Attack on all enemies.
+swirling blade: Decreases Defense-related stats of one enemy by 20% for 2 turns and inflicts damage equal to 200% of Attack.
+sword dance: 'Inflicts Flow damage equal to 400% of Attack on one enemy. Flow: 3x Crit Chance and 3x Crit Damage Increase.
+  Increases damage dealt by 50% of the hero''s Pierce Rate.'
+sword dance of the knight: 'Inflicts Breakthrough damage equal to 16% of the hero''s Max HP on one enemy. Breakthrough: 3x
+  Crit Chance and 2x Crit Damage Increase. Damage dealt +50% while a Buff applied to self is active.'
+sword of dark light: 'Inflicts Flood damage equal to 12% of the hero''s remaining HP on one enemy. Flood: 0.8% additional
+  damage for every percent of remaining HP on self.'
+sword of imprisonment: 'Gains 2 Pitch Black Sword effects for 3 turns and inflicts Pitch Black damage equal to 350% of Attack
+  on all enemies. Pitch Black: 2x Crit Chance Increase. 2x damage dealt to Debuffed enemies. Damage dealt +150% against enemies
+  affected by Pitch Black Curse.'
+sword of the sun: 'Inflicts damage equal to 720% of Attack on one enemy and inflicts additional Death damage. Death: 20% of
+  final damage as additional damage. (Random damage on death)'
+sword rain: 'Inflicts Lightspeed damage equal to 200% of Attack on one enemy. Lightspeed: 2x Crit Chance Increase. Damage
+  dealt +40% for each Fragment of Glory on the hero. 2x Crit Damage Increase when the hero uses a skill while Blade of Glory
+  is active.'
+take my chocolate: Inflicts damage equal to 120% of Attack on one enemy and depletes 1 Ultimate Move Gauge orb(s).
+take your heart: 'Inflicts Rebellion damage equal to 400% of Attack on all enemies. Rebellion: 5x Pierce Rate Increase. Additional
+  damage equal to 700% of initial Attack. Damage dealt +100% while Flame of Rebellion is active.'
+takedown: Inflicts damage equal to 160% of Attack on one enemy and decreases skill ranks.
+tandem steps: 'Inflicts Illumination damage equal to 200% of Attack on one enemy. Illumination: 2x Crit Chance Increase. Increases
+  damage dealt by 100% of (Crit Damage -100%). Attack +80% when using a skill while Blade of Judgment is active.'
+tempest fall: 'Inflicts damage equal to 420% of Attack on all enemies and Releases 100%. Release: Deals additional damage
+  using remaining damage in Shock, Poison, and Bleed Debuffs.'
+tentacle blade: 'Inflicts Covert Action damage equal to 200% of Attack on one enemy. Covert Action: +50% damage dealt per
+  Darkness on target.'
+the king's slash: 'Inflicts Charge damage equal to 130% of Attack on all enemies. Charge: Ignores Defense.'
+the power of knowledge: Inflicts damage equal to 25% of Max HP on one enemy.
+the queen's descent: 'Applies 1 Sharp Talons effect on the hero, applies The Queen''s Protection on all allies for 3 turns,
+  then inflicts Spike damage equal to 300% of Attack on all enemies. The Queen''s Protection: Attack-related stats +5%, Defense-related
+  stats +5%. Spike: 2x Crit Damage Increase.'
+thief's mischief: 'Inflicts Rebellion damage equal to 200% of Attack on one enemy. Rebellion: 5x Pierce Rate Increase. Additional
+  damage equal to 700% of initial Attack. Damage dealt +100% while Flame of Rebellion is active.'
+thorn hunt: Inflicts damage equal to 540% of Attack on one enemy. Disables Attack Skills for 2 turn(s).
+thorn shot: Inflicts damage equal to 220% of Attack on one enemy.
+throwing edge: 'Inflicts damage equal to 82% of Attack on all enemies. Poisons for 3 turn(s). Poison: Additional damage equal
+  to 60% of damage dealt at the end of every turn.'
+throwing star: 'Inflicts Weak Point damage equal to 90% of Attack on all enemies. Weak Point: 3x damage against Debuffed enemies.'
+thunder scream strike: 'Inflicts Spike damage equal to 160% of Attack on one enemy. Spike: 2x Crit Damage Increase.'
+thunderclap: 'Inflicts Despair damage equal to 130% of Attack on all enemies. Despair: Recovers 15% of diminished HP upon
+  successful critical strike.'
+thunderstorm: 'Inflicts Thunderbolt damage equal to 180% of Attack on one enemy. Thunderbolt: 2x Crit Damage Increase. Ignores
+  100% of the enemy''s Crit Resistance on skill use while Thundergod''s Judgment is active.'
+tiny rush: 'Inflicts Ardent Support damage equal to 200% of Attack on one enemy Ardent Support: 2x Crit Chance Increase. Ignores
+  enemy Defense and Resistance.'
+toast crash: 'Inflicts Sever damage equal to 160% of Attack on one enemy and blocks all skill effects including those of Ultimate
+  Moves for 1 turn(s). (Excludes Stance and Recovery Skills) Sever: 3x Crit Chance Increase.'
+tornado: 'Inflicts Quell damage equal to 300% of Attack on all enemies. Quell: Damage dealt +50% per active Stance on self.'
+tornado blast: 'Inflicts Snipe damage equal to 150% of Attack on one enemy. Snipe: +25% damage dealt per active Debuff on
+  target. (Limit 7 times) 2x Crit Damage Increase.'
+tornado shot: 'Inflicts Weak Point damage equal to 120% of Attack on one enemy. Weak Point: 3x damage against Debuffed enemies.'
+tornado slash: Inflicts damage equal to 180% of Attack on one enemy. Decreases HP-related stats by 15% for 1 turn(s).
+torso cut: 'Inflicts Amplify damage equal to 180% of Attack on one enemy. Amplify: Damage dealt +30% per active Buff on self.'
+toxic bottle: Inflicts damage equal to 180% of Attack on one enemy. Decreases Attack-related stats by 20% for 1 turn(s).
+trailing flare: Removes Buffs from one enemy and inflicts damage equal to 220% of Attack.
+trash or treasure: 'Inflicts Reforge damage equal to 200% of Attack on one enemy. Reforge: 3x Pierce Rate Increase. Removes
+  1 Buff effect from the target. Damage dealt +50% while Recycle is active.'
+treat howler: 'Decreases all enemies'' Attack by 20% for 3 turns, then inflicts Resonance damage equal to 380% of Attack on
+  all enemies. Resonance: +5% damage dealt for every Buff, Debuff, and Stance on the target.'
+tree strike: 'Inflicts Rupture damage equal to 100% of Attack on all enemies. Rupture: 2x damage against Buffed enemies.'
+trick and treat: 'Inflicts Pierce damage equal to 200% of Attack on one enemy. Pierce: 3x Pierce Rate Increase.'
+trillion dark: 'Inflicts Magic Burst damage equal to 500% of Attack on all enemies, then applies Suppress Damage Taken on
+  self for 1 turn(s). Magic Burst: Ignores 30% of Crit Resistance and 60% of Crit Defense. Suppress Damage Taken: Damage taken
+  from enemy skills does not exceed 70% of Max HP.'
+triple attack: 'Inflicts Weak Point damage equal to 120% of Attack on one enemy. Weak Point: 3x damage against Debuffed enemies.'
+triple avatar: 'Inflicts Charge damage equal to 130% of Attack on all enemies. Infects for 1 turn(s). Charge: Ignores Defense.
+  Infect: Restricts Recovery-related stats.'
+triple strike: 'Inflicts Pierce damage equal to 200% of Attack on one enemy. Pierce: 3x Pierce Rate Increase.'
+triple thrust: Inflicts damage equal to 240% of Attack on one enemy.
+triple upper: Inflicts damage equal to 540% of Attack on one enemy. Disables Recovery Skills for 2 turn(s).
+triste fin: 'Inflicts Spike damage equal to 350% of Attack on all enemies. Spike: 2x Crit Damage Increase.'
+triumph: Removes Debuffs from all allies.
+tropical water cannon: 'Inflicts Spray damage equal to 200% of Attack on one enemy and applies Barnacle on all enemies for
+  2 turns. Spray: 3x Crit Chance and 3x Crit Damage Increase. Removes 2 orbs from all enemies'' Ultimate Move Gauges when
+  used on a Frozen enemy. Barnacle: Additional damage equal to 20% of remaining HP at the end of every turn.'
+true hatred: 'Increases the hero''s Crit Chance by 50% and Crit Damage by 60% for 2 turns, then inflicts Quell damage equal
+  to 350% of Attack on all enemies. Quell: Damage dealt +5% per active Stance on self.'
+true nightmare: 'Applies Mind Break on all enemies, increases the hero''s Attack-related stats by 10% for 2 turns, then inflicts
+  Spike damage equal to 350% of Attack on all enemies. Every time 1 Hallucination or Enhanced Hallucination is removed from
+  the enemy while the hero is participating in battle, the hero''s basic stats increase by 5%, up to 50%. Spike: 2x Crit Damage
+  Increase.'
+'true spirit spear chastiefol, eighth form: "pollen garden': 'Removes Debuffs from all allies, heals them for 150% of Attack,
+  then Rejuvenates for 2 turn(s). Rejuvenate: Additional Recovery equal to 60% of recovered HP at the beginning of the turn.'
+'true spirit spear chastiefol, fifth form: "increase': 'Inflicts Power Strike damage equal to 110% of Attack on all enemies.
+  Power Strike: Additional damage equal to enemy Resistance.'
+'true spirit spear chastiefol, first form: "chastiefol': 'Inflicts Sever damage equal to 120% of Attack on all enemies. Sever:
+  3x Crit Chance Increase.'
+'true spirit spear chastiefol, fourth form: "sunflower': Removes Debuffs from allies and Buffs from enemies. For each Buff
+  removed, increases damage taken by enemies whose Buffs were removed by 2% for 1 turn, then inflicts damage equal to 400%
+  of Attack on all enemies.
+'true spirit spear chastiefol, second form: "guardian': 'Removes Stances from one enemy and inflicts Power Strike damage equal
+  to 200% of Attack. Power Strike: Additional damage equal to enemy Resistance.'
+truth seeker: 'Increases the hero''s Crit Chance by 80% and Crit Damage by 100% for 2 turns, then inflicts Spike damage equal
+  to 500% of Attack on one enemy. Spike: 2x Crit Damage Increase.'
+twin maximize magic chain dragon lightning: 'Increases all allies'' basic stats by 30% for 3 turns, then inflicts Power Strike
+  damage equal to 600% of Attack on one enemy. Power Strike: Additional damage equal to enemy Resistance.'
+twin maximize magic electrosphere: 'Inflicts Pierce damage equal to 100% of Attack on all enemies. Pierce: 3x Pierce Rate
+  Increase.'
+twin tail rush: 'Removes Stances from one enemy and inflicts Pierce damage equal to 200% of Attack. Pierce: 3x Pierce Rate
+  Increase.'
+twin wind blade: 'Inflicts Sever damage equal to 630% of Attack on one enemy. Sever: 3x Crit Chance Increase.'
+twinkling star: 'Inflicts Dawn damage equal to 200% of Attack on one enemy. Dawn: 2x Crit Chance Increase. Additional damage
+  equal to 30% of the hero''s Max HP. Damage dealt with skills +100% while Twilight Covenant is active.'
+typhoon slash: Inflicts damage equal to 220% of Attack on one enemy.
+tyrant smash: 'Inflicts Pitch Black damage equal to 200% of Attack on one enemy. Pitch Black: 2x Crit Chance Increase. 2x
+  damage dealt to Debuffed enemies. Damage dealt +150% against enemies affected by Pitch Black Curse.'
+tyrant tempest: 'Inflicts damage equal to 300% of Attack on all enemies. Gains Abyss effect and decreases damage taken by
+  50% for 2 turn(s). Abyss: Inflicts additional damage equal to 30% of damage dealt on all enemies at the start of the enemy''s
+  turn. (Only applies the Abyss effect of the last used hero)'
+tyrant's roar: 'Inflicts Raging Gale damage equal to 100% of Attack on all enemies. Raging Gale: 2x Crit Damage Increase and
+  ignores enemy Resistance. Skill damage dealt +50% if the Dragon Rage effect is active on self.'
+ul huma: 'Inflicts Snow Blast damage equal to 140% of Attack on all enemies. Snow Blast: 3x Pierce Rate and 3x Crit Chance
+  Increase. Damage dealt +100% for each Ice Brand Arts on the hero.'
+ultimate divine lance: 'Increases all stats of the hero by 5% for 2 turns, then inflicts Hellfire damage equal to 500% of
+  Attack on all enemies. When participating in battle, the hero Incinerates the target''s Max HP by 30% of the damage dealt
+  with the Raging Fire effect. Everlasting Flame is applied to enemies that reach maximum Incineration. Hellfire: Ignores
+  30% of Defense-related stats. Incinerate: Incinerates up to 30% of Max HP at the start of the battle. If 30% of Max HP is
+  300,000 or higher, the maximum Incineration is capped at 300,000. Incinerated Max HP cannot be healed. Everlasting Flame:
+  Damage taken from Raging Fire skills +50%.'
+umbreaker octashredder: 'Gains a 100% Pierce Rate Increase for 2 turns and inflicts Severance damage equal to 400% of Attack
+  on all enemies. Severance: 3x Pierce Rate and 3x Crit Chance Increase. Increases damage dealt by half of Pierce Rate.'
+unbeatable together: 'Gains Spirit''s Contract for 2 turns, then inflicts Revenant Strike damage equal to 350% of the hero
+  duo''s Attack on all enemies. Revenant Strike: 3x Pierce Rate Increase. Skill damage dealt +50% while Spirit''s Contract
+  is active.'
+unbound prophecy: 'Assumes a Stance which grants Foresight into enemy attacks for 1 turn(s), inflicting Prevision damage equal
+  to 180% of Attack via counter. Foresight: Counters before an enemy''s attack. (Excludes Ultimate Moves) Prevision: 3x Crit
+  Chance Increase, 3x Crit Damage Increase. Damage dealt +50% for each Threads of Fate applied to allies.'
+undead physical: Assumes a Stance for 1 turn(s) and heals 30% of diminished HP at the start of the next turn.
+undir: Inflicts damage equal to 180% of Attack on all enemies.
+unhappy hit: 'Inflicts Spike damage equal to 160% of Attack on one enemy. Spike: 2x Crit Damage Increase.'
+unique present: 'Inflicts Flood damage equal to 200% of Attack on one enemy. Flood: 0.8% additional damage for every percent
+  of remaining HP on self.'
+untouchable: 'Assumes a Stance to Taunt enemies for 1 turn(s), inflicting Amplify damage equal to 150% of Attack via counter
+  when attacked. Amplify: Damage dealt +30% per active Buff on self.'
+'ura 108 shiki: orochinagi': 'Inflicts Blaze damage equal to 100% of Attack on all enemies. Blaze: +25% damage dealt per Ignite
+  effect on target.'
+vague de dauphin: Disables Recovery Skills of all enemies for 2 turn(s).
+vain: Inflicts damage equal to 560% of Attack on one enemy. Decreases HP-related stats by 40% for 2 turn(s).
+valentine's gift: 'Taunts enemies, increases Defense-related stats by 30%, and becomes immune to Stun for 1 turn(s). Taunt:
+  Directs all attacks to self.'
+valkyrie strike: Increases the hero's Attack-related stats by 50% for 2 turns, then inflicts damage equal to 490% of Attack
+  on one enemy and restores the HP of all allies by 30% of damage dealt.
+valkyrie's prayer: 'Heals HP of all allies equal to 130% of Attack. Rejuvenates for 1 turn(s). Rejuvenate: Additional Recovery
+  equal to 60% of recovered HP at the start of every turn.'
+venomous dance: Inflicts damage equal to 200% of Attack on one enemy.
+vermillion blossom: Increases the hero's HP-related stats by 5% for 2 turns, then inflicts damage equal to 50% of the hero's
+  Max HP on one enemy.
+vertical saw: Inflicts damage equal to 540% of Attack on one enemy. Disables Attack Skills for 2 turn(s).
+vibrant vitality: Removes Debuffs from all allies and increases their basic stats by 30% for 3 turns.
+vicious arrow: 'Inflicts Pierce damage equal to 180% of Attack on one enemy and removes 1 orb(s) from their Ultimate Move
+  Gauge. Pierce: 3x Pierce Rate Increase.'
+vicious tempest: 'Inflicts Gale damage equal to 100% of Attack on all enemies. Gale: Ignores 30% of Defense-related stats.
+  2x Crit Damage Increase.'
+vine stab: 'Inflicts Sever damage equal to 154% of Attack on one enemy and makes them Bleed for 2 turn(s). Sever: 3x Crit
+  Chance Increase. Bleed: Additional damage equal to 90% of damage dealt at the end of every turn.'
+violent rays: 'Inflicts Skybreak damage equal to 200% of Attack on one enemy. Skybreak: +50% Attack when using skill. 2x Crit
+  Damage Increase.'
+violent thrashing: 'Inflicts Amplify damage equal to 180% of Attack on one enemy. Amplify: Damage dealt +30% per active Buff
+  on self.'
+violet lightning flash: 'Inflicts Dark Assault damage equal to 180% of Attack on all enemies. Dark Assault: 3x Pierce Rate
+  and 3x Crit Damage Increase. Additional damage equal to 100% of the hero''s increased Attack.'
+virtual body doubles: 'Inflicts Secret Technique damage equal to 300% of Attack on all enemies and deals damage with attribute
+  advantage regardless of attribute. Secret Technique: +20% additional damage per hero skill.'
+volcanic ash: Inflicts damage equal to 700% of Attack on one enemy and fills 2 Ultimate Move Gauge orb(s).
+volcano rush: 'Inflicts Weak Point damage equal to 90% of Attack on all enemies. Weak Point: 3x damage against Debuffed enemies.'
+volley fire: 'Inflicts Power Strike damage equal to 165% of Attack on all enemies and decreases their damage dealt by 40%
+  for 1 turn(s). Power Strike: Additional damage equal to enemy Resistance.'
+volley of light: Inflicts damage equal to 110% of Attack on all enemies, then deals additional damage equal to 3% of Max HP
+  for every orb in the hero's Ultimate Move Gauge.
+vorpal blade: 'Applies Infect on all enemies for 1 turn(s), then inflicts Pirouette damage equal to 150% of Attack. Infect:
+  Restricts Recovery-related stats. Pirouette: 3x Crit Damage Increase. Damage dealt +100% while Brave Step is active.'
+wailing wall: 'Taunts enemies and increases Defense-related stats by 280% for 4 turn(s). Taunt: Directs all attacks to self.'
+wall: Creates a barrier around all allies equal to 150% of Attack for 2 turn(s).
+wall crush: 'Inflicts Shatter damage equal to 180% of Attack on one enemy. Shatter: Ignores Resistance.'
+wall of light: 'Applies Frost Shield on all allies for 3 turns and inflicts all enemies with Cold damage equal to 500% of
+  Attack. Cold: 2x Crit Chance Increase +30% damage dealt for every Buff on the battlefield. (Limit 10)'
+water attack: 'Inflicts Clear Stream damage equal to 200% of Attack on one enemy. Clear Stream: 3x Pierce Rate Increase. Damage
+  dealt +100% while Dice of Fate is active. Applies Freeze on the target for 1 turn when dealing damage while Dice of Fate
+  is active.'
+water ball: Inflicts damage equal to 120% of Attack on one enemy and depletes 1 Ultimate Move Gauge orb(s).
+water canon: Inflicts damage equal to 120% of Attack on one enemy and depletes 1 Ultimate Move Gauge orb(s).
+wave of torment: 'Inflicts Chain damage equal to 200% of Attack on one enemy. Chain: 5x Pierce Rate Increase. Increases Attack
+  by +80% when using the skill. Damage dealt +150% while Chains of the Covenant is active on self.'
+wedding reception: 'Inflicts Weak Point damage equal to 99% of Attack on all enemies. Weak Point: 3x damage against Debuffed
+  enemies.'
+what's in my bag?: 'Inflicts Power Strike damage equal to 110% of Attack on all enemies. Power Strike: Additional damage equal
+  to enemy Resistance.'
+whirl shock: Inflicts damage equal to 240% of Attack on one enemy.
+wicked bite: 'Inflicts Flood damage equal to 100% of Attack on all enemies, then applies Seal of Darkness for 1 turn(s). Flood:
+  0.8% additional damage for every percent of remaining HP on self. Seal of Darkness: Restricts Recovery-related stats. Damage
+  dealt with all-target attacks -30%.'
+wide roar: Increases Attack-related stats of all allies by 15% for 2 turn(s).
+wild full throttle: 'Inflicts Sever damage equal to 630% of Attack on one enemy. Sever: 3x Crit Chance Increase.'
+wind break: Inflicts damage equal to 120% of Attack on all enemies.
+wind destroy: 'Inflicts Rupture damage equal to 180% of Attack on one enemy. Rupture: 2x damage against Buffed enemies.'
+wind explosion: 'Inflicts Cleave damage, which does not activate Crit Damage, equal to 120% of Attack on all enemies. Cleave:
+  Additional damage equal to 75% of (Crit Damage - 100%).'
+wind of the fairy king's forest: Inflicts damage equal to 160% of Attack on one enemy and decreases skill ranks.
+wind shoot: Assumes a Stance for 1 turn(s) which inflicts damage equal to 160% of Attack via counter when an ally is attacked.
+windy payback: 'Assumes a Stance to Taunt enemies for 1 turn(s), inflicting Amplify damage equal to 150% of Attack via counter
+  when attacked. Amplify: Damage dealt +30% per active Buff on self.'
+winged messenger: Inflicts damage equal to 120% of Attack on one enemy and depletes 1 Ultimate Move Gauge orb(s).
+winter bomb: 'Inflicts Pierce damage equal to 100% of Attack on all enemies. Pierce: 3x Pierce Rate Increase.'
+winter's fury: Inflicts damage equal to 180% of Attack on all enemies. Decreases Defense-related stats by 20% for 1 turn(s).
+with my own hands!: 'Undergoes a Titan Transformation for 5 turn(s), increasing Attack-related, Defense-related, and HP-related
+  stats by 15%, then decreasing Attack-related stats of all enemies by 30% for 1 turn(s). Titan Formation: The battle state
+  changes. Becomes immune to Incapacitation. Fully restores HP.'
+wrath of the autumn wind: 'Cancels Buffs and Stances on one enemy, inflicts damage equal to 490% of Attack, then Stuns for
+  1 turn(s). Stun: Prohibits all actions.'
+wrath of the gentle breeze: Inflicts damage equal to 150% of Attack on all enemies.
+wrath of the king: Inflicts damage equal to 120% of Attack on one enemy and depletes 1 Ultimate Move Gauge orb(s).
+yellow dragon sky blade: 'Inflicts Shatter damage equal to 120% of Attack on all enemies. Shatter: Ignores Resistance.'
+yggdra flamenco: 'Increases the hero''s Attack-related stats by 30% for 2 turns, then inflicts Power Strike damage equal to
+  490% of Attack on all enemies. Power Strike: Additional damage equal to enemy Resistance.'
+yin magic expert: 'Inflicts damage equal to 350% of Attack on all enemies and Lifesteals 30% of the damage. Lifesteal: Heals
+  for a portion of the damage dealt.'
+ying-yang blade: Increases basic stats by 50% for 3 turns and inflicts damage equal to 320% of Defense on all enemies.

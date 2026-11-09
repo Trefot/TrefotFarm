@@ -30,3 +30,1048 @@ ciervo_piso4:  # Transcendent Eikthyrnir (capturas del usuario, 2026-10-29)
         attributes. 1 Immortality effect is removed when it is attacked a certain number of times in a
         certain sequence of attributes. The Attribute Defense of each attribute is removed at certain
         amounts of HP.
+
+# --- De 7dshub.com (con permiso de su dueno, 2026-11-08): pasivas y habilidades de cada fase de las bestias.
+# Clave: <bestia>_f<piso> (Floor 1-3) y <bestia>_piso4 (Transcendent). Lo capturado a mano arriba manda.
+pajaro_f1:
+  nombre: Hraesvelgr's Nest Floor 1
+  fases:
+    1:
+    - '"Hunting Dive": Inflicts Spike damage equal to 240% of Attack on one enemy. Spike: 2x Crit Damage Increase.'
+    - '"Hunting Dive": Inflicts Spike damage equal to 400% of Attack on one enemy. Spike: 2x Crit Damage Increase.'
+    - '"Air Blast": Inflicts damage equal to 150% of Attack on all enemies. Makes target(s) Bleed for 2 turn(s).
+      Bleed: Additional damage equal to 90% of damage dealt at the end of every turn.'
+    - '"Air Blast": Inflicts damage equal to 250% of Attack on all enemies. Makes target(s) Bleed for 2 turn(s).
+      Bleed: Additional damage equal to 90% of damage dealt at the end of every turn.'
+    2:
+    - '"Lightning Strike": Inflicts Spike damage equal to 260% of Attack on one enemy. Spike: 2x Crit Damage Increase.'
+    - '"Lightning Strike": Inflicts Spike damage equal to 420% of Attack on one enemy. Spike: 2x Crit Damage Increase.'
+    - '"Flap Tornado": Inflicts damage equal to 150% of Attack on all enemies. Makes target(s) Bleed for 2 turn(s).
+      Bleed: Additional damage equal to 90% of damage dealt at the end of every turn.'
+    - '"Flap Tornado": Inflicts damage equal to 250% of Attack on all enemies. Makes target(s) Bleed for 2 turn(s).
+      Bleed: Additional damage equal to 90% of damage dealt at the end of every turn.'
+    3:
+    - 'Purgatory Energy: Uses "Lightning Strike" every 2 turn(s).'
+    - '"Hunting Dive": Removes Buffs from one enemy and inflicts damage equal to 250% of Attack. Ignites for 3 turn(s).
+      Ignite: Damage taken by target(s) +10% (Can be stacked).'
+    - '"Hunting Dive": Removes Buffs from one enemy and inflicts damage equal to 400% of Attack. Applies 2 Ignite
+      effects for 4 turn(s). Ignite: Damage taken by target(s) +10% (Can be stacked).'
+    - '"Air Blast": Inflicts damage equal to 160% of Attack on all enemies. Makes target(s) Bleed for 2 turn(s).
+      Bleed: Additional damage equal to 90% of damage dealt at the end of every turn.'
+    - '"Air Blast": Inflicts damage equal to 280% of Attack on all enemies. Makes target(s) Bleed for 2 turn(s).
+      Bleed: Additional damage equal to 90% of damage dealt at the end of every turn.'
+    4:
+    - 'Purgatory Energy: Uses "Hunting Dive" every 2 turn(s).'
+    - '"Lightning Strike": Inflicts damage equal to 220% of Attack on one enemy and Releases 100%. Release: Deals
+      additional damage using remaining damage in Shock, Poison, and Bleed Debuffs.'
+    - '"Lightning Strike": Inflicts damage equal to 400% of Attack on one enemy and Releases 130%. Release: Deals
+      additional damage using remaining damage in Shock, Poison, and Bleed Debuffs.'
+    - '"Flap Tornado": Inflicts damage equal to 180% of Attack on all enemies. Makes target(s) Bleed for 2 turn(s).
+      Bleed: Additional damage equal to 90% of damage dealt at the end of every turn.'
+    - '"Flap Tornado": Inflicts damage equal to 300% of Attack on all enemies. Makes target(s) Bleed for 2 turn(s).
+      Bleed: Additional damage equal to 90% of damage dealt at the end of every turn.'
+pajaro_f2:
+  nombre: Hraesvelgr's Nest Floor 2
+  fases:
+    1:
+    - 'Purgatory Energy: Uses "Wind Explosion" every 2 turn(s).'
+    - 'Ominous Aura: Uses "Lightning Strike" every 3 turn(s).'
+    - '"Hunting Dive": Inflicts Weak Point damage equal to 180% of Attack on one enemy. Weak Point: 3x damage against
+      Debuffed enemies.'
+    - '"Hunting Dive": Inflicts Weak Point damage equal to 300% of Attack on one enemy. Weak Point: 3x damage against
+      Debuffed enemies.'
+    - '"Air Blast": Inflicts damage equal to 150% of Attack on all enemies. Makes target(s) Bleed for 2 turn(s).
+      Bleed: Additional damage equal to 90% of damage dealt at the end of every turn.'
+    - '"Air Blast": Inflicts damage equal to 250% of Attack on all enemies. Makes target(s) Bleed for 2 turn(s).
+      Bleed: Additional damage equal to 90% of damage dealt at the end of every turn.'
+    2:
+    - 'Purgatory Energy: Uses "Air Break" every 3 turn(s).'
+    - 'Ominous Aura: Uses "Air Blast" every 1 turn(s).'
+    - 'Revive: Heals for 100% of Defense when the hero''s HP reaches 0. (Once per battle)'
+    - '"Lightning Strike": Inflicts Co-destruction damage equal to 240% of Attack on one enemy. Co-destruction:
+      20% increased damage per Debuff on the target.'
+    - '"Lightning Strike": Inflicts Co-destruction damage equal to 400% of Attack on one enemy. Co-destruction:
+      20% increased damage per Debuff on the target.'
+    - '"Flap Tornado": Inflicts damage equal to 150% of Attack on all enemies. Makes target(s) Bleed for 2 turn(s).
+      Bleed: Additional damage equal to 90% of damage dealt at the end of every turn.'
+    - '"Flap Tornado": Inflicts damage equal to 250% of Attack on all enemies. Makes target(s) Bleed for 2 turn(s).
+      Bleed: Additional damage equal to 90% of damage dealt at the end of every turn.'
+    3:
+    - 'Purgatory Energy: Uses "Flap Tornado" every 2 turn(s).'
+    - 'Ominous Aura: Uses "Air Break" every 3 turn(s).'
+    - '"Hunting Dive": Inflicts damage equal to 220% of Attack on one enemy and Releases 100%. Release: Deals additional
+      damage using remaining damage in Shock, Poison, and Bleed Debuffs.'
+    - '"Hunting Dive": Inflicts damage equal to 400% of Attack on one enemy and Releases 130%. Release: Deals additional
+      damage using remaining damage in Shock, Poison, and Bleed Debuffs.'
+    - '"Air Blast": Inflicts damage equal to 180% of Attack on all enemies. Makes target(s) Bleed and Infects them
+      for 2 turn(s). Bleed: Additional damage equal to 90% of damage dealt at the end of every turn. Infect: Restricts
+      Recovery-related stats.'
+    - '"Air Blast": Inflicts damage equal to 280% of Attack on all enemies. Makes target(s) Bleed and Infects them
+      for 2 turn(s). Bleed: Additional damage equal to 90% of damage dealt at the end of every turn. Infect: Restricts
+      Recovery-related stats.'
+    4:
+    - 'Purgatory Energy: Uses "Air Blast" every 2 turn(s).'
+    - 'Ominous Aura: Uses "Wind Explosion" every 3 turn(s).'
+    - 'Lunacy: Inflicting Explosion damage on an enemy heals the hero''s HP by 20% of Max HP and fills the Ultimate
+      Move Gauge by 1 orb(s).'
+    - '"Lightning Strike": Inflicts damage equal to 270% of Attack on one enemy and depletes 1 Ultimate Move Gauge
+      orb(s).'
+    - '"Lightning Strike": Inflicts damage equal to 450% of Attack on one enemy and depletes 3 Ultimate Move Gauge
+      orb(s).'
+    - '"Flap Tornado": Inflicts Power Strike damage equal to 160% of Attack on all enemies. Power Strike: Additional
+      damage equal to enemy Resistance.'
+    - '"Flap Tornado": Inflicts Power Strike damage equal to 300% of Attack on all enemies. Power Strike: Additional
+      damage equal to enemy Resistance.'
+pajaro_f3:
+  nombre: Hraesvelgr's Nest Floor 3
+  fases:
+    1:
+    - 'Purgatory Energy: Uses "Wind Explosion" every 2 turn(s).'
+    - 'Ominous Aura: Uses "Air Break" every 3 turn(s).'
+    - 'Damage Decrease: Decreases damage taken from Rank 1 Skills by 50%.'
+    - '"Hunting Dive": Inflicts Charge damage equal to 230% of Attack on one enemy. Charge: Ignores Defense.'
+    - '"Hunting Dive": Inflicts Charge damage equal to 400% of Attack on one enemy. Charge: Ignores Defense.'
+    - '"Air Blast": Inflicts damage equal to 180% of Attack on all enemies and allows the use of only Rank 1 skills
+      for 1 turn(s).'
+    - '"Air Blast": Inflicts damage equal to 270% of Attack on all enemies and allows the use of only Rank 1 skills
+      for 2 turn(s).'
+    2:
+    - 'Purgatory Energy: Uses "Wind Explosion" every 2 turn(s).'
+    - 'Ominous Aura: Uses "Air Break" every 3 turn(s).'
+    - 'Ultimate Move Gauge Decrease: Depletes 5 orb(s) from the Ultimate Move Gauge(s) of all enemies at the end
+      of the turn when the hero defeats an enemy.'
+    - '"Hunting Dive": Inflicts damage equal to 200% of Attack on one enemy, removes 1 orb(s) from the target''s
+      Ultimate Move Gauge, and Deletes 2 skill(s) at random. Delete: Randomly removes skills from the target (Excluding
+      Ultimate Moves) (Deletes Ultimate Moves if there is no skill to remove)'
+    - '"Hunting Dive": Inflicts damage equal to 320% of Attack on one enemy, removes 2 orb(s) from the target''s
+      Ultimate Move Gauge, and Deletes 2 skill(s) at random. Delete: Randomly removes skills from the target (Excluding
+      Ultimate Moves) (Deletes Ultimate Moves if there is no skill to remove)'
+    - '"Air Blast": Inflicts damage equal to 160% of Attack on all enemies. Shocks for 4 turn(s). Shock: Additional
+      damage equal to 45% of damage dealt at the end of every turn.'
+    - '"Air Blast": Inflicts damage equal to 240% of Attack on all enemies. Shocks for 4 turn(s). Shock: Additional
+      damage equal to 45% of damage dealt at the end of every turn.'
+    3:
+    - 'Purgatory Energy: Uses "Wind Explosion" every 2 turn(s).'
+    - 'Ominous Aura: Uses "Air Break" every 1 turn(s).'
+    - 'Strong Body: The hero''s damage taken from skills during the enemy turn does not exceed 35% of Max HP. Increases
+      Attack-related stats by 1% for every 5% of remaining HP when using skills. (Applies before skill activation)'
+    - '"Lightning Strike": Inflicts damage equal to 210% of Attack on one enemy and fills 1 Ultimate Move Gauge
+      orb(s).'
+    - '"Lightning Strike": Inflicts damage equal to 350% of Attack on one enemy and fills 2 Ultimate Move Gauge
+      orb(s).'
+    - '"Flap Tornado": Inflicts Wave damage equal to 250% of Attack on all enemies. Wave: Damage dealt -8% per enemy
+      on the battlefield.'
+    - '"Flap Tornado": Inflicts Wave damage equal to 420% of Attack on all enemies. Wave: Damage dealt -12% per
+      enemy on the battlefield.'
+    4:
+    - 'Purgatory Energy: Uses "Wind Explosion" every 2 turn(s).'
+    - 'Ominous Aura: Uses "Air Break" every 3 turn(s).'
+    - 'Strong Body: The hero''s damage taken from skills during the enemy turn does not exceed 35% of Max HP. Increases
+      Attack-related stats by 1% for every 5% of remaining HP when using skills. (Applies before skill activation)'
+    - '"Lightning Strike": Inflicts Flood damage equal to 250% of Attack on one enemy. Flood: 0.8% additional damage
+      for every percent of remaining HP on self.'
+    - '"Lightning Strike": Inflicts Flood damage equal to 400% of Attack on one enemy. Flood: 0.8% additional damage
+      for every percent of remaining HP on self.'
+    - '"Flap Tornado": Inflicts damage equal to 120% of Attack on all enemies and Lifesteals 30% of the damage.
+      Lifesteal: Heals for a portion of the damage dealt.'
+    - '"Flap Tornado": Inflicts damage equal to 180% of Attack on all enemies and Lifesteals 30% of the damage.
+      Lifesteal: Heals for a portion of the damage dealt.'
+pajaro_piso4:
+  nombre: Transcendent Hraesvelgr
+  fases:
+    1:
+    - 'Purgatory Energy: Uses "Air Break" every 2 turn(s).'
+    - 'Ominous Aura: Uses "Flap Tornado" every 1 turn(s).'
+    - 'Yggdrasil''s Wind: Increases the hero''s Defense by 50% for every Debuff applied on all enemies.'
+    - 'Attack-related Stats Increase: When taking damage results in Patience, it increases the hero''s own Attack-related
+      stats by 10% for 2 turns. (Can be stacked 5 times)'
+    - '"Hunting Dive": Inflicts Charge damage equal to 250% of Attack on one enemy. Makes target(s) Bleed for 2
+      turn(s). Charge: Ignores Defense. Bleed: Additional damage equal to 90% of damage dealt at the end of every
+      turn.'
+    - '"Hunting Dive": Inflicts Charge damage equal to 350% of Attack on one enemy. Makes target(s) Bleed for 2
+      turn(s). Charge: Ignores Defense. Bleed: Additional damage equal to 90% of damage dealt at the end of every
+      turn.'
+    - '"Lightning Strike": Inflicts Co-destruction damage equal to 250% of Attack on one enemy. Co-destruction:
+      40% increased damage per Debuff on the target.'
+    - '"Lightning Strike": Inflicts Co-destruction damage equal to 350% of Attack on one enemy. Co-destruction:
+      40% increased damage per Debuff on the target.'
+    2:
+    - 'Purgatory Energy: Uses "Air Blast" every 2 turn(s).'
+    - 'Ominous Aura: Uses "Flap Tornado" every 2 turn(s).'
+    - 'Yggdrasil''s Wind: Applies Hraesvelgr''s Protection on all enemies if the enemy uses 3 or more skills of
+      the same rank (Rank 2 or higher) during the enemy''s turn.'
+    - 'Damage Taken Increase / Decrease: Increases own damage taken from enemies with Hraesvelgr''s Protection by
+      300%. Decreases own damage taken from enemies without Hraesvelgr''s Protection by 300%.'
+    - '"Hunting Dive": Inflicts Charge damage equal to 250% of Attack on one enemy. Makes target(s) Bleed for 2
+      turn(s). Charge: Ignores Defense. Bleed: Additional damage equal to 90% of damage dealt at the end of every
+      turn.'
+    - '"Hunting Dive": Inflicts Charge damage equal to 350% of Attack on one enemy. Makes target(s) Bleed for 2
+      turn(s). Charge: Ignores Defense. Bleed: Additional damage equal to 90% of damage dealt at the end of every
+      turn.'
+    - '"Lightning Strike": Inflicts Flood damage equal to 250% of Attack on one enemy. Flood: 0.8% additional damage
+      for every percent of remaining HP on self.'
+    - '"Lightning Strike": Inflicts Flood damage equal to 350% of Attack on one enemy. Flood: 0.8% additional damage
+      for every percent of remaining HP on self.'
+    3:
+    - 'Purgatory Energy: Uses "Air Break" every 1 turn(s).'
+    - 'Ominous Aura: Uses "Hunting Dive" every 2 turn(s).'
+    - 'Yggdrasil''s Wind: Applies 8 Immortality effect(s) on self at the start of the battle. Immortality is added
+      or removed when taking damage from a skill with a certain effect during the enemy''s turn. Increases all of
+      own stats by +100% when Immortality reaches 15 stacks.'
+    - '"Lightning Strike": Inflicts damage equal to 300% of Attack on one enemy and Releases 100%. Release: Deals
+      additional damage using remaining damage in Shock, Poison, and Bleed Debuffs.'
+    - '"Lightning Strike": Inflicts damage equal to 450% of Attack on one enemy and Releases 130%. Release: Deals
+      additional damage using remaining damage in Shock, Poison, and Bleed Debuffs.'
+    - '"Flap Tornado": Inflicts Charge damage equal to 200% of Attack on all enemies. Makes target(s) Bleed for
+      2 turn(s). Charge: Ignores Defense. Bleed: Additional damage equal to 90% of damage dealt at the end of every
+      turn.'
+    - '"Flap Tornado": Inflicts Charge damage equal to 300% of Attack on all enemies. Makes target(s) Bleed for
+      2 turn(s). Charge: Ignores Defense. Bleed: Additional damage equal to 90% of damage dealt at the end of every
+      turn.'
+    4:
+    - 'Purgatory Energy: Uses "Air Blast" every 2 turn(s).'
+    - 'Ominous Aura: Uses "Wind Explosion" every 2 turn(s).'
+    - 'Yggdrasil''s Wind: Using a skill applies Hraesvelgr''s Wrath on enemies that take damage from it, applied
+      differentially based on the section of Hraesvelgr''s remaining HP. Hraesvelgr''s Wrath: Damage dealt -10%
+      Inflicts 500000 fixed damage on the target with max stacks, then removes the effect. (Can be stacked 7 time(s))'
+    - '"Hunting Dive": Inflicts Spike damage equal to 250% of Attack on one enemy. Spike: 2x Crit Damage Increase.'
+    - '"Hunting Dive": Inflicts Spike damage equal to 350% of Attack on one enemy. Spike: 2x Crit Damage Increase.'
+    - '"Flap Tornado": Inflicts Charge damage equal to 200% of Attack on all enemies. Makes target(s) Bleed for
+      2 turn(s). Charge: Ignores Defense. Bleed: Additional damage equal to 90% of damage dealt at the end of every
+      turn.'
+    - '"Flap Tornado": Inflicts Charge damage equal to 300% of Attack on all enemies. Makes target(s) Bleed for
+      2 turn(s). Charge: Ignores Defense. Bleed: Additional damage equal to 90% of damage dealt at the end of every
+      turn.'
+ciervo_f1:
+  nombre: Eikthyrnir's Refuge Floor 1
+  fases:
+    1:
+    - '"Fierce Rush": Inflicts Spike damage equal to 220% of Attack on one enemy. Spike: 2x Crit Damage Increase.'
+    - '"Fierce Rush": Inflicts Spike damage equal to 360% of Attack on one enemy. Spike: 2x Crit Damage Increase.'
+    - '"Hazy Crush": Inflicts Pierce damage equal to 150% of Attack on all enemies. Pierce: 3x Pierce Rate Increase.'
+    - '"Hazy Crush": Inflicts Pierce damage equal to 250% of Attack on all enemies. Pierce: 3x Pierce Rate Increase.'
+    2:
+    - 'Attack-related Stats Increase: Increases the hero''s Pierce Rate, Crit Chance, and Crit Damage by 10% for
+      every Debuff applied on enemies. (Limit 15 time(s), applies when entering battle)'
+    - '"Water Loop": Inflicts Detonate damage equal to 200% of Attack on one enemy. Detonate: 20% additional damage
+      per orb in the target''s Ultimate Move Gauge.'
+    - '"Water Loop": Inflicts Detonate damage equal to 350% of Attack on one enemy. Detonate: 20% additional damage
+      per orb in the target''s Ultimate Move Gauge.'
+    - '"Splash Shower": Inflicts damage equal to 190% of Attack on all enemies. Disables Ultimate Moves for 1 turn(s).'
+    - '"Splash Shower": Inflicts damage equal to 285% of Attack on all enemies. Disables Ultimate Moves for 2 turn(s).'
+    3:
+    - 'Purgatory Energy: Uses "Splash Shower" every 2 turn(s).'
+    - 'Crit Chance Increase: Increases Crit Chance by 10% per hero skill use.'
+    - 'Lifesteal Increase: Increases Lifesteal by 25% when using a skill while the hero''s HP is 50% or less. (Applies
+      before skill activation)'
+    - '"Fierce Rush": Inflicts Spike damage equal to 230% of Attack on one enemy. Spike: 2x Crit Damage Increase.'
+    - '"Fierce Rush": Inflicts Spike damage equal to 360% of Attack on one enemy. Spike: 2x Crit Damage Increase.'
+    - '"Hazy Crush": Inflicts damage equal to 200% of Attack on all enemies and fills 1 Ultimate Move Gauge orb(s).'
+    - '"Hazy Crush": Inflicts damage equal to 300% of Attack on all enemies and fills 2 Ultimate Move Gauge orb(s).'
+    4:
+    - 'Purgatory Energy: Uses "Defensive Horn" every 2 turn(s).'
+    - 'Crit Chance Increase: Increases Crit Chance by 10% per hero skill use.'
+    - 'Crit Damage Increase: Increases the hero''s Crit Damage by 20% for every orb in the hero''s Ultimate Move
+      Gauge.'
+    - '"Life Force": Inflicts Sever damage equal to 240% of Attack on one enemy. Sever: 3x Crit Chance Increase.'
+    - '"Life Force": Inflicts Sever damage equal to 400% of Attack on one enemy. Sever: 3x Crit Chance Increase.'
+    - '"Icy Pond": Inflicts damage equal to 150% of Attack on all enemies. Infects for 1 turn(s). Infect: Restricts
+      Recovery-related stats.'
+    - '"Icy Pond": Inflicts damage equal to 250% of Attack on all enemies. Infects for 1 turn(s). Infect: Restricts
+      Recovery-related stats.'
+ciervo_f2:
+  nombre: Eikthyrnir's Refuge Floor 2
+  fases:
+    1:
+    - 'Purgatory Energy: Uses "Refresh" every 2 turn(s).'
+    - 'Ominous Aura: Uses "Splash Shower" every 3 turn(s).'
+    - 'Damage Dealt Increase: Deals 200% additional damage when the hero attacks an enemy with a lower Attack.'
+    - '"Fierce Rush": Inflicts Charge damage equal to 220% of Attack on one enemy. Charge: Ignores Defense.'
+    - '"Fierce Rush": Inflicts Charge damage equal to 360% of Attack on one enemy. Charge: Ignores Defense.'
+    - '"Hazy Crush": Inflicts Spike damage equal to 180% of Attack on all enemies. Spike: 2x Crit Damage Increase.'
+    - '"Hazy Crush": Inflicts Spike damage equal to 300% of Attack on all enemies. Spike: 2x Crit Damage Increase.'
+    2:
+    - 'Purgatory Energy: Uses "Life Force" every 1 turn(s).'
+    - 'Ominous Aura: Uses "Icy Pond" every 2 turn(s).'
+    - 'Continuous Damage Increase: Increases damage dealt by 10% for each consecutive skill used by the hero in
+      1 turn. (Resets at the end of every turn)'
+    - 'Capture: Prioritizes attacking Frozen enemies.'
+    - '"Water Loop": Inflicts Shatter damage equal to 240% of Attack on one enemy. Shatter: Ignores Resistance.'
+    - '"Water Loop": Inflicts Shatter damage equal to 400% of Attack on one enemy. Shatter: Ignores Resistance.'
+    - '"Hazy Crush": Inflicts Sever damage equal to 180% of Attack on all enemies. Sever: 3x Crit Chance Increase.'
+    - '"Hazy Crush": Inflicts Sever damage equal to 250% of Attack on all enemies. Sever: 3x Crit Chance Increase.'
+    3:
+    - 'Purgatory Energy: Uses "Splash Shower" every 2 turn(s).'
+    - 'Ominous Aura: Uses "Life Force" every 3 turn(s).'
+    - 'Basic Stats Increase: Increases the hero''s basic stats by 40% when using a skill with the Skill Deletion
+      effect. (Limit once)'
+    - '"Water Loop": Removes Buffs from one enemy and inflicts damage equal to 220% of Attack.'
+    - '"Water Loop": Cancels Buffs and Stances on one enemy and inflicts damage equal to 360% of Attack.'
+    - '"Icy Pond": Inflicts damage equal to 150% of Attack on all enemies. Infects for 1 turn(s). Infect: Restricts
+      Recovery-related stats.'
+    - '"Icy Pond": Inflicts damage equal to 250% of Attack on all enemies. Infects for 1 turn(s). Infect: Restricts
+      Recovery-related stats.'
+    4:
+    - 'Purgatory Energy: Uses "Bubble Bomb" every 2 turn(s).'
+    - 'Ominous Aura: Uses "Defensive Horn" every 3 turn(s).'
+    - 'Evolved Stance: Increases the hero''s Attack-related stats by 15% for 2 turns when using Stance Skills. (Excluding
+      Ultimate Moves)'
+    - '"Water Loop": Inflicts damage equal to 250% of Attack on one enemy and depletes 1 Ultimate Move Gauge orb(s).'
+    - '"Water Loop": Inflicts damage equal to 380% of Attack on one enemy and depletes 3 Ultimate Move Gauge orb(s).'
+    - '"Hazy Crush": Inflicts damage equal to 180% of Attack on all enemies and fills 1 Ultimate Move Gauge orb(s).'
+    - '"Hazy Crush": Inflicts damage equal to 270% of Attack on all enemies and fills 2 Ultimate Move Gauge orb(s).'
+ciervo_f3:
+  nombre: Eikthyrnir's Refuge Floor 3
+  fases:
+    1:
+    - 'Purgatory Energy: Uses "Hazy Crush" every 2 turn(s).'
+    - 'Ominous Aura: Uses "Icy Pond" every 3 turn(s).'
+    - 'Damage Dealt Increase: Increases the hero''s damage dealt by 35% when attacking enemies afflicted with the
+      Shock Debuff.'
+    - '"Life Force": Inflicts damage equal to 190% of Attack on one enemy. Disables Attack Skills for 1 turn(s).'
+    - '"Life Force": Inflicts damage equal to 285% of Attack on one enemy. Disables Attack Skills for 1 turn(s).'
+    - '"Splash Shower": Inflicts damage equal to 150% of Attack on all enemies. Shocks for 4 turn(s). Shock: Additional
+      damage equal to 45% of damage dealt at the end of every turn.'
+    - '"Splash Shower": Inflicts damage equal to 220% of Attack on all enemies. Shocks for 4 turn(s). Shock: Additional
+      damage equal to 45% of damage dealt at the end of every turn.'
+    2:
+    - 'Purgatory Energy: Uses "Refresh" every 2 turn(s).'
+    - 'Ominous Aura: Uses "Icy Pond" every 3 turn(s).'
+    - 'Damage Dealt Increase: Increases the hero''s damage dealt by 5% for every orb in the hero''s Ultimate Move
+      Gauge.'
+    - 'Crit Damage Increase: Increases the hero''s Crit Damage by 30% for each orb removed from the hero''s Ultimate
+      Move Gauge. (Limit 3% times, excludes depletion from Ultimate Move use)'
+    - '"Fierce Rush": Inflicts Sever damage equal to 200% of Attack on one enemy. Sever: 3x Crit Chance Increase.'
+    - '"Fierce Rush": Inflicts Sever damage equal to 300% of Attack on one enemy. Sever: 3x Crit Chance Increase.'
+    - '"Hazy Crush": Inflicts Power Strike damage equal to 140% of Attack on all enemies. Power Strike: Additional
+      damage equal to enemy Resistance.'
+    - '"Hazy Crush": Inflicts Power Strike damage equal to 220% of Attack on all enemies. Power Strike: Additional
+      damage equal to enemy Resistance.'
+    3:
+    - 'Purgatory Energy: Uses "Splash Shower" every 2 turn(s).'
+    - 'Ominous Aura: Uses "Refresh" every 3 turn(s).'
+    - '"Life Force": Inflicts damage equal to 190% of Attack on one enemy and fills 1 Ultimate Move Gauge orb(s).'
+    - '"Life Force": Inflicts damage equal to 300% of Attack on one enemy and fills 2 Ultimate Move Gauge orb(s).'
+    - '"Hazy Crush": Inflicts Charge damage equal to 150% of Attack on all enemies. Charge: Ignores Defense.'
+    - '"Hazy Crush": Inflicts Charge damage equal to 240% of Attack on all enemies. Charge: Ignores Defense.'
+    4:
+    - 'Purgatory Energy: Uses "Refresh" every 2 turn(s).'
+    - 'Ominous Aura: Uses "Defensive Horn" every 3 turn(s).'
+    - 'Evolved Stance: Increases the hero''s Attack-related stats by 15% for 2 turns when using Stance Skills. (Excluding
+      Ultimate Moves)'
+    - 'Blessing in Disguise: Removes the hero''s Debuffs, fully heals their HP, and increases all stats by 10% when
+      the hero survives with 20% HP or less. (Limit once)'
+    - '"Water Loop": Inflicts Flood damage equal to 150% of Attack on one enemy. Flood: 0.8% additional damage for
+      every percent of remaining HP on self.'
+    - '"Water Loop": Inflicts Flood damage equal to 220% of Attack on one enemy. Flood: 0.8% additional damage for
+      every percent of remaining HP on self.'
+    - '"Icy Pond": Inflicts damage equal to 140% of Attack on all enemies and depletes 1 Ultimate Move Gauge orb(s).'
+    - '"Icy Pond": Inflicts damage equal to 210% of Attack on all enemies and depletes 1 Ultimate Move Gauge orb(s).'
+perros_f1:
+  nombre: Twilight Temple Floor 1
+  fases:
+    1:
+    - 'Purgatory Energy: Uses "Defensive Aggression" every 2 turn(s).'
+    - 'Ominous Aura: Uses "Mass Howling" every 3 turn(s).'
+    - 'Immortality: The hero''s HP does not drop below 1.'
+    - 'Crit Chance Increase: Increases allies'' Crit Chance by 10% for every orb filled in the hero''s Ultimate
+      Move Gauge.'
+    - '"Short Temper": Decreases allies'' damage taken by 3% for 2 turn(s). (Can be stacked)'
+    - '"Short Temper": Decreases allies'' damage taken by 5% for 2 turn(s). (Can be stacked)'
+    - '"Short Temper": Decreases allies'' damage taken by 10% for 2 turn(s). (Can be stacked)'
+    - 'Purgatory Energy: Uses "Solar Blessing" every 2 turn(s).'
+    - 'Ominous Aura: Uses "Flare Ball" every 3 turn(s).'
+    - '"Fierce Bite": Inflicts Co-destruction damage equal to 200% of Attack on one enemy. Co-destruction: 20% increased
+      damage per Debuff on the target.'
+    - '"Fierce Bite": Inflicts Co-destruction damage equal to 320% of Attack on one enemy. Co-destruction: 20% increased
+      damage per Debuff on the target.'
+    - '"Wolf Claw": Inflicts Blaze damage equal to 160% of Attack on all enemies. Blaze: +25% damage dealt per Ignite
+      effect on target.'
+    - '"Wolf Claw": Inflicts Blaze damage equal to 240% of Attack on all enemies. Blaze: +25% damage dealt per Ignite
+      effect on target.'
+    2:
+    - 'Purgatory Energy: Uses "Shadow Blackhole" every 2 turn(s).'
+    - 'Ominous Aura: Uses "Shadow Herd" every 3 turn(s).'
+    - '"Fierce Bite": Inflicts damage equal to 310% of Attack on one enemy.'
+    - '"Fierce Bite": Inflicts damage equal to 420% of Attack on one enemy and Freezes them for 1 turn(s). Freeze:
+      Incapacitates target. Effect is removed when target is attacked.'
+    - '"Wolf Claw": Inflicts damage equal to 200% of Attack on all enemies. Infects for 1 turn(s). Infect: Restricts
+      Recovery-related stats.'
+    - '"Wolf Claw": Inflicts damage equal to 280% of Attack on all enemies. Infects for 2 turn(s). Infect: Restricts
+      Recovery-related stats.'
+    - 'Purgatory Energy: Uses "Short Temper" every 3 turn(s).'
+    - 'Ominous Aura: Uses "Defensive Aggression" every 2 turn(s).'
+    - 'Immortality: The hero''s HP does not drop below 1.'
+    - 'Defense Increase: Increases allies'' Defense by 30% for every orb filled in the hero''s Ultimate Move Gauge.'
+    - '"Mass Howling": Decreases Defense-related stats of all enemies by 10% for 1 turn(s).'
+    - '"Mass Howling": Decreases Defense-related stats of all enemies by 15% for 2 turn(s).'
+    - '"Mass Howling": Decreases Defense-related stats of all enemies by 30% for 2 turn(s).'
+    3:
+    - 'Purgatory Energy: Uses "Shadow Blackhole" every 3 turn(s).'
+    - 'Ominous Aura: Uses "Wolf Claw" every 2 turn(s).'
+    - '"Star Impact": Inflicts Co-destruction damage equal to 190% of Attack on all enemies. Co-destruction: 20%
+      increased damage per Debuff on the target.'
+    - '"Star Impact": Inflicts Co-destruction damage equal to 280% of Attack on all enemies. Co-destruction: 20%
+      increased damage per Debuff on the target.'
+    - '"Shadow Herd": Cancels Buffs and Stances on one enemy and inflicts damage equal to 260% of Attack.'
+    - '"Shadow Herd": Cancels Buffs and Stances on one enemy and inflicts damage equal to 400% of Attack.'
+    - 'Purgatory Energy: Uses "Solar Blessing" every 2 turn(s).'
+    - 'Ominous Aura: Uses "Wolf Claw" every 3 turn(s).'
+    - '"Solar Diffusion": Inflicts Blaze damage equal to 190% of Attack on all enemies. Blaze: +25% damage dealt
+      per Ignite effect on target.'
+    - '"Solar Diffusion": Inflicts Blaze damage equal to 280% of Attack on all enemies. Blaze: +25% damage dealt
+      per Ignite effect on target.'
+    - '"Flare Ball": Inflicts damage equal to 260% of Attack on one enemy and depletes 4 Ultimate Move Gauge orb(s).'
+    - '"Flare Ball": Inflicts damage equal to 400% of Attack on one enemy and depletes 4 Ultimate Move Gauge orb(s).'
+perros_f2:
+  nombre: Twilight Temple Floor 2
+  fases:
+    1:
+    - 'Purgatory Energy: Uses "Defensive Aggression" every 2 turn(s).'
+    - 'Ominous Aura: Uses "Mass Howling" every 3 turn(s).'
+    - 'Immortality: The hero''s HP does not drop below 1.'
+    - 'Crit Chance Increase: Increases allies'' Crit Chance by 10% for every orb filled in the hero''s Ultimate
+      Move Gauge.'
+    - '"Short Temper": Decreases allies'' damage taken by 3% for 2 turn(s). (Can be stacked)'
+    - '"Short Temper": Decreases allies'' damage taken by 5% for 2 turn(s). (Can be stacked)'
+    - '"Short Temper": Decreases allies'' damage taken by 10% for 2 turn(s). (Can be stacked)'
+    - 'Purgatory Energy: Uses "Solar Blessing" every 2 turn(s).'
+    - 'Ominous Aura: Uses "Flare Ball" every 3 turn(s).'
+    - 'Basic Stats Increase: Increases the hero''s basic stats by 100% when an enemy uses a Rank Up Skill during
+      the enemy''s turn. (Limit 10 times)'
+    - 'HP Recovery: The hero recovers 3% of Max HP per Buff on the hero at the start of the turn.'
+    - 'Attack Increase: Increases allies'' Attack by 5% for every Buff applied to the hero.'
+    - '"Fierce Bite": Inflicts Co-destruction damage equal to 200% of Attack on one enemy. Co-destruction: 20% increased
+      damage per Debuff on the target.'
+    - '"Fierce Bite": Inflicts Co-destruction damage equal to 320% of Attack on one enemy. Co-destruction: 20% increased
+      damage per Debuff on the target.'
+    - '"Wolf Claw": Inflicts Blaze damage equal to 140% of Attack on all enemies. Blaze: +25% damage dealt per Ignite
+      effect on target.'
+    - '"Wolf Claw": Inflicts Blaze damage equal to 220% of Attack on all enemies. Blaze: +25% damage dealt per Ignite
+      effect on target.'
+    2:
+    - 'Purgatory Energy: Uses "Shadow Blackhole" every 2 turn(s).'
+    - 'Ominous Aura: Uses "Shadow Herd" every 3 turn(s).'
+    - 'Basic Stats Increase: Increases the hero''s basic stats by 100% when an enemy uses a Rank Up Skill during
+      the enemy''s turn. (Limit 10 times)'
+    - 'HP Increase: Increases the hero''s Max HP by 3% for every Debuff applied on enemies.'
+    - '"Fierce Bite": Inflicts damage equal to 200% of Attack on one enemy.'
+    - '"Fierce Bite": Inflicts damage equal to 300% of Attack on one enemy and Freezes them for 1 turn(s). Frozen
+      enemies take 30% additional damage. Freeze: Incapacitates target. Effect is removed when target is attacked.'
+    - '"Wolf Claw": Inflicts damage equal to 210% of Attack on all enemies. Infects for 1 turn(s). Infect: Restricts
+      Recovery-related stats.'
+    - '"Wolf Claw": Inflicts damage equal to 260% of Attack on all enemies. Infects for 2 turn(s). Infect: Restricts
+      Recovery-related stats.'
+    - 'Purgatory Energy: Uses "Short Temper" every 3 turn(s).'
+    - 'Ominous Aura: Uses "Defensive Aggression" every 2 turn(s).'
+    - 'Immortality: The hero''s HP does not drop below 1.'
+    - 'Defense Increase: Increases allies'' Defense by 30% for every orb filled in the hero''s Ultimate Move Gauge.'
+    - '"Mass Howling": Decreases Defense-related stats of all enemies by 10% for 1 turn(s).'
+    - '"Mass Howling": Decreases Defense-related stats of all enemies by 15% for 2 turn(s).'
+    - '"Mass Howling": Decreases Defense-related stats of all enemies by 30% for 2 turn(s).'
+    3:
+    - 'Purgatory Energy: Uses "Shadow Blackhole" every 3 turn(s).'
+    - 'Ominous Aura: Uses "Wolf Claw" every 2 turn(s).'
+    - 'Remove Buffs: Removes all Buffs from enemies with Attack Increase at the start of the allies'' turn.'
+    - 'Basic Stats Increase: Increases the hero''s basic stats by 100% when an enemy uses a Rank Up Skill during
+      the enemy''s turn. (Limit 10 times)'
+    - '"Star Impact": Inflicts Co-destruction damage equal to 150% of Attack on all enemies. Co-destruction: 20%
+      increased damage per Debuff on the target.'
+    - '"Star Impact": Inflicts Co-destruction damage equal to 260% of Attack on all enemies. Co-destruction: 20%
+      increased damage per Debuff on the target.'
+    - '"Shadow Herd": Cancels Buffs and Stances on one enemy and inflicts damage equal to 220% of Attack.'
+    - '"Shadow Herd": Cancels Buffs and Stances on one enemy and inflicts damage equal to 400% of Attack.'
+    - 'Purgatory Energy: Uses "Solar Blessing" every 2 turn(s).'
+    - 'Ominous Aura: Uses "Wolf Claw" every 3 turn(s).'
+    - 'Remove Buffs: Removes all Buffs from enemies with Debuff Immunity at the start of the allies'' turn.'
+    - '"Solar Diffusion": Inflicts Blaze damage equal to 170% of Attack on all enemies. Blaze: +25% damage dealt
+      per Ignite effect on target.'
+    - '"Solar Diffusion": Inflicts Blaze damage equal to 280% of Attack on all enemies. Blaze: +25% damage dealt
+      per Ignite effect on target.'
+    - '"Flare Ball": Inflicts damage equal to 250% of Attack on one enemy and depletes 4 Ultimate Move Gauge orb(s).'
+    - '"Flare Ball": Inflicts damage equal to 400% of Attack on one enemy and depletes 4 Ultimate Move Gauge orb(s).'
+perros_f3:
+  nombre: Twilight Temple Floor 3
+  fases:
+    1:
+    - 'Purgatory Energy: Uses "Defensive Aggression" every 2 turn(s).'
+    - 'Ominous Aura: Uses "Mass Howling" every 3 turn(s).'
+    - 'Immortality: The hero''s HP does not drop below 1.'
+    - 'Crit Chance Increase: Increases allies'' Crit Chance by 10% for every orb filled in the hero''s Ultimate
+      Move Gauge.'
+    - '"Short Temper": Decreases allies'' damage taken by 3% for 2 turn(s). (Can be stacked)'
+    - '"Short Temper": Decreases allies'' damage taken by 5% for 2 turn(s). (Can be stacked)'
+    - '"Short Temper": Decreases allies'' damage taken by 10% for 2 turn(s). (Can be stacked)'
+    - 'Purgatory Energy: Uses "Solar Blessing" every 2 turn(s).'
+    - 'Ominous Aura: Uses "Flare Ball" every 3 turn(s).'
+    - 'Remove Buffs: Removes all Buffs from enemies with Debuff Immunity at the start of the allies'' turn.'
+    - 'Basic Stats Increase: Increases the hero''s basic stats by 100% when an enemy uses a Rank Up Skill during
+      the enemy''s turn. (Limit 10 times)'
+    - '"Fierce Bite": Inflicts Co-destruction damage equal to 190% of Attack on one enemy. Co-destruction: 20% increased
+      damage per Debuff on the target.'
+    - '"Fierce Bite": Inflicts Co-destruction damage equal to 300% of Attack on one enemy. Co-destruction: 20% increased
+      damage per Debuff on the target.'
+    - '"Wolf Claw": Inflicts Blaze damage equal to 140% of Attack on all enemies. Blaze: +25% damage dealt per Ignite
+      effect on target.'
+    - '"Wolf Claw": Inflicts Blaze damage equal to 220% of Attack on all enemies. Blaze: +25% damage dealt per Ignite
+      effect on target.'
+    2:
+    - 'Purgatory Energy: Uses "Shadow Blackhole" every 2 turn(s).'
+    - 'Ominous Aura: Uses "Shadow Herd" every 3 turn(s).'
+    - 'Remove Buffs: Removes all Buffs from enemies with Attack Increase at the start of the allies'' turn.'
+    - 'Basic Stats Increase: Increases the hero''s basic stats by 100% when an enemy uses a Rank Up Skill during
+      the enemy''s turn. (Limit 10 times)'
+    - '"Fierce Bite": Inflicts damage equal to 210% of Attack on one enemy.'
+    - '"Fierce Bite": Inflicts damage equal to 280% of Attack on one enemy and Freezes them for 1 turn(s). Freeze:
+      Incapacitates target. Effect is removed when target is attacked.'
+    - '"Wolf Claw": Inflicts damage equal to 180% of Attack on all enemies. Infects for 1 turn(s). Infect: Restricts
+      Recovery-related stats.'
+    - '"Wolf Claw": Inflicts damage equal to 260% of Attack on all enemies. Infects for 2 turn(s). Infect: Restricts
+      Recovery-related stats.'
+    - 'Purgatory Energy: Uses "Short Temper" every 3 turn(s).'
+    - 'Ominous Aura: Uses "Defensive Aggression" every 2 turn(s).'
+    - 'Immortality: The hero''s HP does not drop below 1.'
+    - 'Defense Increase: Increases allies'' Defense by 30% for every orb filled in the hero''s Ultimate Move Gauge.'
+    - '"Mass Howling": Decreases Defense-related stats of all enemies by 10% for 1 turn(s).'
+    - '"Mass Howling": Decreases Defense-related stats of all enemies by 15% for 2 turn(s).'
+    - '"Mass Howling": Decreases Defense-related stats of all enemies by 30% for 2 turn(s).'
+    3:
+    - 'Purgatory Energy: Uses "Shadow Blackhole" every 3 turn(s).'
+    - 'Ominous Aura: Uses "Wolf Claw" every 2 turn(s).'
+    - 'Remove Buffs: Removes all Buffs from enemies with Attack Increase at the start of the allies'' turn.'
+    - 'Basic Stats Increase: Increases the hero''s basic stats by 100% when an enemy uses a Rank Up Skill during
+      the enemy''s turn. (Limit 10 times)'
+    - '"Star Impact": Inflicts Co-destruction damage equal to 150% of Attack on all enemies. Co-destruction: 20%
+      increased damage per Debuff on the target.'
+    - '"Star Impact": Inflicts Co-destruction damage equal to 240% of Attack on all enemies. Co-destruction: 20%
+      increased damage per Debuff on the target.'
+    - '"Shadow Herd": Cancels Buffs and Stances on one enemy and inflicts damage equal to 220% of Attack.'
+    - '"Shadow Herd": Cancels Buffs and Stances on one enemy and inflicts damage equal to 350% of Attack.'
+    - 'Purgatory Energy: Uses "Solar Blessing" every 2 turn(s).'
+    - 'Ominous Aura: Uses "Wolf Claw" every 3 turn(s).'
+    - 'Remove Buffs: Removes all Buffs from enemies with Debuff Immunity at the start of the allies'' turn.'
+    - '"Solar Diffusion": Inflicts Blaze damage equal to 170% of Attack on all enemies. Blaze: +25% damage dealt
+      per Ignite effect on target.'
+    - '"Solar Diffusion": Inflicts Blaze damage equal to 260% of Attack on all enemies. Blaze: +25% damage dealt
+      per Ignite effect on target.'
+    - '"Flare Ball": Inflicts damage equal to 240% of Attack on one enemy and depletes 4 Ultimate Move Gauge orb(s).'
+    - '"Flare Ball": Inflicts damage equal to 380% of Attack on one enemy and depletes 4 Ultimate Move Gauge orb(s).'
+perros_piso4:
+  nombre: Transcendent Skoll and Hati
+  fases:
+    1:
+    - 'Purgatory Energy: Uses "Short Temper" every odd-numbered turn.'
+    - 'Ominous Aura: Uses "Defensive Aggression" every even-numbered turn.'
+    - 'Immortality: The hero''s HP does not drop below 1.'
+    - 'Grounded Attitude: Uses "Defensive Aggression" at the start of the battle.'
+    - 'Apply Buff: When an enemy removes the boss''s Stance, it applies Moonlight on all enemies for 2 turns, then
+      removes 2 Moonwave Debuffs from them. Moonlight: Attack-related stats +40%. Immune to Blindness.'
+    - 'Threatening Posture: When taking damage while assuming a Stance, 1 Moonwave is inflicted on all enemies for
+      3 turns, then their Moonlight Buffs are removed. Moonwave: All stats -5%. Stuns for 2 turns when the effect
+      reaches max stacks. (Stacks 5 times)'
+    - 'Attack-related Stats Decrease: Decreases enemies'' Attack-related stats by 40%.'
+    - '"Mass Howling": Inflicts 1 Moonwave on all enemies for 3 turn(s). Moonwave: All stats -5%. Stuns for 2 turns
+      when the effect reaches max stacks. (Stacks 5 times)'
+    - '"Mass Howling": Inflicts 2 Moonwave stacks on all enemies for 3 turn(s). Moonwave: All stats -5%. Stuns for
+      2 turns when the effect reaches max stacks. (Stacks 5 times)'
+    - 'Purgatory Energy: Uses "Solar Blessing" every odd-numbered turn.'
+    - 'Ominous Aura: Uses "Flare Ball" every even-numbered turn.'
+    - 'The Wolf That Seeks the Sun: Decreases damage taken from enemies without the Moonlight Buff by 100%. When
+      the boss uses the Ultimate Move, the target''s Moonlight Buff is removed. Moonlight: Attack-related stats
+      +40%. Immune to Blindness.'
+    - 'Apply Debuff: Inflicts Blindness on all enemies for 2 turns at the end of the allies'' turn. Blindness: Attack
+      Skills other than Ultimate Moves will miss. (Including counters)'
+    - 'Damage Dealt Increase: Increases the boss''s damage dealt by 100% when attacking an enemy affected by Blindness.
+      Blindness: Attack Skills other than Ultimate Moves will miss. (Including counters)'
+    - 'Crit Chance/Crit Damage Increase: Increases the boss''s Crit Chance and Crit Damage by 10% for each Moonwave
+      on the enemy. (Limit 20 time(s)) Moonwave: All stats -5%. Stuns for 2 turns when the effect reaches max stacks.
+      (Stacks 5 times)'
+    - 'Basic Stats Increase: Increases the hero''s basic stats by 100% when an enemy uses a Rank Up Skill during
+      the enemy''s turn. (Limit 10 times)'
+    - '"Fierce Bite": Inflicts Co-destruction damage equal to 190% of Attack on one enemy. Co-destruction: 20% increased
+      damage per Debuff on the target.'
+    - '"Fierce Bite": Inflicts Co-destruction damage equal to 300% of Attack on one enemy. Co-destruction: 20% increased
+      damage per Debuff on the target.'
+    - '"Wolf Claw": Inflicts Blaze damage equal to 140% of Attack on all enemies. Blaze: +25% damage dealt per Ignite
+      effect on target.'
+    - '"Wolf Claw": Inflicts Blaze damage equal to 220% of Attack on all enemies. Blaze: +25% damage dealt per Ignite
+      effect on target.'
+    2:
+    - 'Purgatory Energy: Uses "Shadow Black Hole" every odd-numbered turn.'
+    - 'Ominous Aura: Uses "Shadow Herd" every even-numbered turn.'
+    - 'The Wolf that Seeks the Moon: Decreases damage taken from enemies without the Sunlight Buff by 100%. When
+      the boss uses their Ultimate Move, the target''s Sunlight Buff is removed. Sunlight: Attack-related stats
+      +40%. Immune to Freeze.'
+    - 'Apply Debuff: Freezes all enemies for 2 turns at the end of the allies'' turn. Freeze: Incapacitates target.
+      Effect is removed when target is attacked.'
+    - 'Damage Dealt Increase: Increases the boss''s damage dealt by 200% when attacking a Frozen enemy. Freeze:
+      Incapacitates target. Effect is removed when target is attacked.'
+    - 'Crit Chance/Crit Damage Increase: Increases the boss''s Crit Chance and Crit Damage by 10% for each Sunwave
+      on the enemy. (Limit 20 time(s)) Sunwave: All stats -5%. 1,000,000 fixed damage when the effect reaches max
+      stacks. (Stacks 5 times)'
+    - 'Basic Stats Increase: Increases the hero''s basic stats by 100% when an enemy uses a Rank Up Skill during
+      the enemy''s turn. (Limit 10 times)'
+    - '"Fierce Bite": Inflicts damage equal to 210% of Attack on one enemy.'
+    - '"Fierce Bite": Inflicts damage equal to 280% of Attack on one enemy and Freezes them for 1 turn(s). Freeze:
+      Incapacitates target. Effect is removed when target is attacked.'
+    - '"Wolf Claw": Inflicts damage equal to 180% of Attack on all enemies. Infects for 1 turn(s). Infect: Restricts
+      Recovery-related stats.'
+    - '"Wolf Claw": Inflicts damage equal to 260% of Attack on all enemies. Infects for 2 turn(s). Infect: Restricts
+      Recovery-related stats.'
+    - 'Purgatory Energy: Uses "Short Temper" every odd-numbered turn.'
+    - 'Ominous Aura: Uses "Defensive Aggression" every even-numbered turn.'
+    - 'Immortality: The hero''s HP does not drop below 1.'
+    - 'Grounded Attitude: Uses "Defensive Aggression" at the start of the battle.'
+    - 'Apply Buff: When an enemy removes the boss''s Stance, it applies Sunlight on all enemies for 2 turns, then
+      removes 2 Sunwave Debuffs from them. Sunlight: Attack-related stats +40%. Immune to Freeze.'
+    - 'Threatening Posture: When taking damage while assuming a Stance, 1 Sunwave is inflicted on all enemies for
+      3 turns, then their Sunlight Buffs are removed. Sunwave: All stats -5%. 1,000,000 fixed damage when the effect
+      reaches max stacks. (Stacks 5 times)'
+    - 'Attack-related Stats Decrease: Decreases enemies'' Attack-related stats by 40%.'
+    - '"Mass Howling": Inflicts 1 Sunwave on all enemies for 3 turn(s). Sunwave: All stats -5%. 1,000,000 fixed
+      damage when the effect reaches max stacks. (Stacks 5 times)'
+    - '"Mass Howling": Inflicts 2 Sunwave stacks on all enemies for 3 turn(s). Sunwave: All stats -5%. 1,000,000
+      fixed damage when the effect reaches max stacks. (Stacks 5 times)'
+    3:
+    - 'Purgatory Energy: Uses "Shadow Black Hole" every odd-numbered turn.'
+    - 'Ominous Aura: Uses "Wolf Claw" every even-numbered turn.'
+    - 'The Wolf that Seeks the Moon: If an enemy has both the Sunlight and Moonlight Buffs, all enemies gain the
+      Light of Dawn Buff, and Damage Suppression is removed from the boss. Light of Dawn: All stats +40%. Immune
+      to Sunwave and Moonwave Debuffs.'
+    - 'Apply Debuff: When taking damage from a skill during the enemy''s turn, the attacker is inflicted with 1
+      Moonwave for 3 turns. Moonwave: All stats -5%. Stuns for 2 turns when the effect reaches max stacks. (Stacks
+      5 times)'
+    - 'Crit Chance/Crit Damage Increase: Increases the boss''s Crit Chance and Crit Damage by 10% for each Sunwave
+      on the enemy. (Limit 20 time(s)) Sunwave: All stats -5%. 1,000,000 fixed damage when the effect reaches max
+      stacks. (Stacks 5 times)'
+    - 'Basic Stats Increase: Increases the hero''s basic stats by 100% when an enemy uses a Rank Up Skill during
+      the enemy''s turn. (Limit 10 times)'
+    - '"Star Impact": Inflicts Co-destruction damage equal to 150% of Attack on all enemies. Co-destruction: 20%
+      increased damage per Debuff on the target.'
+    - '"Star Impact": Inflicts Co-destruction damage equal to 240% of Attack on all enemies. Co-destruction: 20%
+      increased damage per Debuff on the target.'
+    - '"Shadow Herd": Cancels Buffs and Stances on one enemy and inflicts damage equal to 220% of Attack.'
+    - '"Shadow Herd": Cancels Buffs and Stances on one enemy and inflicts damage equal to 350% of Attack.'
+    - 'Purgatory Energy: Uses "Solar Blessing" every odd-numbered turn.'
+    - 'The Wolf That Seeks the Sun: If an enemy has both the Sunlight and Moonlight Buffs, all enemies gain the
+      Light of Dawn Buff, and Damage Suppression is removed from the boss. Light of Dawn: All stats +40%. Immune
+      to Sunwave and Moonwave Debuffs.'
+    - 'Apply Debuff: When taking damage from a skill during the enemy''s turn, the attacker is inflicted with 1
+      Sunwave for 3 turns. Sunwave: All stats -5%. 1,000,000 fixed damage when the effect reaches max stacks. (Stacks
+      5 times)'
+    - 'Crit Chance/Crit Damage Increase: Increases the boss''s Crit Chance and Crit Damage by 10% for each Moonwave
+      on the enemy. (Limit 20 time(s)) Moonwave: All stats -5%. Stuns for 2 turns when the effect reaches max stacks.
+      (Stacks 5 times)'
+    - '"Solar Diffusion": Inflicts Blaze damage equal to 170% of Attack on all enemies. Blaze: +25% damage dealt
+      per Ignite effect on target.'
+    - '"Solar Diffusion": Inflicts Blaze damage equal to 260% of Attack on all enemies. Blaze: +25% damage dealt
+      per Ignite effect on target.'
+    - '"Flare Ball": Inflicts damage equal to 240% of Attack on one enemy and depletes 4 Ultimate Move Gauge orb(s).'
+    - '"Flare Ball": Inflicts damage equal to 380% of Attack on one enemy and depletes 4 Ultimate Move Gauge orb(s).'
+serpiente_f1:
+  nombre: Corpse Farer Naglfar Floor 1
+  fases:
+    1:
+    - 'HP Increase: Increases the hero''s Max HP by 3% for every Debuff applied on enemies.'
+    - '"Offensive Thorns": Inflicts Weak Point damage equal to 160% of Attack on one enemy. Weak Point: 3x damage
+      against Debuffed enemies.'
+    - '"Offensive Thorns": Inflicts Weak Point damage equal to 280% of Attack on one enemy. Weak Point: 3x damage
+      against Debuffed enemies.'
+    - '"Acid Spit": Removes Buffs and Stances from all enemies, inflicts damage equal to 150% of Attack, then applies
+      Poison and Bleed for 2 turn(s). Poison: Additional damage equal to 60% of damage dealt at the end of every
+      turn. Bleed: Additional damage equal to 90% of damage dealt at the end of every turn.'
+    - '"Acid Spit": Removes Buffs and Stances from all enemies, inflicts damage equal to 240% of Attack, then applies
+      Poison and Bleed for 2 turn(s). Poison: Additional damage equal to 60% of damage dealt at the end of every
+      turn. Bleed: Additional damage equal to 90% of damage dealt at the end of every turn.'
+    2:
+    - 'Purgatory Energy: Uses "Hail of Thorns" every 2 turn(s).'
+    - 'Ominous Aura: Uses "Twisted Stinger" every 3 turn(s).'
+    - '"Demonic Force": Inflicts damage equal to 200% of Attack on one enemy. Extorts 50% Attack and Defense for
+      1 turn(s). Extort: Decreases the target''s stats and increases own stats by the same amount.'
+    - '"Demonic Force": Inflicts damage equal to 340% of Attack on one enemy. Extorts 80% Attack and Defense for
+      1 turn(s). Extort: Decreases the target''s stats and increases own stats by the same amount.'
+    - '"Piercing Stinger": Inflicts Pierce damage equal to 200% of Attack on one enemy, then decreases Max HP by
+      25% for 2 turn(s). Pierce: 3x Pierce Rate Increase.'
+    - '"Piercing Stinger": Inflicts Pierce damage equal to 340% of Attack on one enemy, then decreases Max HP by
+      40% for 2 turn(s). Pierce: 3x Pierce Rate Increase.'
+    3:
+    - 'Purgatory Energy: Uses "Massive Bump" every 2 turn(s).'
+    - '"Rampage": Inflicts damage equal to 195% of Attack on one enemy. Makes target(s) Bleed for 2 turn(s). Bleed:
+      Additional damage equal to 90% of damage dealt at the end of every turn.'
+    - '"Rampage": Inflicts damage equal to 325% of Attack on one enemy. Makes target(s) Bleed for 2 turn(s). Bleed:
+      Additional damage equal to 90% of damage dealt at the end of every turn.'
+    - '"Dark Emission": Inflicts damage equal to 210% of Attack on all enemies. Poisons for 3 turn(s). Poison: Additional
+      damage equal to 60% of damage dealt at the end of every turn.'
+    - '"Dark Emission": Inflicts damage equal to 350% of Attack on all enemies. Poisons for 3 turn(s). Poison: Additional
+      damage equal to 60% of damage dealt at the end of every turn.'
+serpiente_f2:
+  nombre: Corpse Farer Naglfar Floor 2
+  fases:
+    1:
+    - 'Purgatory Energy: Uses "Black Absorption" every 2 turn(s).'
+    - 'Ominous Aura: Uses "Defensive Thorns" every 3 turn(s).'
+    - 'Basic Stats Increase: Increases the hero''s basic stats by 100% when an enemy uses a Rank Up Skill during
+      the enemy''s turn. (Limit 10 times)'
+    - '"Crazy Lash": Inflicts Weak Point damage equal to 150% of Attack on all enemies. Weak Point: 3x damage against
+      Debuffed enemies.'
+    - '"Crazy Lash": Inflicts Weak Point damage equal to 200% of Attack on all enemies. Weak Point: 3x damage against
+      Debuffed enemies.'
+    - '"Acid Spit": Inflicts damage equal to 170% of Attack on all enemies and inflicts Corrosion damage equal to
+      10% of the remaining HP. Corrosion: Additional damage at the end of every turn. (Can be stacked)'
+    - '"Acid Spit": Inflicts damage equal to 200% of Attack on all enemies and applies 2 Corrosion effects equal
+      to 10% of the remaining HP. Corrosion: Additional damage at the end of every turn. (Can be stacked)'
+    2:
+    - 'Purgatory Energy: Uses "Twisted Stinger" every 2 turn(s).'
+    - 'Basic Stats Increase: Increases the hero''s basic stats by 100% when an enemy uses a Rank Up Skill during
+      the enemy''s turn. (Limit 10 times)'
+    - '"Demonic Force": Inflicts damage equal to 200% of Attack on one enemy. Decreases Defense-related stats by
+      30% for 1 turn(s).'
+    - '"Demonic Force": Inflicts damage equal to 320% of Attack on one enemy. Decreases Defense-related stats by
+      40% for 2 turn(s).'
+    - '"Piercing Stinger": Inflicts damage equal to 290% of Attack on one enemy, disables Ultimate Moves for 2 turn(s),
+      then depletes 1 Ultimate Move Gauge orb(s) at the end of the enemy''s turn.'
+    - '"Piercing Stinger": Inflicts damage equal to 370% of Attack on one enemy, disables Ultimate Moves for 2 turn(s),
+      then depletes 1 Ultimate Move Gauge orb(s) at the end of the enemy''s turn.'
+    3:
+    - 'Purgatory Energy: Uses "Massive Bump" every 2 turn(s).'
+    - 'Ominous Aura: Uses "Massive Bite" every 3 turn(s).'
+    - 'Basic Stats Increase: Increases the hero''s basic stats by 100% when an enemy uses a Rank Up Skill during
+      the enemy''s turn. (Limit 10 times)'
+    - '"Rampage": Removes Buffs from one enemy and inflicts damage equal to 300% of Attack.'
+    - '"Rampage": Cancels Buffs and Stances on one enemy and inflicts damage equal to 400% of Attack.'
+    - '"Dark Emission": Inflicts damage equal to 150% of Attack on all enemies and Lifesteals 30% of the damage.
+      Lifesteal: Heals for a portion of the damage dealt.'
+    - '"Dark Emission": Inflicts damage equal to 250% of Attack on all enemies and Lifesteals 30% of the damage.
+      Lifesteal: Heals for a portion of the damage dealt.'
+serpiente_f3:
+  nombre: Corpse Farer Naglfar Floor 3
+  fases:
+    1:
+    - 'Purgatory Energy: Uses "Black Absorption" every 2 turn(s).'
+    - 'Ominous Aura: Uses "Defensive Thorns" every 3 turn(s).'
+    - 'Basic Stats Increase: Increases the hero''s basic stats by 100% when an enemy uses a Rank Up Skill during
+      the enemy''s turn. (Limit 10 times)'
+    - 'Threatening Posture: Applies Infect on all enemies for 2 turn(s) when assuming a Stance.'
+    - '"Crazy Lash": Inflicts Co-destruction damage equal to 155% of Attack on all enemies. Co-destruction: 20%
+      increased damage per Debuff on the target.'
+    - '"Crazy Lash": Inflicts Co-destruction damage equal to 220% of Attack on all enemies. Co-destruction: 30%
+      increased damage per Debuff on the target.'
+    - '"Acid Spit": Inflicts Quell damage equal to 180% of Defense on all enemies. Quell: Damage dealt +50% per
+      active Stance on self.'
+    - '"Acid Spit": Inflicts Quell damage equal to 250% of Defense on all enemies. Quell: Damage dealt +50% per
+      active Stance on self.'
+    2:
+    - 'Purgatory Energy: Uses "Twisted Stinger" every 2 turn(s).'
+    - 'Basic Stats Increase: Increases the hero''s basic stats by 100% when an enemy uses a Rank Up Skill during
+      the enemy''s turn. (Limit 10 times)'
+    - '"Demonic Force": Inflicts Covert Action damage equal to 200% of Attack on one enemy. Covert Action: +50%
+      damage dealt per Darkness on target.'
+    - '"Demonic Force": Inflicts Covert Action damage equal to 300% of Attack on one enemy. Covert Action: +50%
+      damage dealt per Darkness on target.'
+    - '"Piercing Stinger": Cancels Buffs and Stances on one enemy and inflicts damage equal to 240% of Attack.'
+    - '"Piercing Stinger": Cancels Buffs and Stances on one enemy and inflicts damage equal to 360% of Attack.'
+    3:
+    - 'Purgatory Energy: Uses "Massive Bite" every 2 turn(s).'
+    - 'Ominous Aura: Uses "Death Throes" every 3 turn(s).'
+    - 'Basic Stats Increase: Increases the hero''s basic stats by 100% when an enemy uses a Rank Up Skill during
+      the enemy''s turn. (Limit 10 times)'
+    - '"Rampage": Inflicts damage equal to 195% of Attack on one enemy. Makes target(s) Bleed for 2 turn(s). Bleed:
+      Additional damage equal to 90% of damage dealt at the end of every turn.'
+    - '"Rampage": Inflicts damage equal to 325% of Attack on one enemy. Makes target(s) Bleed for 2 turn(s). Bleed:
+      Additional damage equal to 90% of damage dealt at the end of every turn.'
+    - '"Dark Emission": Inflicts damage equal to 210% of Attack on all enemies. Poisons for 3 turn(s). Poison: Additional
+      damage equal to 60% of damage dealt at the end of every turn.'
+    - '"Dark Emission": Inflicts damage equal to 350% of Attack on all enemies. Poisons for 3 turn(s). Poison: Additional
+      damage equal to 60% of damage dealt at the end of every turn.'
+rata_f1:
+  nombre: Troublemaker's Hideout Floor 1
+  fases:
+    1:
+    - 'Purgatory Energy: Uses "Brilliant Fruit" every 1 turn(s) at Suspicious Wooden Device 3.'
+    - 'Ominous Aura: Uses "Static Shell" every 2 turn(s) at Suspicious Wooden Device 2.'
+    - 'Attack Increase: Only 1 Debuff(s) can be applied. Increases Attack by 5% when Debuffed.'
+    - 'Remove Buffs: Removes all Buffs from enemies with Debuff Immunity at the start of the allies'' turn.'
+    - '"Shock of Thor": Inflicts damage equal to 200% of Attack and applies a Food Poisoning effect for 5 turn(s)
+      on all enemies. Food Poisoning: Additional damage equal to 5% of Max HP at the end of every turn. (Can be
+      stacked)'
+    - '"Shock of Thor": Inflicts damage equal to 300% of Attack and applies a Food Poisoning effect for 5 turn(s)
+      on all enemies. Food Poisoning: Additional damage equal to 5% of Max HP at the end of every turn. (Can be
+      stacked)'
+    - '"Untruth Temptation": Inflicts Spike damage equal to 250% of Attack on one enemy. Spike: 2x Crit Damage Increase.'
+    - '"Untruth Temptation": Inflicts Spike damage equal to 350% of Attack on one enemy. Spike: 2x Crit Damage Increase.'
+    - 'HP Increase: Increases the hero''s HP by 100%.'
+    - 'Solid Stance: Decreases the hero''s damage taken by 90% when assuming a Stance.'
+    - 'The Beginning of Vengeance: The hero''s Debuffs are removed when using Stance Skills. The hero gains Debuff
+      Immunity for 2 turns. (Excluding Ultimate Moves)'
+    - 'Grounded Attitude: The Demonic Beast does not move if it is assuming a Stance by Suspicious Wooden Device
+      2.'
+    - 'Attack Increase: Increases the hero''s Attack by 30%.'
+    2:
+    - 'Purgatory Energy: Uses "Brilliant Fruit" every 1 turn(s) at Suspicious Wooden Device 3.'
+    - 'Ominous Aura: Uses "Static Shell" every 2 turn(s) at Suspicious Wooden Device 2.'
+    - 'Attack Increase: Only 1 Debuff(s) can be applied. Increases Attack by 5% when Debuffed.'
+    - 'Remove Buffs: Removes all Buffs from enemies with Debuff Immunity at the start of the allies'' turn.'
+    - '"Shock of Thor": Inflicts damage equal to 200% of Attack and applies a Food Poisoning effect for 5 turn(s)
+      on all enemies. Food Poisoning: Additional damage equal to 5% of Max HP at the end of every turn. (Can be
+      stacked)'
+    - '"Shock of Thor": Inflicts damage equal to 300% of Attack and applies a Food Poisoning effect for 5 turn(s)
+      on all enemies. Food Poisoning: Additional damage equal to 5% of Max HP at the end of every turn. (Can be
+      stacked)'
+    - '"Thunderbolt Tail": Inflicts Pierce damage equal to 250% of Attack on one enemy. Pierce: 3x Pierce Rate Increase.'
+    - '"Thunderbolt Tail": Inflicts Pierce damage equal to 350% of Attack on one enemy. Pierce: 3x Pierce Rate Increase.'
+    - 'HP Increase: Increases the hero''s HP by 100%.'
+    - 'Solid Stance: Decreases the hero''s damage taken by 90% when assuming a Stance.'
+    - 'The Beginning of Vengeance: The hero''s Debuffs are removed when using Stance Skills. The hero gains Debuff
+      Immunity for 2 turns. (Excluding Ultimate Moves)'
+    - 'Grounded Attitude: The Demonic Beast does not move if it is assuming a Stance by Suspicious Wooden Device
+      2.'
+    - 'Attack Increase: Increases the hero''s Attack by 30%.'
+    3:
+    - 'Purgatory Energy: Uses "Lightning Speed" every 1 turn(s).'
+    - 'Ominous Aura: Uses "Static Shell" every 2 turn(s) at Suspicious Wooden Device 2.'
+    - 'Attack Increase: Only 1 Debuff(s) can be applied. Increases Attack by 5% when Debuffed.'
+    - 'Remove Buffs: Removes all Buffs from enemies with Debuff Immunity at the start of the allies'' turn.'
+    - '"Untruth Temptation": Inflicts damage equal to 250% of Attack and applies a Food Poisoning effect for 5 turn(s)
+      on one enemy. Food Poisoning: Additional damage equal to 5% of Max HP at the end of every turn. (Can be stacked)'
+    - '"Untruth Temptation": Inflicts damage equal to 350% of Attack and applies 2 Food Poisoning effects for 5
+      turn(s) on one enemy. Food Poisoning: Additional damage equal to 5% of Max HP at the end of every turn. (Can
+      be stacked)'
+    - '"Shock of Thor": Inflicts Sever damage equal to 200% of Attack on all enemies. Sever: 3x Crit Chance Increase.'
+    - '"Shock of Thor": Inflicts Sever damage equal to 300% of Attack on all enemies. Sever: 3x Crit Chance Increase.'
+    - 'HP Increase: Increases the hero''s HP by 100%.'
+    - 'Solid Stance: Decreases the hero''s damage taken by 90% when assuming a Stance.'
+    - 'The Beginning of Vengeance: The hero''s Debuffs are removed when using Stance Skills. The hero gains Debuff
+      Immunity for 2 turns. (Excluding Ultimate Moves)'
+    - 'Grounded Attitude: The Demonic Beast does not move if it is assuming a Stance by Suspicious Wooden Device
+      2.'
+    - 'Attack Increase: Increases the hero''s Attack by 30%.'
+rata_f2:
+  nombre: Troublemaker's Hideout Floor 2
+  fases:
+    1:
+    - 'Purgatory Energy: Uses "Lightning Speed" every 2 turn(s).'
+    - 'Ominous Aura: Uses "Static Shell" every 2 turn(s) at Suspicious Wooden Device 2.'
+    - 'Attack Increase: Only 1 Debuff(s) can be applied. Increases Attack by 5% when Debuffed.'
+    - 'Remove Buffs: Removes all Buffs from enemies with Debuff Immunity at the start of the allies'' turn.'
+    - 'World Tree''s Troublemaker: Applies Immortality on self if the Suspicious Wooden Devices 2 and 3 have HP
+      remaining.'
+    - '"Thunderbolt Tail": Inflicts damage equal to 250% of Attack and applies a Food Poisoning effect for 5 turn(s)
+      on one enemy. Food Poisoning: Additional damage equal to 5% of Max HP at the end of every turn. (Can be stacked)'
+    - '"Thunderbolt Tail": Inflicts damage equal to 350% of Attack and applies 2 Food Poisoning effects for 5 turn(s)
+      on one enemy. Food Poisoning: Additional damage equal to 5% of Max HP at the end of every turn. (Can be stacked)'
+    - '"Shock of Thor": Inflicts damage equal to 200% of Attack and applies a Food Poisoning effect for 5 turn(s)
+      on all enemies. Food Poisoning: Additional damage equal to 5% of Max HP at the end of every turn. (Can be
+      stacked)'
+    - '"Shock of Thor": Inflicts damage equal to 300% of Attack and applies a Food Poisoning effect for 5 turn(s)
+      on all enemies. Food Poisoning: Additional damage equal to 5% of Max HP at the end of every turn. (Can be
+      stacked)'
+    - 'HP Increase: Increases the hero''s HP by 100%.'
+    - 'Solid Stance: Decreases the hero''s damage taken by 90% when assuming a Stance.'
+    - 'The Beginning of Vengeance: The hero''s Debuffs are removed when using Stance Skills. The hero gains Debuff
+      Immunity for 2 turns. (Excluding Ultimate Moves)'
+    - 'Grounded Attitude: The Demonic Beast does not move if it is assuming a Stance by Suspicious Wooden Device
+      2.'
+    - 'Attack Increase: Increases the hero''s Attack by 30%.'
+    2:
+    - 'Purgatory Energy: Uses "Brilliant Fruit" every 1 turn(s) at Suspicious Wooden Device 3.'
+    - 'Ominous Aura: Uses "Static Shell" every 2 turn(s) at Suspicious Wooden Device 2.'
+    - 'Attack Increase: Only 1 Debuff(s) can be applied. Increases Attack by 5% when Debuffed.'
+    - 'Remove Buffs: Removes all Buffs from enemies with Debuff Immunity at the start of the allies'' turn.'
+    - 'World Tree''s Troublemaker: Applies Immortality on self if the Suspicious Wooden Devices 2 and 3 have HP
+      remaining.'
+    - '"Untruth Temptation": Inflicts damage equal to 250% of Attack and applies a Food Poisoning effect for 5 turn(s)
+      on one enemy. Food Poisoning: Additional damage equal to 5% of Max HP at the end of every turn. (Can be stacked)'
+    - '"Untruth Temptation": Inflicts damage equal to 350% of Attack and applies 2 Food Poisoning effects for 5
+      turn(s) on one enemy. Food Poisoning: Additional damage equal to 5% of Max HP at the end of every turn. (Can
+      be stacked)'
+    - '"Lightning Speed": Inflicts Weak Point damage equal to 100% of Attack on all enemies. Weak Point: 3x damage
+      against Debuffed enemies.'
+    - '"Lightning Speed": Inflicts Weak Point damage equal to 200% of Attack on all enemies. Weak Point: 3x damage
+      against Debuffed enemies.'
+    - 'HP Increase: Increases the hero''s HP by 100%.'
+    - 'Solid Stance: Decreases the hero''s damage taken by 90% when assuming a Stance.'
+    - 'The Beginning of Vengeance: The hero''s Debuffs are removed when using Stance Skills. The hero gains Debuff
+      Immunity for 2 turns. (Excluding Ultimate Moves)'
+    - 'Grounded Attitude: The Demonic Beast does not move if it is assuming a Stance by Suspicious Wooden Device
+      2.'
+    - 'Attack Increase: Increases the hero''s Attack by 30%.'
+    3:
+    - 'Purgatory Energy: Uses "Brilliant Fruit" every 2 turn(s) at Suspicious Wooden Device 3.'
+    - 'Ominous Aura: Uses "Static Shell" every 2 turn(s) at Suspicious Wooden Device 2.'
+    - 'Attack Increase: Only 1 Debuff(s) can be applied. Increases Attack by 5% when Debuffed.'
+    - 'Remove Buffs: Removes all Buffs from enemies with Debuff Immunity at the start of the allies'' turn.'
+    - 'HP Recovery: Removes the hero''s Debuffs, fully heals their HP, and increases all stats by 5% when the hero
+      survives with 30% HP or less. (Limit once)'
+    - '"Shock of Thor": Inflicts damage equal to 200% of Attack and applies a Food Poisoning effect for 5 turn(s)
+      on all enemies. Food Poisoning: Additional damage equal to 5% of Max HP at the end of every turn. (Can be
+      stacked)'
+    - '"Shock of Thor": Inflicts damage equal to 300% of Attack and applies a Food Poisoning effect for 5 turn(s)
+      on all enemies. Food Poisoning: Additional damage equal to 5% of Max HP at the end of every turn. (Can be
+      stacked)'
+    - '"Lightning Speed": Inflicts Weak Point damage equal to 100% of Attack on all enemies. Weak Point: 3x damage
+      against Debuffed enemies.'
+    - '"Lightning Speed": Inflicts Weak Point damage equal to 200% of Attack on all enemies. Weak Point: 3x damage
+      against Debuffed enemies.'
+    - 'HP Increase: Increases the hero''s HP by 100%.'
+    - 'Solid Stance: Decreases the hero''s damage taken by 90% when assuming a Stance.'
+    - 'The Beginning of Vengeance: The hero''s Debuffs are removed when using Stance Skills. The hero gains Debuff
+      Immunity for 2 turns. (Excluding Ultimate Moves)'
+    - 'Suspicious Effect: Applies Immortality on the Demonic Beast if this Wooden Device has HP remaining.'
+    - 'Grounded Attitude: The Demonic Beast does not move if it is assuming a Stance by Suspicious Wooden Device
+      2.'
+    - 'Attack-related Stats Increase: Increases allies'' Attack-related stats by 20%.'
+    - 'Suspicious Effect: Increases the Demonic Beast''s HP by 500% if this Wooden Device has HP remaining.'
+rata_f3:
+  nombre: Troublemaker's Hideout Floor 3
+  fases:
+    1:
+    - 'Purgatory Energy: Uses "Brilliant Fruit" every 1 turn(s) at Suspicious Wooden Device 3.'
+    - 'Ominous Aura: Uses "Static Shell" every 2 turn(s) at Suspicious Wooden Device 2.'
+    - 'Attack Increase: Only 3 Debuff(s) can be applied. Increases Attack by 5% when Debuffed.'
+    - 'Remove Buffs: Removes all Buffs from enemies with Debuff Immunity at the start of the allies'' turn.'
+    - '"Lightning Speed": Inflicts damage equal to 200% of Attack and applies a Food Poisoning effect for 5 turn(s)
+      on all enemies. Food Poisoning: Additional damage equal to 5% of Max HP at the end of every turn. (Can be
+      stacked)'
+    - '"Lightning Speed": Inflicts damage equal to 300% of Attack and applies a Food Poisoning effect for 5 turn(s)
+      on all enemies. Food Poisoning: Additional damage equal to 5% of Max HP at the end of every turn. (Can be
+      stacked)'
+    - '"Thunderbolt Tail": Inflicts Pierce damage equal to 250% of Attack on one enemy. Pierce: 3x Pierce Rate Increase.'
+    - '"Thunderbolt Tail": Inflicts Pierce damage equal to 350% of Attack on one enemy. Pierce: 3x Pierce Rate Increase.'
+    - 'Solid Stance: Decreases the hero''s damage taken by 90% when assuming a Stance.'
+    - 'The Beginning of Vengeance: The hero''s Debuffs are removed when using Stance Skills. The hero gains Debuff
+      Immunity for 2 turns. (Excluding Ultimate Moves)'
+    - 'Grounded Attitude: The Demonic Beast does not move if it is assuming a Stance by Suspicious Wooden Device
+      2.'
+    - 'HP Increase: Increases the hero''s HP by 100%.'
+    2:
+    - 'Purgatory Energy: Uses "Brilliant Fruit" every 1 turn(s) at Suspicious Wooden Device 3.'
+    - 'Ominous Aura: Uses "Static Shell" every 2 turn(s) at Suspicious Wooden Device 2.'
+    - 'Attack Increase: Only 3 Debuff(s) can be applied. Increases Attack by 5% when Debuffed.'
+    - 'Remove Buffs: Removes all Buffs from enemies with Debuff Immunity at the start of the allies'' turn.'
+    - '"Shock of Thor": Inflicts damage equal to 200% of Attack and applies a Food Poisoning effect for 5 turn(s)
+      on all enemies. Food Poisoning: Additional damage equal to 5% of Max HP at the end of every turn. (Can be
+      stacked)'
+    - '"Shock of Thor": Inflicts damage equal to 300% of Attack and applies a Food Poisoning effect for 5 turn(s)
+      on all enemies. Food Poisoning: Additional damage equal to 5% of Max HP at the end of every turn. (Can be
+      stacked)'
+    - '"Lightning Speed": Inflicts damage equal to 200% of Attack and applies a Food Poisoning effect for 5 turn(s)
+      on all enemies. Food Poisoning: Additional damage equal to 5% of Max HP at the end of every turn. (Can be
+      stacked)'
+    - '"Lightning Speed": Inflicts damage equal to 300% of Attack and applies a Food Poisoning effect for 5 turn(s)
+      on all enemies. Food Poisoning: Additional damage equal to 5% of Max HP at the end of every turn. (Can be
+      stacked)'
+    - 'Solid Stance: Decreases the hero''s damage taken by 90% when assuming a Stance.'
+    - 'The Beginning of Vengeance: The hero''s Debuffs are removed when using Stance Skills. The hero gains Debuff
+      Immunity for 2 turns. (Excluding Ultimate Moves)'
+    - 'Grounded Attitude: The Demonic Beast does not move if it is assuming a Stance by Suspicious Wooden Device
+      2.'
+    - 'All Stats Increase: Increases all stats of the hero by 20%.'
+    3:
+    - 'Purgatory Energy: Uses "Lightning Speed" every 2 turn(s) at Suspicious Wooden Device 3.'
+    - 'Ominous Aura: Uses "Static Shell" every 2 turn(s) at Suspicious Wooden Device 2.'
+    - 'Attack Increase: Only 3 Debuff(s) can be applied. Increases Attack by 5% when Debuffed.'
+    - 'Remove Buffs: Removes all Buffs from enemies with Debuff Immunity at the start of the allies'' turn.'
+    - '"Untruth Temptation": Inflicts Spike damage equal to 250% of Attack on one enemy. Spike: 2x Crit Damage Increase.'
+    - '"Untruth Temptation": Inflicts Spike damage equal to 350% of Attack on one enemy. Spike: 2x Crit Damage Increase.'
+    - '"Shock of Thor": Inflicts Sever damage equal to 200% of Attack on all enemies. Sever: 3x Crit Chance Increase.'
+    - '"Shock of Thor": Inflicts Sever damage equal to 300% of Attack on all enemies. Sever: 3x Crit Chance Increase.'
+    - 'Solid Stance: Decreases the hero''s damage taken by 90% when assuming a Stance.'
+    - 'The Beginning of Vengeance: The hero''s Debuffs are removed when using Stance Skills. The hero gains Debuff
+      Immunity for 2 turns. (Excluding Ultimate Moves)'
+    - 'Grounded Attitude: The Demonic Beast does not move if it is assuming a Stance by Suspicious Wooden Device
+      2.'
+    - 'All Stats Increase: Increases all stats of the hero by 20%.'
+surtr_f1:
+  nombre: Hall of Genesis Floor 1
+  fases:
+    1:
+    - '"Hati''s Shadow": Inflicts Flood damage equal to 250% of Attack on one enemy. Flood: 0.8% additional damage
+      for every percent of remaining HP on self.'
+    - '"Hati''s Shadow": Inflicts Flood damage equal to 320% of Attack on one enemy then inflicts Co-destruction
+      damage. Flood: 0.8% additional damage for every percent of HP remaining on self. Co-destruction: 40% increased
+      damage per Debuff on the target.'
+    - '"Skoll''s Majesty": Inflicts damage equal to 210% of Attack on all enemies. Ignites for 3 turn(s). Ignite:
+      Damage taken by target(s) +10% (Can be stacked).'
+    - '"Skoll''s Majesty": Removes Buffs from all enemies and inflicts damage equal to 260% of Attack. Applies 2
+      Ignite effects for 3 turn(s). Ignite: Damage taken by target(s) +10% (Can be stacked).'
+    2:
+    - '"Ratatoskr''s Sparkle": Inflicts Flood damage equal to 250% of Attack on one enemy. Flood: 0.8% additional
+      damage for every percent of remaining HP on self.'
+    - '"Ratatoskr''s Sparkle": Inflicts Flood damage equal to 320% of Attack on one enemy then inflicts Co-destruction
+      damage. Flood: 0.8% additional damage for every percent of HP remaining on self. Co-destruction: 40% increased
+      damage per Debuff on the target.'
+    - '"Reignition": Gains 2 Igniting Attack effects for 3 turns. Igniting Attack: Inflicts the Ignite effect on
+      the target when using an Attack Skill other than the Ultimate Move. (Stacks up to 9 times)'
+    - '"Reignition": Gains 2 Igniting Attack effects and a 50% Damage Dealt Increase for 3 turns. Igniting Attack:
+      Inflicts the Ignite effect on the target when using an Attack Skill other than the Ultimate Move. (Stacks
+      up to 9 times)'
+    3:
+    - '"Skoll''s Majesty": Inflicts damage equal to 210% of Attack on all enemies. Ignites for 3 turn(s). Ignite:
+      Damage taken by target(s) +10% (Can be stacked).'
+    - '"Skoll''s Majesty": Removes Buffs from all enemies and inflicts damage equal to 260% of Attack. Applies 2
+      Ignite effects for 3 turn(s). Ignite: Damage taken by target(s) +10% (Can be stacked).'
+    - '"Eikthyrnir''s Breath": Inflicts Blaze damage equal to 210% of Attack on all enemies. Blaze: +25% damage
+      dealt per Ignite effect on target.'
+    - '"Eikthyrnir''s Breath": Inflicts Blaze damage equal to 260% of Attack on all enemies, then decreases their
+      Ultimate Move Gauge by 1 orb(s). Blaze: +25% damage dealt per Ignite effect on target.'
+surtr_f2:
+  nombre: Hall of Genesis Floor 2
+  fases:
+    1:
+    - '"Skoll''s Majesty": Inflicts damage equal to 210% of Attack on all enemies. Ignites for 3 turn(s). Ignite:
+      Damage taken by target(s) +10% (Can be stacked).'
+    - '"Skoll''s Majesty": Removes Buffs from all enemies and inflicts damage equal to 260% of Attack. Applies 2
+      Ignite effects for 3 turn(s). Ignite: Damage taken by target(s) +10% (Can be stacked).'
+    - '"Eikthyrnir''s Breath": Inflicts damage equal to 210% of Attack on all enemies, ignoring Defense and Resistance.'
+    - '"Eikthyrnir''s Breath": Inflicts damage equal to 260% of Attack on all enemies, ignoring Defense and Resistance.'
+    2:
+    - '"Hati''s Shadow": Inflicts Flood damage equal to 250% of Attack on one enemy, then applies Ignite for 3 turn(s).
+      Flood: 0.8% additional damage for every percent of remaining HP on self. Ignite: Damage taken by target(s)
+      +10% (Stacks up to 9 times).'
+    - '"Hati''s Shadow": Inflicts Flood damage equal to 320% of Attack on one enemy, then applies 2 Ignite effects
+      for 3 turn(s). Flood: 0.8% additional damage for every percent of remaining HP on self. Ignite: Damage taken
+      by target(s) +10% (Stacks to up 9 times).'
+    - '"Skoll''s Majesty": Inflicts Blaze damage equal to 210% of Attack on all enemies. Blaze: +25% damage dealt
+      per Ignite effect on target.'
+    - '"Skoll''s Majesty": Inflicts Blaze damage equal to 260% of Attack on all enemies. Blaze: +25% damage dealt
+      per Ignite effect on target.'
+    3:
+    - '"Eikthyrnir''s Breath": Inflicts Rupture damage equal to 210% of Attack on all enemies. Rupture: 2x damage
+      against Buffed enemies.'
+    - '"Eikthyrnir''s Breath": Inflicts Rupture damage equal to 260% of Attack on all enemies. Rupture: 2x damage
+      against Buffed enemies.'
+    - '"Skoll''s Majesty": Cancels Stances on all enemies and inflicts damage equal to 210% of Attack. Inflicts
+      100% additional damage if the target is afflicted with Overheat.'
+    - '"Skoll''s Majesty": Cancels Stances on all enemies and inflicts damage equal to 260% of Attack. Inflicts
+      100% additional damage if the target is afflicted with Overheat.'
+surtr_f3:
+  nombre: Hall of Genesis Floor 3
+  fases:
+    1:
+    - '"Ratatoskr''s Sparkle": Inflicts Flood damage equal to 250% of Attack on one enemy. Flood: 0.8% additional
+      damage for every percent of remaining HP on self.'
+    - '"Ratatoskr''s Sparkle": Inflicts Flood damage equal to 320% of Attack on one enemy then inflicts Co-destruction
+      damage. Flood: 0.8% additional damage for every percent of HP remaining on self. Co-destruction: 40% increased
+      damage per Debuff on the target.'
+    - '"Eikthyrnir''s Breath": Inflicts damage equal to 210% of Attack on all enemies, ignoring Defense and Resistance.'
+    - '"Eikthyrnir''s Breath": Inflicts damage equal to 260% of Attack on all enemies, ignoring Defense and Resistance.'
+    2:
+    - '"Skoll''s Majesty": Inflicts damage equal to 210% of Attack on all enemies. Ignites for 3 turn(s). Ignite:
+      Damage taken by target(s) +10% (Can be stacked).'
+    - '"Skoll''s Majesty": Removes Buffs from all enemies and inflicts damage equal to 260% of Attack. Applies 2
+      Ignite effects for 3 turn(s). Ignite: Damage taken by target(s) +10% (Can be stacked).'
+    - '"Reignition": Gains an Igniting Attack effect and a 50% Damage Dealt Increase for 3 turns. Igniting Attack:
+      Inflicts the Ignite effect on the target when using an Attack Skill other than the Ultimate Move. (Stacks
+      up to 9 times)'
+    - '"Reignition": Gains 2 Igniting Attack effects and a 50% Damage Dealt Increase for 3 turns. Igniting Attack:
+      Inflicts the Ignite effect on the target when using an Attack Skill other than the Ultimate Move. (Stacks
+      up to 9 times)'
+    3:
+    - '"Hati''s Shadow": Inflicts damage equal to 250% of Defense on all enemies.'
+    - '"Hati''s Shadow": Inflicts damage equal to 320% of Defense on all enemies.'
+    - '"Rune of Protection": Assumes a Stance that decreases damage taken by 60% for 2 turn(s), Reflecting 50% of
+      damage taken, then gains a 15% Defense-related Stats Increase. Reflect: Returns a portion of damage taken
+      back to the attacker.'
+    - '"Rune of Protection": Assumes a Stance that decreases damage taken by 60% for 2 turn(s), Reflecting 50% of
+      damage taken, then gains 2 instances of a 15% Defense-related Stats Increase. Reflect: Returns a portion of
+      damage taken back to the attacker.'

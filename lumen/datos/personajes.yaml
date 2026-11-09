@@ -5523,11 +5523,11 @@ data_zahard_verde:
   roles: []
   cartas:
     skill_1:
-      descripcion: Golden Needle of Mystery Island
+      descripcion: "Un objetivo (Golden Needle of Mystery Island)"
     skill_2:
-      descripcion: Lecalicus
+      descripcion: "Área (Lecalicus)"
     ulti:
-      descripcion: Second Cosmos
+      descripcion: "Área (Second Cosmos)"
 rudeus_greyrat_rojo:
   clave: '[Otherworldly Reincarnation] Rudeus Greyrat'
   nombre: Rudeus Greyrat
@@ -5536,11 +5536,11 @@ rudeus_greyrat_rojo:
   roles: []
   cartas:
     skill_1:
-      descripcion: Stone Cannon
+      descripcion: "Un objetivo (Stone Cannon)"
     skill_2:
-      descripcion: Air Burst
+      descripcion: "Área (Air Burst)"
     ulti:
-      descripcion: Flash Over
+      descripcion: "Área (Flash Over)"
 roxy_migurdia_verde:
   clave: '[King-Class Water Mage] Roxy Migurdia'
   nombre: Roxy Migurdia
@@ -5549,11 +5549,11 @@ roxy_migurdia_verde:
   roles: []
   cartas:
     skill_1:
-      descripcion: Water Ball
+      descripcion: "Un objetivo (Water Ball)"
     skill_2:
-      descripcion: Icicle Break
+      descripcion: "Área (Icicle Break)"
     ulti:
-      descripcion: Cumulonimbus
+      descripcion: "Área (Cumulonimbus)"
 ghislaine_dedoldia_verde:
   clave: '[Sword King] Ghislaine Dedoldia'
   nombre: Ghislaine Dedoldia
@@ -5562,11 +5562,11 @@ ghislaine_dedoldia_verde:
   roles: []
   cartas:
     skill_1:
-      descripcion: Nimble Slash
+      descripcion: "Un objetivo (Nimble Slash)"
     skill_2:
-      descripcion: Savage Movement
+      descripcion: "Un objetivo (Savage Movement)"
     ulti:
-      descripcion: Blade of Light
+      descripcion: "Área (Blade of Light)"
 terry_bogard_rojo:
   clave: '[KOF ''98] Terry Bogard'
   nombre: Terry Bogard
@@ -5575,11 +5575,11 @@ terry_bogard_rojo:
   roles: []
   cartas:
     skill_1:
-      descripcion: Rising Tackle
+      descripcion: "Un objetivo (Rising Tackle)"
     skill_2:
-      descripcion: Crack Shoot
+      descripcion: "Apoyo (Crack Shoot)"
     ulti:
-      descripcion: Power Geyser
+      descripcion: "Área (Power Geyser)"
 iori_yagami_verde:
   clave: '[KOF ''98] Iori Yagami'
   nombre: Iori Yagami
@@ -5588,11 +5588,11 @@ iori_yagami_verde:
   roles: []
   cartas:
     skill_1:
-      descripcion: '108 Shiki: Yamibarai'
+      descripcion: "Un objetivo (108 Shiki: Yamibarai)"
     skill_2:
-      descripcion: '100 Shiki: Oniyaki'
+      descripcion: "Área (100 Shiki: Oniyaki)"
     ulti:
-      descripcion: 'Kin 1211 Shiki: Yaotome'
+      descripcion: "Un objetivo (Kin 1211 Shiki: Yaotome)"
 guardian_hawk_elizabeth_rojo:
   clave: '[Summer Vibes] Guardian Hawk & Elizabeth'
   nombre: Guardian Hawk & Elizabeth
@@ -5601,11 +5601,11 @@ guardian_hawk_elizabeth_rojo:
   roles: []
   cartas:
     skill_1:
-      descripcion: Rolling Ham Spike
+      descripcion: "Área (Rolling Ham Spike)"
     skill_2:
-      descripcion: Surprise Fireworks
+      descripcion: "Área (Surprise Fireworks)"
     ulti:
-      descripcion: Rush Hawk
+      descripcion: "Un objetivo (Rush Hawk)"
 eleven_azul:
   clave: '[Stranger Things] Eleven'
   nombre: Eleven
@@ -5614,11 +5614,11 @@ eleven_azul:
   roles: []
   cartas:
     skill_1:
-      descripcion: Psychokinesis
+      descripcion: "Un objetivo (Psychokinesis)"
     skill_2:
-      descripcion: Psychic Wave
+      descripcion: "Área (Psychic Wave)"
     ulti:
-      descripcion: Psychic Pressure
+      descripcion: "Un objetivo (Psychic Pressure)"
 jim_hopper_rojo:
   clave: '[Stranger Things] Jim Hopper'
   nombre: Jim Hopper
@@ -5627,11 +5627,11 @@ jim_hopper_rojo:
   roles: []
   cartas:
     skill_1:
-      descripcion: Aimed Shot
+      descripcion: "Un objetivo (Aimed Shot)"
     skill_2:
-      descripcion: Kick & Shoot
+      descripcion: "Un objetivo (Kick & Shoot)"
     ulti:
-      descripcion: Macho Chief
+      descripcion: "Un objetivo (Macho Chief)"
 mike_wheeler_rojo:
   clave: '[Stranger Things] Mike Wheeler'
   nombre: Mike Wheeler
@@ -5640,11 +5640,11 @@ mike_wheeler_rojo:
   roles: []
   cartas:
     skill_1:
-      descripcion: Light Slash
+      descripcion: "Un objetivo (Light Slash)"
     skill_2:
-      descripcion: Shield Smash
+      descripcion: "Un objetivo (Shield Smash)"
     ulti:
-      descripcion: Holy Sword
+      descripcion: "Un objetivo (Holy Sword)"
 will_byers_verde:
   clave: '[Stranger Things] Will Byers'
   nombre: Will Byers
@@ -5653,11 +5653,11 @@ will_byers_verde:
   roles: []
   cartas:
     skill_1:
-      descripcion: Fireball
+      descripcion: "Un objetivo (Fireball)"
     skill_2:
-      descripcion: Blizzard Rain
+      descripcion: "Área (Blizzard Rain)"
     ulti:
-      descripcion: Magic Explosion
+      descripcion: "Área (Magic Explosion)"
 mai_shiranui_azul:
   clave: '[KOF ''98] Mai Shiranui'
   nombre: Mai Shiranui
@@ -5666,11 +5666,11 @@ mai_shiranui_azul:
   roles: []
   cartas:
     skill_1:
-      descripcion: Sui Chou no Mai
+      descripcion: "Un objetivo (Sui Chou no Mai)"
     skill_2:
-      descripcion: Ryuuembu
+      descripcion: "Área (Ryuuembu)"
     ulti:
-      descripcion: Chou Hissatsu Shinobi-bachi
+      descripcion: "Un objetivo (Chou Hissatsu Shinobi-bachi)"
 athena_asamiya_verde:
   clave: '[KOF ''98] Athena Asamiya'
   nombre: Athena Asamiya
@@ -5679,11 +5679,11 @@ athena_asamiya_verde:
   roles: []
   cartas:
     skill_1:
-      descripcion: Phoenix Arrow
+      descripcion: "Un objetivo (Phoenix Arrow)"
     skill_2:
-      descripcion: Psycho Ball
+      descripcion: "Un objetivo (Psycho Ball)"
     ulti:
-      descripcion: Crystal Shoot
+      descripcion: "Un objetivo (Crystal Shoot)"
 omega_rugal_verde:
   clave: '[KOF ''98] Omega Rugal'
   nombre: Omega Rugal
@@ -5692,11 +5692,11 @@ omega_rugal_verde:
   roles: []
   cartas:
     skill_1:
-      descripcion: Gravity Smash
+      descripcion: "Área (Gravity Smash)"
     skill_2:
-      descripcion: Genocide Cutter
+      descripcion: "Un objetivo (Genocide Cutter)"
     ulti:
-      descripcion: Gigantic Pressure
+      descripcion: "Un objetivo (Gigantic Pressure)"
 kyo_kusanagi_rojo:
   clave: '[KOF ''98] Kyo Kusanagi'
   nombre: Kyo Kusanagi
@@ -5705,11 +5705,11 @@ kyo_kusanagi_rojo:
   roles: []
   cartas:
     skill_1:
-      descripcion: '115 Shiki: Dokugami'
+      descripcion: "Un objetivo (115 Shiki: Dokugami)"
     skill_2:
-      descripcion: 'Ura 108 Shiki: Orochinagi'
+      descripcion: "Área (Ura 108 Shiki: Orochinagi)"
     ulti:
-      descripcion: 'Saishuu Kessen Ougi: Mu Shiki'
+      descripcion: "Área (Saishuu Kessen Ougi: Mu Shiki)"
 eren_jaeger_verde:
   clave: '[Titan Form] Eren Jaeger'
   nombre: Eren Jaeger
@@ -5718,8 +5718,8 @@ eren_jaeger_verde:
   roles: []
   cartas:
     skill_1:
-      descripcion: I Will Exterminate Them All!
+      descripcion: "Un objetivo (I Will Exterminate Them All!)"
     skill_2:
-      descripcion: Leave None Alive
+      descripcion: "Área (Leave None Alive)"
     ulti:
-      descripcion: With My Own Hands!
+      descripcion: "Área (With My Own Hands!)"

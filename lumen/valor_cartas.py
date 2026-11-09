@@ -68,13 +68,27 @@ def porcentajes_locales(ruta: Path = CATALOGO_TEXTOS) -> dict[str, float]:
     return salida
 
 
+HABILIDADES = Path(__file__).resolve().parent / "datos" / "habilidades.yaml"  # textos de 7dshub (con el programa)
+
+
+def porcentajes_base(ruta: Path = HABILIDADES) -> dict[str, float]:
+    """nombre de habilidad -> % de ataque, de los textos de 7dshub que vienen con el programa (todos los heroes)."""
+    try:
+        textos = yaml.safe_load(ruta.read_text(encoding="utf-8")) or {}
+    except (OSError, yaml.YAMLError):
+        return {}
+    return {str(n).lower(): pct for n, t in textos.items() if (pct := porcentaje(t or ""))}
+
+
 class Tasador:
     """Da el valor de cada carta "heroe.carta" para una pelea con ``enemigos`` enemigos."""
 
     def __init__(self, enemigos: int = 1, biblioteca: dict | None = None, porcentajes: dict | None = None):
         self.enemigos = max(1, enemigos)
         self.biblioteca = biblioteca if biblioteca is not None else P.cargar()
-        self.porcentajes = porcentajes if porcentajes is not None else porcentajes_locales()
+        # Antes solo habia cifras en la PC del administrador (su captura de heroes): ahora la base son las de
+        # 7dshub para todos, y lo capturado en esta PC se pone encima.
+        self.porcentajes = porcentajes if porcentajes is not None else {**porcentajes_base(), **porcentajes_locales()}
         self._cache: dict[str, float] = {}
 
     def valor(self, nombre: str) -> float:

@@ -62,6 +62,11 @@ SUFIJO_FICHA = "_ficha"
 ESCALA_FICHA = (1.22, 1.26)
 UMBRAL_PROPIA = 0.7
 UMBRAL_FICHA = 0.55
+# Carta de 7dshub.com (con permiso): su dibujo entero reducido a 63 px de ancho y recortado como en la mano del
+# juego (desde x=9, y=13, 45x74). Medido con 25 cartas: coincide con la de la ficha del juego en 0,71-0,98.
+# La hay de todos los heroes, tambien de los que nadie ha capturado. Se usa si no hay nada mejor.
+SUFIJO_HUB = "_hub"
+UMBRAL_HUB = 0.55
 
 _lock = threading.RLock()
 
@@ -149,14 +154,21 @@ class Personaje:
         ruta = IMAGENES / c.respaldo if c and c.respaldo else None
         return ruta if ruta and ruta.is_file() else None
 
+    def ruta_hub(self, carta: str) -> Path:
+        """Carta sacada de 7dshub, ya recortada y al tamano de la mano."""
+        return self._archivo(f"{carta}{SUFIJO_HUB}.png")
+
     def estado_carta(self, carta: str) -> str:
-        """'propia' (de una pelea) > 'ficha' (de la ficha del heroe) > 'respaldo' (AutoFarming) > 'falta'."""
+        """'propia' (de una pelea) > 'ficha' (de la ficha del heroe) > 'respaldo' (AutoFarming) > 'hub' (7dshub)
+        > 'falta'."""
         if self.tiene_captura(carta):
             return "propia"
         if self.ruta_ficha(carta).is_file():
             return "ficha"
         if self._respaldo(carta):
             return "respaldo"
+        if self.ruta_hub(carta).is_file():
+            return "hub"
         return "falta"
 
     def plantilla(self, carta: str) -> tuple[Plantilla | None, float]:
@@ -169,6 +181,8 @@ class Personaje:
             return Plantilla(self.ruta_ficha(carta), nombre=nombre), UMBRAL_FICHA
         if estado == "respaldo":
             return Plantilla(self._respaldo(carta), nombre=nombre), UMBRAL_PROPIA
+        if estado == "hub":
+            return Plantilla(self.ruta_hub(carta), nombre=nombre), UMBRAL_HUB
         return None, UMBRAL_PROPIA
 
 

@@ -14,6 +14,7 @@ import time
 from lumen import config, entrada, inteligencia, juego, ocr
 from lumen.cartas import Carta, Rango, TipoCarta
 from lumen.motor import Opcion, TerminarModo
+from lumen.ia import decidir as decidir_ia
 from lumen.modos.perros_piso4 import Estrategia, PerrosPiso4, Reiniciar
 
 
@@ -41,9 +42,12 @@ class EstrategiaInteligente(EstrategiaSimple):
         self.jugador = inteligencia.Jugador(enemigos)
 
     fases_area: frozenset = frozenset()  # fases en que hay que matar a todos a la vez (las pone el modo)
+    destino = ""  # "<bestia>_f<piso>": de donde salen las mecanicas del jefe (lumen/datos/jefes.yaml)
 
     def decidir(self, fase: int, turno: int, accion: int, mano: list[Carta], total: int = 4):
         self.jugador.solo_area = fase in self.fases_area
+        # Lo que pide el jefe en esta fase (posturas, inmortalidad...): cambia cuanto vale cada carta (ia/decidir).
+        self.jugador.mecanicas = decidir_ia.mecanicas_de(self.destino, fase) if self.destino and fase else []
         paso = self.jugador.elegir(mano, total - accion)
         if paso is None:  # nada que jugar ni fusionar: lo de siempre (mover una carta para gastar el hueco)
             return super().decidir(fase, turno, accion, mano, total)
@@ -83,6 +87,11 @@ class BestiaPisos1a3(PerrosPiso4):
     def al_empezar(self):
         if isinstance(self.estrategia, EstrategiaInteligente):
             self.estrategia.jugador.precargar()
+
+    def _nueva_pelea(self):
+        super()._nueva_pelea()
+        if isinstance(getattr(self, "estrategia", None), EstrategiaInteligente):
+            self.estrategia.destino = f"{self.id.removesuffix('_pisos1a3')}_f{self.piso}"
 
     def __init__(self, valores: dict):
         super().__init__(valores)

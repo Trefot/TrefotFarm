@@ -89,18 +89,30 @@ class LectorCartas:
         return pj.color if pj else None
 
 
+HABILIDADES = JEFES.with_name("habilidades.yaml")  # textos exactos de 7dshub (vienen con el programa)
+
+
 def textos_por_habilidad() -> dict[str, str]:
-    """nombre de la habilidad (en minusculas) -> su texto, de la captura de heroes de esta PC."""
+    """nombre de la habilidad (en minusculas) -> su texto. La base son los de 7dshub, que vienen con el programa
+    para todos los heroes (antes solo habia textos en la PC del administrador, de su captura de heroes);
+    lo capturado en esta PC se pone encima."""
     from lumen.valor_cartas import CATALOGO_TEXTOS
 
+    textos: dict[str, str] = {}
+    try:
+        textos.update({str(k).lower(): v for k, v in (yaml.safe_load(HABILIDADES.read_text(encoding="utf-8")) or {}).items()
+                       if v})
+    except (OSError, yaml.YAMLError):
+        pass
     if not CATALOGO_TEXTOS.is_file():
-        return {}
+        return textos
     try:
         catalogo = yaml.safe_load(CATALOGO_TEXTOS.read_text(encoding="utf-8")) or {}
     except (OSError, yaml.YAMLError):
-        return {}
-    return {(c.get("nombre") or "").strip().lower(): c["texto"]
-            for h in catalogo.values() for c in (h or {}).get("cartas") or [] if c.get("texto") and c.get("nombre")}
+        return textos
+    textos.update({(c.get("nombre") or "").strip().lower(): c["texto"]
+                   for h in catalogo.values() for c in (h or {}).get("cartas") or [] if c.get("texto") and c.get("nombre")})
+    return textos
 
 
 # ------------------------------------------------------------------ ajustar

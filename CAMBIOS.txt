@@ -29,6 +29,17 @@ Etapas previstas:
 
 CAMBIOS
 -------
+0.19.0-alpha
+  - Cartas de todos los heroes (de 7dshub.com, con permiso): 1133 cartas recortadas como en la mano. Los 381
+    heroes ya se pueden reconocer en pelea, tambien los 16 nuevos. Probado con las 1085 cartas capturadas del
+    juego: reconoce la carta correcta en todas menos 2 (0,2 %), y esas 2 salen como "no reconocida" (no como
+    otra). Lo capturado en el juego sigue mandando.
+  - Textos exactos de 987 habilidades (lumen/datos/habilidades.yaml): el juego inteligente sabe que hace cada
+    carta y cuanto dano hace en cualquier PC. Antes solo habia textos en la PC del administrador.
+  - Jefes: pasivas y habilidades de cada fase de las 6 bestias, Floor 1-3 y Transcendent (lumen/datos/jefes.yaml).
+    El juego inteligente de las bestias Floor 1-3 ya las usa: con postura valen mas las cartas que la quitan, con
+    inmortalidad las de varios golpes, etc. (antes estaba hecho pero ningun modo se lo pasaba).
+
 0.18.0-alpha
   - Personajes: los iconos de todos los heroes vienen ahora de 7dshub.com (con permiso de su dueno): iguales,
     limpios y de los 381. Se ven en Personajes, Equipos, Inicio y el asistente.
