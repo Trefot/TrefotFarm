@@ -29,6 +29,19 @@ Etapas previstas:
 
 CAMBIOS
 -------
+0.27.0-alpha
+  - Ratatoskr juega su mecanica, tal como la explico el usuario jugando una partida (lumen/modos/rata.py). Las cartas
+    con desventaja la mueven de tronco (Bleed al 3, Shock al 2, Poison al 1; sabe cual pone cada carta por su texto
+    de 7dshub) y la que la mandaria donde ya esta no se usa.
+    Floor 1: a la rata; si el turno acaba sin matarla, la deja en otro tronco para no quedar bloqueado.
+    Floor 2: rompe los troncos 2 y 3 (a uno y otro, al de mas vida) sin moverla; luego a la rata, guardando un Poison.
+    Floor 3: la lleva a su tronco (fase 1 al 3, fase 2 al 2, fase 3 al 3) lanzando una desventaja de cada tipo en el
+    mismo turno; sin las 3, las guarda y no usa ultis (la moverian al azar), salvo como ultimo recurso con el tronco 2
+    roto. Ya colocada, rompe los otros troncos sin pegarle (su escudo rebota) y guarda las 3 para la fase siguiente;
+    sin troncos, la remata con todo.
+  - Sabe en que tronco esta la rata (tapa la espiral cian del suyo) y que troncos siguen en pie (su barra morada), en
+    el Floor 1 y en el 3 (los troncos no estan en el mismo sitio).
+
 0.26.0-alpha
   - Bestias: la recompensa del reto (Challenge Reward, arriba a la izquierda de los pisos) se recoge sola. Al superar
     el Floor 3 el icono brilla; el bot lo toca una vez, y la pantalla "REWARD - Notification" que sale se apunta en el

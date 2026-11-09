@@ -14,6 +14,7 @@ import time
 import numpy as np
 
 from lumen import config, entrada, inteligencia, juego, ocr
+from lumen import personajes as P
 from lumen.cartas import Carta, Rango, TipoCarta
 from lumen.motor import Opcion, TerminarModo
 from lumen.vision import Plantilla
@@ -635,45 +636,172 @@ RATA_PELEA = Plantilla("rat/ratatoskr_pelea.png")  # la rata en la pelea (salta 
 
 class RataPisos1a3(_bestia("rata", "Ratatoskr", juego.rata, "rat/ratatoskr.png")):
     """Ratatoskr con sus 3 troncos ("Suspicious Wooden Device"): 1 en el centro, 2 a la izquierda y 3 a la derecha
-    (lo dijo el usuario, 2026-11-09; se ve el numero sobre cada barra). La pelea acaba al matar a la rata, asi que
-    se le apunta a ella; salvo en el Floor 2 (7dshub), donde es inmortal mientras vivan los troncos 2 y 3 (fases 1
-    y 2) o el 2 (fase 3): primero se rompe ese tronco. Antes el bot no apuntaba y el juego elegia por su cuenta."""
+    (lo dijo el usuario; se ve el numero sobre cada barra). Las reglas (que cartas jugar y a quien apuntar en cada
+    piso y fase) estan en lumen/modos/rata.py, tal como las explico el usuario jugando una partida (2026-11-09).
+    Aqui se mira la pantalla: en que tronco esta la rata y que troncos siguen en pie."""
 
-    PUNTOS = {"tronco 2": (142, 376), "tronco 3": (326, 370)}  # medido en una captura real de 550x940
-    BARRAS = {"tronco 2": (118, 308, 180, 326), "tronco 3": (300, 306, 360, 326)}  # su barra de vida (morada)
+    LADOS = {"centro": 1, "izq": 2, "der": 3}
+    # Encima de cada tronco hay una espiral cian; la rata siempre esta subida a uno y tapa la suya (la tapada da
+    # 0,007-0,019 y las visibles 0,086-0,118). Mas fiable que buscar su dibujo, que cambia de postura.
+    ESPIRALES = {"izq": ((100, 340, 190, 415), (142, 360)), "centro": ((190, 345, 285, 425), (236, 360)),
+                 "der": ((280, 335, 375, 410), (326, 352))}
+    # Barra de vida (morada) de cada tronco: en el Floor 1 y en el 3 los troncos no estan en el mismo sitio, asi que
+    # se mira una franja ancha encima de cada uno.
+    BARRAS = {"izq": (95, 292, 190, 340), "centro": (185, 292, 280, 340), "der": (270, 292, 372, 340)}
     RATA_CENTRO = (240, 358)
 
-    def tronco_vivo(self, p, tronco: str) -> bool:
-        x1, y1, x2, y2 = self.BARRAS[tronco]
-        trozo = p[y1:y2, x1:x2].astype(int)
-        morado = (trozo[..., 0] > 130) & (trozo[..., 2] > 110) & (trozo[..., 1] < 110)  # BGR: azul y rojo, poco verde
-        return float(morado.mean()) > 0.06
+    def __init__(self, valores: dict):
+        super().__init__(valores)
+        self._ultima_p = None
+        self._ultimo_motivo = ""
+        self._textos = None
+        if isinstance(self.estrategia, EstrategiaInteligente):
+            original = self.estrategia.decidir
+
+            def con_reglas(fase, turno, accion, mano, total=4):
+                return self._decidir_rata(original, fase, turno, accion, mano, total)
+
+            self.estrategia.decidir = con_reglas
+
+    def capturar(self):
+        p, o = super().capturar()
+        self._ultima_p = p
+        return p, o
+
+    # ------------------------------------------------------------------ mirar la pantalla
+    @staticmethod
+    def _morado(p, zona) -> float:
+        x1, y1, x2, y2 = zona
+        z = p[y1:y2, x1:x2].astype(int)
+        return float(((z[..., 0] > 130) & (z[..., 2] > 110) & (z[..., 1] < 110)).mean())  # BGR: azul y rojo
+
+    def lado_de_la_rata(self, p) -> str | None:
+        if not isinstance(p, np.ndarray):
+            return None
+        cian = {}
+        for lado, ((x1, y1, x2, y2), _) in self.ESPIRALES.items():
+            z = p[y1:y2, x1:x2].astype(int)
+            cian[lado] = float(((z[..., 0] > 180) & (z[..., 1] > 170) & (z[..., 2] < 140)).mean())
+        tapada = min(cian, key=cian.get)
+        otras = [v for k, v in cian.items() if k != tapada]
+        # La tapada casi no tiene cian (0,001-0,019) y las demas claramente mas (Floor 1: 0,086-0,118; en el Floor 3
+        # una espiral es mas palida: 0,027).
+        return tapada if cian[tapada] < 0.025 and min(otras) >= cian[tapada] + 0.015 else None
+
+    def rata_tronco(self, p) -> int | None:
+        lado = self.lado_de_la_rata(p)
+        return self.LADOS[lado] if lado else None
+
+    def tronco_de_la_rata(self, p) -> tuple[int, int] | None:
+        lado = self.lado_de_la_rata(p)
+        return self.ESPIRALES[lado][1] if lado else None
 
     def donde_rata(self, p) -> tuple[int, int]:
+        sobre = self.tronco_de_la_rata(p)
+        if sobre is not None:
+            return sobre
         rect = RATA_PELEA.buscar(p, 0.55)
         if rect is None:
             return self.RATA_CENTRO
         x, y, w, h = rect
         return x + w // 2, y + h // 2
 
+    def vida_troncos(self, p) -> dict[int, float]:
+        """Lo que se ve de la barra de cada tronco (0 = no se ve: roto, o tapado por la rata)."""
+        if not isinstance(p, np.ndarray):
+            return {}
+        return {self.LADOS[lado]: self._morado(p, zona) for lado, zona in self.BARRAS.items()}
+
+    def troncos_vivos(self, p) -> set[int]:
+        vida = self.vida_troncos(p)
+        vivos = {n for n, v in vida.items() if v > 0.02}  # sin barra: 0,00; con barra: 0,04-0,07
+        rata = self.rata_tronco(p)
+        if rata is not None:
+            vivos.add(rata)  # la rata tapa la barra del suyo: se da por vivo
+        return vivos
+
+    def punto_tronco(self, n: int) -> tuple[int, int]:
+        lado = next(k for k, v in self.LADOS.items() if v == n)
+        return self.ESPIRALES[lado][1]
+
+    # ------------------------------------------------------------------ decidir
+    def _texto_de(self, nombre: str | None) -> str:
+        if not nombre or "." not in nombre:
+            return ""
+        if self._textos is None:
+            from lumen.ia import decidir as dec
+
+            self._textos = dec.textos_por_habilidad()
+        from lumen.valor_cartas import nombre_de_habilidad
+
+        pid, _, cid = nombre.split("@")[0].partition(".")
+        pj = P.cargar().get(pid)
+        carta = pj.cartas.get(cid) if pj else None
+        return self._textos.get(nombre_de_habilidad(carta.descripcion), "") if carta else ""
+
+    def _cartas_rata(self, mano) -> list:
+        from lumen.modos import rata as R
+
+        tasador = getattr(self.estrategia.jugador, "_tasador", None)
+        cartas = []
+        for i, c in enumerate(mano):
+            if c.tipo in (TipoCarta.SUELO, TipoCarta.NINGUNA):
+                continue
+            nombre = (c.nombre or "").split("@")[0]
+            area = bool(tasador and nombre and "." in nombre and tasador.es_area(nombre)) and c.tipo != TipoCarta.ULTI
+            cartas.append(R.CartaRata(i, R.desventajas_del_texto(self._texto_de(nombre)), c.tipo == TipoCarta.ULTI,
+                                      area, c.jugable))
+        return cartas
+
+    def plan_rata(self, p, fase: int, mano=None, accion: int = 0, total: int = 4):
+        from lumen.modos import rata as R
+
+        cartas = self._cartas_rata(mano) if mano is not None else []
+        restantes = max(1, total - accion)
+        return R.decidir(self.piso, fase or 1, self.rata_tronco(p), self.troncos_vivos(p), cartas, restantes,
+                         restantes == 1)
+
+    def _decidir_rata(self, original, fase, turno, accion, mano, total):
+        jugador = self.estrategia.jugador
+        try:
+            inteligencia.agrupar_por_dibujo(mano, jugador._identificar)  # nombres de las cartas
+        except Exception:
+            pass
+        d = self.plan_rata(self._ultima_p, fase, mano, accion, total)
+        jugables = {i for i, c in enumerate(mano) if c.jugable}
+        bloquear = set(d.bloquear)
+        if d.forzar & jugables:
+            bloquear |= jugables - d.forzar  # jugar una de las forzadas
+        if d.motivo and d.motivo != self._ultimo_motivo:
+            self._ultimo_motivo = d.motivo
+            self.log(f"Rata: {d.motivo}.")
+        antes = {i: mano[i].tipo for i in bloquear if 0 <= i < len(mano)}
+        for i in antes:
+            mano[i].tipo = TipoCarta.BLOQUEADA
+        try:
+            return original(fase, turno, accion, mano, total)
+        finally:
+            for i, tipo in antes.items():
+                mano[i].tipo = tipo
+
     def objetivo_rata(self, p, fase: int) -> tuple[str, tuple[int, int]]:
-        """(a quien, donde tocar) segun el piso y la fase."""
-        rata = self.donde_rata(p)
-        if self.piso == 2:
-            vivos = [t for t in ("tronco 3", "tronco 2") if self.tronco_vivo(p, t)]
-            if fase == 3 and "tronco 2" in vivos:
-                return "tronco 2", self.PUNTOS["tronco 2"]
-            if fase in (1, 2) and len(vivos) == 2:
-                # Romper uno basta: el que no tenga a la rata encima (tocar ahi la elegiria a ella).
-                tronco = "tronco 2" if abs(rata[0] - self.PUNTOS["tronco 3"][0]) < 50 else "tronco 3"
-                return tronco, self.PUNTOS[tronco]
-        return "rata", rata
+        """(a quien, donde tocar) segun el piso, la fase y lo que se ve."""
+        d = self.plan_rata(p, fase)
+        if d.objetivo == "rata":
+            return "rata", self.donde_rata(p)
+        objetivo = d.objetivo
+        if self.piso == 2:  # a uno y otro: al que tenga mas vida, para dejarlos parejos
+            vida = self.vida_troncos(p)
+            vivos = [n for n in (2, 3) if n in self.troncos_vivos(p)]
+            if len(vivos) == 2:
+                objetivo = max(vivos, key=lambda n: vida.get(n, 0))
+        return f"tronco {objetivo}", self.punto_tronco(objetivo)
 
     def _empezar_turno(self, p, huecos: int):
         fase = self._detectar_fase(p, huecos) or self.fase or 1
         quien, punto = self.objetivo_rata(p, fase)
         # En CADA turno, no solo al cambiar: la rata salta de un tronco a otro y el juego deja la marca en el tronco
-        # donde estaba (prueba del usuario, 2026-11-09: turno 1 a la rata, del 2 en adelante al tronco).
+        # donde estaba (prueba del usuario, 2026-11-09).
         if quien != self.objetivo_actual:
             self.log(f"Apunto a {'la rata' if quien == 'rata' else 'el ' + quien}.")
         else:
@@ -681,4 +809,6 @@ class RataPisos1a3(_bestia("rata", "Ratatoskr", juego.rata, "rat/ratatoskr.png")
         self.objetivo_actual = quien
         entrada.clic(punto, self.capturar()[1], espera=0.3)
         return super()._empezar_turno(p, huecos)
+
+
 TODAS = (PerrosPisos1a3, PajaroPisos1a3, CiervoPisos1a3, SerpientePisos1a3, RataPisos1a3)
