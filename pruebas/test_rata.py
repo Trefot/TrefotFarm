@@ -195,3 +195,26 @@ class Piso3Trio(unittest.TestCase):
         m._apuntar_desventajas((7, None, False), cartas)
         m._apuntar_desventajas(((3, 7), None, False), cartas)  # mover no cuenta
         self.assertEqual(m._puestas_turno, {"shock"})
+
+
+class Piso3Objetivo(unittest.TestCase):
+    """Prueba del 2026-11-09: el Shock de un objetivo fue al tronco marcado, no a la rata."""
+
+    def test_el_trio_va_a_la_rata(self):
+        d = R.decidir(3, 1, 1, {1, 2, 3}, mano(), 4, False)
+        self.assertEqual(d.objetivo, "rata")
+
+    def test_cambia_la_marca_a_mitad_de_turno(self):
+        from unittest import mock
+        from lumen import entrada
+
+        m = B.RataPisos1a3({"jugar": "Inteligente"})
+        m.piso, m.objetivo_actual = 3, "tronco 2"
+        clics = []
+        with mock.patch.object(entrada, "clic", lambda punto, o, **k: clics.append(punto)), \
+                mock.patch.object(m, "capturar", lambda: (None, (0, 0))), \
+                mock.patch.object(m, "log", lambda *a, **k: None):
+            m._cambiar_objetivo("rata")
+            m._cambiar_objetivo("rata")
+        self.assertEqual(len(clics), 1, "una vez, y no repite si ya la tiene marcada")
+        self.assertEqual(m.objetivo_actual, "rata")

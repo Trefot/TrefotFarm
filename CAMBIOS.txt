@@ -29,6 +29,10 @@ Etapas previstas:
 
 CAMBIOS
 -------
+0.29.4-alpha
+  - Ratatoskr Floor 3 (prueba del 2026-11-09): el trio de desventajas ya salia entero, pero el Shock de Valenti es de
+    un objetivo y fue al tronco marcado, no a la rata. Ahora, antes de poner el trio, marca a la rata a mitad de turno.
+
 0.29.3-alpha
   - Ratatoskr Floor 3 (run perdida del 2026-11-09): con las 3 desventajas en la mano jugaba la primera y, al quedarle
     solo 2, las guardaba; la rata nunca se movia y acababa tirando ultis. Ahora recuerda las que ya le puso en el

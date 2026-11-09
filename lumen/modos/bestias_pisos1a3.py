@@ -798,6 +798,7 @@ class RataPisos1a3(_bestia("rata", "Ratatoskr", juego.rata, "rat/ratatoskr.png")
         if d.motivo and d.motivo != self._ultimo_motivo:
             self._ultimo_motivo = d.motivo
             self.log(f"Rata: {d.motivo}.")
+        self._cambiar_objetivo(d.objetivo)
         antes = {i: mano[i].tipo for i in bloquear if 0 <= i < len(mano)}
         for i in antes:
             mano[i].tipo = TipoCarta.BLOQUEADA
@@ -808,6 +809,21 @@ class RataPisos1a3(_bestia("rata", "Ratatoskr", juego.rata, "rat/ratatoskr.png")
                 mano[i].tipo = tipo
         self._apuntar_desventajas(jugada, mano)
         return jugada
+
+    def _cambiar_objetivo(self, objetivo):
+        """Floor 3: a mitad de turno, si la carta tiene que ir a otro sitio (el trio de desventajas, a la rata)."""
+        if self.piso != 3 or objetivo is None:
+            return
+        quien = "rata" if objetivo == "rata" else f"tronco {objetivo}"
+        if quien == getattr(self, "objetivo_actual", None):
+            return
+        try:
+            punto = self.donde_rata(self._ultima_p) if quien == "rata" else self.punto_tronco(objetivo)
+        except Exception:
+            return
+        self.log(f"Cambio el objetivo a {'la rata' if quien == 'rata' else 'el ' + quien} para esta carta.")
+        self.objetivo_actual = quien
+        entrada.clic(punto, self.capturar()[1], espera=0.3)
 
     def _apuntar_desventajas(self, jugada, mano):
         """Recuerda que desventajas lleva la carta que se va a jugar (no las que solo se mueven)."""

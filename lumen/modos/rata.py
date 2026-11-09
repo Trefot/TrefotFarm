@@ -155,6 +155,8 @@ def decidir(piso: int, fase: int, rata_en: int | None, vivos: set[int], cartas: 
                 d.motivo = "guardo las desventajas hasta tener las 3; sin ultis"
         otros = sorted(vivos - {destino})
         d.objetivo = 2 if 2 in otros else (otros[0] if otros else "rata")
+        if d.forzar and not (d.forzar & set(ultis)):
+            d.objetivo = "rata"  # las desventajas tienen que caerle a ella (la de un objetivo iba al tronco marcado)
         return d
     # Colocada: romper los otros troncos y despues rematarla
     otros = sorted(vivos - {destino})
