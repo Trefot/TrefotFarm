@@ -366,6 +366,11 @@ class PerrosPiso4(Modo):
                 self.pociones += 1
                 self._stats()
                 return None
+        # Un aviso con OK tapa la pantalla ("weekly reset soon... Proceed anyway?", prueba del usuario, 2026-11-09):
+        # Start se sigue viendo detras (oscurecido) y pulsarlo cerraba el aviso: en bucle. Primero el OK.
+        if self.clic_si(juego.ok, p, o, espera=1.0):
+            self.log("Acepto un aviso (OK).", "aviso")
+            return None
         if not self.equipo_verificado and juego.empezar.esta(p):
             self._verificar_equipo(p)  # puede terminar el modo si el equipo no es el del guion
         if self.clic_si(juego.empezar, p, o):

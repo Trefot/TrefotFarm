@@ -29,6 +29,11 @@ Etapas previstas:
 
 CAMBIOS
 -------
+0.23.1-alpha
+  - Bestias: el aviso "Demonic Beast Battle will have its weekly reset soon... Proceed anyway?" dejaba al bot en
+    bucle: Start se ve detras (oscurecido), el bot lo pulsaba y eso cerraba el aviso. Ahora, al preparar la pelea,
+    primero acepta el OK de cualquier aviso y luego pulsa Start.
+
 0.23.0-alpha
   - Ratatoskr: el bot ya elige a quien atacar (antes lo elegia el juego). Troncos: 1 en el centro, 2 a la izquierda
     y 3 a la derecha (los numera el juego sobre su barra). Floor 1 y 3: a la rata (la busca donde este, salta de un

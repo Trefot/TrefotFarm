@@ -691,3 +691,18 @@ class ApuntarEnLaRata(unittest.TestCase):
             self.assertEqual(clics, [B.RataPisos1a3.PUNTOS["tronco 3"]], "una vez")
             self.m._empezar_turno(self.pantalla(("tronco 2",)), 4)
         self.assertEqual(clics[-1], B.RataPisos1a3.RATA_CENTRO, "roto el tronco: a la rata")
+
+
+class AvisoReinicioSemanal(unittest.TestCase):
+    def test_primero_el_ok_y_no_start(self):
+        """"Demonic Beast Battle will have its weekly reset soon. Proceed anyway?": Start se ve detras."""
+        m = B.SerpientePisos1a3({})
+        m.equipo_verificado = True
+        clics = []
+        with mock.patch.object(juego, "empezar", PlantillaFalsa("empezar")), \
+                mock.patch.object(juego, "ok", PlantillaFalsa("ok")), \
+                mock.patch.object(juego, "pocion_stamina", PlantillaFalsa("pocion")), \
+                mock.patch.object(m, "clic_si", lambda pl, p, o, **k: pl.esta(p) and (clics.append(pl.nombre) or True)), \
+                mock.patch.object(m, "log", lambda *a, **k: None):
+            m.preparar({"empezar", "ok"}, (0, 0))
+        self.assertEqual(clics, ["ok"], "acepta el aviso y no toca Start debajo")
