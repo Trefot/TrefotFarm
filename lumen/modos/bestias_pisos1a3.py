@@ -11,6 +11,8 @@ Reutiliza todo el modo de Perros piso 4 (llegar a los pisos, pelear, botin, derr
 import re
 import time
 
+import numpy as np
+
 from lumen import config, entrada, inteligencia, juego, ocr
 from lumen.cartas import Carta, Rango, TipoCarta
 from lumen.motor import Opcion, TerminarModo
@@ -64,6 +66,9 @@ DESPLAZAR_ABAJO = ((270, 720), (270, 420))  # dedo hacia arriba: la lista baja (
 DESPLAZAR_ARRIBA = ((270, 420), (270, 720))
 BAJO_TITULO = 56  # del centro del titulo del piso al centro de su circulo (lo que se toca)
 LIMITE_CIRCULO = 780  # mas abajo lo tapa la barra del equipo
+FLECHA_ZONA = (15, 150, 95, 820)  # x1, y1, x2, y2: columna de la izquierda donde sale la flecha del piso abierto
+FLECHA_MIN_PIXELES = 60  # en una captura real la flecha tiene ~210 pixeles cian
+PUNTO_X_PISO = 282  # x del circulo (el retrato de la bestia) de cada piso
 CADA_OCR_S = 1.0  # leer el texto de la pantalla como mucho una vez por segundo (el OCR gasta CPU)
 
 
@@ -129,6 +134,7 @@ class BestiaPisos1a3(PerrosPiso4):
         self.esperando_ok_reset: float | None = None  # se pulso Reset: esperar su OK sin tocar nada mas
         self.reintentos_reset = 0
         self.foto_sin_piso = False
+        self._ultimo_flecha = 0.0
         self.buscando_piso_desde: float | None = None
         self._ultimo_ocr: tuple[float, int, object] = (0.0, 0, None)  # (hora, piso, rectangulo) de la ultima lectura
         self._pisos_vistos: tuple[float, set] = (0.0, set())  # (hora, numeros de piso) de la ultima lectura
@@ -263,6 +269,8 @@ class BestiaPisos1a3(PerrosPiso4):
             self.piso, self.pedir_reset, self._toques_piso = 1, False, 0
             self._recordar_piso()
             return None
+        if self._ir_al_piso_abierto(p, o):
+            return None
         rect = self._buscar_piso(p)
         if rect is not None:
             # El piso se abre tocando su circulo (la imagen de la bestia), no su titulo: en la prueba de la
@@ -358,6 +366,62 @@ class BestiaPisos1a3(PerrosPiso4):
                 self._recordar_piso()
                 return True
         return False
+
+    def flechas_piso_abierto(self, p) -> list[int]:
+        """Alturas (y) de las flechas cian de los pisos abiertos. El juego marca asi el piso que toca (y su retrato
+        sale a color con el coste "x30"; los cerrados, oscuros): lo enseno el usuario (2026-11-09). Puede haber dos:
+        el Floor 1-3 que toca y el Floor 4 (Transcendent) si tambien esta abierto."""
+        if not isinstance(p, np.ndarray):
+            return []
+        tira = p[FLECHA_ZONA[1]:FLECHA_ZONA[3], FLECHA_ZONA[0]:FLECHA_ZONA[2]].astype(int)
+        cian = ((tira[..., 0] > 200) & (tira[..., 1] > 170) & (tira[..., 2] < 130)).sum(axis=1)
+        flechas, inicio, pixeles = [], None, 0
+        for y, n in enumerate(list(cian) + [0] * 9):  # filas con cian, separadas por 8 o mas filas sin el = otra flecha
+            if n:
+                inicio, pixeles, ultima = (y if inicio is None else inicio), pixeles + int(n), y
+            elif inicio is not None and y - ultima > 8:
+                if pixeles >= FLECHA_MIN_PIXELES:
+                    flechas.append((inicio + ultima) // 2 + FLECHA_ZONA[1])
+                inicio, pixeles = None, 0
+        return flechas
+
+    def _ir_al_piso_abierto(self, p, o) -> bool:
+        """Toca directamente el piso que el juego marca como abierto, sin probar los cerrados (antes tocaba el 2 y el
+        3 tres veces cada uno cuando estaban cerrados). Si el abierto no es el que el bot esperaba, lo corrige. La
+        flecha del Floor 4 (Transcendent) no cuenta: su titulo no dice "Floor N" (lo aviso el usuario)."""
+        flechas = [y for y in self.flechas_piso_abierto(p) if y <= LIMITE_CIRCULO]
+        if not flechas:
+            return False  # sin flecha (todo superado: hace falta Reset) o tapada por la barra del equipo
+        elegida, numero = None, None
+        if ocr.disponible():
+            if time.time() - self._ultimo_flecha < CADA_OCR_S:
+                return True  # leido hace nada: esperar a que el toque anterior haga efecto
+            self._ultimo_flecha = time.time()
+            lineas = [(t, r) for t, r in self._lineas(p) if not _es_premio(t)]
+            for y in flechas:
+                for texto, (x, ty, w, h) in lineas:
+                    numeros = [n for n in numeros_de_piso(texto) if n in (1, 2, 3)]
+                    if numeros and 0 < y - (ty + h // 2) < 2 * BAJO_TITULO:
+                        elegida, numero = y, numeros[0]
+                        break
+                if elegida is not None:
+                    break
+        if elegida is None:
+            if len(flechas) != 1 or ocr.disponible():
+                return False  # no se sabe cual es la del Floor 1-3: lo de siempre
+            elegida = flechas[0]
+        if numero and numero != self.piso:
+            self.log(f"El piso abierto es el Floor {numero}: voy a ese (esperaba el {self.piso}).", "aviso")
+            self.piso, self.pedir_reset = numero, False
+            self._recordar_piso()
+            self._stats()
+        if self._toques_piso >= TOQUES_PISO:
+            return False  # tocarlo no lo abre: lo de siempre
+        self._toques_piso += 1
+        self.log(f"Abro el Floor {self.piso}.")
+        entrada.clic((PUNTO_X_PISO, elegida), o, espera=1.0)
+        self.buscando_piso_desde = None
+        return True
 
     def _sin_vuelta_empezada(self, p) -> bool:
         """En la pantalla de pisos se lee "Set Party" (y no "Reset") cuando no hay ninguna vuelta a medias."""

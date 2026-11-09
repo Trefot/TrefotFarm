@@ -29,6 +29,12 @@ Etapas previstas:
 
 CAMBIOS
 -------
+0.24.0-alpha
+  - Bestias Floor 1-3: el bot ve que piso esta abierto. El juego marca el abierto con una flecha cian a la izquierda
+    (y su retrato a color y el coste "x30"); los cerrados salen oscuros. El bot busca esa flecha, lee el numero del
+    piso que tiene encima y lo toca directamente: ya no prueba el 2 y el 3 tres veces cada uno cuando estan cerrados,
+    y si el abierto no es el que esperaba, se corrige solo.
+
 0.23.1-alpha
   - Bestias: el aviso "Demonic Beast Battle will have its weekly reset soon... Proceed anyway?" dejaba al bot en
     bucle: Start se ve detras (oscurecido), el bot lo pulsaba y eso cerraba el aviso. Ahora, al preparar la pelea,

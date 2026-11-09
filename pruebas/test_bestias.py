@@ -707,3 +707,48 @@ class AvisoReinicioSemanal(unittest.TestCase):
                 mock.patch.object(m, "log", lambda *a, **k: None):
             m.preparar({"empezar", "ok"}, (0, 0))
         self.assertEqual(clics, ["ok"], "acepta el aviso y no toca Start debajo")
+
+
+class PisoAbierto(unittest.TestCase):
+    """El piso abierto lleva una flecha cian a la izquierda; los cerrados salen oscuros (usuario, 2026-11-09)."""
+
+    def setUp(self):
+        import cv2
+        from pathlib import Path
+
+        self.p = cv2.imread(str(Path(__file__).with_name("pisos_nidhoggr.png")))  # Nidhoggr con el Floor 1 abierto
+
+    def test_ve_la_flecha_del_floor_1(self):
+        import numpy as np
+
+        m = B.SerpientePisos1a3({})
+        flechas = m.flechas_piso_abierto(self.p)
+        self.assertEqual(len(flechas), 1)
+        self.assertLess(abs(flechas[0] - 680), 8)
+        self.assertEqual(m.flechas_piso_abierto(np.zeros_like(self.p)), [], "sin flecha: todo superado o cerrado")
+
+    def test_con_el_floor_4_abierto_hay_dos_flechas_y_elige_la_del_floor_1_3(self):
+        """Lo aviso el usuario: si el Floor 4 (Transcendent) esta abierto tambien lleva flecha."""
+        m = B.SerpientePisos1a3({})
+        p = self.p.copy()
+        p[230:260] = p[665:695]  # la misma fila de la flecha, arriba: la del Transcendent
+        self.assertEqual(len(m.flechas_piso_abierto(p)), 2)
+        clics = []
+        lineas = [("Transcendent Nidhoggr", (190, 190, 180, 18)), ("Corpse Farer Naglfar Floor 1", (190, 616, 180, 18))]
+        with mock.patch.object(entrada, "clic", lambda r, o, **k: clics.append(r)),                 mock.patch.object(B.ocr, "disponible", lambda: True), mock.patch.object(m, "_lineas", lambda p: lineas),                 mock.patch.object(m, "_recordar_piso", lambda: None), mock.patch.object(m, "log", lambda *a, **k: None):
+            self.assertTrue(m._ir_al_piso_abierto(p, (0, 0)))
+        self.assertLess(abs(clics[0][1] - 680), 8, "la del Floor 1, no la del Transcendent")
+
+    def test_va_directo_al_abierto_aunque_esperara_otro(self):
+        m = B.SerpientePisos1a3({})
+        m.piso = 3
+        clics = []
+        lineas = [("Corpse Farer Naglfar Floor 3", (190, 318, 180, 18)), ("Corpse Farer Naglfar Floor 2", (190, 467, 180, 18)),
+                  ("Corpse Farer Naglfar Floor 1", (190, 616, 180, 18))]
+        with mock.patch.object(entrada, "clic", lambda r, o, **k: clics.append(r)), \
+                mock.patch.object(B.ocr, "disponible", lambda: True), mock.patch.object(m, "_lineas", lambda p: lineas), \
+                mock.patch.object(m, "_recordar_piso", lambda: None), mock.patch.object(m, "log", lambda *a, **k: None):
+            self.assertTrue(m._ir_al_piso_abierto(self.p, (0, 0)))
+        self.assertEqual(m.piso, 1)
+        self.assertEqual(len(clics), 1)
+        self.assertLess(abs(clics[0][1] - 680), 8, "toca el retrato del Floor 1")
