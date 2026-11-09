@@ -29,6 +29,14 @@ Etapas previstas:
 
 CAMBIOS
 -------
+0.22.1-alpha
+  - Bestias: si tras pulsar Start (o al buscar un piso) sale un aviso que el bot no conoce, lo acepta por su OK o
+    por el texto de su boton (OK, Confirm, Yes...). Antes seguia pulsando Start debajo, en bucle. La primera vez
+    guarda una foto en logs/avisos para reconocerlo.
+  - Personajes: cada tarjeta tiene un boton (i) (o clic derecho) que abre la ficha del heroe: sus cartas con lo
+    que hacen en cada rango, la ulti, la pasiva unica, el talento, la reliquia y su perfil (de 7dshub).
+  - Inicio, ayuda y el Floor 4: "Skoll & Hati" (aun decia "Skollandhati & Hati").
+
 0.22.0-alpha
   Arreglos del plan de 150 peleas del usuario (2026-11-09):
   - Bestias Floor 1-3: la meta son VUELTAS (Floor 1, 2 y 3 = 1 vuelta), no peleas. Lo guardado (opciones y plan

@@ -63,7 +63,7 @@ CATALOGO: list[Contenido] = [
     # capturas del juego (2026-10-28). La foto de cada una esta en assets/modos/<id>.png.
     _bestia("pajaro", "Hraesvelgr", "demonic_beasts/hraesvelgr.png"),
     _bestia("ciervo", "Eikthyrnir", "deer/Eikthyrnir.png"),
-    _bestia("perros", "Skollandhati & Hati", "demonic_beasts/skollandhati.png"),
+    _bestia("perros", "Skoll & Hati", "demonic_beasts/skollandhati.png"),
     _bestia("serpiente", "Nidhoggr", "snake/nidhoggr.png", piso4=False),
     _bestia("rata", "Ratatoskr", "rat/ratatoskr.png", piso4=False),
     _bestia("surtr", "Surtr", "", piso4=False),

@@ -53,7 +53,7 @@ def _lugar(registro: dict) -> str:
 
 
 def donde_se_consigue(oids, registros: list[dict]) -> str:
-    """'Skollandhati & Hati · Floor 4 (8 veces)...' segun las fotos de recompensas de esos objetos."""
+    """'Skoll & Hati · Floor 4 (8 veces)...' segun las fotos de recompensas de esos objetos."""
     cuenta: dict[str, int] = {}
     for r in registros:
         if any(o in (r.get("objetos") or {}) for o in oids):

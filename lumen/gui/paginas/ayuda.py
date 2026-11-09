@@ -145,7 +145,7 @@ class PaginaAyuda(Pagina):
         capa = QVBoxLayout(w)
         capa.setContentsMargins(14, 14, 14, 14)
         capa.setSpacing(12)
-        capa.addWidget(_texto("Así farmea el bot <b>Skollandhati &amp; Hati · Floor 4</b>, paso a paso, con capturas "
+        capa.addWidget(_texto("Así farmea el bot <b>Skoll &amp; Hati · Floor 4</b>, paso a paso, con capturas "
                               "del juego.", "tenue"))
         for paso in pasos:
             caja = QFrame(objectName="seccion")

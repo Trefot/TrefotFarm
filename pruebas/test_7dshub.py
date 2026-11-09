@@ -73,3 +73,22 @@ class Jefes(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class Fichas(unittest.TestCase):
+    def test_ficha_completa_y_texto_con_colores(self):
+        joker = P.ficha("joker_oscuro")
+        self.assertEqual(len(joker["skill_1"]["rangos"]), 3, "lo que hace en cada rango")
+        for clave in ("skill_2", "ulti", "pasiva", "talento", "reliquia"):
+            self.assertIn(clave, joker)
+        self.assertEqual(P.ficha("no_existe"), {})
+        import entorno
+
+        entorno.app_qt()
+        from lumen.gui.paginas import personajes as G
+
+        html = G.texto_juego("Hits [FFAE00]200%[-] of Attack.\\n\\nNext")
+        self.assertIn('<span style="color:#FFAE00">200%</span>', html)
+        self.assertIn("<br><br>", html)
+        self.assertNotIn("[-]", html)
+        G.DialogoFicha(P.cargar()["joker_oscuro"])  # se abre sin errores

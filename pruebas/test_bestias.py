@@ -618,3 +618,24 @@ class ArreglosDelPlan(unittest.TestCase):
 
     def test_nombre_de_los_lobos(self):
         self.assertEqual(B.PerrosPisos1a3.titulo_juego, "Skoll & Hati")
+
+
+class AvisoTrasStart(unittest.TestCase):
+    def test_tras_tres_start_sin_pelea_acepta_el_aviso(self):
+        """Prueba del usuario (2026-11-09): un aviso tras Start dejaba al bot pulsando Start en bucle."""
+        m = B.RataPisos1a3({})
+        aceptados = []
+        with mock.patch.object(juego, "empezar", PlantillaFalsa("empezar")), \
+                mock.patch.object(juego, "pocion_stamina", PlantillaFalsa("pocion")), \
+                mock.patch.object(juego, "carga_bestias", PlantillaFalsa("carga")), \
+                mock.patch.object(juego, "carga_taberna", PlantillaFalsa("carga_t")), \
+                mock.patch.object(m, "clic_si", lambda pl, p, o, **k: pl.esta(p)), \
+                mock.patch.object(m, "_aceptar_aviso", lambda p, o: aceptados.append(1)):
+            m.equipo_verificado = True
+            for _ in range(2):
+                m.preparar({"empezar"}, (0, 0))
+            self.assertEqual(aceptados, [], "las dos primeras veces solo Start")
+            m.preparar({"empezar"}, (0, 0))
+            self.assertEqual(aceptados, [1])
+            m.preparar(set(), (0, 0))  # Start ya no se ve: el aviso lo tapa
+            self.assertEqual(len(aceptados), 2)

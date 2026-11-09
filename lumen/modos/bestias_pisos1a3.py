@@ -290,6 +290,10 @@ class BestiaPisos1a3(PerrosPiso4):
                 self._ultimo_desplazamiento = time.time()
                 self._ultimo_ocr = (0.0, 0, None)
             return None
+        # Sin el piso a la vista: quiza lo tapa un aviso (prueba del dragon, 2026-11-09: toco el Floor 3, algo salio
+        # y el bot deslizaba la lista debajo). Primero intentar aceptarlo.
+        if self.buscando_piso_desde and time.time() - self.buscando_piso_desde > 4:
+            self._aceptar_aviso(p, o)
         # Sin el piso a la vista: deslizar la lista (4 veces hacia abajo, 4 hacia arriba...).
         if time.time() - self._ultimo_desplazamiento > CADA_DESPLAZAR_S:
             abajo = (self._desplazamientos // 4) % 2 == 0

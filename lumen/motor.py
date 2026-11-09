@@ -43,7 +43,7 @@ class Modo:
     nombre = "Modo"
     descripcion = ""
     # Para la tarjeta del modo en Inicio (nombres tal como salen en el juego)
-    titulo_juego = ""  # p. ej. "Skollandhati & Hati"
+    titulo_juego = ""  # p. ej. "Skoll & Hati"
     subtitulo_juego = ""  # p. ej. "Demonic Beast · Floor 4"
     imagen = ""  # emblema, relativo a assets/imagenes
     duracion = ""  # duracion aproximada de una pelea, p. ej. "~2,5 min"

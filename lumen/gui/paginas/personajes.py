@@ -4,10 +4,14 @@ El jugador solo marca si tiene cada personaje (clic en su tarjeta). Las fichas, 
 vienen en la base fija del bot; se editan en el Editor de personajes (modo administrador).
 """
 
+import html
+import re
+
 from PyQt5.QtCore import Qt, pyqtSignal
 from PyQt5.QtGui import QImage, QPixmap
 from PyQt5.QtWidgets import (
     QButtonGroup,
+    QDialog,
     QFrame,
     QGridLayout,
     QHBoxLayout,
@@ -16,6 +20,7 @@ from PyQt5.QtWidgets import (
     QMessageBox,
     QPushButton,
     QScrollArea,
+    QToolButton,
     QVBoxLayout,
     QWidget,
 )
@@ -51,6 +56,95 @@ def _firma(pj: P.Personaje) -> tuple:
     return pj.nombre, pj.color, pj.tiene_datos, fecha(pj.ruta_artwork()), fecha(pj.ruta_cara())
 
 
+def texto_juego(texto: str) -> str:
+    """Texto de 7dshub a HTML: los colores del juego ([RRGGBB]texto[-]) se pintan y los saltos de linea se ven."""
+    t = html.escape(texto or "")
+    t = re.sub(r"\[([0-9A-Fa-f]{6})\](.*?)\[-\]", r'<span style="color:#\1">\2</span>', t, flags=re.S)
+    t = re.sub(r"\[[0-9A-Fa-f]{6}\]|\[-\]", "", t)
+    return t.replace("\\n", "<br>").replace("\n", "<br>")  # 7dshub trae los saltos escritos como \n
+
+
+NOMBRES_PERFIL = {"edad": "Edad", "altura": "Altura", "peso": "Peso", "cumpleanos": "Cumpleaños", "sangre": "Sangre",
+                  "voz": "Voz (japonés)"}
+
+
+class DialogoFicha(QDialog):
+    """Todo lo que se sabe de un heroe, para leerlo: sus cartas con lo que hacen en cada rango, la ulti, la pasiva
+    unica, el talento, la reliquia y su perfil (datos de 7dshub.com). Lo pidio el usuario (2026-11-09)."""
+
+    def __init__(self, pj: P.Personaje, padre=None):
+        super().__init__(padre)
+        datos = P.ficha(pj.id)
+        self.setWindowTitle(pj.nombre)
+        self.setMinimumSize(600, 680)
+        exterior = QVBoxLayout(self)
+        cabecera = QHBoxLayout()
+        cara = QLabel()
+        ruta, _ = pj.rostro()
+        if ruta and ruta.is_file():
+            cara.setPixmap(QPixmap(str(ruta)).scaled(96, 96, Qt.KeepAspectRatio, Qt.SmoothTransformation))
+        cabecera.addWidget(cara)
+        titulos = QVBoxLayout()
+        clave = (P._leer_yaml(P.BASE).get(pj.id) or {}).get("clave", "")
+        titulos.addWidget(QLabel(pj.nombre, objectName="titulo_seccion", wordWrap=True))
+        if clave and clave != pj.nombre:
+            titulos.addWidget(QLabel(clave, objectName="tenue", wordWrap=True))
+        color = QLabel(f"<span style='color:{COLOR_ATRIBUTO.get(pj.color, tema.TENUE)}'>●</span> "
+                       f"{P.NOMBRE_COLOR.get(pj.color, '?')}")
+        titulos.addWidget(color)
+        titulos.addStretch()
+        cabecera.addLayout(titulos, 1)
+        exterior.addLayout(cabecera)
+
+        zona = QWidget()
+        capa = QVBoxLayout(zona)
+        capa.setSpacing(12)
+        if not datos:
+            capa.addWidget(QLabel("Todavía no hay ficha de este personaje.", objectName="tenue"))
+        for carta, titulo in (("skill_1", "Habilidad 1"), ("skill_2", "Habilidad 2"), ("ulti", "Ulti")):
+            info = datos.get(carta)
+            if not info:
+                continue
+            fila = QHBoxLayout()
+            img = QLabel()
+            ruta = pj.ruta_hub(carta)
+            if not ruta.is_file():
+                ruta = pj.ruta_ficha(carta)
+            if ruta.is_file():
+                img.setPixmap(QPixmap(str(ruta)).scaled(90, 148, Qt.KeepAspectRatio, Qt.SmoothTransformation))
+            fila.addWidget(img, 0, Qt.AlignTop)
+            if "rangos" in info:
+                cuerpo = "".join(f"<p><b>Rango {i}</b><br>{texto_juego(t)}</p>" for i, t in enumerate(info["rangos"], 1))
+            else:
+                cuerpo = f"<p>{texto_juego(info.get('texto', ''))}</p>"
+            fila.addWidget(self._texto(f"<b>{titulo}: {html.escape(info['nombre'])}</b>{cuerpo}"), 1)
+            capa.addLayout(fila)
+        for clave_, titulo in (("pasiva", "Pasiva única"), ("talento", "Talento"), ("reliquia", "Reliquia sagrada")):
+            info = datos.get(clave_)
+            if info and (info.get("nombre") or info.get("texto")):
+                capa.addWidget(self._texto(f"<b>{titulo}: {html.escape(info.get('nombre', ''))}</b>"
+                                           f"<p>{texto_juego(info.get('texto', ''))}</p>"))
+        if datos.get("perfil"):
+            filas = "".join(f"<tr><td><b>{NOMBRES_PERFIL.get(k, k)}</b>&nbsp;&nbsp;</td><td>{html.escape(str(v))}</td></tr>"
+                            for k, v in datos["perfil"].items())
+            capa.addWidget(self._texto(f"<b>Perfil</b><table>{filas}</table>"))
+        capa.addWidget(QLabel("Datos e imágenes: 7dshub.com", objectName="tenue"))
+        capa.addStretch()
+        desplazar = QScrollArea(widgetResizable=True)
+        desplazar.setWidget(zona)
+        exterior.addWidget(desplazar, 1)
+        cerrar = QPushButton("Cerrar")
+        cerrar.clicked.connect(self.accept)
+        exterior.addWidget(cerrar, 0, Qt.AlignRight)
+
+    @staticmethod
+    def _texto(contenido: str) -> QLabel:
+        etiqueta = QLabel(contenido, wordWrap=True)
+        etiqueta.setTextFormat(Qt.RichText)
+        etiqueta.setTextInteractionFlags(Qt.TextSelectableByMouse)
+        return etiqueta
+
+
 class TarjetaPersonaje(QFrame):
     """Retrato con nombre y atributo. Clic = lo tengo / no lo tengo."""
 
@@ -74,6 +168,15 @@ class TarjetaPersonaje(QFrame):
         self.pix = None
         self.cargada = False  # la imagen se lee al verse la tarjeta por primera vez (ver paintEvent)
         capa.addWidget(self.foto, 0, Qt.AlignHCenter)
+        # Boton para leer la ficha (el clic en la tarjeta sigue siendo "lo tengo / no lo tengo")
+        self.info = QToolButton(self)
+        self.info.setText("ⓘ")
+        self.info.setToolTip("Ver su ficha: cartas, pasiva, talento, reliquia...")
+        self.info.setCursor(Qt.PointingHandCursor)
+        self.info.setStyleSheet("QToolButton { background: rgba(0,0,0,150); color: white; border-radius: 11px;"
+                                " font-size: 11pt; padding: 0 5px; }")
+        self.info.move(ANCHO_TARJETA - 34, 10)
+        self.info.clicked.connect(self.abrir_ficha)
 
         nombre = QLabel(pj.nombre, alignment=Qt.AlignCenter, wordWrap=True)
         nombre.setObjectName("nombre_pj")
@@ -136,7 +239,13 @@ class TarjetaPersonaje(QFrame):
         self.style().unpolish(self)
         self.style().polish(self)
 
+    def abrir_ficha(self):
+        DialogoFicha(self.pj, self.window()).exec_()
+
     def mousePressEvent(self, evento):
+        if evento.button() == Qt.RightButton:  # clic derecho: la ficha
+            self.abrir_ficha()
+            return
         if evento.button() == Qt.LeftButton:
             self.cambiado.emit(self.pj.id, not self.pj.tengo)
         super().mousePressEvent(evento)
@@ -144,7 +253,7 @@ class TarjetaPersonaje(QFrame):
 
 class PaginaPersonajes(Pagina):
     titulo = "Personajes"
-    subtitulo = "Toca los que tienes. A color = lo tienes. Más rápido: «Marcar todos» y quita los que te faltan."
+    subtitulo = "Toca los que tienes (a color = lo tienes). ⓘ o clic derecho: su ficha. Más rápido: «Marcar todos»."
 
     def __init__(self, app):
         super().__init__()

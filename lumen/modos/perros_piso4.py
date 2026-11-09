@@ -224,12 +224,12 @@ AUTO_QUIETO = 4.0  # s con casillas libres sin que se llenen: el AUTO no esta pu
 
 class PerrosPiso4(Modo):
     id = "perros_piso4"
-    nombre = "Skollandhati & Hati · Floor 4"
+    nombre = "Skoll & Hati · Floor 4"
     descripcion = (
         "Demonic Beast de los perros, Floor 4, con Odin, Gawain, Freyja (Strength) y Thonar (Speed). "
         "Puede empezar desde la Tavern, el menú Battle o la pantalla de Floors."
     )
-    titulo_juego = "Skollandhati & Hati"
+    titulo_juego = "Skoll & Hati"
     subtitulo_juego = "Demonic Beast · Floor 4"
     imagen = "demonic_beasts/skollandhati.png"
     duracion = "~2,5 min por pelea"
@@ -368,8 +368,14 @@ class PerrosPiso4(Modo):
                 return None
         if not self.equipo_verificado and juego.empezar.esta(p):
             self._verificar_equipo(p)  # puede terminar el modo si el equipo no es el del guion
-        self.clic_si(juego.empezar, p, o)
+        if self.clic_si(juego.empezar, p, o):
+            self.toques_start = getattr(self, "toques_start", 0) + 1
+            if self.toques_start >= 3:
+                self._aceptar_aviso(p, o)
+        elif getattr(self, "toques_start", 0) >= 3:
+            self._aceptar_aviso(p, o)
         if juego.carga_bestias.esta(p) or juego.carga_taberna.esta(p):
+            self.toques_start = 0
             self._nueva_pelea()
             self.diario.terminar("abandonada")  # la anterior acabo sin verse el final
             config, prueba = self._configuracion()
@@ -378,6 +384,38 @@ class PerrosPiso4(Modo):
             self.log("¡A pelear!", "ok")
             return "pelea"
         return None
+
+    BOTONES_AVISO = ("yes", "sí", "si", "enter", "start battle", "battle start", "proceed")
+
+    def _aceptar_aviso(self, p, o):
+        """Tras pulsar Start a veces sale un aviso que pide confirmar: el bot no lo conocia y seguia pulsando Start
+        debajo, en bucle (prueba del usuario, 2026-11-09). Se acepta por su OK o por el texto de su boton, y la
+        primera vez se guarda una foto en logs/avisos para reconocerlo mejor."""
+        if time.time() - getattr(self, "ultimo_aviso", 0.0) < 2:
+            return
+        self.ultimo_aviso = time.time()
+        if not getattr(self, "foto_aviso", False):
+            self.foto_aviso = True
+            try:
+                ruta = LOGS / "avisos" / f"{self.id}_{time.strftime('%Y%m%d_%H%M%S')}.png"
+                guardar_imagen(ruta, p)
+                self.log(f"Start no empieza la pelea: guardo una captura en logs/avisos ({ruta.name}).", "aviso")
+            except Exception:
+                pass
+        if self.clic_si(juego.ok, p, o, espera=1.0):
+            self.log("Acepto un aviso (OK).", "aviso")
+            return
+        if self.clic_boton_por_texto(p, o):
+            return
+        from lumen import ocr
+
+        if not ocr.disponible():
+            return
+        for texto, (x, y, w, h) in ocr.lineas_con_posicion(p):
+            if texto.strip().lower().strip(".!") in self.BOTONES_AVISO:
+                entrada.clic((x + w // 2, y + h // 2), o, espera=0.8)
+                self.log(f"Acepto un aviso: toco «{texto.strip()}».", "aviso")
+                return
 
     def _configuracion(self) -> tuple[dict | None, bool]:
         """Con que parametros juega el juego inteligente esta pelea (IA.md, pieza 6). Solo si lo usa."""

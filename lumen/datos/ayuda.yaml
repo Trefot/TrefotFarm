@@ -135,7 +135,7 @@ glosario:
   - termino: "Demonic Beast"
     tipo: juego
     definicion: "Jefes especiales que se pelean por pisos (Floors). Dan materiales para mejorar el equipo."
-  - termino: "Skollandhati & Hati"
+  - termino: "Skoll & Hati"
     tipo: juego
     definicion: "La Demonic Beast de los perros: un lobo dorado y uno azul. En el juego sale como Skoll and Hati."
   - termino: "Floor"
@@ -189,7 +189,7 @@ glosario:
   # ---- del bot
   - termino: "Modo"
     tipo: bot
-    definicion: "Una actividad que el bot sabe farmear solo, por ejemplo Skollandhati & Hati · Floor 4."
+    definicion: "Una actividad que el bot sabe farmear solo, por ejemplo Skoll & Hati · Floor 4."
   - termino: "Guion"
     tipo: bot
     definicion: "El orden de cartas probado que sigue el bot en cada fase y turno."

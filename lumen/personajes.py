@@ -198,6 +198,21 @@ def _leer_yaml(ruta: Path) -> dict:
         return yaml.load(f, Loader=CARGADOR_YAML) or {}
 
 
+FICHAS = Path(__file__).resolve().parent / "datos" / "fichas.yaml"  # de 7dshub: cartas, pasiva, talento, reliquia
+
+
+_fichas_cache: dict | None = None
+
+
+def ficha(pid: str) -> dict:
+    """Lo que se sabe del heroe para leerlo (pagina Personajes): cartas con el texto de cada rango, ulti, pasiva
+    unica, talento, reliquia y perfil. Vacio si no esta en 7dshub (p. ej. un heroe creado a mano)."""
+    global _fichas_cache
+    if _fichas_cache is None:
+        _fichas_cache = _leer_yaml(FICHAS)
+    return _fichas_cache.get(pid) or {}
+
+
 def _crear(pid: str, datos: dict, propio: bool) -> Personaje:
     cartas = {}
     for cid, c in (datos.get("cartas") or {}).items():

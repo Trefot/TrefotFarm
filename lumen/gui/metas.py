@@ -52,7 +52,7 @@ def texto_media(id_destino: str, objeto: str) -> str:
 
 
 def estimacion(meta: metas.Meta) -> str:
-    """'Mejor: Skollandhati & Hati · Floor 4 · faltan ≈13 victorias · ≈35 min'."""
+    """'Mejor: Skoll & Hati · Floor 4 · faltan ≈13 victorias · ≈35 min'."""
     if meta.completa:
         return f"<span style='color:{tema.OK}'>✓ Completada</span>"
     mejor = metas.mejor_destino(meta.objeto)
