@@ -154,3 +154,65 @@ class EnLosModos(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class ObjetivosDeTurno(unittest.TestCase):
+    """Lo que pide el jefe para todo el turno: N cartas del mismo rango, o colores seguidos (0.21.0)."""
+
+    PL, OR = Rango.PLATA, Rango.ORO
+
+    def mano(self, cartas):
+        return [Carta(i, tipo=T.NORMAL, rango=r, nombre=n) for i, (n, r) in enumerate(cartas)]
+
+    def jugadas(self, plan, mano):
+        return [mano[p[1]] for p in plan if p[0] == "jugar"]
+
+    def test_sin_objetivos_juega_lo_que_mas_pega(self):
+        mano = self.mano([("a", self.PL), ("b", self.PL), ("c", self.OR), ("d", self.OR), ("e", self.PL)])
+        _, plan = I.planear(mano, 2)
+        self.assertEqual(sorted(c.nombre for c in self.jugadas(plan, mano)), ["c", "d"], "las dos de oro")
+
+    def test_tres_del_mismo_rango(self):
+        """Hraesvelgr F4 fase 2: 3 habilidades del mismo rango (2 o mas) = su proteccion (dano x3)."""
+        mano = self.mano([("a", self.PL), ("b", self.OR), ("c", self.PL), ("d", self.OR), ("e", self.PL)])
+        _, plan = I.planear(mano, 3, objetivos=(("rango", 3, 2),))
+        self.assertEqual(sorted(c.nombre for c in self.jugadas(plan, mano)), ["a", "c", "e"], "las tres de plata")
+
+    def test_cuenta_lo_ya_jugado_en_el_turno(self):
+        mano = self.mano([("a", self.PL), ("b", self.OR), ("c", self.OR)])
+        ya = ((self.PL, None), (self.PL, None))  # ya se jugaron dos de plata
+        _, plan = I.planear(mano, 1, objetivos=(("rango", 3, 2),), jugadas=ya)
+        self.assertEqual(self.jugadas(plan, mano)[0].nombre, "a", "falta una de plata: esa, aunque el oro pegue mas")
+
+    def test_bronce_no_cuenta_si_pide_rango_2(self):
+        self.assertEqual(I.bono_objetivos(((Rango.BRONCE, None),) * 3, (("rango", 3, 2),)), 0.0)
+        self.assertEqual(I.bono_objetivos(((Rango.PLATA, None),) * 3, (("rango", 3, 2),)), I.BONO_RANGO)
+        self.assertEqual(I.bono_objetivos(((None, None),) * 3, (("rango", 3, 1),)), 0.0, "las ultis no tienen rango")
+
+    def test_colores_seguidos(self):
+        mano = self.mano([("r1", self.PL), ("v1", self.PL), ("r2", self.PL), ("v2", self.PL)])
+        colores = {"r1": "rojo", "r2": "rojo", "v1": "verde", "v2": "verde"}
+        _, plan = I.planear(mano, 2, colores=colores, objetivos=(("color",),), jugadas=((self.PL, "verde"),))
+        self.assertEqual({c.nombre for c in self.jugadas(plan, mano)}, {"v1", "v2"}, "sigue con el verde")
+
+    def test_objetivos_de_los_jefes(self):
+        from lumen.ia import decidir
+
+        self.assertIn(("rango", 3, 2), I.objetivos_de(decidir.mecanicas_de("pajaro_piso4", 2)))
+        self.assertIn(("color",), I.objetivos_de(decidir.mecanicas_de("ciervo_piso4", 2)))
+        self.assertEqual(I.objetivos_de(decidir.mecanicas_de("rata_f1", 1)), ())
+
+    def test_el_jugador_recuerda_lo_jugado_y_empieza_turno_nuevo(self):
+        from lumen.ia.efectos import Mecanica
+
+        j = I.Jugador()
+        j.mecanicas = [Mecanica("mismo_rango", ("mismo_rango",), "3:2")]
+        j._lector = mock.Mock(color_de=lambda n: None)
+        mano = self.mano([("a", self.PL), ("b", self.OR), ("c", self.PL), ("d", self.OR), ("e", self.PL)])
+        with mock.patch.object(I, "agrupar_por_dibujo", lambda m, f: None):
+            j.elegir(mano, 3)
+            self.assertEqual(len(j.jugadas_turno), 1)
+            j.elegir(mano, 2)
+            self.assertEqual(len(j.jugadas_turno), 2)
+            j.elegir(mano, 4)  # turno nuevo
+            self.assertEqual(len(j.jugadas_turno), 1)

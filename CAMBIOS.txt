@@ -29,6 +29,14 @@ Etapas previstas:
 
 CAMBIOS
 -------
+0.21.0-alpha
+  - Juego inteligente: objetivos de turno que pide el jefe. Ya no solo valora cada carta: busca la combinacion
+    del turno entero. "3 o mas habilidades del mismo rango (rango 2 o mas)" (Hraesvelgr Transcendent, fase 2):
+    juega 3 platas u oros juntas aunque otra carta pegue mas. "Atacar seguido con el mismo atributo"
+    (Eikthyrnir Transcendent, fases 2 y 3): encadena cartas del mismo color. Cuenta lo ya jugado en el turno.
+    Lo que el texto no dice (la secuencia exacta de atributos, cuantas inmortalidades quedan) necesita ver el
+    estado del jefe en pantalla: aun no.
+
 0.20.0-alpha
   - Quitadas las herramientas de administrador que ya cubre 7dshub: Captura de heroes, Captura de artworks,
     Captura de pasivas y la pagina "Heroes" (Heroes capturados), con sus imagenes y pruebas (~2300 lineas).

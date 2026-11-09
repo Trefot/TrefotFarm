@@ -39,6 +39,10 @@ PARAMS_DEFECTO = {"peso_futuro": PESO_FUTURO, "valor_ulti": VALOR_ULTI, "solo_ar
 _PARAMS: dict = dict(PARAMS_DEFECTO)
 MISMO_DIBUJO = 8.0  # distancia de dibujo (0-100, ver agrupar_por_dibujo) por debajo: es la misma carta
 SUBIR = {Rango.BRONCE: Rango.PLATA, Rango.PLATA: Rango.ORO}
+# Objetivos de turno (los pide el jefe, ver objetivos_de): un premio si la secuencia de cartas del turno los cumple.
+# El planificador prueba todas las secuencias, asi que busca solo la combinacion (no carta a carta).
+BONO_RANGO = 4.0  # jugar N cartas del mismo rango (Hraesvelgr F4 fase 2: 3 de rango 2 o mas = su proteccion)
+BONO_COLOR = 0.8  # por cada carta que sigue el color de la anterior (atacar "seguido con el mismo atributo")
 
 
 @dataclass(frozen=True)
@@ -50,6 +54,7 @@ class Ficha:
     ulti: bool
     jugable: bool
     valor: float  # dano relativo si se juega
+    color: str | None = None  # atributo del heroe (para los objetivos de "mismo color seguido")
 
     def gemela(self, otra: "Ficha") -> bool:
         return (self.nombre is not None and self.nombre == otra.nombre and self.rango == otra.rango
@@ -57,7 +62,7 @@ class Ficha:
 
     def subida(self, valores: dict) -> "Ficha":
         rango = SUBIR[self.rango]
-        return Ficha(self.nombre, rango, False, self.jugable, valor_de(self.nombre, rango, False, valores))
+        return Ficha(self.nombre, rango, False, self.jugable, valor_de(self.nombre, rango, False, valores), self.color)
 
 
 def valor_de(nombre: str | None, rango: Rango, ulti: bool, valores: dict) -> float:
@@ -110,40 +115,76 @@ def valor_futuro(mano: tuple, tamano: int) -> float:
     return sum(sorted(jugables, reverse=True)[:ACCIONES_SIGUIENTE]) + extra
 
 
+def bono_objetivos(jugadas: tuple, objetivos: tuple) -> float:
+    """Premio de una secuencia de cartas jugadas en el turno, ((rango | None si ulti, color), ...), por cumplir
+    los objetivos: ("rango", n, rango_minimo) y ("color",)."""
+    bono = 0.0
+    for obj in objetivos:
+        if obj[0] == "rango":
+            n, minimo = obj[1], obj[2]
+            cuenta: dict = {}
+            for rango, _ in jugadas:
+                if rango is not None and rango.value + 1 >= minimo:  # bronce = rango 1, plata = 2, oro = 3
+                    cuenta[rango] = cuenta.get(rango, 0) + 1
+            if cuenta and max(cuenta.values()) >= n:
+                bono += BONO_RANGO
+        elif obj[0] == "color":
+            bono += BONO_COLOR * sum(1 for a, b in zip(jugadas, jugadas[1:]) if a[1] and a[1] == b[1])
+    return bono
+
+
 @lru_cache(maxsize=50_000)
-def _mejor(mano: tuple, acciones: int, tamano: int, arrastrar: bool = True) -> tuple[float, tuple]:
-    """(puntuacion, plan) de la mejor secuencia de ``acciones`` jugadas. Plan: (("jugar", i) | ("mover", i, j), ...)."""
+def _mejor(mano: tuple, acciones: int, tamano: int, arrastrar: bool = True, objetivos: tuple = (),
+           jugadas: tuple = ()) -> tuple[float, tuple]:
+    """(puntuacion, plan) de la mejor secuencia de ``acciones`` jugadas. Plan: (("jugar", i) | ("mover", i, j), ...).
+    ``jugadas``: lo jugado ya en este turno (cuenta para los ``objetivos``)."""
     if acciones == 0 or not mano:
-        return _PARAMS["peso_futuro"] * valor_futuro(mano, tamano), ()
+        return _PARAMS["peso_futuro"] * valor_futuro(mano, tamano) + bono_objetivos(jugadas, objetivos), ()
     opciones = []
     for i, f in enumerate(mano):
         if f.jugable:
             dano, resto = jugar(mano, i)
-            puntos, plan = _mejor(resto, acciones - 1, tamano, arrastrar)
+            hecho = jugadas + ((None if f.ulti else f.rango, f.color),) if objetivos else ()
+            puntos, plan = _mejor(resto, acciones - 1, tamano, arrastrar, objetivos, hecho)
             opciones.append((dano + puntos, (("jugar", i),) + plan))
     for i, f in enumerate(mano if arrastrar else ()):  # arrastrar sobre una gemela (solo las que no estan ya al lado: esas ya se habrian fusionado)
         for j, g in enumerate(mano):
             if f.jugable and i != j and abs(i - j) > 1 and f.gemela(g):
-                puntos, plan = _mejor(mover(mano, i, j), acciones - 1, tamano, arrastrar)
+                puntos, plan = _mejor(mover(mano, i, j), acciones - 1, tamano, arrastrar, objetivos, jugadas)
                 opciones.append((puntos, (("mover", i, j),) + plan))
     if not opciones:  # nada que jugar ni fusionar: el turno se pierde
-        return _PARAMS["peso_futuro"] * valor_futuro(mano, tamano), ()
+        return _PARAMS["peso_futuro"] * valor_futuro(mano, tamano) + bono_objetivos(jugadas, objetivos), ()
     # Empates: preferir jugar a mover y, entre jugadas, la carta mas a la derecha (como una persona).
     return max(opciones, key=lambda o: (round(o[0], 6), o[1][0][0] == "jugar", o[1][0][1]))
 
 
 def planear(mano: list[Carta], acciones: int, valores: dict | None = None, arrastrar: bool = True,
-            params: dict | None = None) -> tuple[float, tuple]:
+            params: dict | None = None, colores: dict | None = None, objetivos: tuple = (),
+            jugadas: tuple = ()) -> tuple[float, tuple]:
     """El mejor plan para lo que queda del turno. ``mano``: la leida de la pantalla (con sus huecos).
-    ``params``: los que cambie el aprendizaje (ver PARAMS_DEFECTO); los que falten, los de siempre."""
+    ``params``: los que cambie el aprendizaje (ver PARAMS_DEFECTO); los que falten, los de siempre.
+    ``colores``: nombre -> atributo; ``objetivos`` y ``jugadas`` (lo ya jugado este turno): ver bono_objetivos."""
     global _VALORES_ACTUALES, _PARAMS
     valores = valores or {}
     params = {**PARAMS_DEFECTO, **(params or {})}
     if valores != _VALORES_ACTUALES or params != _PARAMS:
         _VALORES_ACTUALES, _PARAMS = dict(valores), params
         _mejor.cache_clear()
-    fichas = tuple(_ficha(c, valores) for c in mano if c.tipo not in (TipoCarta.SUELO, TipoCarta.NINGUNA))
-    return _mejor(fichas, max(0, acciones), max(len(fichas), _tamano(mano)), arrastrar)
+    fichas = tuple(_ficha(c, valores, colores) for c in mano if c.tipo not in (TipoCarta.SUELO, TipoCarta.NINGUNA))
+    return _mejor(fichas, max(0, acciones), max(len(fichas), _tamano(mano)), arrastrar, tuple(objetivos),
+                  tuple(jugadas) if objetivos else ())
+
+
+def objetivos_de(mecanicas: list) -> tuple:
+    """Los objetivos de turno que piden las mecanicas del jefe (ver bono_objetivos)."""
+    objetivos = []
+    for m in mecanicas:
+        if m.tipo == "mismo_rango":
+            n, _, minimo = (m.detalle or "3:1").partition(":")
+            objetivos.append(("rango", int(n), int(minimo or 1)))
+        elif "mismo_atributo" in m.contra and ("color",) not in objetivos:
+            objetivos.append(("color",))
+    return tuple(objetivos)
 
 
 class Jugador:
@@ -164,6 +205,8 @@ class Jugador:
         self.razones: dict[str, list[str]] = {}  # por que valio mas o menos cada carta (para el diario)
         self.params: dict = {}  # lo que cambia el aprendizaje (lumen/ia/aprendizaje.py); vacio = los de siempre
         self._indice = self._tasador = self._lector = None  # se cargan en la primera jugada (tardan ~1 s)
+        self.jugadas_turno: list = []  # (rango | None, color) de lo jugado este turno, para los objetivos del jefe
+        self._acciones_antes = 0
         self._carga = threading.Lock()
 
     def _cargar(self):
@@ -202,11 +245,27 @@ class Jugador:
                 self._lector = decidir.LectorCartas()
             valores, self.razones = decidir.ajustar(valores, self.mecanicas, self._lector.efectos_de,
                                                     self._lector.color_de, self.color_turno)
-        _, plan = planear(mano, acciones, valores, self.arrastrar, self.params)
+        if acciones >= self._acciones_antes:  # quedan mas acciones que en la jugada anterior: turno nuevo
+            self.jugadas_turno = []
+        self._acciones_antes = acciones
+        objetivos = objetivos_de(self.mecanicas)
+        colores = {}
+        if objetivos:
+            if self._lector is None:
+                from lumen.ia import decidir
+
+                self._lector = decidir.LectorCartas()
+            colores = {c.nombre: self._lector.color_de(c.nombre) for c in mano if c.nombre}
+        _, plan = planear(mano, acciones, valores, self.arrastrar, self.params, colores, objetivos,
+                          tuple(self.jugadas_turno))
         if not plan:
             return None
         reales = posiciones_reales(mano)
         paso = plan[0]
+        if paso[0] == "jugar" and objetivos:
+            fichas = [c for c in mano if c.tipo not in (TipoCarta.SUELO, TipoCarta.NINGUNA)]
+            carta = fichas[paso[1]]
+            self.jugadas_turno.append((None if carta.tipo == TipoCarta.ULTI else carta.rango, colores.get(carta.nombre)))
         return ("jugar", reales[paso[1]]) if paso[0] == "jugar" else ("mover", reales[paso[1]], reales[paso[2]])
 
 
@@ -215,9 +274,10 @@ def _tamano(mano: list[Carta]) -> int:
     return sum(1 for c in mano if c.tipo != TipoCarta.SUELO)
 
 
-def _ficha(c: Carta, valores: dict) -> Ficha:
+def _ficha(c: Carta, valores: dict, colores: dict | None = None) -> Ficha:
     ulti = c.tipo == TipoCarta.ULTI
-    return Ficha(c.nombre, c.rango, ulti, c.jugable, valor_de(c.nombre, c.rango, ulti, valores))
+    return Ficha(c.nombre, c.rango, ulti, c.jugable, valor_de(c.nombre, c.rango, ulti, valores),
+                 (colores or {}).get(c.nombre))
 
 
 def posiciones_reales(mano: list[Carta]) -> list[int]:

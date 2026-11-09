@@ -276,6 +276,9 @@ def _atributos(texto: str) -> tuple[str, ...]:
 
 REGLAS_JEFE: list[tuple[re.Pattern, Callable[[re.Match, str], Mecanica]]] = [
     (re.compile(r"\btorrent\b", re.I), lambda m, t: Mecanica("torrent", _contra_de("torrent", t) or ("ulti",))),
+    # Hraesvelgr F4 fase 2: "if the enemy uses 3 or more skills of the same rank (Rank 2 or higher)": detalle "3:2"
+    (re.compile(r"(?P<n>\d+) or more skills of the same rank(?:\W+rank (?P<r>\d+) or higher)?", re.I),
+     lambda m, t: Mecanica("mismo_rango", ("mismo_rango",), f"{m.group('n')}:{m.group('r') or 1}")),
     (re.compile(r"\bimmortality\b", re.I), lambda m, t: Mecanica("inmortalidad", _atributos(t) or ("golpes",))),
     (re.compile(r"damage taken decrease", re.I),
      lambda m, t: Mecanica("reduccion_dano_atributo", _atributos(t) or ("atributo_fuerte",))),
