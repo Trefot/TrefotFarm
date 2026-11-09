@@ -29,6 +29,10 @@ Etapas previstas:
 
 CAMBIOS
 -------
+0.24.4-alpha
+  - Ratatoskr: el objetivo se marca al empezar CADA turno. La rata salta de un tronco a otro y el juego dejaba la marca
+    en el tronco: el bot apuntaba a la rata en el turno 1 y desde el 2 atacaba al tronco toda la pelea.
+
 0.24.3-alpha
   - Pisos: el titulo del piso abierto (resaltado) a veces no se lee (el dragon no encontraba su Floor 3 abierto). Ahora
     su numero se deduce de los titulos que si se leen: los pisos van apilados a la misma distancia.

@@ -642,9 +642,13 @@ class RataPisos1a3(_bestia("rata", "Ratatoskr", juego.rata, "rat/ratatoskr.png")
     def _empezar_turno(self, p, huecos: int):
         fase = self._detectar_fase(p, huecos) or self.fase or 1
         quien, punto = self.objetivo_rata(p, fase)
+        # En CADA turno, no solo al cambiar: la rata salta de un tronco a otro y el juego deja la marca en el tronco
+        # donde estaba (prueba del usuario, 2026-11-09: turno 1 a la rata, del 2 en adelante al tronco).
         if quien != self.objetivo_actual:
-            self.objetivo_actual = quien
             self.log(f"Apunto a {'la rata' if quien == 'rata' else 'el ' + quien}.")
-            entrada.clic(punto, self.capturar()[1], espera=0.3)
+        else:
+            self.log(f"Vuelvo a marcar {'la rata' if quien == 'rata' else 'el ' + quien} ({punto[0]}, {punto[1]}).", "debug")
+        self.objetivo_actual = quien
+        entrada.clic(punto, self.capturar()[1], espera=0.3)
         return super()._empezar_turno(p, huecos)
 TODAS = (PerrosPisos1a3, PajaroPisos1a3, CiervoPisos1a3, SerpientePisos1a3, RataPisos1a3)

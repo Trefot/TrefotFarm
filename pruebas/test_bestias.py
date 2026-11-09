@@ -679,7 +679,7 @@ class ApuntarEnLaRata(unittest.TestCase):
         with mock.patch.object(B.RATA_PELEA, "buscar", lambda pantalla, umbral=0.7: (300, 330, 50, 60)):
             self.assertEqual(self.m.objetivo_rata(self.pantalla(), 1)[0], "tronco 2")
 
-    def test_apunta_al_empezar_el_turno_y_solo_si_cambia(self):
+    def test_apunta_al_empezar_cada_turno(self):
         clics = []
         self.m.piso = 2
         with mock.patch.object(entrada, "clic", lambda r, o, **k: clics.append(r)), \
@@ -689,7 +689,7 @@ class ApuntarEnLaRata(unittest.TestCase):
                 mock.patch.object(self.m, "log", lambda *a, **k: None):
             self.m._empezar_turno(self.pantalla(), 4)
             self.m._empezar_turno(self.pantalla(), 4)
-            self.assertEqual(clics, [B.RataPisos1a3.PUNTOS["tronco 3"]], "una vez")
+            self.assertEqual(clics, [B.RataPisos1a3.PUNTOS["tronco 3"]] * 2, "en cada turno: el juego mueve la marca")
             self.m._empezar_turno(self.pantalla(("tronco 2",)), 4)
         self.assertEqual(clics[-1], B.RataPisos1a3.RATA_CENTRO, "roto el tronco: a la rata")
 
