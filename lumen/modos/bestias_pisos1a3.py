@@ -30,9 +30,11 @@ class EstrategiaSimple(Estrategia):
         if jugables:
             mejor = max(jugables, key=lambda c: (c.rango.value if c.rango not in (Rango.NINGUNO, Rango.ULTI) else -1, c.posicion))
             return mejor.posicion, None, False
-        for izq, der in zip(mano, mano[1:]):  # todo bloqueado: mover una carta gasta el hueco sin atacar
-            if izq.tipo not in (TipoCarta.SUELO, TipoCarta.NINGUNA) and der.tipo not in (TipoCarta.SUELO, TipoCarta.NINGUNA):
-                return (der.posicion, izq.posicion), None, False
+        # Todo bloqueado: mover una carta sobre otra gasta el hueco sin atacar. Cualquier par, aunque haya huecos entre
+        # ellas (la rata, 2026-11-09: 3 cartas separadas por huecos y el bot no encontraba pareja y se rendia).
+        cartas = [c for c in mano if c.tipo not in (TipoCarta.SUELO, TipoCarta.NINGUNA)]
+        for izq, der in zip(cartas, cartas[1:]):
+            return (der.posicion, izq.posicion), None, False
         raise Reiniciar("no hay cartas que jugar ni mover")
 
 

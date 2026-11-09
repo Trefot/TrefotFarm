@@ -42,7 +42,9 @@ class Rueda(QWidget):
         super().__init__()
         self.contenidos = contenidos
         self.listos = listos  # ids de contenidos con algun destino que ya funciona
-        self.fotos = [foto_redonda(c) for c in contenidos]
+        # Lo que aun no se puede farmear ("Proximamente"), en gris: como los personajes que no tienes (idea del
+        # usuario, 2026-11-09).
+        self.fotos = [self._foto(c) for c in contenidos]
         self.indice = indice
         self.posicion = float(indice)  # se mueve con la animacion
         self.setMinimumHeight(TAM + 40)
@@ -60,9 +62,20 @@ class Rueda(QWidget):
             b.clicked.connect(lambda _, s=paso: self.girar(s))
             self.flechas.append(b)
 
-    def poner_foto(self, indice: int, foto=None):
-        """Cambia la foto de una parada (p. ej. la del piso elegido); sin ``foto``, vuelve a la suya."""
-        self.fotos[indice] = foto_redonda(self.contenidos[indice], foto=foto)
+    def _foto(self, contenido, foto=None, listo: bool | None = None) -> QPixmap:
+        pix = foto_redonda(contenido, foto=foto)
+        if listo is None:
+            listo = contenido.id in self.listos
+        if listo:
+            return pix
+        from lumen.gui.paginas.personajes import _en_gris
+
+        return _en_gris(pix)
+
+    def poner_foto(self, indice: int, foto=None, listo: bool | None = None):
+        """Cambia la foto de una parada (p. ej. la del piso elegido); sin ``foto``, vuelve a la suya. ``listo``: si
+        ese piso ya se puede farmear (en gris si no)."""
+        self.fotos[indice] = self._foto(self.contenidos[indice], foto, listo)
         self.update()
 
     # ------------------------------------------------------------------ girar

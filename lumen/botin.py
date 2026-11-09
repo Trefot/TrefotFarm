@@ -486,6 +486,87 @@ def identificar(img_icono, catalogo: dict) -> str | None:
     return oid
 
 
+# "First Reward" (la primera vez que se supera cada piso en la semana): sus objetos van en casillas grandes (~89 px)
+# en el centro. Se reducen al tamano de las del botin normal (LADO) para leerlas igual. Medido el 2026-11-09.
+ZONA_PRIMERA = (420, 580)  # alto (y) donde van sus casillas
+LADO_PRIMERA = (82, 96)
+
+
+def casillas_primera(pantalla) -> list[tuple[int, int, int]]:
+    """(x, y, lado) de las casillas de la pantalla "First Reward", de izquierda a derecha."""
+    y1, y2 = ZONA_PRIMERA
+    zona = pantalla[y1:y2]
+    bordes = cv2.dilate(cv2.Canny(cv2.cvtColor(zona, cv2.COLOR_BGR2GRAY), 60, 160), np.ones((2, 2), np.uint8))
+    contornos, _ = cv2.findContours(bordes, cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
+    cajas = []
+    for c in contornos:
+        x, y, w, h = cv2.boundingRect(c)
+        if LADO_PRIMERA[0] <= w <= LADO_PRIMERA[1] and LADO_PRIMERA[0] <= h <= LADO_PRIMERA[1] and abs(w - h) <= 8:
+            if not any(abs(x - cx) < 20 for cx, _, _ in cajas):
+                cajas.append((x, y + y1, max(w, h)))
+    return sorted(cajas)
+
+
+def _dif_con_holgura(gris, caja, plantilla, holgura: int) -> float:
+    media, peso = plantilla
+    y1, y2, x1, x2 = caja
+    mejor = float("inf")
+    for dy in range(-holgura, holgura + 1):
+        for dx in range(-holgura, holgura + 1):
+            r = gris[y1 + dy:y2 + dy, x1 + dx:x2 + dx]
+            if r.shape == media.shape:
+                mejor = min(mejor, float((np.abs(r - media) * peso).sum() / peso.sum()))
+    return mejor
+
+
+def cantidad_primera(celda_grande) -> int:
+    """La cantidad en una casilla grande de "First Reward": su numero no guarda la misma proporcion que en el botin
+    normal, asi que se prueba la casilla a varios tamanos y con mas holgura, y vale el digito que gane con margen
+    (medido: el "2" del cristal da 26 frente a 39 del siguiente; sin numero, nada baja de 46)."""
+    plantillas = _plantillas_digitos()
+    if not plantillas["uni"]:
+        return 1
+    mejor = (float("inf"), None, None)
+    for lado in range(58, 72, 2):
+        gris = cv2.cvtColor(cv2.resize(celda_grande, (lado, lado), interpolation=cv2.INTER_AREA), cv2.COLOR_BGR2GRAY)
+        gris = gris.astype(np.float32)
+        if lado < LADO:
+            gris = cv2.copyMakeBorder(gris, 0, LADO - lado, 0, LADO - lado, cv2.BORDER_REPLICATE)
+        difs = sorted((_dif_con_holgura(gris, HUECO_UNIDADES, t, 4), d) for d, t in plantillas["uni"].items())
+        segunda = difs[1][0] if len(difs) > 1 else float("inf")
+        if difs[0][0] < mejor[0]:
+            mejor = (difs[0][0], difs[0][1], (gris, segunda))
+    dif, unidad, (gris, segunda) = mejor[0], mejor[1], mejor[2] if mejor[2] else (None, 0)
+    if unidad is None or dif > MAX_DIF_PRIMERA or segunda - dif < MARGEN_PRIMERA:
+        return 1
+    decena = ""
+    if plantillas["dec"]:
+        dif_d, d = min((_dif_con_holgura(gris, HUECO_DECENAS, t, 4), d) for d, t in plantillas["dec"].items())
+        decena = d if dif_d <= MAX_DIF_PRIMERA - 8 else ""
+    if unidad == "0" and not decena:
+        return 1
+    return int(decena + unidad)
+
+
+MAX_DIF_PRIMERA = 32.0
+MARGEN_PRIMERA = 8.0
+
+
+def analizar_primera(pantalla) -> dict:
+    """Los objetos de la pantalla "First Reward" (sin oro)."""
+    with _lock:
+        catalogo = cargar_catalogo()
+        objetos: dict[str, int] = {}
+        for x, y, lado in casillas_primera(pantalla):
+            celda = cv2.resize(pantalla[y:y + lado, x:x + lado], (LADO, LADO), interpolation=cv2.INTER_AREA)
+            oid = identificar(icono(celda), catalogo)
+            if oid is None:
+                continue
+            objetos[oid] = objetos.get(oid, 0) + cantidad_primera(pantalla[y:y + lado, x:x + lado])
+        guardar_catalogo(catalogo)
+        return {"objetos": objetos, "oro": None}
+
+
 def analizar(pantalla) -> dict:
     """{'objetos': {id: cantidad}, 'oro': int | None}. Agrega al catalogo los objetos nuevos."""
     with _lock:

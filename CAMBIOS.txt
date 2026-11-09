@@ -29,6 +29,16 @@ Etapas previstas:
 
 CAMBIOS
 -------
+0.25.0-alpha
+  - Bestias: la pantalla "First Reward" (lo que da la primera vez de la semana cada piso) se apunta en el Botin con su
+    propia foto. Antes solo se apuntaba la pantalla VICTORY y esos objetos se perdian. Sus casillas son mas grandes:
+    se leen a varios tamanos (probado con una real: material de reliquia x1 y cristal x2).
+  - Floor 1-3: si no encuentra jugada, espera en vez de rendirse (la rata se rendia y estropeaba la vuelta). Mover una
+    carta para gastar la accion vale con cualquier par, aunque haya huecos entre ellas.
+  - La ulti tiene 4 s para colocarse (antes 1,6 s: la rata la daba por bloqueada).
+  - Inicio: lo que aun no se puede farmear ("Proximamente", p. ej. Surtr o el Floor 4 del pajaro) sale en gris, como
+    los personajes que no tienes.
+
 0.24.4-alpha
   - Ratatoskr: el objetivo se marca al empezar CADA turno. La rata salta de un tronco a otro y el juego dejaba la marca
     en el tronco: el bot apuntaba a la rata en el turno 1 y desde el 2 atacaba al tronco toda la pelea.

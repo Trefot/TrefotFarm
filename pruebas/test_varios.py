@@ -599,3 +599,16 @@ class CantidadesSobreFondoClaro(unittest.TestCase):
         self.assertEqual(self.leer("cubo_amarillo_10"), 10, "se leia 1")
         self.assertEqual(self.leer("cubo_amarillo_15"), 15, "se leia 5")
         self.assertEqual(self.leer("objeto_4"), 4, "los de una cifra siguen igual")
+
+
+class PrimeraRecompensa(unittest.TestCase):
+    """"First Reward": lo que da la primera vez de la semana cada piso (2026-11-09)."""
+
+    def test_lee_sus_casillas_grandes(self):
+        p = cv2.imread(str(Path(__file__).with_name("first_reward.png")))
+        casillas = botin.casillas_primera(p)
+        self.assertEqual(len(casillas), 2)
+        self.assertEqual([botin.cantidad_primera(p[y:y + l, x:x + l]) for x, y, l in casillas], [1, 2])
+        from lumen.modos import perros_piso4 as P4
+
+        self.assertTrue(P4.PRIMERA_RECOMPENSA.esta(p, 0.8))

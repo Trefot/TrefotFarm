@@ -820,3 +820,17 @@ class PisoAbiertoSinTitulo(unittest.TestCase):
             self.assertTrue(m._ir_al_piso_abierto(p, (0, 0)))
         self.assertEqual(m.piso, 3)
         self.assertLess(abs(clics[0][1] - 383), 8)
+
+
+class SinRendirseEnPisos1a3(unittest.TestCase):
+    def test_mueve_cualquier_par_aunque_haya_huecos(self):
+        """La rata (2026-11-09): 3 cartas bloqueadas separadas por huecos; el bot no encontraba pareja y se rendia."""
+        mano = [Carta(i, tipo=T.SUELO) for i in range(8)]
+        for i in (3, 5, 7):
+            mano[i] = Carta(i, tipo=T.BLOQUEADA, rango=Rango.BRONCE)
+        idx, _, _ = B.EstrategiaSimple().decidir(2, 2, 2, mano, 4)
+        self.assertEqual(idx, (5, 3))
+
+    def test_sin_jugada_espera_en_vez_de_rendirse(self):
+        m = B.RataPisos1a3({})
+        self.assertFalse(m.rendirse_si_bloqueada)

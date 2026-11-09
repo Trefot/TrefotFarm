@@ -24,8 +24,10 @@ _lock = threading.Lock()
 LECTURA = 4  # 4: el "10" sobre fondos claros (cubo amarillo) se leia 1
 
 
-def _analizar(pantalla) -> dict:
+def _analizar(pantalla, primera: bool = False) -> dict:
     try:
+        if primera:  # "First Reward": la recompensa de la primera vez de la semana (sin boton OK)
+            return {**botin.analizar_primera(pantalla), "primera": True}
         if not juego.ok.esta(pantalla):
             # Sin el boton OK no es la pantalla de premios: las fotos de Indura de antes de la 0.2.3 se
             # hicieron en "HEART DESTROYED" y el bot guardo como objetos 14 trozos del fondo de lava.
@@ -35,10 +37,11 @@ def _analizar(pantalla) -> dict:
         return {"objetos": {}, "oro": None, "error_lectura": True}
 
 
-def guardar(pantalla: np.ndarray, *, modo: str, nombre_modo: str, sesion: float, victoria: int) -> Path:
+def guardar(pantalla: np.ndarray, *, modo: str, nombre_modo: str, sesion: float, victoria: int,
+            primera: bool = False) -> Path:
     ahora = time.time()
     carpeta = CARPETA / time.strftime("%Y-%m-%d", time.localtime(ahora))
-    ruta = carpeta / f"{time.strftime('%H%M%S', time.localtime(ahora))}_{modo}_v{victoria}.png"
+    ruta = carpeta / f"{time.strftime('%H%M%S', time.localtime(ahora))}_{modo}_v{victoria}{'_primera' if primera else ''}.png"
     guardar_imagen(ruta, pantalla)
     registro = {
         "ruta": ruta.relative_to(CARPETA).as_posix(),
@@ -47,7 +50,7 @@ def guardar(pantalla: np.ndarray, *, modo: str, nombre_modo: str, sesion: float,
         "nombre_modo": nombre_modo,
         "sesion": sesion,
         "victoria": victoria,
-        **_analizar(pantalla),
+        **_analizar(pantalla, primera),
         "analizado": True,
         "lectura": LECTURA,
     }

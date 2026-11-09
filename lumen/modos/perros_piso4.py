@@ -218,6 +218,8 @@ def heroes_con_talento() -> set[str]:
 
 
 _TALENTOS: set | None = None
+PRIMERA_RECOMPENSA = Plantilla("demonic_beasts/first_reward.png")  # titulo "First Reward" (primera vez de la semana)
+PUNTO_CONTINUAR = (275, 800)  # tocar abajo, fuera de las casillas, para pasar la pantalla
 AUTO = Plantilla("demons/auto.jpg")  # el boton AUTO de la pelea (el mismo en demonios y bestias)
 AUTO_QUIETO = 4.0  # s con casillas libres sin que se llenen: el AUTO no esta puesto
 
@@ -283,6 +285,7 @@ class PerrosPiso4(Modo):
         return self.estado in ("ir_a_perros", "elegir_piso", "preparar")
 
     def _nueva_pelea(self):
+        self.foto_primera = False
         self.auto_puesto = False
         self.huecos_sin_mi, self.bajadas_solas, self.auto_quitado_en = -1, 0, 0.0
         self.auto_huecos, self.auto_quieto_desde = -1, None
@@ -645,6 +648,13 @@ class PerrosPiso4(Modo):
                 idx, objetivo, talento = self.estrategia.decidir(self.fase, self.turno_fase, accion, mano, self.huecos_turno)
                 self._anotar_heroes(mano)
             except Reiniciar as motivo:
+                if not self.rendirse_si_bloqueada:
+                    # Floor 1-3: rendirse estropea la vuelta entera (la rata, 2026-11-09: mano leida como bloqueada
+                    # y el bot se rindio en un turno que se podia seguir). Mejor esperar a que el turno se resuelva.
+                    self.log(f"No encuentro jugada ({motivo}): espero sin rendirme.", "aviso")
+                    self.diario.nota(f"Sin jugada: {motivo}")
+                    self.turno_abierto = False
+                    return None
                 self.log(f"Reinicio: {motivo}", "aviso")
                 self.diario.nota(f"Reinicio: {motivo}")
                 self.turno_abierto = False
@@ -665,7 +675,9 @@ class PerrosPiso4(Modo):
                 self.log(f"Accion {accion + 1}: juego {carta}")
                 entrada.clic(carta.rect, o, espera=0)
                 ultima_carta = carta
-            if self._esperar_hueco(huecos):
+            es_ulti = not isinstance(idx, tuple) and mano[idx].tipo == TipoCarta.ULTI
+            # La ulti tiene una animacion larga: con 1,6 s la rata la dio por "no entra" y la aparto (2026-11-09).
+            if self._esperar_hueco(huecos, 4.0 if es_ulti else 1.6):
                 self.log("Carta colocada.", "debug")
             else:
                 self.log("La carta aun no ocupa su hueco; lo vuelvo a comprobar.", "debug")
@@ -761,6 +773,14 @@ class PerrosPiso4(Modo):
 
     # ----------------------------------------------------------------- finales
     def victoria(self, p, o):
+        if not getattr(self, "foto_primera", False) and PRIMERA_RECOMPENSA.esta(p, 0.8):
+            # "First Reward": lo que da la primera vez de la semana cada piso. Salia tras la victoria y el bot no lo
+            # apuntaba en el Botin (solo la pantalla VICTORY). Lo pidio el usuario al empezar la semana (2026-11-09).
+            self.foto_primera = True
+            self.guardar_recompensa(p, self.victorias + 1, primera=True)
+            self.log("Recompensa de la primera vez de la semana: la apunto en el Botín.", "ok")
+            entrada.clic(PUNTO_CONTINUAR, o, espera=1.0)  # tocar para seguir (si no, tarda unos segundos sola)
+            return None
         self.clic_si(juego.info_mision, p, o)
         if not self.foto_recompensa and juego.ok.esta(p):
             # La pantalla con el boton OK tras ganar es la que lista las recompensas: foto antes de cerrarla,

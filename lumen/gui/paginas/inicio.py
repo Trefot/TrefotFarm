@@ -219,7 +219,7 @@ class PaginaInicio(Pagina):
         self.rueda.cambiado.connect(self._girada)
         self.caja_rueda.addWidget(self.rueda)
         if contenido_de(getattr(self, "modo_id", "")) is self.contenido:  # foto del piso elegido (Floor 4)
-            self.rueda.poner_foto(self.lista.index(self.contenido), foto_de(self.modo_id))
+            self.rueda.poner_foto(self.lista.index(self.contenido), foto_de(self.modo_id), listo=self.modo_id in MODOS)
 
     def _cambiar_grupo(self, grupo: str):
         if grupo == self.contenido.grupo:
@@ -242,7 +242,9 @@ class PaginaInicio(Pagina):
         config.guardar(cambios)
         indice = self.lista.index(self.contenido)  # la foto del piso elegido (Floor 4: el trascendente)
         for i in range(len(self.lista)):
-            self.rueda.poner_foto(i, foto_de(id_destino) if i == indice else None)
+            # El piso elegido en gris si aun no se farmea (p. ej. el Floor 4 del pajaro): "Proximamente"
+            self.rueda.poner_foto(i, foto_de(id_destino) if i == indice else None,
+                                  listo=(id_destino in MODOS) if i == indice else None)
         if pintar:
             self._pintar_contenido()
         self._pintar_premios()
