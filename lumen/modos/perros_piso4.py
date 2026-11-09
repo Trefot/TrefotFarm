@@ -387,8 +387,10 @@ class PerrosPiso4(Modo):
             self._nueva_pelea()
             self.diario.terminar("abandonada")  # la anterior acabo sin verse el final
             config, prueba = self._configuracion()
+            lecciones = getattr(self.estrategia, "destino", "")  # p. ej. "rata_f2": se aprende por piso
             self.diario.empezar(equipo=getattr(self.equipo, "orden", None), estrategia=self.stats.get("estrategia", ""),
-                                **({"config": config, "prueba": prueba} if config else {}))
+                                **({"config": config, "prueba": prueba} if config else {}),
+                                **({"lecciones": lecciones} if lecciones else {}))
             self.log("¡A pelear!", "ok")
             return "pelea"
         return None

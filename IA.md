@@ -64,3 +64,9 @@ pasiva más). **Un héroe puede tener más de una reliquia distinta** (ya hay un
 - Skill Info de cada carta (captura de héroes, PC). Ejemplo: Raining Blades de Freyr.
 - Enemy Info de cada jefe (fases y pasivas del piso). Ejemplo: Eikthyrnir Floor 4, en
   `pruebas/test_efectos.py`.
+
+## 2026-11-09: aprender de cada pelea y entender pasivas
+
+- Paso 5 ampliado: `lumen/ia/lecciones.py` aprende de UNA pelea (victoria rapida refuerza; derrota castiga lo de los ultimos turnos de esa fase; por tardar, mas area y ultis). Se aplica en `Jugador.elegir` por destino y fase.
+- Paso 1: `lumen/ia/pasivas.py` lee la pasiva unica (dano propio, por tipo de ataque, ulti) y contra que jefe aplica.
+- Reglas que ensena el jugador: `lumen/modos/rata.py` (Ratatoskr), a convertir en un formato por jefe (paso 3).

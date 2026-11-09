@@ -71,7 +71,21 @@ class Diario:
                 f.write(json.dumps(pelea, ensure_ascii=False) + "\n")
         except OSError:
             pass  # el diario nunca debe parar el bot
+        self._aprender(pelea)
         return pelea
+
+    @staticmethod
+    def _aprender(pelea: dict) -> None:
+        """Paso 5 de IA.md: cada pelea terminada ensena algo (lumen/ia/lecciones.py). Nunca para el bot."""
+        try:
+            from lumen.control import control
+            from lumen.ia import lecciones
+
+            for frase in lecciones.aprender({**pelea, "destino": pelea.get("lecciones") or pelea.get("destino")},
+                                            es_area=lecciones.es_area_por_defecto):
+                control.log(f"Aprendo: {frase}", "ok")
+        except Exception:
+            pass
 
 
 # ------------------------------------------------------------------ leer

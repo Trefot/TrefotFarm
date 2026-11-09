@@ -206,6 +206,8 @@ class Jugador:
         self.params: dict = {}  # lo que cambia el aprendizaje (lumen/ia/aprendizaje.py); vacio = los de siempre
         self._indice = self._tasador = self._lector = None  # se cargan en la primera jugada (tardan ~1 s)
         self.jugadas_turno: list = []  # (rango | None, color) de lo jugado este turno, para los objetivos del jefe
+        self.destino: str = ""  # donde se pelea y en que fase (para lo aprendido en cada pelea: ia/lecciones.py)
+        self.fase = None
         self._acciones_antes = 0
         self._carga = threading.Lock()
 
@@ -238,6 +240,16 @@ class Jugador:
             resto = self.params.get("solo_area_resto", SOLO_AREA_RESTO)
             valores = {n: v if self._tasador.es_area(n) else v * resto for n, v in valores.items()}
         self.razones = {}
+        if self.destino and valores and self._tasador:
+            from lumen.ia import pasivas  # la pasiva de cada heroe en este jefe (paso 1 de IA.md)
+
+            valores, por_pasiva = pasivas.aplicar(valores, self.destino, self._tasador.es_area)
+            self.razones.update(por_pasiva)
+        if self.destino and self.fase and valores and self._tasador:
+            from lumen.ia import lecciones
+
+            valores, aprendido = lecciones.aplicar(valores, self.destino, self.fase, self._tasador.es_area)
+            self.razones.update(aprendido)
         if self.mecanicas and valores:
             from lumen.ia import decidir
 

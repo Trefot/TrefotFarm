@@ -29,6 +29,17 @@ Etapas previstas:
 
 CAMBIOS
 -------
+0.28.0-alpha
+  - IA, paso 5: aprende de CADA pelea, gane o pierda (lumen/ia/lecciones.py; lo pidio el usuario: sin esperar muchas
+    peleas). Victoria: si una fase salio en menos turnos que la mejor vez, refuerza las cartas que jugo ahi. Derrota o
+    reinicio: en la fase donde perdio, lo que jugo en los ultimos turnos vale menos la proxima vez; si fue por tardar,
+    valen mas el area y las ultis. Por piso y fase (p. ej. "rata Floor 2, fase 1"), con limites, y las peleas
+    abandonadas no cuentan. El registro dice que aprendio ("Aprendo: ...").
+  - IA, paso 1: entiende las pasivas de los heroes (lumen/ia/pasivas.py): "+N % de dano", "+N % con ataques de un
+    objetivo / de area", "+N % a la ulti", y contra que jefe valen ("solo en Ratatoskr", "en bestias"). P. ej. contra
+    la rata las cartas de un objetivo de Jormungand rojo valen x3. Las reliquias se leen pero no se aplican (el bot no
+    sabe si la tienes puesta).
+
 0.27.1-alpha
   - Ratatoskr: el bot tambien lee las pasivas. Valenti azul envenena con sus ataques de area (su habilidad 2 y su ulti
     cuentan como Poison), asi que Valenti azul + Jormungand rojo ya tienen las 3 desventajas. Lo senalo el usuario.

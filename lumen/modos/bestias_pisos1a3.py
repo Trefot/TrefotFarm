@@ -54,6 +54,7 @@ class EstrategiaInteligente(EstrategiaSimple):
         self.jugador.solo_area = fase in self.fases_area
         # Lo que pide el jefe en esta fase (posturas, inmortalidad...): cambia cuanto vale cada carta (ia/decidir).
         self.jugador.mecanicas = decidir_ia.mecanicas_de(self.destino, fase) if self.destino and fase else []
+        self.jugador.destino, self.jugador.fase = self.destino, fase  # lo aprendido en este piso y fase
         paso = self.jugador.elegir(mano, total - accion)
         if paso is None:  # nada que jugar ni fusionar: lo de siempre (mover una carta para gastar el hueco)
             return super().decidir(fase, turno, accion, mano, total)

@@ -293,7 +293,9 @@ class DemonioTiempoReal(Modo):
     def _abrir_diario(self):
         self._cerrar_diario("abandonada")  # la anterior acabo sin verse el final
         jugar = self.valores.get("jugar")
-        extra = {"nivel": self.valores.get("nivel"), "jugar": jugar}
+        extra = {"nivel": self.valores.get("nivel"), "jugar": jugar,
+                 "lecciones": f"{self.id}_{str(self.valores.get('nivel', '')).lower()}"}
+        self.jugador.destino, self.jugador.fase = extra["lecciones"], 1  # lo aprendido en este demonio y nivel
         if jugar == "Inteligente":
             peleas = self.peleas_del_nivel()
             config, prueba = aprendizaje.elegir(peleas, explorar=bool(self.valores.get("aprender", True)))
@@ -326,7 +328,7 @@ class DemonioTiempoReal(Modo):
     def _apuntar(self, mano, idx):
         self._contar_heroes(mano)
         if self.diario.pelea is not None:
-            self.diario.decision(None, None, len(self.diario.pelea["turnos"]) + 1, mano, idx)
+            self.diario.decision(1, None, len(self.diario.pelea["turnos"]) + 1, mano, idx)
 
     # ------------------------------------------------------------------ pelea
     def _jugar_carta(self, p, o):
