@@ -29,6 +29,11 @@ Etapas previstas:
 
 CAMBIOS
 -------
+0.20.0-alpha
+  - Quitadas las herramientas de administrador que ya cubre 7dshub: Captura de heroes, Captura de artworks,
+    Captura de pasivas y la pagina "Heroes" (Heroes capturados), con sus imagenes y pruebas (~2300 lineas).
+    Los heroes, cartas, textos y pasivas vienen ahora de 7dshub. Siguen "Aprender de mi" y "Capturar objetos".
+
 0.19.0-alpha
   - Cartas de todos los heroes (de 7dshub.com, con permiso): 1133 cartas recortadas como en la mano. Los 381
     heroes ya se pueden reconocer en pelea, tambien los 16 nuevos. Probado con las 1085 cartas capturadas del

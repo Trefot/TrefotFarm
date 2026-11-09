@@ -199,9 +199,11 @@ def publicar(local: Local) -> Resultado:
 
 
 def leer_local() -> Local:
-    """Lo de este PC: equipos del admin, heroes de usuario.yaml y las claves de la captura de heroes."""
+    """Lo de este PC: equipos del admin, heroes de usuario.yaml y las claves de la captura de heroes (si quedo una
+    de antes: la captura se quito en la 0.20.0, los heroes vienen de 7dshub)."""
     from lumen.gui.paginas.equipos import PROPIOS, _leer
-    from lumen.modos.captura_heroes import cargar_catalogo
+    from lumen.valor_cartas import CATALOGO_TEXTOS
 
+    catalogo = P._leer_yaml(CATALOGO_TEXTOS)
     return Local(equipos=_leer(PROPIOS), heroes=P._leer_yaml(P.USUARIO), carpeta=P.CARPETA,
-                 claves={pid: h.get("clave", "") for pid, h in cargar_catalogo().items()})
+                 claves={pid: (h or {}).get("clave", "") for pid, h in catalogo.items()})

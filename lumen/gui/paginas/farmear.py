@@ -622,13 +622,8 @@ class PaginaFarmear(Pagina):
         herramienta = getattr(self.modo_externo, "id", "")
         self.modo_externo = None
         self._pintar_estado()
-        if herramienta in ("captura_heroes", "captura_pasivas"):  # al terminar, ensenar lo capturado
-            self.app.navegar("capturados")
-        elif herramienta == "aprender":  # y lo medido con las peleas que jugo el admin
+        if herramienta == "aprender":  # y lo medido con las peleas que jugo el admin
             self.app.navegar("equipos")
-        elif herramienta == "captura_artworks":  # y los retratos nuevos
-            self.app.paginas["personajes"].al_mostrar()
-            self.app.navegar("personajes")
         elif herramienta == "captura_objetos":  # y la galeria de objetos
             self.app.navegar("recompensas")
 
