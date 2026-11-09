@@ -66,6 +66,8 @@ DESPLAZAR_ABAJO = ((270, 720), (270, 420))  # dedo hacia arriba: la lista baja (
 DESPLAZAR_ARRIBA = ((270, 420), (270, 720))
 BAJO_TITULO = 56  # del centro del titulo del piso al centro de su circulo (lo que se toca)
 LIMITE_CIRCULO = 780  # mas abajo lo tapa la barra del equipo
+# Nombres escritos de cada bestia en el carrusel, en su orden (juego.ORDEN_BESTIAS) y Surtr al final.
+NOMBRES_CARRUSEL = (("hraesvelgr",), ("eikthyrnir",), ("skoll", "hati"), ("nidhoggr",), ("ratatoskr",), ("surtr",))
 FLECHA_ZONA = (15, 150, 95, 820)  # x1, y1, x2, y2: columna de la izquierda donde sale la flecha del piso abierto
 FLECHA_MIN_PIXELES = 60  # en una captura real la flecha tiene ~210 pixeles cian
 PUNTO_X_PISO = 282  # x del circulo (el retrato de la bestia) de cada piso
@@ -219,11 +221,30 @@ class BestiaPisos1a3(PerrosPiso4):
             return None
         return None
 
-    def _deslizar_hacia_bestia(self, p, o):
+    def _bestia_en_carrusel(self, p) -> int | None:
+        """Posicion en el carrusel de la bestia que se ve: por su imagen o por su nombre escrito (Surtr, la ultima,
+        no tiene imagen: el bot no sabia donde estaba y deslizaba sin fin hacia el final, prueba del usuario,
+        2026-11-09)."""
         actual = next((i for i, b in enumerate(juego.ORDEN_BESTIAS) if b.esta(p)), None)
+        if actual is not None or not ocr.disponible():
+            return actual
+        for texto, _ in ocr.lineas_con_posicion(p):
+            t = texto.lower()
+            for i, nombres in enumerate(NOMBRES_CARRUSEL):
+                if any(n in t for n in nombres):
+                    return i
+        return None
+
+    def _deslizar_hacia_bestia(self, p, o):
+        actual = self._bestia_en_carrusel(p)
         objetivo = juego.ORDEN_BESTIAS.index(self.bestia)
         desde, hasta = juego.COORD["deslizar_der"], juego.COORD["deslizar_izq"]
-        if actual is not None and actual > objetivo:
+        self._deslizes_carrusel = getattr(self, "_deslizes_carrusel", 0) + 1
+        if actual is not None:
+            atras = actual > objetivo
+        else:  # no se sabe donde esta: ir y volver (6 hacia un lado, 6 hacia el otro) en vez de quedarse en un extremo
+            atras = (self._deslizes_carrusel // 6) % 2 == 1
+        if atras:
             desde, hasta = hasta, desde
         entrada.arrastrar(desde, hasta, o)
 

@@ -752,3 +752,30 @@ class PisoAbierto(unittest.TestCase):
         self.assertEqual(m.piso, 1)
         self.assertEqual(len(clics), 1)
         self.assertLess(abs(clics[0][1] - 680), 8, "toca el retrato del Floor 1")
+
+
+class CarruselDeBestias(unittest.TestCase):
+    def setUp(self):
+        self.arrastres = []
+        p = mock.patch.object(entrada, "arrastrar", lambda a, b, o, **k: self.arrastres.append((a, b)))
+        p.start()
+        self.addCleanup(p.stop)
+        for b in juego.ORDEN_BESTIAS:
+            q = mock.patch.object(b, "esta", lambda p, u=0.7: False)
+            q.start()
+            self.addCleanup(q.stop)
+
+    def test_en_surtr_vuelve_hacia_atras(self):
+        """Surtr es la ultima y no tiene imagen: el bot deslizaba sin fin hacia el final (2026-11-09)."""
+        m = B.CiervoPisos1a3({})
+        with mock.patch.object(B.ocr, "disponible", lambda: True), \
+                mock.patch.object(B.ocr, "lineas_con_posicion", lambda p: [("Surtr and the Primordial Flame", (0, 0, 9, 9))]):
+            m._deslizar_hacia_bestia(None, (0, 0))
+        self.assertEqual(self.arrastres, [(juego.COORD["deslizar_izq"], juego.COORD["deslizar_der"])], "hacia atras")
+
+    def test_sin_saber_donde_esta_va_y_vuelve(self):
+        m = B.CiervoPisos1a3({})
+        with mock.patch.object(B.ocr, "disponible", lambda: False):
+            for _ in range(12):
+                m._deslizar_hacia_bestia(None, (0, 0))
+        self.assertEqual(len(set(self.arrastres)), 2, "cambia de direccion")
