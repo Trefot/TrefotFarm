@@ -245,6 +245,11 @@ class Jugador:
 
             valores, por_pasiva = pasivas.aplicar(valores, self.destino, self._tasador.es_area)
             self.razones.update(por_pasiva)
+        if self.destino and valores and self._tasador:
+            from lumen.ia import conocimiento  # lo que el jugador ensena de este jefe (lumen/datos/conocimiento.yaml)
+
+            valores, ensenado = conocimiento.aplicar(valores, self.destino, self.fase, self._tasador.es_area)
+            self.razones.update(ensenado)
         if self.destino and self.fase and valores and self._tasador:
             from lumen.ia import lecciones
 

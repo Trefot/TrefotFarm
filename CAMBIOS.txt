@@ -29,6 +29,16 @@ Etapas previstas:
 
 CAMBIOS
 -------
+0.29.0-alpha
+  - Pestana "Aprendido" en Farmear: lo que el bot aprendio de cada pelea, por piso y fase (que cartas prefiere y
+    cuales evita). Tambien llega al movil con la orden "diario".
+  - Pantalla "Sync Data" (pide cuenta o contrasena): el bot para y avisa al movil. Nunca escribe datos de la cuenta.
+  - Aviso al movil si una pelea o una busqueda dura demasiado (posible bucle o bestia atascada), con foto, una vez.
+  - IA, paso 3: lo que ensenas de cada jefe va en lumen/datos/conocimiento.yaml (preferir area, evitar ultis...) sin
+    tocar codigo. Ya trae Ratatoskr: Floor 2 prefiere area; Floor 3 evita ultis (mueven a la rata al azar).
+  - Talentos: ya no solo en el turno 1; se vuelve a usar cada vez que se recarga, segun su texto (cooldown de 3
+    turnos y limite de usos, p. ej. Nemesis 3 veces, Merlin & Escanor 1).
+
 0.28.1-alpha
   - IA: las reliquias tambien cuentan (el usuario: todos los heroes la llevan siempre puesta). Se leen como la pasiva
     ("+N % de dano", por tipo de ataque, a la ulti) y las de un jefe ("in Nidhoggr's Demonic Beast Battle") solo valen

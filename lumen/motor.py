@@ -38,6 +38,9 @@ class TerminarModo(Exception):
     """El modo termino su trabajo (p. ej. llego al numero de victorias)."""
 
 
+ESTADOS_LARGOS = {"pelea", "buscar"}  # pasos que pueden durar mucho sin que sea un bucle (pelear, esperar invitaciones)
+
+
 class Modo:
     id = "base"
     nombre = "Modo"
@@ -126,7 +129,7 @@ class Modo:
             avisos.enviar("LumenFarm: el juego cerró la sesión (la cuenta se abrió en otro sitio).", pantalla)
             self.clic_si(juego.ok, pantalla, origen, espera=2.0)
             return True
-        if juego.conexion_caducada.esta(pantalla, 0.8) or juego.contrasena.esta(pantalla, 0.8):
+        if juego.conexion_caducada.esta(pantalla, 0.8) or juego.contrasena.esta(pantalla, 0.8)                 or juego.sync_data.esta(pantalla, 0.8):
             # Para volver hay que entrar con la contrasena: eso lo hace el jugador, no el bot.
             self.log("El juego cerró la sesión y pide entrar de nuevo. Detengo el bot.", "error")
             avisos.enviar("LumenFarm: el juego cerró la sesión y pide entrar de nuevo. Bot detenido.", pantalla)
@@ -240,11 +243,28 @@ class Modo:
 
         def vigilar():
             avisado = False
+            estado, desde, avisado_bucle = None, time.time(), False
             while self._vigilante_activo:
                 time.sleep(5)
                 if control.en_pausa:
                     continue
                 minutos = float(config.obtener("minutos_atasco") or 0)
+                # Bucles: el bot sigue haciendo clics (asi que no cuenta como parado) pero no sale del mismo paso de
+                # navegacion (el carrusel deslizando sin fin, Start pulsado bajo un aviso...: pruebas del 2026-11-09).
+                if self.estado != estado:
+                    estado, desde, avisado_bucle = self.estado, time.time(), False
+                limite_bucle = max(180.0, minutos * 30) if minutos > 0 else 0  # la mitad del atasco, minimo 3 min
+                if (limite_bucle and not avisado_bucle and estado not in ESTADOS_LARGOS
+                        and time.time() - desde > limite_bucle):
+                    avisado_bucle = True
+                    nombre = self.nombres_estados.get(estado, estado)
+                    self.log(f"Parece un bucle: {(time.time() - desde) / 60:.0f} min en '{nombre}' sin avanzar.", "error")
+                    try:
+                        pantalla, _ = ventana.capturar()
+                    except Exception:
+                        pantalla = None
+                    avisos.enviar(f"LumenFarm ({self.nombre}): llevo {(time.time() - desde) / 60:.0f} min en "
+                                  f"'{nombre}' sin avanzar. ¿Un bucle? Te mando la pantalla.", pantalla)
                 parado = time.time() - control.ultima_actividad
                 if minutos > 0 and parado > minutos * 60:
                     if not avisado:

@@ -242,8 +242,11 @@ class PaginaFarmear(Pagina):
         self.parar_en_meta = False  # parar (o pasar a la siguiente tarea del plan) al cumplir las metas
         self.metas_objetivo: list[str] = []  # las metas que llena el modo en marcha
         self._ultima_revision_metas = 0.0
+        # Lo que la IA aprendio de cada pelea en este modo (lumen/ia/lecciones.py), por piso y fase
+        self.aprendido = QTextEdit(readOnly=True, objectName="registro")
         for i, (texto, ic, vista) in enumerate((("Registro", "registro", self.registro), ("Plan", "mdi6.format-list-checks", self.panel_plan),
-                                               ("Opciones", "ajustes", panel_opciones))):
+                                               ("Opciones", "ajustes", panel_opciones),
+                                               ("Aprendido", "mdi6.school-outline", self.aprendido))):
             b = QPushButton(" " + texto, objectName="chip", checkable=True, checked=i == 0)
             b.setIcon(iconos.icono(ic, tema.TENUE, tema.SOBRE_ACENTO))
             b.clicked.connect(lambda _, n=i: self._ver_vista(n))
@@ -295,7 +298,9 @@ class PaginaFarmear(Pagina):
         self.actualizar_ayuda_teclas()
 
     def _ver_vista(self, n: int):
-        """Registro (0), Plan (1) u Opciones (2) abajo a la izquierda."""
+        """Registro (0), Plan (1), Opciones (2) o Aprendido (3) abajo a la izquierda."""
+        if n == 3:
+            self._pintar_aprendido()
         self.pila_vista.setCurrentIndex(n)
         self.grupo_vista.buttons()[n].setChecked(True)
         for w in self.solo_registro:
@@ -556,6 +561,9 @@ class PaginaFarmear(Pagina):
             from lumen.ia import aprendizaje
 
             texto = diario.texto(self.modo_cls.id, self.modo_cls.nombre)
+            from lumen.ia import lecciones
+
+            texto += "\n\nAprendido:\n" + lecciones.texto_modo(self.modo_cls.id)
             if any(p.get("config") for p in diario.leer(self.modo_cls.id, 1000)):
                 texto += "\n" + aprendizaje.texto(diario.leer(self.modo_cls.id, 1000))
             avisos.enviar(texto)
@@ -856,6 +864,11 @@ class PaginaFarmear(Pagina):
             self.saltar_tarea()  # en un plan, sigue con la siguiente tarea
         else:
             self.detener()
+
+    def _pintar_aprendido(self):
+        from lumen.ia import lecciones
+
+        self.aprendido.setPlainText(lecciones.texto_modo(self.modo_cls.id))
 
     def ver_equipos(self):
         """Abre Farmear, donde estan los mejores equipos (p. ej. desde el icono Equipo de Inicio)."""

@@ -218,6 +218,23 @@ def heroes_con_talento() -> set[str]:
 
 
 _TALENTOS: set | None = None
+
+
+def enfriamiento_talento(heroes: set) -> tuple[int, int | None]:
+    """(turnos entre usos, limite de usos o None) del talento del equipo, leidos de su texto (7dshub):
+    "(Cooldown: 3 turns)", "(Limit 3 times)". Sin dato, cada 3 turnos (lo mas comun)."""
+    import re
+
+    from lumen import personajes as P
+
+    for pid in sorted(heroes & heroes_con_talento()):
+        texto = ((P.ficha(pid) or {}).get("talento") or {}).get("texto", "")
+        texto = re.sub(r"\[[0-9A-Fa-f]{6}\]|\[-\]", "", texto)  # sin los colores del juego ("[FFAE00]3[-]")
+        cd = re.search(r"cooldown:\s*(\d+)", texto, re.I)
+        limite = re.search(r"limit (?:once|(\d+) times?)", texto, re.I)
+        n_limite = (int(limite.group(1)) if limite.group(1) else 1) if limite else None
+        return (int(cd.group(1)) if cd else 3), n_limite
+    return 3, None
 PRIMERA_RECOMPENSA = Plantilla("demonic_beasts/first_reward.png")  # titulo "First Reward" (primera vez de la semana)
 PUNTO_CONTINUAR = (275, 800)  # tocar abajo, fuera de las casillas, para pasar la pantalla
 AUTO = Plantilla("demons/auto.jpg")  # el boton AUTO de la pelea (el mismo en demonios y bestias)
@@ -300,6 +317,9 @@ class PerrosPiso4(Modo):
         self.objetivo_actual: str | None = None
         self.talento_usado = False
         self.talento_inicial_usado = False
+        self.turnos_pelea = 0  # turnos jugados en la pelea (para el cooldown del talento)
+        self.talento_usado_en = None
+        self.usos_talento = 0
         self.inicio_pelea = time.time()
         self.ultimo_turno = time.time()  # para guardar una captura si no llega ningun turno
         self.foto_sin_turno_hecha = False
@@ -601,13 +621,26 @@ class PerrosPiso4(Modo):
         if self.rendirse_si_bloqueada and self.fase != 3 and juego.mano_bloqueada.esta(p, 0.6):
             self.log("Mano bloqueada desde el inicio: reinicio.", "aviso")
             return "rendirse"
-        if self.talento_turno_1 and self.fase == 1 and self.turno_fase == 1 and not self.talento_inicial_usado \
-                and self._hay_talento(p):
+        self.turnos_pelea = getattr(self, "turnos_pelea", 0) + 1
+        if self.talento_turno_1 and self._talento_listo() and self._hay_talento(p):
+            # Cada vez que se recarga, no solo en el turno 1 (casi todos tienen "Cooldown: 3 turns"; algunos, un limite
+            # de usos): antes se usaba una vez por pelea y se desperdiciaba (2026-11-09).
+            primera = getattr(self, "talento_usado_en", None) is None
             self.talento_inicial_usado = True
-            self.log("Turno 1: activo el talento antes de jugar.")
+            self.talento_usado_en, self.usos_talento = self.turnos_pelea, getattr(self, "usos_talento", 0) + 1
+            self.log("Turno 1: activo el talento antes de jugar." if primera else "El talento ya se recargó: lo uso.")
             entrada.clic(juego.COORD["talento"], self.capturar()[1], espera=0.1)
             self.esperar_corto(2.5)  # la animacion del talento
         return self._jugar_turno()
+
+    def _talento_listo(self) -> bool:
+        usado = getattr(self, "talento_usado_en", None)
+        if usado is None:
+            return True
+        enfriamiento, limite = enfriamiento_talento(set(getattr(self, "heroes_vistos", {})))
+        if limite and getattr(self, "usos_talento", 0) >= limite:
+            return False
+        return self.turnos_pelea - usado >= enfriamiento
 
     def _jugar_turno(self):
         """Juega cartas hasta llenar los huecos. Se puede retomar si se corta a medias."""

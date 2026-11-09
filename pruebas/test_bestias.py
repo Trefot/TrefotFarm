@@ -159,7 +159,7 @@ class Navegacion(ConPantallaSimulada):
         from lumen.motor import TerminarModo
 
         for n in ("reconectar", "reiniciar_juego", "conexion_duplicada", "conexion_caducada", "contrasena",
-                  "servidor_global"):
+                  "servidor_global", "sync_data"):
             self._parchear(juego, n, PlantillaFalsa(n))
         enviados = []
         self._parchear(avisos, "enviar", lambda m, c=None: enviados.append(m))
@@ -169,7 +169,9 @@ class Navegacion(ConPantallaSimulada):
         self.assertTrue(m.comprobaciones_globales({"servidor_global"}, (0, 0)), "toca para volver a entrar")
         with self.assertRaises(TerminarModo):
             m.comprobaciones_globales({"contrasena"}, (0, 0))
-        self.assertEqual(len(enviados), 2, "avisa al movil de la sesion cerrada y de la contrasena")
+        with self.assertRaises(TerminarModo):
+            m.comprobaciones_globales({"sync_data"}, (0, 0))
+        self.assertEqual(len(enviados), 3, "avisa al movil de la sesion cerrada, la contrasena y Sync Data")
         self.assertFalse(m.comprobaciones_globales(set(), (0, 0)))
         m.estado = "pelea"
         self.assertTrue(m.comprobaciones_globales({"reiniciar_juego"}, (0, 0)), "pulsa Restart en vez de parar")

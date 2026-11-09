@@ -29,6 +29,9 @@ info_mision = P("dailies/quest_info.png")
 conexion_duplicada = P("duplicate_connection.png", "simultaneous_logins.png", nombre="conexion_duplicada")
 conexion_caducada = P("connection_confirmation_expired.png")
 contrasena = P("password.png")
+# "Sync Data": tras el reinicio semanal el juego pide el codigo y la contrasena de la cuenta (2026-11-09).
+# Eso lo hace el jugador, nunca el bot: se para y avisa al movil.
+sync_data = P("sync_data.png")
 servidor_global = P("global_server.png")
 # Boton "Run Game" del lanzador de Netmarble (AutoFarming, MIT): para volver a abrir el juego si se cierra.
 abrir_juego = P("run_game.png", "run_game_2.png", nombre="abrir_juego")

@@ -189,3 +189,29 @@ def resumen(destino: str, carpeta: Path | None = None) -> str:
             partes.append("evito: " + ", ".join(abajo))
         lineas.append(f"Fase {fase}: " + ("; ".join(partes) if partes else "sin cambios"))
     return "\n".join(lineas)
+
+
+def claves_de(modo_id: str, carpeta: Path | None = None) -> list[str]:
+    """Los destinos con lecciones de un modo: "rata_pisos1a3" -> rata_f1, rata_f2, rata_f3; "indura" -> indura_chaos..."""
+    carpeta = carpeta or CARPETA
+    if not carpeta.is_dir():
+        return []
+    base = modo_id.replace("_pisos1a3", "")
+    claves = []
+    for ruta in sorted(carpeta.glob("*.json")):
+        clave = ruta.stem
+        if clave == modo_id or clave.startswith(modo_id + "_") or (base != modo_id and clave.startswith(base + "_f")):
+            claves.append(clave)
+    return claves
+
+
+def texto_modo(modo_id: str, carpeta: Path | None = None) -> str:
+    """Todo lo aprendido en un modo, por piso/nivel y fase, para la pagina Farmear y el movil."""
+    claves = claves_de(modo_id, carpeta)
+    if not claves:
+        return "Todavía no he aprendido nada en este modo: aprendo de cada pelea que gano o pierdo."
+    partes = []
+    for clave in claves:
+        nombre = clave.replace("_f", " · Floor ").replace("_", " ").title() if "_f" in clave else clave.replace("_", " ").title()
+        partes.append(f"{nombre}\n{resumen(clave, carpeta)}")
+    return "\n\n".join(partes)

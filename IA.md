@@ -70,3 +70,5 @@ pasiva más). **Un héroe puede tener más de una reliquia distinta** (ya hay un
 - Paso 5 ampliado: `lumen/ia/lecciones.py` aprende de UNA pelea (victoria rapida refuerza; derrota castiga lo de los ultimos turnos de esa fase; por tardar, mas area y ultis). Se aplica en `Jugador.elegir` por destino y fase.
 - Paso 1: `lumen/ia/pasivas.py` lee la pasiva unica (dano propio, por tipo de ataque, ulti) y contra que jefe aplica.
 - Reglas que ensena el jugador: `lumen/modos/rata.py` (Ratatoskr), a convertir en un formato por jefe (paso 3).
+- 0.29.0: conocimiento por jefe en `lumen/datos/conocimiento.yaml` (`lumen/ia/conocimiento.py`): por destino y fase, `preferir` (x1,6) y `evitar` (x0,3) un tipo de carta; se aplica en `Jugador.elegir` tras las pasivas. Lo que necesita mirar la pantalla (troncos de la rata) sigue en `rata.py`.
+- 0.29.0: lo aprendido se ve en la pestana "Aprendido" y en la orden "diario" (`lecciones.texto_modo`). Talentos: se usan cada vez que se recargan (cooldown y limite leidos del texto del talento).

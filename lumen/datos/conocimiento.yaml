@@ -1,0 +1,21 @@
+# Lo que el jugador ensena de cada jefe, por destino y fase (paso 3 de IA.md). Lo lee lumen/ia/conocimiento.py y lo
+# usa el juego inteligente al valorar las cartas, en todas las bestias y demonios, sin tocar codigo.
+#
+# Destino: el piso ("rata_f2" = Ratatoskr Floor 2, "perros_piso4", "indura_chaos"...). Fase: 1, 2, 3 o "todas".
+#   preferir: area | uno        -> ese tipo de carta vale mas (x1,6)
+#   evitar: [ulti, area, uno]   -> esas valen mucho menos (x0,3): solo si no queda otra cosa
+#   notas: por que (para leerlo; el bot no lo usa)
+#
+# Lo especial de Ratatoskr (troncos y desventajas) esta en lumen/modos/rata.py porque necesita mirar la pantalla.
+
+rata_f2:
+  todas:
+    preferir: area
+    notas: Romper los troncos 2 y 3 (inmortal mientras vivan), mejor con ataques de area (el usuario, 2026-11-09).
+
+rata_f3:
+  todas:
+    evitar: [ulti]
+    notas: >-
+      La ulti mueve a la rata a un tronco al azar y estropea la colocacion; solo vale para rematar (el usuario,
+      2026-11-09). Las reglas de rata.py la permiten cuando ya no importa.
