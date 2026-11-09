@@ -29,6 +29,11 @@ Etapas previstas:
 
 CAMBIOS
 -------
+0.26.0-alpha
+  - Bestias: la recompensa del reto (Challenge Reward, arriba a la izquierda de los pisos) se recoge sola. Al superar
+    el Floor 3 el icono brilla; el bot lo toca una vez, y la pantalla "REWARD - Notification" que sale se apunta en el
+    Botin y se cierra. Visto en vivo al empezar la semana (2026-11-09).
+
 0.25.0-alpha
   - Bestias: la pantalla "First Reward" (lo que da la primera vez de la semana cada piso) se apunta en el Botin con su
     propia foto. Antes solo se apuntaba la pantalla VICTORY y esos objetos se perdian. Sus casillas son mas grandes:

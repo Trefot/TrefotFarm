@@ -73,7 +73,14 @@ NOMBRES_CARRUSEL = (("hraesvelgr",), ("eikthyrnir",), ("skoll", "hati"), ("nidho
 CABECERA_PISOS = (125, 170)  # alto (y) del nombre de la bestia arriba de su pantalla de pisos
 ATRAS = Plantilla("back.png")  # la flecha de volver, arriba a la izquierda
 PUNTO_ATRAS = (39, 64)
-TITULO_CARRUSEL = (570, 650)  # alto (y) del nombre grande de la bestia del centro, medido con Surtr
+TITULO_CARRUSEL = (570, 650)
+# Recompensa del reto (Challenge Reward), arriba a la izquierda de los pisos: al superar el Floor 3 brilla y se toca
+# para recogerla; sale "REWARD - Notification" con lo que da. Visto el 2026-11-09 (inicio de semana).
+RECOMPENSA_AVISO = Plantilla("demonic_beasts/reward_notification.png")
+ZONA_RETO = (25, 135, 115, 245)  # x1, y1, x2, y2 del icono
+PUNTO_RETO = (70, 180)
+BRILLO_RETO = 88  # brillo medio del icono: ~100 recien ganado, ~75 sin ganar
+PUNTO_CONTINUAR = (275, 800)  # alto (y) del nombre grande de la bestia del centro, medido con Surtr
 FLECHA_ZONA = (15, 150, 95, 820)  # x1, y1, x2, y2: columna de la izquierda donde sale la flecha del piso abierto
 FLECHA_MIN_PIXELES = 60  # en una captura real la flecha tiene ~210 pixeles cian
 PASO_PISOS = 149  # distancia (y) entre los titulos de dos pisos seguidos, medida en Nidhoggr
@@ -143,6 +150,7 @@ class BestiaPisos1a3(PerrosPiso4):
         self.esperando_ok_reset: float | None = None  # se pulso Reset: esperar su OK sin tocar nada mas
         self.reintentos_reset = 0
         self.foto_sin_piso = False
+        self.reto_por_recoger = False  # se acaba de superar el Floor 3: el Challenge Reward se puede recoger
         self._ultimo_flecha = 0.0
         self.buscando_piso_desde: float | None = None
         self._ultimo_ocr: tuple[float, int, object] = (0.0, 0, None)  # (hora, piso, rectangulo) de la ultima lectura
@@ -201,6 +209,8 @@ class BestiaPisos1a3(PerrosPiso4):
             self.terminar_tras_reset = True
             return "elegir_piso"
         if siguiente == "elegir_piso":
+            if self.piso == 3:
+                self.reto_por_recoger = True
             self._siguiente_piso()
             self.piso_abierto_seguro = self.piso != 1  # tras ganar el 1 o el 2, el siguiente esta abierto seguro
             self.log(f"Siguiente: Floor {self.piso}.", "ok")
@@ -299,6 +309,18 @@ class BestiaPisos1a3(PerrosPiso4):
             self.buscando_piso_desde = None
             self._toques_piso = 0
             return "preparar"
+        if isinstance(p, np.ndarray) and RECOMPENSA_AVISO.esta(p, 0.8):
+            # Lo que da el Challenge Reward: se apunta en el Botin (casillas grandes, como "First Reward").
+            self.guardar_recompensa(p, self.victorias, primera=True)
+            self.log("Recompensa del reto de la semana: la apunto en el Botín.", "ok")
+            self.reto_por_recoger = False
+            entrada.clic(PUNTO_CONTINUAR, o, espera=1.0)
+            return None
+        if self.reto_por_recoger and self.reto_brilla(p):
+            self.reto_por_recoger = False  # una vez: si no sale nada, no insistir
+            self.log("Recojo la recompensa del reto (Challenge Reward).", "ok")
+            entrada.clic(PUNTO_RETO, o, espera=1.5)
+            return None
         if self.esperando_ok_reset is not None:
             # Tras pulsar Reset sale una confirmacion: el bot deslizaba la lista y la cerraba sin querer, el Reset no
             # se hacia y daba la vuelta 1 -> 2 -> 3 (prueba del usuario, 2026-11-09). Ahora espera el OK.
@@ -489,6 +511,12 @@ class BestiaPisos1a3(PerrosPiso4):
         entrada.clic((PUNTO_X_PISO, elegida), o, espera=1.0)
         self.buscando_piso_desde = None
         return True
+
+    def reto_brilla(self, p) -> bool:
+        if not isinstance(p, np.ndarray):
+            return False
+        x1, y1, x2, y2 = ZONA_RETO
+        return float(p[y1:y2, x1:x2].mean()) > BRILLO_RETO
 
     def _sin_vuelta_empezada(self, p) -> bool:
         """En la pantalla de pisos se lee "Set Party" (y no "Reset") cuando no hay ninguna vuelta a medias."""

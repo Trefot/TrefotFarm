@@ -834,3 +834,32 @@ class SinRendirseEnPisos1a3(unittest.TestCase):
     def test_sin_jugada_espera_en_vez_de_rendirse(self):
         m = B.RataPisos1a3({})
         self.assertFalse(m.rendirse_si_bloqueada)
+
+
+class RecompensaDelReto(unittest.TestCase):
+    """Challenge Reward (2026-11-09): tras el Floor 3 brilla arriba a la izquierda y se toca para recogerla."""
+
+    def leer(self, nombre):
+        import cv2
+        from pathlib import Path
+
+        return cv2.imread(str(Path(__file__).with_name(f"{nombre}.png")))
+
+    def test_brilla_tras_el_floor_3_y_no_antes(self):
+        m = B.PajaroPisos1a3({})
+        self.assertTrue(m.reto_brilla(self.leer("reto_021734")))
+        self.assertFalse(m.reto_brilla(self.leer("reto_021807")), "otra bestia sin la vuelta hecha")
+
+    def test_lo_toca_una_vez_y_apunta_lo_que_da(self):
+        m = B.PajaroPisos1a3({})
+        m.reto_por_recoger = True
+        clics, fotos = [], []
+        with mock.patch.object(entrada, "clic", lambda r, o, **k: clics.append(r)), \
+                mock.patch.object(m, "guardar_recompensa", lambda p, v, primera=False: fotos.append(primera)), \
+                mock.patch.object(m, "log", lambda *a, **k: None):
+            self.assertIsNone(m.elegir_piso(self.leer("reto_021734"), (0, 0)))
+            self.assertEqual(clics, [B.PUNTO_RETO])
+            self.assertFalse(m.reto_por_recoger, "una sola vez")
+            m.elegir_piso(self.leer("reward_notification"), (0, 0))
+        self.assertEqual(fotos, [True], "la recompensa se apunta en el Botin")
+        self.assertEqual(clics[-1], B.PUNTO_CONTINUAR)
