@@ -39,7 +39,7 @@ def _miles(n: int) -> str:
 
 def _lugar(registro: dict) -> str:
     """Nombre actual del contenido (las fotos viejas guardaban nombres de antes, p. ej. "Perros piso 4 - Trefot")."""
-    from lumen.modos import MODOS
+    from lumen.modos import TODOS_LOS_MODOS as MODOS  # tambien los cerrados: su botin viejo sigue ahi
     from lumen.modos.catalogo import CATALOGO
 
     modo = registro.get("modo", "")

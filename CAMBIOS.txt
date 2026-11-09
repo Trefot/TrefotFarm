@@ -29,6 +29,11 @@ Etapas previstas:
 
 CAMBIOS
 -------
+0.29.6-alpha
+  - Ratatoskr cerrado hasta que funcione bien (lo pidio el usuario): sale en gris como "proximamente" y no se puede
+    empezar ni poner en el plan. El codigo y lo aprendido se guardan; su botin viejo sigue con su nombre. Falta
+    entender el bloqueo de cartas del Floor 1 ("Move a skill or lock the slot").
+
 0.29.5-alpha
   - Ratatoskr Floor 3, fase 2 (prueba del 2026-11-09): tiro 4 ultis seguidas con la regla "tronco 2 roto: prueba la
     ulti", que el usuario enseno solo para la fase 3, y el area rompio el tronco de destino (la rata quedo inmortal).

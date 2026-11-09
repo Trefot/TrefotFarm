@@ -48,8 +48,16 @@ class Catalogo(unittest.TestCase):
     def test_modos_listos(self):
         listos = {d.id for c in CATALOGO for d in c.destinos if d.id in MODOS}
         self.assertEqual(listos, {"perros_pisos1a3", "pajaro_pisos1a3", "ciervo_pisos1a3", "serpiente_pisos1a3",
-                                  "rata_pisos1a3", "perros_piso4", "demonio_rojo", "demonio_gris", "howlex",
+                                  "perros_piso4", "demonio_rojo", "demonio_gris", "howlex",
                                   "bellmoth", "demonio_original", "indura", "oro", "monedas_sa"})
+
+    def test_ratatoskr_cerrado_hasta_que_funcione(self):
+        """El usuario lo cerro el 2026-11-09: sale en gris, pero el codigo sigue (y su botin viejo tiene nombre)."""
+        from lumen.modos import CERRADOS, TODOS_LOS_MODOS
+
+        self.assertIn("rata_pisos1a3", CERRADOS)
+        self.assertNotIn("rata_pisos1a3", MODOS)
+        self.assertIn("rata_pisos1a3", TODOS_LOS_MODOS)
 
     def test_bestias_y_pisos(self):
         destinos = {c.id: [d.nombre for d in c.destinos] for c in CATALOGO if c.grupo == "Bestias demoníacas"}
