@@ -28,7 +28,7 @@ from lumen.ia.diario import Diario
 from lumen.equipo import Equipo, Puesto
 from lumen.motor import Modo, Opcion, TerminarModo
 from lumen.rutas import LOGS
-from lumen.vision import guardar_imagen
+from lumen.vision import Plantilla, guardar_imagen
 
 # ---------------------------------------------------------------------- el equipo
 EQUIPO = Equipo(
@@ -203,6 +203,10 @@ def _misma_imagen(a, b) -> bool:
 VECES_HEROE = 5  # cartas de un heroe vistas en la sesion para contarlo en el equipo
 
 
+AUTO = Plantilla("demons/auto.jpg")  # el boton AUTO de la pelea (el mismo en demonios y bestias)
+AUTO_QUIETO = 4.0  # s con casillas libres sin que se llenen: el AUTO no esta puesto
+
+
 class PerrosPiso4(Modo):
     id = "perros_piso4"
     nombre = "Skollandhati & Hati · Floor 4"
@@ -233,6 +237,7 @@ class PerrosPiso4(Modo):
     ]
     pausa_entre_pasos = 0.45
     rendirse_si_bloqueada = True  # mano bloqueada al empezar un turno: rendirse y repetir
+    jugar_auto = False  # True: se pone el AUTO del juego y no se juegan cartas (bestias Floor 1-3, opcion "AUTO")
     talento_turno_1 = False  # activar el talento del equipo al empezar la pelea (las bestias Floor 1-3, opcion)
 
     def __init__(self, valores: dict):
@@ -263,6 +268,8 @@ class PerrosPiso4(Modo):
         return self.estado in ("ir_a_perros", "elegir_piso", "preparar")
 
     def _nueva_pelea(self):
+        self.auto_puesto = False
+        self.auto_huecos, self.auto_quieto_desde = -1, None
         self.fase: int | None = None
         self.turno_fase = 0
         self.turno_abierto = False
@@ -406,6 +413,8 @@ class PerrosPiso4(Modo):
         if time.time() - self.inicio_pelea > 8 * 60:
             self.log("La pelea dura demasiado; me rindo.", "aviso")
             return "rendirse"
+        if self.jugar_auto:
+            return self._pelea_auto(p, o)
 
         talento = self._talento_visible(p)
         # 0.75 y no 0.8: el boton del talento tapa un poco la 2.a casilla y con Nidhoggr (fase 2) el ultimo hueco
@@ -437,6 +446,23 @@ class PerrosPiso4(Modo):
             self.lecturas_turno = 0
             self.huecos_leidos = 0
         self._foto_sin_turno(p)
+        return None
+
+    def _pelea_auto(self, p, o):
+        """Con el AUTO del juego: no se juegan cartas. AUTO se toca cuando hay casillas libres que nadie llena
+        en AUTO_QUIETO s: asi se pone al principio y, si el juego lo dejo puesto de la pelea anterior (o un toque
+        lo quito), no se queda apagado. Con AUTO puesto el juego llena las casillas enseguida."""
+        huecos = C.contar_huecos(p, 0.75)
+        if huecos == 0:
+            self.auto_huecos, self.auto_quieto_desde = 0, None
+            return None
+        if huecos != self.auto_huecos:
+            self.auto_huecos, self.auto_quieto_desde = huecos, time.time()
+            return None
+        if time.time() - self.auto_quieto_desde >= AUTO_QUIETO and self.clic_si(AUTO, p, o, umbral=0.8, espera=1.0):
+            self.log("Pongo el AUTO del juego." if not self.auto_puesto else "El AUTO no estaba puesto: lo toco otra vez.")
+            self.auto_puesto = True
+            self.auto_quieto_desde = time.time()
         return None
 
     def _foto_sin_turno(self, p):

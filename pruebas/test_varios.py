@@ -781,7 +781,7 @@ class PrecargaCartas(unittest.TestCase):
         from lumen.modos import bestias_pisos1a3 as B
 
         modo = next(m for m in B.__dict__.values() if isinstance(m, type) and issubclass(m, B.BestiaPisos1a3)
-                    and m is not B.BestiaPisos1a3)({})
+                    and m is not B.BestiaPisos1a3)({"jugar": "Inteligente"})
         with mock.patch.object(modo.estrategia.jugador, "precargar") as precargar:
             modo.al_empezar()
         precargar.assert_called_once()

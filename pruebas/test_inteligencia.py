@@ -133,7 +133,8 @@ class EnLosModos(unittest.TestCase):
         self.assertEqual(m[1].nombre, m[3].nombre)
 
     def test_floor13_por_defecto_inteligente(self):
-        self.assertIsInstance(B.PerrosPisos1a3({}).estrategia, B.EstrategiaInteligente)
+        self.assertIsInstance(B.PerrosPisos1a3({"jugar": "Inteligente"}).estrategia, B.EstrategiaInteligente)
+        self.assertIsInstance(B.SerpientePisos1a3({}).estrategia, B.EstrategiaInteligente, "serpiente y rata siguen igual")
         self.assertIs(type(B.PerrosPisos1a3({"jugar": "Simple"}).estrategia), B.EstrategiaSimple)
 
     def test_indura_toca_la_carta_que_fusiona(self):

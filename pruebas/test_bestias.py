@@ -130,7 +130,7 @@ class Navegacion(ConPantallaSimulada):
         m = self.modo(B.PerrosPisos1a3, {"jugar": "Simple"})
         mano = [Carta(i, (0, 0, 1, 1), None, T.NORMAL, Rango.PLATA) for i in range(8)]
         self.assertEqual([m.estrategia.decidir(f, 1, 0, mano, 4)[1] for f in (1, 2, 3)], ["der", "izq", None])
-        self.assertEqual(self.modo(B.PerrosPisos1a3).estrategia.fases_area, frozenset({3}))
+        self.assertEqual(self.modo(B.PerrosPisos1a3, {"jugar": "Inteligente"}).estrategia.fases_area, frozenset({3}))
         self.assertIsNone(self.modo(B.PajaroPisos1a3, {"jugar": "Simple"}).estrategia.decidir(1, 1, 0, mano, 4)[1])
 
     def test_reset_tras_el_floor_3(self):
@@ -492,3 +492,56 @@ class DemoniosYFuerte(ConPantallaSimulada):
         self._parchear(buena, "_cofre", lambda p: "Oro")
         self.assertEqual(buena.reintentar({"pausa"}, (0, 0)), "pelea", "a ultima hora sale oro: no repite")
         self.assertEqual((buena.reinicios, buena.cofres["Oro"]), (0, 1))
+
+
+class AutoEnBestiasFaciles(unittest.TestCase):
+    """Pajaro, ciervo y perros (Floor 1-3) en AUTO por defecto: lo pidio el usuario (2026-11-08)."""
+
+    def test_por_defecto_en_auto_solo_esas_tres(self):
+        from lumen.modos import bestias_pisos1a3 as B
+
+        self.assertTrue(B.PajaroPisos1a3({}).jugar_auto)
+        self.assertTrue(B.CiervoPisos1a3({}).jugar_auto)
+        self.assertTrue(B.PerrosPisos1a3({}).jugar_auto)
+        self.assertFalse(B.SerpientePisos1a3({}).jugar_auto)
+        self.assertFalse(B.PajaroPisos1a3({"jugar": "Inteligente"}).jugar_auto, "se puede elegir otra forma")
+
+    def test_toca_auto_solo_si_las_casillas_no_se_llenan(self):
+        from lumen.modos import bestias_pisos1a3 as B
+        from lumen.modos import perros_piso4 as P4
+
+        modo = B.PajaroPisos1a3({})
+        modo._nueva_pelea()
+        reloj, huecos, clics = [100.0], [4], []
+        with mock.patch.object(P4.time, "time", lambda: reloj[0]), \
+                mock.patch.object(P4.C, "contar_huecos", lambda p, u: huecos[0]), \
+                mock.patch.object(modo, "clic_si", lambda pl, p, o, **k: clics.append(pl) or True), \
+                mock.patch.object(modo, "log", lambda *a, **k: None):
+            modo._pelea_auto(None, (0, 0))  # empiezan a contar 4 casillas libres
+            reloj[0] = 102.0
+            modo._pelea_auto(None, (0, 0))
+            self.assertEqual(clics, [], "aun no: con AUTO ya puesto el juego las llena solo")
+            reloj[0] = 104.5
+            modo._pelea_auto(None, (0, 0))
+            self.assertEqual(clics, [P4.AUTO], "4 s sin llenarse: el AUTO no esta puesto")
+            self.assertTrue(modo.auto_puesto)
+            huecos[0] = 3  # el juego ya juega solo
+            reloj[0] = 106.0
+            modo._pelea_auto(None, (0, 0))
+            huecos[0] = 0
+            reloj[0] = 120.0
+            modo._pelea_auto(None, (0, 0))
+            self.assertEqual(len(clics), 1, "no se vuelve a tocar mientras el juego juega")
+
+    def test_quien_ya_tenia_inteligente_guardado_pasa_a_auto_una_vez(self):
+        from lumen import config
+
+        datos = {"opciones_modos": {"pajaro_pisos1a3": {"jugar": "Inteligente", "victorias": 3},
+                                    "ciervo_pisos1a3": {"jugar": "Simple"},
+                                    "serpiente_pisos1a3": {"jugar": "Inteligente"}}}
+        config._auto_en_bestias_faciles(datos)
+        o = datos["opciones_modos"]
+        self.assertEqual(o["pajaro_pisos1a3"], {"jugar": "AUTO", "victorias": 3})
+        self.assertEqual(o["ciervo_pisos1a3"]["jugar"], "Simple", "lo elegido a proposito se respeta")
+        self.assertEqual(o["serpiente_pisos1a3"]["jugar"], "Inteligente")
+        self.assertTrue(datos["auto_bestias_faciles"])

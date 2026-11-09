@@ -96,13 +96,13 @@ class EnElJuego(unittest.TestCase):
         p = mock.patch.object(entrada, "clic", lambda *a, **k: None)
         p.start()
         self.addCleanup(p.stop)
-        m = B.CiervoPisos1a3({})
+        m = B.CiervoPisos1a3({"jugar": "Inteligente"})
         m.equipo_verificado = True
         with mock.patch.object(A, "elegir", lambda peleas, explorar=True: (ULTI_ALTA, True)):
             m.preparar({"carga_bestias"}, (0, 0))
         self.assertEqual(m.estrategia.jugador.params, ULTI_ALTA)
         self.assertEqual((m.diario.pelea["config"], m.diario.pelea["prueba"]), (ULTI_ALTA, True))
-        m2 = B.CiervoPisos1a3({"aprender": False})
+        m2 = B.CiervoPisos1a3({"jugar": "Inteligente", "aprender": False})
         m2.equipo_verificado = True
         with mock.patch.object(A, "elegir", lambda peleas, explorar=True: (A.DEFECTO, explorar)):
             m2.preparar({"carga_bestias"}, (0, 0))

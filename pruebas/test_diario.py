@@ -85,7 +85,7 @@ class EnElModo(unittest.TestCase):
         self.addCleanup(p.stop)
 
     def test_pelea_que_acaba_en_derrota(self):
-        m = B.PerrosPisos1a3({})
+        m = B.PerrosPisos1a3({"jugar": "Inteligente"})
         m.equipo_verificado = True
         self.assertIsNone(m.diario.pelea, "crear el modo no abre ninguna pelea")
         self.assertEqual(m.preparar({"carga_bestias"}, (0, 0)), "pelea")
@@ -100,7 +100,7 @@ class EnElModo(unittest.TestCase):
         self.assertEqual(len(guardada["turnos"]), 1)
 
     def test_parar_a_media_pelea(self):
-        m = B.PerrosPisos1a3({})
+        m = B.PerrosPisos1a3({"jugar": "Inteligente"})
         m.equipo_verificado = True
         m.preparar({"carga_bestias"}, (0, 0))
         m.al_terminar()

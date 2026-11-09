@@ -29,6 +29,12 @@ Etapas previstas:
 
 CAMBIOS
 -------
+0.17.0-alpha
+  - Bestias Floor 1-3: nueva forma de jugar "AUTO" (pone el AUTO del juego y no lanza cartas). Es la de por
+    defecto en Hraesvelgr (pajaro), Eikthyrnir (ciervo) y Skoll & Hati (perros), donde el AUTO gana solo; quien
+    ya los tenia en "Inteligente" pasa a AUTO una vez. Nidhoggr y Ratatoskr siguen en Inteligente. Si el AUTO
+    se queda apagado (casillas libres 4 s sin llenarse), el bot lo vuelve a tocar.
+
 0.16.2-alpha
   - PC lentos: en el portatil de un probador la primera carta del turno 1 tardo casi 2 minutos (el bot cargaba
     entonces las mas de 1000 cartas de la base para reconocerlas) y se pasaba el limite del turno. Ahora se

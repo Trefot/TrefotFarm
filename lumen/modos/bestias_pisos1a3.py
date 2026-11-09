@@ -78,20 +78,7 @@ class BestiaPisos1a3(PerrosPiso4):
     rendirse_si_bloqueada = False
     nombres_estados = {**PerrosPiso4.nombres_estados, "ir_a_perros": "Entrando a Demonic Beasts",
                        "elegir_piso": "Eligiendo el piso"}
-    opciones = [
-        Opcion("victorias", "Victorias (0 = sin límite)", "entero", 3, maximo=9999,
-               ayuda="3 = una pasada: Floor 1, 2 y 3, Reset y para."),
-        Opcion("primer_piso", "Empezar en el Floor", "lista", "1", opciones=["1", "2", "3"]),
-        Opcion("jugar", "Cómo jugar", "lista", "Inteligente", opciones=["Inteligente", "Simple"],
-               ayuda="Inteligente: piensa el turno entero y las fusiones. Simple: ulti y luego la de más rango."),
-        Opcion("aprender", "Aprender solo", "si_no", True,
-               ayuda="1 de cada 10 peleas prueba una variante pequeña del juego inteligente y se queda con lo que "
-                     "gane más rápido. Apagado: juega siempre con lo ya aprendido."),
-        Opcion("talento", "Activar el talento en el turno 1", "si_no", True,
-               ayuda="Toca el talento del equipo (el boton redondo sobre las casillas) antes de jugar el primer turno."),
-        Opcion("pociones", "Usar pociones de stamina", "si_no", True),
-        Opcion("max_pociones", "Máximo de pociones (0 = sin límite)", "entero", 0, maximo=999),
-    ]
+    opciones: list = []  # cada bestia pone las suyas (_opciones): cambia la forma de jugar por defecto
 
     def al_empezar(self):
         if isinstance(self.estrategia, EstrategiaInteligente):
@@ -99,7 +86,9 @@ class BestiaPisos1a3(PerrosPiso4):
 
     def __init__(self, valores: dict):
         super().__init__(valores)
-        inteligente = self.valores.get("jugar", "Inteligente") != "Simple"
+        jugar = self.valores.get("jugar", "Inteligente")
+        self.jugar_auto = jugar == "AUTO"
+        inteligente = jugar == "Inteligente"
         self.estrategia = EstrategiaInteligente(self.enemigos) if inteligente else EstrategiaSimple()
         if isinstance(self.estrategia, EstrategiaInteligente):
             self.estrategia.fases_area = self.fases_area
@@ -115,7 +104,7 @@ class BestiaPisos1a3(PerrosPiso4):
                 return idx, objetivo or self.objetivos.get(fase), talento
 
             self.estrategia.decidir = con_objetivo
-        self.stats["estrategia"] = "Inteligente" if inteligente else "Simple"  # queda en el historial
+        self.stats["estrategia"] = jugar  # queda en el historial
         self.textos_vistos = False
         self.piso = int(self.valores.get("primer_piso") or 1)
         # Por donde iba esta bestia la ultima vez (piso que toca y si hay que pulsar Reset antes): en la prueba de
@@ -363,14 +352,36 @@ def _es_premio(texto: str) -> bool:
     return any(palabra in t for palabra in ("clear", "superad", "reward", "recompensa", "obtain", "obten"))
 
 
+def _opciones(jugar: str) -> list[Opcion]:
+    return [
+        Opcion("victorias", "Victorias (0 = sin límite)", "entero", 3, maximo=9999,
+               ayuda="3 = una pasada: Floor 1, 2 y 3, Reset y para."),
+        Opcion("primer_piso", "Empezar en el Floor", "lista", "1", opciones=["1", "2", "3"]),
+        Opcion("jugar", "Cómo jugar", "lista", jugar, opciones=["AUTO", "Inteligente", "Simple"],
+               ayuda="AUTO: pone el AUTO del juego y no juega cartas (lo más rápido en los pisos fáciles). "
+                     "Inteligente: piensa el turno entero y las fusiones. Simple: ulti y luego la de más rango."),
+        Opcion("aprender", "Aprender solo", "si_no", True,
+               ayuda="Solo con Inteligente: 1 de cada 10 peleas prueba una variante pequeña y se queda con lo que "
+                     "gane más rápido. Apagado: juega siempre con lo ya aprendido."),
+        Opcion("talento", "Activar el talento en el turno 1", "si_no", True,
+               ayuda="Toca el talento del equipo (el boton redondo sobre las casillas) antes de jugar el primer turno. "
+                     "Con AUTO no se toca."),
+        Opcion("pociones", "Usar pociones de stamina", "si_no", True),
+        Opcion("max_pociones", "Máximo de pociones (0 = sin límite)", "entero", 0, maximo=999),
+    ]
+
+
+BestiaPisos1a3.opciones = _opciones("Inteligente")
+
+
 def _bestia(id_base: str, titulo: str, plantilla, imagen: str, piso3=None, enemigos: int = 1, objetivos=None,
-            fases_area=()):
-    """Crea el modo Floor 1-3 de una bestia."""
+            fases_area=(), jugar: str = "Inteligente"):
+    """Crea el modo Floor 1-3 de una bestia. ``jugar``: la forma de jugar por defecto."""
     return type(f"Pisos1a3_{id_base}", (BestiaPisos1a3,), {
         "id": f"{id_base}_pisos1a3", "nombre": f"{titulo} · Floor 1-3", "titulo_juego": titulo,
         "subtitulo_juego": "Demonic Beast · Floor 1-3", "imagen": imagen, "bestia": plantilla,
         "piso3_superado": piso3, "enemigos": enemigos, "objetivos": objetivos or {},
-        "fases_area": frozenset(fases_area),
+        "fases_area": frozenset(fases_area), "opciones": _opciones(jugar),
     })
 
 
@@ -380,9 +391,9 @@ PerrosPisos1a3 = _bestia("perros", "Skollandhati & Hati", juego.perros, "demonic
                          objetivos={1: "der", 2: "izq"},
                          # Fase 3 (lo explico el usuario): los dos perros tienen que caer a la vez, asi que sin
                          # objetivo y todo areas y ultis.
-                         fases_area={3})
-PajaroPisos1a3 = _bestia("pajaro", "Hraesvelgr", juego.pajaro, "demonic_beasts/hraesvelgr.png")
-CiervoPisos1a3 = _bestia("ciervo", "Eikthyrnir", juego.ciervo, "deer/Eikthyrnir.png")
+                         fases_area={3}, jugar="AUTO")
+PajaroPisos1a3 = _bestia("pajaro", "Hraesvelgr", juego.pajaro, "demonic_beasts/hraesvelgr.png", jugar="AUTO")
+CiervoPisos1a3 = _bestia("ciervo", "Eikthyrnir", juego.ciervo, "deer/Eikthyrnir.png", jugar="AUTO")
 SerpientePisos1a3 = _bestia("serpiente", "Nidhoggr", juego.serpiente, "snake/nidhoggr.png")
 RataPisos1a3 = _bestia("rata", "Ratatoskr", juego.rata, "rat/ratatoskr.png")
 TODAS = (PerrosPisos1a3, PajaroPisos1a3, CiervoPisos1a3, SerpientePisos1a3, RataPisos1a3)

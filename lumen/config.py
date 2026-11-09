@@ -31,8 +31,14 @@ def _cargar() -> dict:
         with CONFIG.open(encoding="utf-8") as f:
             leidos = yaml.safe_load(f) or {}
         datos.update(leidos)
+        cambio = False
         if datos.get("limpieza_victorias", 0) < 2:
             _limpiar_victorias(datos)
+            cambio = True
+        if not datos.get("auto_bestias_faciles"):
+            _auto_en_bestias_faciles(datos)
+            cambio = True
+        if cambio:
             with CONFIG.open("w", encoding="utf-8") as f:
                 yaml.safe_dump(datos, f, allow_unicode=True, sort_keys=False)
     return datos
@@ -51,6 +57,23 @@ def _limpiar_victorias(datos: dict) -> None:
         opciones[modo] = o
     datos["opciones_modos"] = opciones
     datos["limpieza_victorias"] = 2
+
+
+BESTIAS_EN_AUTO = ("pajaro_pisos1a3", "ciervo_pisos1a3", "perros_pisos1a3")
+
+
+def _auto_en_bestias_faciles(datos: dict) -> None:
+    """Desde la 0.17.0 los Floor 1-3 de pajaro, ciervo y perros juegan en AUTO por defecto (lo pidio el usuario).
+    Al abrir un modo se guardan todas sus opciones, asi que quien ya los habia usado tenia "Inteligente" guardado
+    sin haberlo elegido: se pasa a AUTO una sola vez. Si despues elige otra cosa, se respeta."""
+    opciones = dict(datos.get("opciones_modos") or {})
+    for modo in BESTIAS_EN_AUTO:
+        o = dict(opciones.get(modo) or {})
+        if o.get("jugar") == "Inteligente":
+            o["jugar"] = "AUTO"
+            opciones[modo] = o
+    datos["opciones_modos"] = opciones
+    datos["auto_bestias_faciles"] = True
 
 
 def obtener(clave: str, defecto=None):
