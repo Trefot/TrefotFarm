@@ -114,3 +114,23 @@ class CadaTurno(unittest.TestCase):
             m._empezar_turno(p, 4)
             m._empezar_turno(p, 4)
         self.assertEqual(clics, [B.RataPisos1a3.ESPIRALES["centro"][1]] * 2, "a la rata, en el tronco del centro")
+
+
+class Pasivas(unittest.TestCase):
+    """La pasiva de Valenti azul: sus ataques de area envenenan (lo senalo el usuario, 2026-11-09)."""
+
+    def test_valenti_azul_y_jormungand_rojo_dan_las_tres(self):
+        from lumen.cartas import Carta, Rango, TipoCarta as T
+
+        m = B.RataPisos1a3({"jugar": "Inteligente"})
+        nombres = ["valenti_of_obsession_azul.skill_1", "valenti_of_obsession_azul.skill_2",
+                   "valenti_of_obsession_azul.ulti", "world_serpent_jormungand_rojo.skill_2"]
+        mano = [Carta(i, tipo=T.ULTI if n.endswith("ulti") else T.NORMAL, rango=Rango.ULTI if n.endswith("ulti")
+                      else Rango.BRONCE, nombre=n) for i, n in enumerate(nombres)]
+        desventajas = [c.desventajas for c in m._cartas_rata(mano)]
+        self.assertEqual(desventajas, [{"shock"}, {"poison"}, {"poison"}, {"bleed"}])
+
+    def test_texto_de_la_pasiva(self):
+        texto = ("If the hero uses an all-target attack and deals damage, enemies hit by the attack are Poisoned for "
+                 "2 turns.")
+        self.assertEqual(R.desventajas_de_pasiva(texto), {"area": {"poison"}, "uno": set()})

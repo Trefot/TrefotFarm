@@ -29,6 +29,11 @@ Etapas previstas:
 
 CAMBIOS
 -------
+0.27.1-alpha
+  - Ratatoskr: el bot tambien lee las pasivas. Valenti azul envenena con sus ataques de area (su habilidad 2 y su ulti
+    cuentan como Poison), asi que Valenti azul + Jormungand rojo ya tienen las 3 desventajas. Lo senalo el usuario.
+    Otras pasivas asi: Narberal Gamma azul (Shock en area) y Giant Skadi azul (Bleed en area).
+
 0.27.0-alpha
   - Ratatoskr juega su mecanica, tal como la explico el usuario jugando una partida (lumen/modos/rata.py). Las cartas
     con desventaja la mueven de tronco (Bleed al 3, Shock al 2, Poison al 1; sabe cual pone cada carta por su texto

@@ -39,6 +39,26 @@ def desventajas_del_texto(texto: str) -> set[str]:
     return {d for d, patron in _APLICA.items() if patron.search(t)}
 
 
+_PALABRA = {"poison": "poison", "bleed": "bleed", "shock": "shock"}
+_PASIVA = re.compile(r"(all-target|single-target) attack[^.]*?(poison|bleed|shock)", re.I)
+_A_TODOS = re.compile(r"on all enemies|all-target", re.I)
+
+
+def desventajas_de_pasiva(texto: str) -> dict[str, set[str]]:
+    """Desventajas que la pasiva del heroe anade a sus ataques: {"area": {...}, "uno": {...}}. P. ej. Valenti azul:
+    "If the hero uses an all-target attack and deals damage, enemies hit by the attack are Poisoned" -> sus cartas
+    de area ponen Poison (lo senalo el usuario, 2026-11-09)."""
+    t = re.sub(r"\[[0-9A-Fa-f]{6}\]|\[-\]", "", texto or "")
+    salida = {"area": set(), "uno": set()}
+    for alcance, palabra in _PASIVA.findall(t):
+        salida["area" if alcance.lower().startswith("all") else "uno"].add(palabra.lower())
+    return salida
+
+
+def es_de_area(texto: str) -> bool:
+    return bool(_A_TODOS.search(texto or ""))
+
+
 @dataclass
 class CartaRata:
     indice: int  # posicion en la mano

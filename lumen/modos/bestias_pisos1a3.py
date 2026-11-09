@@ -748,9 +748,14 @@ class RataPisos1a3(_bestia("rata", "Ratatoskr", juego.rata, "rat/ratatoskr.png")
             if c.tipo in (TipoCarta.SUELO, TipoCarta.NINGUNA):
                 continue
             nombre = (c.nombre or "").split("@")[0]
-            area = bool(tasador and nombre and "." in nombre and tasador.es_area(nombre)) and c.tipo != TipoCarta.ULTI
-            cartas.append(R.CartaRata(i, R.desventajas_del_texto(self._texto_de(nombre)), c.tipo == TipoCarta.ULTI,
-                                      area, c.jugable))
+            texto = self._texto_de(nombre)
+            area = R.es_de_area(texto) or bool(tasador and nombre and "." in nombre and tasador.es_area(nombre)
+                                                and c.tipo != TipoCarta.ULTI)
+            desventajas = R.desventajas_del_texto(texto)
+            # Y las que anade la pasiva del heroe (Valenti azul: sus ataques de area envenenan)
+            pasiva = R.desventajas_de_pasiva(((P.ficha(nombre.partition(".")[0]) or {}).get("pasiva") or {}).get("texto", ""))
+            desventajas |= pasiva["area"] if area else pasiva["uno"]
+            cartas.append(R.CartaRata(i, desventajas, c.tipo == TipoCarta.ULTI, area, c.jugable))
         return cartas
 
     def plan_rata(self, p, fase: int, mano=None, accion: int = 0, total: int = 4):
