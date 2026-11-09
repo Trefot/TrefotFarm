@@ -112,6 +112,53 @@ class Indura(unittest.TestCase):
         self.assertGreater(len(capturas), 1)
         self.assertEqual(tocado, [])
 
+    def _con_diario(self, valores):
+        carpeta = Path(tempfile.mkdtemp())
+        q = mock.patch.object(M.diario, "CARPETA", carpeta)
+        q.start()
+        self.addCleanup(q.stop)
+        q = mock.patch.object(M.aprendizaje, "EXPLORAR", 0.0)  # sin pruebas al azar (1 de cada 10)
+        q.start()
+        self.addCleanup(q.stop)
+        ind = M.Indura({"nivel": "Chaos", "jugar": "Inteligente", "aprender": True, **valores})
+        for nombre in ("log", "_stats"):
+            q = mock.patch.object(ind, nombre, lambda *a, **k: None)
+            q.start()
+            self.addCleanup(q.stop)
+        return ind
+
+    def test_cada_pelea_se_apunta_en_el_diario(self):
+        ind = self._con_diario({})
+        ind._abrir_diario()
+        self.assertEqual(ind.jugador.params, M.aprendizaje.DEFECTO, "sin peleas juega lo de siempre")
+        ind._apuntar([Carta(0, tipo=T.NORMAL, rango=Rango.ORO)], 0)
+        ind.diario.terminar("victoria")
+        ind._abrir_diario()
+        ind.al_terminar()  # se paro el bot a media pelea
+        peleas = M.diario.leer("indura")
+        self.assertEqual([p["resultado"] for p in peleas], ["abandonada", "victoria"])
+        victoria = peleas[1]
+        self.assertEqual((victoria["nivel"], victoria["jugar"], len(victoria["turnos"])), ("Chaos", "Inteligente", 1))
+        self.assertEqual(victoria["config"], M.aprendizaje.DEFECTO)
+
+    def test_aprende_por_separado_en_cada_nivel(self):
+        ind = self._con_diario({})
+        for nivel in ("Chaos", "Hell", "Chaos"):
+            ind.valores["nivel"] = nivel
+            ind._abrir_diario()
+            ind.diario.terminar("victoria")
+        self.assertEqual(len(ind.peleas_del_nivel()), 2)
+        ind.valores["nivel"] = "Hell"
+        self.assertEqual(len(ind.peleas_del_nivel()), 1)
+
+    def test_mis_cartas_y_auto_no_cuentan_para_aprender(self):
+        ind = self._con_diario({"jugar": "Mis cartas"})
+        ind._abrir_diario()
+        ind.diario.terminar("derrota")
+        pelea = M.diario.leer("indura")[0]
+        self.assertNotIn("config", pelea)
+        self.assertEqual(M.aprendizaje.cifras([pelea]), {}, "solo el modo Inteligente tiene algo que ajustar")
+
     def test_carta_de_reserva(self):
         m = [Carta(0, tipo=T.NORMAL, rango=Rango.BRONCE), Carta(1, tipo=T.BLOQUEADA, rango=Rango.ORO),
              Carta(2, tipo=T.NORMAL, rango=Rango.PLATA)]

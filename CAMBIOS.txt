@@ -29,6 +29,14 @@ Etapas previstas:
 
 CAMBIOS
 -------
+0.14.0-alpha
+  - Demonios en tiempo real (Indura y los demas): cada pelea se guarda en el diario (resultado, tiempo, nivel,
+    forma de jugar y cartas jugadas), como en las bestias. La orden "diario" del movil ya los resume.
+  - Jugando "Inteligente" en los demonios, el bot aprende solo como en las bestias: 1 de cada 10 peleas prueba
+    una variante pequena y se queda con la que gane mas rapido, en cada nivel por separado. Opcion "Aprender
+    solo" (encendida). Al empezar la primera pelea, el registro dice con que juega ("Aprendizaje: ...").
+    "Mis cartas" y AUTO se apuntan en el diario pero no aprenden (no tienen nada que ajustar).
+
 0.13.3-alpha
   - Demonios en tiempo real en PC lentos: cada vuelta del bot (mirar la pantalla y ~10 imagenes) tardaba mas de
     2 s en la maquina virtual, asi que la invitacion se veia muy tarde y se perdia. Ahora, mientras espera, mira

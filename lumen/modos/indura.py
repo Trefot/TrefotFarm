@@ -28,6 +28,7 @@ import cv2
 
 from lumen import avisos, botin, cartas, entrada, estrategias, inteligencia, juego, ventana
 from lumen.control import Detenido, control
+from lumen.ia import aprendizaje, diario
 from lumen.motor import Modo, Opcion, TerminarModo
 from lumen.vision import Plantilla
 
@@ -108,6 +109,10 @@ class DemonioTiempoReal(Modo):
         self.tocado_en = 0.0
         self.pestana_elegida = False
         self.t_captura = self.t_captura_anterior = 0.0  # cuando se miraron las dos ultimas pantallas
+        # Diario de cada pelea (IA.md, pieza 5) y, jugando "Inteligente", aprender solo (pieza 6), como en las
+        # bestias. Un archivo por demonio; cada pelea apunta su nivel y se aprende por separado en cada uno.
+        self.diario = diario.Diario(self.id)
+        self.aprendizaje_dicho = False
 
     def capturar(self):
         self.t_captura_anterior, self.t_captura = self.t_captura, time.perf_counter()
@@ -264,11 +269,37 @@ class DemonioTiempoReal(Modo):
             self.turnos_sin_equipo = 0
             self.libres_antes = -1
             self.log("¡Empieza la pelea!", "ok")
+            self._abrir_diario()
             return "pelea"
         if juego.menu_batalla.esta(p, 0.6) or TIEMPO_REAL.esta(p, 0.75):
             self.log("La partida se deshizo antes de empezar. Vuelvo a buscar.", "aviso")
             return "ir_a_indura"
         return None
+
+    # ------------------------------------------------------------------ diario y aprendizaje
+    def peleas_del_nivel(self) -> list[dict]:
+        nivel = self.valores.get("nivel")
+        return [p for p in diario.leer(self.id, 1000) if p.get("nivel") == nivel]
+
+    def _abrir_diario(self):
+        self.diario.terminar("abandonada")  # la anterior acabo sin verse el final
+        jugar = self.valores.get("jugar")
+        extra = {"nivel": self.valores.get("nivel"), "jugar": jugar}
+        if jugar == "Inteligente":
+            peleas = self.peleas_del_nivel()
+            config, prueba = aprendizaje.elegir(peleas, explorar=bool(self.valores.get("aprender", True)))
+            self.jugador.params = config
+            extra.update(config=config, prueba=prueba)
+            if not self.aprendizaje_dicho:
+                self.aprendizaje_dicho = True
+                self.log(aprendizaje.texto(peleas).splitlines()[0] + ".")
+            if prueba:
+                self.log(f"Aprendiendo: esta pelea pruebo {aprendizaje.diferencia(config) or 'lo de siempre'}.")
+        self.diario.empezar(**extra)
+
+    def _apuntar(self, mano, idx):
+        if self.diario.pelea is not None:
+            self.diario.decision(None, None, len(self.diario.pelea["turnos"]) + 1, mano, idx)
 
     # ------------------------------------------------------------------ pelea
     def _jugar_carta(self, p, o):
@@ -304,10 +335,13 @@ class DemonioTiempoReal(Modo):
                     self.auto_puesto = self.clic_si(AUTO, p, o, umbral=0.8)
                 return
             self.log(f"Equipo reconocido: {self.estrategia.nombre}. Juego como tú.", "ok")
+            if self.diario.pelea is not None:
+                self.diario.pelea["estrategia"] = self.estrategia.nombre
         self.estrategia.etiquetar(mano)
         carta = self.estrategia.elegir(mano) or estrategias.la_de_mas_rango(mano)
         if carta is None:
             return
+        self._apuntar(mano, next((i for i, c in enumerate(mano) if c is carta), carta.posicion))
         entrada.clic(carta.rect, o, espera=0.3)
         self.libres_antes, self.tocado_en, self.ultima_tocada = libres, time.time(), carta
         self.log(f"   juego {carta.nombre} ({carta.rango.name.lower()}, posición {carta.posicion + 1})", "debug")
@@ -319,6 +353,7 @@ class DemonioTiempoReal(Modo):
         if paso is None:
             return
         carta = mano[paso[1]]
+        self._apuntar(mano, paso[1])
         entrada.clic(carta.rect, o, espera=0.3)
         self.libres_antes, self.tocado_en, self.ultima_tocada = libres, time.time(), carta
         self.log(f"   juego {carta.nombre} ({carta.rango.name.lower()}, posición {carta.posicion + 1})", "debug")
@@ -337,6 +372,7 @@ class DemonioTiempoReal(Modo):
             self._contada = True
             self.victorias += 1
             self.log(f"¡{self.nombre} destruido! Victoria #{self.victorias}.", "ok")
+            self.diario.terminar("victoria")
             self._stats()
             self._foto_pendiente, self._previa, self._ok_desde = True, None, None
         if getattr(self, "_foto_pendiente", False) and juego.ok.esta(p):
@@ -352,6 +388,7 @@ class DemonioTiempoReal(Modo):
             if not getattr(self, "_contada", False):
                 self.derrotas += 1
                 self.log(f"No pudimos con {self.nombre} esta vez.", "aviso")
+                self.diario.terminar("derrota")
                 self._stats()
             self.clic_si(juego.ok, p, o, espera=1.0)
             self._contada = False
@@ -363,6 +400,7 @@ class DemonioTiempoReal(Modo):
         return None
 
     def al_terminar(self):
+        self.diario.terminar("abandonada")  # se paro el bot a media pelea
         self.log(f"{self.nombre}: {self.victorias} victorias, {self.derrotas} derrotas, "
                  f"{self.perdidas} invitaciones perdidas.", "ok")
 
@@ -373,6 +411,9 @@ def _opciones(nivel: str, niveles: list[str], jugar: str) -> list[Opcion]:
         Opcion("jugar", "Cómo pelear", "lista", jugar, opciones=["Inteligente", "Mis cartas", "AUTO"],
                ayuda="Inteligente: piensa las 6 cartas del turno y las fusiones, con cualquier equipo. "
                      "Mis cartas: tu lista de prioridades (si no reconoce el equipo, AUTO). AUTO: lo juega el juego."),
+        Opcion("aprender", "Aprender solo", "si_no", True,
+               ayuda="Solo con Inteligente: 1 de cada 10 peleas prueba una variante pequeña y se queda con lo que "
+                     "gane más rápido, en cada nivel por separado. Apagado: juega siempre con lo ya aprendido."),
         Opcion("espera", "Segundos antes de aceptar", "texto", "9.3",
                ayuda="Aceptar justo a los 9.3 s entra a la partida sin gastar entradas de tiempo real."),
         Opcion("victorias", "Victorias (0 = sin límite)", "entero", 0, maximo=999),
