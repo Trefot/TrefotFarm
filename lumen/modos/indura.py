@@ -57,6 +57,7 @@ ADELANTO_MAX = 3.0
 # En la maquina virtual cada vuelta del bot (captura + ~10 imagenes) tardaba mas de 2 s: la invitacion se veia
 # tan tarde y con tanta duda que se perdia. Mientras se espera, se mira solo Accept, muy seguido, este rato.
 VIGILANCIA = 2.0
+VECES_HEROE = 5  # cartas de un heroe vistas en la sesion para contarlo en el equipo (como en las bestias)
 
 
 def adelanto_por_lentitud(captura_anterior: float, captura: float, reconocida: float) -> float:
@@ -113,6 +114,10 @@ class DemonioTiempoReal(Modo):
         # bestias. Un archivo por demonio; cada pelea apunta su nivel y se aprende por separado en cada uno.
         self.diario = diario.Diario(self.id)
         self.aprendizaje_dicho = False
+        # Con que equipo se jugo (para medirlo y recomendarlo en Mejores equipos): el de la estrategia de
+        # "Mis cartas" o, jugando Inteligente, los 4 heroes cuyas cartas mas se vieron.
+        self.equipo_usado: list[str] | None = None
+        self.heroes_vistos: dict[str, int] = {}
 
     def capturar(self):
         self.t_captura_anterior, self.t_captura = self.t_captura, time.perf_counter()
@@ -282,7 +287,7 @@ class DemonioTiempoReal(Modo):
         return [p for p in diario.leer(self.id, 1000) if p.get("nivel") == nivel]
 
     def _abrir_diario(self):
-        self.diario.terminar("abandonada")  # la anterior acabo sin verse el final
+        self._cerrar_diario("abandonada")  # la anterior acabo sin verse el final
         jugar = self.valores.get("jugar")
         extra = {"nivel": self.valores.get("nivel"), "jugar": jugar}
         if jugar == "Inteligente":
@@ -297,7 +302,25 @@ class DemonioTiempoReal(Modo):
                 self.log(f"Aprendiendo: esta pelea pruebo {aprendizaje.diferencia(config) or 'lo de siempre'}.")
         self.diario.empezar(**extra)
 
+    def equipo_de_la_sesion(self) -> list[str] | None:
+        if self.equipo_usado:
+            return sorted(self.equipo_usado)
+        vistos = sorted(((n, h) for h, n in self.heroes_vistos.items() if n >= VECES_HEROE), reverse=True)[:4]
+        return sorted(h for _, h in vistos) if len(vistos) == 4 else None
+
+    def _cerrar_diario(self, resultado: str):
+        if self.diario.pelea is not None and not self.diario.pelea.get("equipo"):
+            self.diario.pelea["equipo"] = self.equipo_de_la_sesion() or []
+        self.diario.terminar(resultado)
+
+    def _contar_heroes(self, mano):
+        for c in mano:
+            if c.nombre and "." in c.nombre:
+                heroe = c.nombre.split(".")[0]
+                self.heroes_vistos[heroe] = self.heroes_vistos.get(heroe, 0) + 1
+
     def _apuntar(self, mano, idx):
+        self._contar_heroes(mano)
         if self.diario.pelea is not None:
             self.diario.decision(None, None, len(self.diario.pelea["turnos"]) + 1, mano, idx)
 
@@ -335,6 +358,7 @@ class DemonioTiempoReal(Modo):
                     self.auto_puesto = self.clic_si(AUTO, p, o, umbral=0.8)
                 return
             self.log(f"Equipo reconocido: {self.estrategia.nombre}. Juego como tú.", "ok")
+            self.equipo_usado = list(self.estrategia.equipo)
             if self.diario.pelea is not None:
                 self.diario.pelea["estrategia"] = self.estrategia.nombre
         self.estrategia.etiquetar(mano)
@@ -372,7 +396,7 @@ class DemonioTiempoReal(Modo):
             self._contada = True
             self.victorias += 1
             self.log(f"¡{self.nombre} destruido! Victoria #{self.victorias}.", "ok")
-            self.diario.terminar("victoria")
+            self._cerrar_diario("victoria")
             self._stats()
             self._foto_pendiente, self._previa, self._ok_desde = True, None, None
         if getattr(self, "_foto_pendiente", False) and juego.ok.esta(p):
@@ -388,7 +412,7 @@ class DemonioTiempoReal(Modo):
             if not getattr(self, "_contada", False):
                 self.derrotas += 1
                 self.log(f"No pudimos con {self.nombre} esta vez.", "aviso")
-                self.diario.terminar("derrota")
+                self._cerrar_diario("derrota")
                 self._stats()
             self.clic_si(juego.ok, p, o, espera=1.0)
             self._contada = False
@@ -400,7 +424,7 @@ class DemonioTiempoReal(Modo):
         return None
 
     def al_terminar(self):
-        self.diario.terminar("abandonada")  # se paro el bot a media pelea
+        self._cerrar_diario("abandonada")  # se paro el bot a media pelea
         self.log(f"{self.nombre}: {self.victorias} victorias, {self.derrotas} derrotas, "
                  f"{self.perdidas} invitaciones perdidas.", "ok")
 

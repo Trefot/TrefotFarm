@@ -159,6 +159,30 @@ class Indura(unittest.TestCase):
         self.assertNotIn("config", pelea)
         self.assertEqual(M.aprendizaje.cifras([pelea]), {}, "solo el modo Inteligente tiene algo que ajustar")
 
+    def test_equipo_de_mis_cartas(self):
+        ind = self._con_diario({"jugar": "Mis cartas"})
+        ind._abrir_diario()
+        ind.estrategia = estrategias.Estrategia("Mi equipo", ["d", "b", "c", "a"], [])
+        ind.equipo_usado = list(ind.estrategia.equipo)
+        ind._cerrar_diario("victoria")
+        self.assertEqual(ind.equipo_de_la_sesion(), ["a", "b", "c", "d"])
+        self.assertEqual(M.diario.leer("indura")[0]["equipo"], ["a", "b", "c", "d"])
+
+    def test_equipo_jugando_inteligente_por_las_cartas_vistas(self):
+        ind = self._con_diario({})
+        def carta(nombre):
+            c = Carta(0, tipo=T.NORMAL, rango=Rango.ORO)
+            c.nombre = nombre
+            return c
+        mano = [carta(f"{h}.skill_1") for h in ("enjin", "sho", "roxy")]
+        for _ in range(M.VECES_HEROE):
+            ind._contar_heroes(mano)
+        self.assertIsNone(ind.equipo_de_la_sesion(), "con 3 heroes aun no se sabe el equipo")
+        for _ in range(M.VECES_HEROE):
+            ind._contar_heroes(mano + [carta("zanka.skill_2")])
+        ind._contar_heroes([carta("mal_leida.skill_1")])  # una carta mal reconocida no entra
+        self.assertEqual(ind.equipo_de_la_sesion(), ["enjin", "roxy", "sho", "zanka"])
+
     def test_carta_de_reserva(self):
         m = [Carta(0, tipo=T.NORMAL, rango=Rango.BRONCE), Carta(1, tipo=T.BLOQUEADA, rango=Rango.ORO),
              Carta(2, tipo=T.NORMAL, rango=Rango.PLATA)]

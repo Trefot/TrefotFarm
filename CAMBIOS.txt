@@ -29,6 +29,12 @@ Etapas previstas:
 
 CAMBIOS
 -------
+0.15.0-alpha
+  - Demonios en tiempo real: cada sesion guarda con que equipo se jugo (el de "Mis cartas" o, jugando
+    Inteligente, los 4 heroes cuyas cartas mas se vieron), igual que las bestias. Asi un equipo de Indura
+    puesto en la lista de equipos se mide y sale en "Mejores equipos" (con 5 peleas manda lo medido en tu PC).
+    El diario de cada pelea tambien apunta el equipo.
+
 0.14.0-alpha
   - Demonios en tiempo real (Indura y los demas): cada pelea se guarda en el diario (resultado, tiempo, nivel,
     forma de jugar y cartas jugadas), como en las bestias. La orden "diario" del movil ya los resume.
