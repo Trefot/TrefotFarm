@@ -639,3 +639,55 @@ class AvisoTrasStart(unittest.TestCase):
             self.assertEqual(aceptados, [1])
             m.preparar(set(), (0, 0))  # Start ya no se ve: el aviso lo tapa
             self.assertEqual(len(aceptados), 2)
+
+
+class ApuntarEnLaRata(unittest.TestCase):
+    """Ratatoskr: troncos 1 (centro), 2 (izquierda) y 3 (derecha), segun el usuario (2026-11-09)."""
+
+    def pantalla(self, vivos=("tronco 2", "tronco 3")):
+        import numpy as np
+
+        p = np.zeros((940, 550, 3), np.uint8)
+        p[:] = (84, 148, 203)  # fondo verde/marron
+        for tronco in vivos:
+            x1, y1, x2, y2 = B.RataPisos1a3.BARRAS[tronco]
+            p[y1 + 4:y2 - 4, x1 + 2:x2 - 2] = (210, 60, 145)  # barra de vida morada
+        return p
+
+    def setUp(self):
+        self.m = B.RataPisos1a3({"jugar": "Inteligente"})
+        p = mock.patch.object(B.RATA_PELEA, "buscar", lambda pantalla, umbral=0.7: None)
+        p.start()
+        self.addCleanup(p.stop)
+
+    def test_floor_1_y_3_a_la_rata(self):
+        for piso in (1, 3):
+            self.m.piso = piso
+            for fase in (1, 2, 3):
+                self.assertEqual(self.m.objetivo_rata(self.pantalla(), fase)[0], "rata")
+
+    def test_floor_2_primero_un_tronco(self):
+        self.m.piso = 2
+        self.assertEqual(self.m.objetivo_rata(self.pantalla(), 1), ("tronco 3", B.RataPisos1a3.PUNTOS["tronco 3"]))
+        self.assertEqual(self.m.objetivo_rata(self.pantalla(("tronco 2",)), 1)[0], "rata", "roto uno, ya no es inmortal")
+        self.assertEqual(self.m.objetivo_rata(self.pantalla(), 3)[0], "tronco 2", "en la fase 3 manda el 2")
+        self.assertEqual(self.m.objetivo_rata(self.pantalla(("tronco 3",)), 3)[0], "rata")
+
+    def test_si_la_rata_esta_sobre_el_3_rompe_el_2(self):
+        self.m.piso = 2
+        with mock.patch.object(B.RATA_PELEA, "buscar", lambda pantalla, umbral=0.7: (300, 330, 50, 60)):
+            self.assertEqual(self.m.objetivo_rata(self.pantalla(), 1)[0], "tronco 2")
+
+    def test_apunta_al_empezar_el_turno_y_solo_si_cambia(self):
+        clics = []
+        self.m.piso = 2
+        with mock.patch.object(entrada, "clic", lambda r, o, **k: clics.append(r)), \
+                mock.patch.object(self.m, "capturar", lambda: (self.pantalla(), (0, 0))), \
+                mock.patch.object(self.m, "_detectar_fase", lambda p, h: 1), \
+                mock.patch.object(B.BestiaPisos1a3, "_empezar_turno", lambda s, p, h: None), \
+                mock.patch.object(self.m, "log", lambda *a, **k: None):
+            self.m._empezar_turno(self.pantalla(), 4)
+            self.m._empezar_turno(self.pantalla(), 4)
+            self.assertEqual(clics, [B.RataPisos1a3.PUNTOS["tronco 3"]], "una vez")
+            self.m._empezar_turno(self.pantalla(("tronco 2",)), 4)
+        self.assertEqual(clics[-1], B.RataPisos1a3.RATA_CENTRO, "roto el tronco: a la rata")

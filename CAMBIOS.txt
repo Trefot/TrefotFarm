@@ -29,6 +29,12 @@ Etapas previstas:
 
 CAMBIOS
 -------
+0.23.0-alpha
+  - Ratatoskr: el bot ya elige a quien atacar (antes lo elegia el juego). Troncos: 1 en el centro, 2 a la izquierda
+    y 3 a la derecha (los numera el juego sobre su barra). Floor 1 y 3: a la rata (la busca donde este, salta de un
+    tronco a otro). Floor 2: la rata es inmortal mientras vivan los troncos 2 y 3 (fases 1 y 2) o el 2 (fase 3),
+    asi que primero rompe ese tronco (sabe si sigue vivo por su barra morada) y luego va a por la rata.
+
 0.22.1-alpha
   - Bestias: si tras pulsar Start (o al buscar un piso) sale un aviso que el bot no conoce, lo acepta por su OK o
     por el texto de su boton (OK, Confirm, Yes...). Antes seguia pulsando Start debajo, en bucle. La primera vez

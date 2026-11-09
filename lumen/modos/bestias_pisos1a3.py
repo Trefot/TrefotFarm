@@ -14,6 +14,7 @@ import time
 from lumen import config, entrada, inteligencia, juego, ocr
 from lumen.cartas import Carta, Rango, TipoCarta
 from lumen.motor import Opcion, TerminarModo
+from lumen.vision import Plantilla
 from lumen.ia import decidir as decidir_ia
 from lumen.modos.perros_piso4 import Estrategia, PerrosPiso4, Reiniciar
 
@@ -470,5 +471,51 @@ PerrosPisos1a3 = _bestia("perros", "Skoll & Hati", juego.perros, "demonic_beasts
 PajaroPisos1a3 = _bestia("pajaro", "Hraesvelgr", juego.pajaro, "demonic_beasts/hraesvelgr.png", jugar="AUTO")
 CiervoPisos1a3 = _bestia("ciervo", "Eikthyrnir", juego.ciervo, "deer/Eikthyrnir.png", jugar="AUTO")
 SerpientePisos1a3 = _bestia("serpiente", "Nidhoggr", juego.serpiente, "snake/nidhoggr.png")
-RataPisos1a3 = _bestia("rata", "Ratatoskr", juego.rata, "rat/ratatoskr.png")
+RATA_PELEA = Plantilla("rat/ratatoskr_pelea.png")  # la rata en la pelea (salta de un tronco a otro)
+
+
+class RataPisos1a3(_bestia("rata", "Ratatoskr", juego.rata, "rat/ratatoskr.png")):
+    """Ratatoskr con sus 3 troncos ("Suspicious Wooden Device"): 1 en el centro, 2 a la izquierda y 3 a la derecha
+    (lo dijo el usuario, 2026-11-09; se ve el numero sobre cada barra). La pelea acaba al matar a la rata, asi que
+    se le apunta a ella; salvo en el Floor 2 (7dshub), donde es inmortal mientras vivan los troncos 2 y 3 (fases 1
+    y 2) o el 2 (fase 3): primero se rompe ese tronco. Antes el bot no apuntaba y el juego elegia por su cuenta."""
+
+    PUNTOS = {"tronco 2": (142, 376), "tronco 3": (326, 370)}  # medido en una captura real de 550x940
+    BARRAS = {"tronco 2": (118, 308, 180, 326), "tronco 3": (300, 306, 360, 326)}  # su barra de vida (morada)
+    RATA_CENTRO = (240, 358)
+
+    def tronco_vivo(self, p, tronco: str) -> bool:
+        x1, y1, x2, y2 = self.BARRAS[tronco]
+        trozo = p[y1:y2, x1:x2].astype(int)
+        morado = (trozo[..., 0] > 130) & (trozo[..., 2] > 110) & (trozo[..., 1] < 110)  # BGR: azul y rojo, poco verde
+        return float(morado.mean()) > 0.06
+
+    def donde_rata(self, p) -> tuple[int, int]:
+        rect = RATA_PELEA.buscar(p, 0.55)
+        if rect is None:
+            return self.RATA_CENTRO
+        x, y, w, h = rect
+        return x + w // 2, y + h // 2
+
+    def objetivo_rata(self, p, fase: int) -> tuple[str, tuple[int, int]]:
+        """(a quien, donde tocar) segun el piso y la fase."""
+        rata = self.donde_rata(p)
+        if self.piso == 2:
+            vivos = [t for t in ("tronco 3", "tronco 2") if self.tronco_vivo(p, t)]
+            if fase == 3 and "tronco 2" in vivos:
+                return "tronco 2", self.PUNTOS["tronco 2"]
+            if fase in (1, 2) and len(vivos) == 2:
+                # Romper uno basta: el que no tenga a la rata encima (tocar ahi la elegiria a ella).
+                tronco = "tronco 2" if abs(rata[0] - self.PUNTOS["tronco 3"][0]) < 50 else "tronco 3"
+                return tronco, self.PUNTOS[tronco]
+        return "rata", rata
+
+    def _empezar_turno(self, p, huecos: int):
+        fase = self._detectar_fase(p, huecos) or self.fase or 1
+        quien, punto = self.objetivo_rata(p, fase)
+        if quien != self.objetivo_actual:
+            self.objetivo_actual = quien
+            self.log(f"Apunto a {'la rata' if quien == 'rata' else 'el ' + quien}.")
+            entrada.clic(punto, self.capturar()[1], espera=0.3)
+        return super()._empezar_turno(p, huecos)
 TODAS = (PerrosPisos1a3, PajaroPisos1a3, CiervoPisos1a3, SerpientePisos1a3, RataPisos1a3)
