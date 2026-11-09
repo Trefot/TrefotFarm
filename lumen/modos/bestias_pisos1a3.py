@@ -656,6 +656,7 @@ class RataPisos1a3(_bestia("rata", "Ratatoskr", juego.rata, "rat/ratatoskr.png")
         super().__init__(valores)
         self._ultima_p = None
         self._ultimo_motivo = ""
+        self._puestas_turno: set[str] = set()  # desventajas puestas a la rata este turno (Floor 3: el trio)
         self._textos = None
         if isinstance(self.estrategia, EstrategiaInteligente):
             original = self.estrategia.decidir
@@ -781,7 +782,7 @@ class RataPisos1a3(_bestia("rata", "Ratatoskr", juego.rata, "rat/ratatoskr.png")
         cartas = self._cartas_rata(mano) if mano is not None else []
         restantes = max(1, total - accion)
         return R.decidir(self.piso, fase or 1, self.rata_tronco(p), self.troncos_vivos(p), cartas, restantes,
-                         restantes == 1)
+                         restantes == 1, getattr(self, "_puestas_turno", set()))
 
     def _decidir_rata(self, original, fase, turno, accion, mano, total):
         jugador = self.estrategia.jugador
@@ -801,10 +802,23 @@ class RataPisos1a3(_bestia("rata", "Ratatoskr", juego.rata, "rat/ratatoskr.png")
         for i in antes:
             mano[i].tipo = TipoCarta.BLOQUEADA
         try:
-            return original(fase, turno, accion, mano, total)
+            jugada = original(fase, turno, accion, mano, total)
         finally:
             for i, tipo in antes.items():
                 mano[i].tipo = tipo
+        self._apuntar_desventajas(jugada, mano)
+        return jugada
+
+    def _apuntar_desventajas(self, jugada, mano):
+        """Recuerda que desventajas lleva la carta que se va a jugar (no las que solo se mueven)."""
+        if not jugada or not isinstance(jugada[0], int):
+            return
+        try:
+            indice = next(i for i, c in enumerate(mano) if c.posicion == jugada[0])
+            carta = next(c for c in self._cartas_rata(mano) if c.indice == indice)
+        except (StopIteration, Exception):
+            return
+        self._puestas_turno |= carta.desventajas
 
     def objetivo_rata(self, p, fase: int) -> tuple[str, tuple[int, int]]:
         """(a quien, donde tocar) segun el piso, la fase y lo que se ve."""
@@ -820,6 +834,7 @@ class RataPisos1a3(_bestia("rata", "Ratatoskr", juego.rata, "rat/ratatoskr.png")
         return f"tronco {objetivo}", self.punto_tronco(objetivo)
 
     def _empezar_turno(self, p, huecos: int):
+        self._puestas_turno = set()
         fase = self._detectar_fase(p, huecos) or self.fase or 1
         quien, punto = self.objetivo_rata(p, fase)
         # En CADA turno, no solo al cambiar: la rata salta de un tronco a otro y el juego deja la marca en el tronco

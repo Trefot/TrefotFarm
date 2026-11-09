@@ -29,6 +29,11 @@ Etapas previstas:
 
 CAMBIOS
 -------
+0.29.3-alpha
+  - Ratatoskr Floor 3 (run perdida del 2026-11-09): con las 3 desventajas en la mano jugaba la primera y, al quedarle
+    solo 2, las guardaba; la rata nunca se movia y acababa tirando ultis. Ahora recuerda las que ya le puso en el
+    turno y acaba el trio con las que faltan. Con las 3 puestas guarda el resto para la fase siguiente.
+
 0.29.2-alpha
   - Ratatoskr Floor 2 (el usuario: solo romper los troncos 2 y 3 y luego mucho dano): el tronco 1 (centro) no se
     rompe, porque roto deja a la rata inmortal (run perdida del 2026-11-09). Si la rata no esta encima del 1, la

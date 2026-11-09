@@ -88,8 +88,10 @@ def _una_de_cada(cartas: list[CartaRata], tipos=("bleed", "shock", "poison")) ->
 
 
 def decidir(piso: int, fase: int, rata_en: int | None, vivos: set[int], cartas: list[CartaRata],
-            restantes: int, ultima_del_turno: bool) -> Decision:
-    """``vivos``: troncos que siguen en pie. ``restantes``: acciones que quedan en el turno (esta incluida)."""
+            restantes: int, ultima_del_turno: bool, puestas: set[str] | None = None) -> Decision:
+    """``vivos``: troncos que siguen en pie. ``restantes``: acciones que quedan en el turno (esta incluida).
+    ``puestas``: desventajas que ya se le pusieron este turno (para acabar el trio empezado)."""
+    puestas = set(puestas or ())
     d = Decision()
     con_desventaja = [c for c in cartas if c.desventajas and c.jugable]
     for c in con_desventaja:  # las que la mandarian donde ya esta: el juego no las deja
@@ -130,11 +132,19 @@ def decidir(piso: int, fase: int, rata_en: int | None, vivos: set[int], cartas: 
     # Floor 3
     destino = TRONCO_FASE_F3.get(fase, 3)
     if rata_en != destino:
-        trio = _una_de_cada(cartas)
+        # Se mueve al tener una de cada (el orden da igual). Si ya se empezo el trio este turno, se acaba con las que
+        # faltan (prueba del 2026-11-09: jugaba la primera y despues, con 2 en la mano, guardaba las otras).
+        faltan = tuple(x for x in ("bleed", "shock", "poison") if x not in puestas)
+        trio = _una_de_cada(cartas, faltan)
         ultis = [c.indice for c in cartas if c.ulti and c.jugable]
-        if len(trio) == 3 and restantes >= 3:
+        if puestas and not faltan:
+            d.bloquear |= {c.indice for c in con_desventaja}  # ya tiene las 3: guardarlas para la fase siguiente
+            d.bloquear |= set(ultis)
+            d.motivo = f"ya tiene las 3 desventajas: va al tronco {destino}"
+        elif faltan and len(trio) == len(faltan) and restantes >= len(faltan):
             d.forzar = set(trio.values())
-            d.motivo = f"tengo las 3 desventajas: la llevo al tronco {destino}"
+            d.motivo = (f"le faltan {', '.join(faltan)}: las pongo para llevarla al tronco {destino}" if puestas
+                        else f"tengo las 3 desventajas: la llevo al tronco {destino}")
         else:
             d.bloquear |= {c.indice for c in con_desventaja}  # guardarlas hasta tener las 3
             if 2 not in vivos and ultis and len(trio) < 3:

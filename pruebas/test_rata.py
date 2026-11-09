@@ -173,3 +173,25 @@ class Piso2EnElJuego(unittest.TestCase):
 
     def test_la_rata_tiene_mas_tiempo(self):
         self.assertGreater(B.RataPisos1a3.MINUTOS_PELEA, 8)
+
+
+class Piso3Trio(unittest.TestCase):
+    """Prueba del 2026-11-09: jugaba la primera desventaja del trio y despues guardaba las otras dos."""
+
+    def test_acaba_el_trio_empezado(self):
+        cartas = [C(0, {"bleed"}), C(2, {"poison"}), C(3), C(5, ulti=True)]
+        d = R.decidir(3, 1, 1, {1, 2, 3}, cartas, 3, False, {"shock"})
+        self.assertEqual(d.forzar, {0, 2}, "faltan Bleed y Poison: van ya")
+
+    def test_con_las_tres_puestas_guarda_el_resto(self):
+        d = R.decidir(3, 1, 1, {1, 2, 3}, mano(), 1, True, {"shock", "bleed", "poison"})
+        self.assertTrue({0, 1, 2, 5} <= d.bloquear)
+        self.assertFalse(d.forzar)
+
+    def test_el_modo_recuerda_lo_que_jugo(self):
+        m = B.RataPisos1a3({"jugar": "Inteligente"})
+        cartas = [type("C", (), {"posicion": 7})(), type("C", (), {"posicion": 3})()]
+        m._cartas_rata = lambda mano: [C(0, {"shock"}), C(1)]
+        m._apuntar_desventajas((7, None, False), cartas)
+        m._apuntar_desventajas(((3, 7), None, False), cartas)  # mover no cuenta
+        self.assertEqual(m._puestas_turno, {"shock"})
