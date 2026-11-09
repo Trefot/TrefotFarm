@@ -198,3 +198,13 @@ monedas_sa:
     notas: >-
       Equipo del administrador para la Torre del reloj (2026-10-29). En el juego se llama "Farm.Oro": el bot
       lee ese nombre antes del Start para medir lo rapido que va.
+
+indura:
+  - nombre: Enjin, Shō, Roxy y Zanka
+    nivel: recomendado
+    bot: true
+    personajes: [cleaner_enjin_claro, sh_kusakabe_azul, roxy_of_madness_azul, cleaner_zanka_azul]
+    notas: >-
+      Equipo del administrador para Indura en Chaos (2026-10-27: victoria en 3 min 10 s de pelea). El bot lo
+      reconoce y lo juega con "Mis cartas" (la estrategia grabada) y tambien con "Inteligente". Enjin y Shō
+      hacen el daño en area; las cartas de Zanka casi no salen en la mano.

@@ -29,6 +29,10 @@ Etapas previstas:
 
 CAMBIOS
 -------
+0.15.1-alpha
+  - Equipos: Indura ya tiene equipo recomendado (Enjin, Shō, Roxy y Zanka, el que juega el bot). Sale en
+    "Mejores equipos" de Indura y, con 5 peleas medidas, con los minutos por victoria de tu PC.
+
 0.15.0-alpha
   - Demonios en tiempo real: cada sesion guarda con que equipo se jugo (el de "Mis cartas" o, jugando
     Inteligente, los 4 heroes cuyas cartas mas se vieron), igual que las bestias. Asi un equipo de Indura
