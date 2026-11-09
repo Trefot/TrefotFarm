@@ -89,7 +89,7 @@ class EnElJuego(unittest.TestCase):
         self.assertEqual(I.planear(m, 1)[1][0], ("jugar", 0), "y vuelve a lo de siempre (sin cache vieja)")
 
     def test_el_modo_juega_y_apunta_su_configuracion(self):
-        for n in ("pocion_stamina", "empezar", "carga_bestias", "carga_taberna"):
+        for n in ("pocion_stamina", "empezar", "carga_bestias", "carga_taberna", "ok"):
             p = mock.patch.object(juego, n, PlantillaFalsa(n))
             p.start()
             self.addCleanup(p.stop)

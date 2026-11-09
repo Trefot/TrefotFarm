@@ -629,6 +629,7 @@ class AvisoTrasStart(unittest.TestCase):
                 mock.patch.object(juego, "pocion_stamina", PlantillaFalsa("pocion")), \
                 mock.patch.object(juego, "carga_bestias", PlantillaFalsa("carga")), \
                 mock.patch.object(juego, "carga_taberna", PlantillaFalsa("carga_t")), \
+                mock.patch.object(juego, "ok", PlantillaFalsa("ok")), \
                 mock.patch.object(m, "clic_si", lambda pl, p, o, **k: pl.esta(p)), \
                 mock.patch.object(m, "_aceptar_aviso", lambda p, o: aceptados.append(1)):
             m.equipo_verificado = True
