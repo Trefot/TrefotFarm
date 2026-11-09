@@ -587,3 +587,15 @@ class PrecargaCartas(unittest.TestCase):
         with mock.patch.object(modo.estrategia.jugador, "precargar") as precargar:
             modo.al_empezar()
         precargar.assert_called_once()
+
+
+class CantidadesSobreFondoClaro(unittest.TestCase):
+    """Cubo amarillo: el "1" de las decenas casi no se ve sobre el fondo claro (prueba del usuario, 2026-11-09)."""
+
+    def leer(self, nombre):
+        return botin.leer_cantidad(cv2.imread(str(Path(__file__).with_name(f"{nombre}.png"))))
+
+    def test_diez_y_quince_amarillos(self):
+        self.assertEqual(self.leer("cubo_amarillo_10"), 10, "se leia 1")
+        self.assertEqual(self.leer("cubo_amarillo_15"), 15, "se leia 5")
+        self.assertEqual(self.leer("objeto_4"), 4, "los de una cifra siguen igual")

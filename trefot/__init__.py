@@ -4,4 +4,4 @@ El actualizador de las versiones 2.x lee la version de este archivo: tiene que l
 que lumen/__init__.py hasta que todos hayan actualizado. Despues se borra.
 """
 
-__version__ = "0.24.1-alpha"
+__version__ = "0.24.2-alpha"

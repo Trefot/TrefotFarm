@@ -29,6 +29,11 @@ Etapas previstas:
 
 CAMBIOS
 -------
+0.24.2-alpha
+  - Botin: en el cubo amarillo (fondo muy claro) el "1" de las decenas no se veia: 10 se leia 1 y 15 se leia 5. Ahora
+    se nota porque el numero del juego es blanco puro y el fondo tiene color. Medido en las 88 fotos guardadas: solo
+    cambian 6 casillas, todas cubos amarillos, y todas quedan bien. Las fotos ya guardadas se vuelven a leer solas.
+
 0.24.1-alpha
   - Carrusel de bestias: si llegaba al final (Surtr, la ultima, que el bot no reconocia) se quedaba deslizando hacia
     el mismo lado sin fin. Ahora reconoce cada bestia tambien por su nombre escrito, asi sabe volver; y si aun asi no

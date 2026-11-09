@@ -200,6 +200,15 @@ def _diferencia(gris, caja, plantilla) -> float:
     return mejor
 
 
+MIN_BLANCOS_DECENA = 8
+
+
+def _blancos_decena(celda) -> int:
+    y1, y2, x1, x2 = HUECO_DECENAS
+    hsv = cv2.cvtColor(celda[y1:y2, x1:x2], cv2.COLOR_BGR2HSV)
+    return int(((hsv[..., 1] < 45) & (hsv[..., 2] > 215)).sum())
+
+
 def _cantidad_por_digitos_juego(celda) -> int | None:
     """La cantidad con los digitos reales; None si las unidades no se parecen a ninguno conocido."""
     plantillas = _plantillas_digitos()
@@ -213,8 +222,19 @@ def _cantidad_por_digitos_juego(celda) -> int | None:
     if plantillas["dec"]:
         dif_d, d = min((_diferencia(gris, HUECO_DECENAS, t), d) for d, t in plantillas["dec"].items())
         decena = d if dif_d <= MAX_DIF_DECENAS else ""
-    if unidad == "0" and not decena:  # "20", "30"...: una decena que aun no se conoce
-        return None
+        if not decena and _blancos_decena(celda) >= MIN_BLANCOS_DECENA:
+            # Sobre un fondo claro (cubo amarillo) el "1" no se parece a su plantilla, pero el numero del juego es
+            # blanco puro y el fondo tiene color: con blanco en el hueco de las decenas, hay decena. Medido en 88 fotos:
+            # las de una cifra tienen 0 pixeles blancos ahi; las de dos, 5 o mas (los "15" amarillos, 10-14).
+            decena = d
+    if unidad == "0" and not decena:
+        # Una cantidad no puede ser "0": tiene que haber una decena delante. Sobre un fondo muy claro (el cubo
+        # amarillo, prueba del usuario 2026-11-09) el "1" de "10" daba 19,8 y se descartaba: se leia 1. Con unas
+        # unidades "0" claras, la mejor decena vale con el margen de las unidades.
+        if plantillas["dec"] and dif_d <= MAX_DIF_UNIDADES:
+            decena = d
+        else:
+            return None  # "20", "30"...: una decena que aun no se conoce
     return int(decena + unidad)
 
 
