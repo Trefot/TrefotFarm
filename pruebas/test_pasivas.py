@@ -30,3 +30,16 @@ class Pasivas(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class Reliquias(unittest.TestCase):
+    """Todos los heroes llevan siempre su reliquia (el usuario, 2026-11-09): se aplica como la pasiva."""
+
+    def test_reliquia_de_un_jefe(self):
+        r = PA.leer("Increases the hero's damage dealt by 20% in Nidhoggr's Demonic Beast Battle.")
+        self.assertEqual((r["jefe"], r["todas"]), ("nidhoggr", 1.2))
+        self.assertTrue(PA.aplica(r, "serpiente_f3"))
+        self.assertFalse(PA.aplica(r, "rata_f1"))
+
+    def test_se_suma_a_la_pasiva(self):
+        self.assertEqual(PA.factor("king_the_fairy_king_azul.skill_1", "rata_f1", lambda n: False), 1.8)

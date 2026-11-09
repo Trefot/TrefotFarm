@@ -10,8 +10,10 @@ Y cuando se aplica: "only activates in Demonic Beast Battle Ratatoskr" (solo con
 Battle" (en cualquier bestia) o siempre. P. ej. Jormungand rojo: +200 % con ataques de un objetivo, solo contra
 Ratatoskr -> ahi sus cartas de un objetivo valen x3.
 
-Lo que sube a todos los aliados por igual no cambia que carta elegir, asi que no se cuenta. Las reliquias se leen
-igual (``leer``) pero no se aplican: el bot no sabe si el jugador la tiene puesta.
+Lo que sube a todos los aliados por igual no cambia que carta elegir, asi que no se cuenta. Las reliquias se leen y
+se aplican igual (el usuario: todos los heroes la llevan puesta siempre, 2026-11-09); las suyas nombran al jefe asi:
+"in Eikthyrnir's Demonic Beast Battle". Muchas tienen condiciones ("contra enemigos con desventaja"): se cuentan
+enteras, como aproximacion.
 """
 
 import re
@@ -30,7 +32,8 @@ _PATRONES = (
     ("ulti", re.compile(r"(?:hero's )?ultimate move damage (?:dealt )?(?:increases? )?by " + _N, re.I)),
     ("todas", re.compile(r"increases? the hero's damage dealt by " + _N, re.I)),
 )
-_SOLO_JEFE = re.compile(r"only activates in demonic beast battle ([a-z' ]+?)[.,\\]", re.I)
+_SOLO_JEFE = re.compile(r"only activates in demonic beast battle ([a-z' ]+?)[.,\\]|in ([a-z' &]+?)'s demonic beast battle",
+                        re.I)
 _EN_BESTIAS = re.compile(r"in demonic beast battle", re.I)
 
 
@@ -44,7 +47,7 @@ def leer(texto: str) -> dict:
     salida = {"jefe": None, "bestias": False, "uno": 1.0, "area": 1.0, "ulti": 1.0, "todas": 1.0}
     m = _SOLO_JEFE.search(t)
     if m:
-        salida["jefe"] = m.group(1).strip().lower()
+        salida["jefe"] = (m.group(1) or m.group(2)).strip().lower()
     elif _EN_BESTIAS.search(t):
         salida["bestias"] = True
     for clave, patron in _PATRONES:
@@ -74,25 +77,31 @@ def pasiva_de(pid: str) -> dict:
     return leer(((P.ficha(pid) or {}).get("pasiva") or {}).get("texto", ""))
 
 
+@lru_cache(maxsize=512)
+def reliquia_de(pid: str) -> dict:
+    from lumen import personajes as P
+
+    return leer(((P.ficha(pid) or {}).get("reliquia") or {}).get("texto", ""))
+
+
 def factor(nombre: str, destino: str, es_area=None) -> float:
     """Cuanto mas vale esta carta ("heroe.carta") por la pasiva de su heroe en este destino."""
     base = (nombre or "").split("@")[0]
     if "." not in base:
         return 1.0
     pid, _, cid = base.partition(".")
-    pasiva = pasiva_de(pid)
-    if not aplica(pasiva, destino):
-        return 1.0
-    f = pasiva["todas"]
-    if cid == "ulti":
-        return min(MAX_FACTOR, f * pasiva["ulti"])
     area = False
-    if es_area is not None:
+    if es_area is not None and cid != "ulti":
         try:
             area = bool(es_area(base))
         except Exception:
             area = False
-    return min(MAX_FACTOR, f * (pasiva["area"] if area else pasiva["uno"]))
+    f = 1.0
+    for datos in (pasiva_de(pid), reliquia_de(pid)):  # la pasiva unica y la reliquia (siempre puesta)
+        if not aplica(datos, destino):
+            continue
+        f *= datos["todas"] * (datos["ulti"] if cid == "ulti" else datos["area"] if area else datos["uno"])
+    return min(MAX_FACTOR, f)
 
 
 def aplicar(valores: dict, destino: str, es_area=None) -> tuple[dict, dict]:

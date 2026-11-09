@@ -29,6 +29,11 @@ Etapas previstas:
 
 CAMBIOS
 -------
+0.28.1-alpha
+  - IA: las reliquias tambien cuentan (el usuario: todos los heroes la llevan siempre puesta). Se leen como la pasiva
+    ("+N % de dano", por tipo de ataque, a la ulti) y las de un jefe ("in Nidhoggr's Demonic Beast Battle") solo valen
+    contra el. P. ej. King azul: x1,8 (+80 % contra enemigos con desventaja, contado entero).
+
 0.28.0-alpha
   - IA, paso 5: aprende de CADA pelea, gane o pierda (lumen/ia/lecciones.py; lo pidio el usuario: sin esperar muchas
     peleas). Victoria: si una fase salio en menos turnos que la mejor vez, refuerza las cartas que jugo ahi. Derrota o
