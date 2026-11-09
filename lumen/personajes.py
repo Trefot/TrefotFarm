@@ -43,6 +43,10 @@ RETRATO = "retrato"  # captura de la cara en la pantalla del equipo (no es una c
 ICONO = "icono"  # icono del heroe en la lista de Heroes del juego: es lo que se muestra en la interfaz
 CARA_ARTWORK = "cara_artwork.jpg"  # cabeza y hombros de su ilustracion (Artwork): si esta, se muestra antes
 ARTWORK = "artwork.jpg"  # la ilustracion entera (pagina Personajes)
+# Icono del heroe de 7dshub.com (con permiso de su dueno, 2026-11-08): los hay de todos, iguales y limpios (sin
+# nivel ni estrellas). Lo eligio el usuario para toda la interfaz: se muestra antes que el artwork y el icono propio.
+ICONO_HUB = "icono_hub.png"
+ROSTRO_HUB = (0.13, 0.1, 0.74)  # la cara sin el marco ni el atributo de arriba a la derecha
 ALTO_SIN_TEXTO = 0.755  # parte de arriba del artwork sin el texto del juego (sello LR, nombre, Combat Class, voz)
 ANCHO_SIN_BORDE = 0.99  # sin la franja de la derecha que queda fuera del pergamino
 # Cuadro pegado al rostro (izquierda, arriba, lado; en partes del ancho) para los retratos pequenos de Inicio.
@@ -97,9 +101,12 @@ class Personaje:
         return self._archivo(f"{carta}.png")
 
     def ruta_cara(self) -> Path:
-        """Imagen para mostrar: la cara de su Artwork (la prefirio el usuario, 2026-10-29); si no hay, el icono
-        de la lista de Heroes; si tampoco, el retrato del equipo. (Para comprobar el equipo en pantalla se
-        sigue usando el retrato.)"""
+        """Imagen para mostrar: el icono de 7dshub (el usuario lo eligio, 2026-11-08); si no hay, la cara de su
+        Artwork; si no, el icono de la lista de Heroes; si tampoco, el retrato del equipo. (Para comprobar el
+        equipo en pantalla se sigue usando el retrato.)"""
+        hub = self._archivo(ICONO_HUB)
+        if hub.is_file():
+            return hub
         artwork = self._archivo(CARA_ARTWORK)
         if artwork.is_file():
             return artwork
@@ -112,6 +119,8 @@ class Personaje:
     def rostro(self) -> tuple[Path, tuple[float, float, float] | None]:
         """Imagen y cuadro del rostro para un retrato pequeno (None = la imagen entera)."""
         ruta = self.ruta_cara()
+        if ruta.name == ICONO_HUB:
+            return ruta, ROSTRO_HUB
         if ruta.name == CARA_ARTWORK:
             return ruta, ROSTRO_ARTWORK
         return ruta, ROSTRO_ICONO if ruta.name == f"{ICONO}.png" else None

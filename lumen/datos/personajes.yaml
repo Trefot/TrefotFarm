@@ -5514,3 +5514,212 @@ mona_azul:
       descripcion: Área (Masukunda)
     ulti:
       descripcion: Apoyo (Salvation)
+# --- De 7dshub.com (2026-11-08): heroes que aun no estaban capturados (sin cartas: el bot aun no los reconoce en pelea) ---
+data_zahard_verde:
+  clave: '[Secret Floor] Data Zahard'
+  nombre: Data Zahard
+  color: verde
+  raza: desconocida
+  roles: []
+  cartas:
+    skill_1:
+      descripcion: Golden Needle of Mystery Island
+    skill_2:
+      descripcion: Lecalicus
+    ulti:
+      descripcion: Second Cosmos
+rudeus_greyrat_rojo:
+  clave: '[Otherworldly Reincarnation] Rudeus Greyrat'
+  nombre: Rudeus Greyrat
+  color: rojo
+  raza: desconocida
+  roles: []
+  cartas:
+    skill_1:
+      descripcion: Stone Cannon
+    skill_2:
+      descripcion: Air Burst
+    ulti:
+      descripcion: Flash Over
+roxy_migurdia_verde:
+  clave: '[King-Class Water Mage] Roxy Migurdia'
+  nombre: Roxy Migurdia
+  color: verde
+  raza: desconocida
+  roles: []
+  cartas:
+    skill_1:
+      descripcion: Water Ball
+    skill_2:
+      descripcion: Icicle Break
+    ulti:
+      descripcion: Cumulonimbus
+ghislaine_dedoldia_verde:
+  clave: '[Sword King] Ghislaine Dedoldia'
+  nombre: Ghislaine Dedoldia
+  color: verde
+  raza: desconocida
+  roles: []
+  cartas:
+    skill_1:
+      descripcion: Nimble Slash
+    skill_2:
+      descripcion: Savage Movement
+    ulti:
+      descripcion: Blade of Light
+terry_bogard_rojo:
+  clave: '[KOF ''98] Terry Bogard'
+  nombre: Terry Bogard
+  color: rojo
+  raza: desconocida
+  roles: []
+  cartas:
+    skill_1:
+      descripcion: Rising Tackle
+    skill_2:
+      descripcion: Crack Shoot
+    ulti:
+      descripcion: Power Geyser
+iori_yagami_verde:
+  clave: '[KOF ''98] Iori Yagami'
+  nombre: Iori Yagami
+  color: verde
+  raza: desconocida
+  roles: []
+  cartas:
+    skill_1:
+      descripcion: '108 Shiki: Yamibarai'
+    skill_2:
+      descripcion: '100 Shiki: Oniyaki'
+    ulti:
+      descripcion: 'Kin 1211 Shiki: Yaotome'
+guardian_hawk_elizabeth_rojo:
+  clave: '[Summer Vibes] Guardian Hawk & Elizabeth'
+  nombre: Guardian Hawk & Elizabeth
+  color: rojo
+  raza: desconocida
+  roles: []
+  cartas:
+    skill_1:
+      descripcion: Rolling Ham Spike
+    skill_2:
+      descripcion: Surprise Fireworks
+    ulti:
+      descripcion: Rush Hawk
+eleven_azul:
+  clave: '[Stranger Things] Eleven'
+  nombre: Eleven
+  color: azul
+  raza: desconocida
+  roles: []
+  cartas:
+    skill_1:
+      descripcion: Psychokinesis
+    skill_2:
+      descripcion: Psychic Wave
+    ulti:
+      descripcion: Psychic Pressure
+jim_hopper_rojo:
+  clave: '[Stranger Things] Jim Hopper'
+  nombre: Jim Hopper
+  color: rojo
+  raza: desconocida
+  roles: []
+  cartas:
+    skill_1:
+      descripcion: Aimed Shot
+    skill_2:
+      descripcion: Kick & Shoot
+    ulti:
+      descripcion: Macho Chief
+mike_wheeler_rojo:
+  clave: '[Stranger Things] Mike Wheeler'
+  nombre: Mike Wheeler
+  color: rojo
+  raza: desconocida
+  roles: []
+  cartas:
+    skill_1:
+      descripcion: Light Slash
+    skill_2:
+      descripcion: Shield Smash
+    ulti:
+      descripcion: Holy Sword
+will_byers_verde:
+  clave: '[Stranger Things] Will Byers'
+  nombre: Will Byers
+  color: verde
+  raza: desconocida
+  roles: []
+  cartas:
+    skill_1:
+      descripcion: Fireball
+    skill_2:
+      descripcion: Blizzard Rain
+    ulti:
+      descripcion: Magic Explosion
+mai_shiranui_azul:
+  clave: '[KOF ''98] Mai Shiranui'
+  nombre: Mai Shiranui
+  color: azul
+  raza: desconocida
+  roles: []
+  cartas:
+    skill_1:
+      descripcion: Sui Chou no Mai
+    skill_2:
+      descripcion: Ryuuembu
+    ulti:
+      descripcion: Chou Hissatsu Shinobi-bachi
+athena_asamiya_verde:
+  clave: '[KOF ''98] Athena Asamiya'
+  nombre: Athena Asamiya
+  color: verde
+  raza: desconocida
+  roles: []
+  cartas:
+    skill_1:
+      descripcion: Phoenix Arrow
+    skill_2:
+      descripcion: Psycho Ball
+    ulti:
+      descripcion: Crystal Shoot
+omega_rugal_verde:
+  clave: '[KOF ''98] Omega Rugal'
+  nombre: Omega Rugal
+  color: verde
+  raza: desconocida
+  roles: []
+  cartas:
+    skill_1:
+      descripcion: Gravity Smash
+    skill_2:
+      descripcion: Genocide Cutter
+    ulti:
+      descripcion: Gigantic Pressure
+kyo_kusanagi_rojo:
+  clave: '[KOF ''98] Kyo Kusanagi'
+  nombre: Kyo Kusanagi
+  color: rojo
+  raza: desconocida
+  roles: []
+  cartas:
+    skill_1:
+      descripcion: '115 Shiki: Dokugami'
+    skill_2:
+      descripcion: 'Ura 108 Shiki: Orochinagi'
+    ulti:
+      descripcion: 'Saishuu Kessen Ougi: Mu Shiki'
+eren_jaeger_verde:
+  clave: '[Titan Form] Eren Jaeger'
+  nombre: Eren Jaeger
+  color: verde
+  raza: desconocida
+  roles: []
+  cartas:
+    skill_1:
+      descripcion: I Will Exterminate Them All!
+    skill_2:
+      descripcion: Leave None Alive
+    ulti:
+      descripcion: With My Own Hands!

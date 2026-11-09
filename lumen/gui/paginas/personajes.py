@@ -96,7 +96,9 @@ class TarjetaPersonaje(QFrame):
         w, h = FOTO
         artwork = self.pj.ruta_artwork()
         ruta = self.pj.ruta_cara()
-        if artwork.is_file():  # la ilustracion entera, sin el texto del juego de abajo
+        if ruta.name == P.ICONO_HUB:  # el icono de 7dshub, entero (lo eligio el usuario, 2026-11-08)
+            self.pix = QPixmap(str(ruta)).scaled(w, h, Qt.KeepAspectRatio, Qt.SmoothTransformation)
+        elif artwork.is_file():  # la ilustracion entera, sin el texto del juego de abajo
             pix = QPixmap(str(artwork))
             pix = pix.copy(0, 0, int(pix.width() * P.ANCHO_SIN_BORDE), int(pix.height() * P.ALTO_SIN_TEXTO))
             self.pix = pix.scaled(w, h, Qt.KeepAspectRatio, Qt.SmoothTransformation)

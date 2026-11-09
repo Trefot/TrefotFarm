@@ -5,6 +5,8 @@ Autofarming propio para 7DS Grand Cross (cliente de PC, modo vertical).
 Reutiliza las imagenes de pantalla y los dos modelos de cartas del proyecto AutoFarming
 (licencia MIT, ver LICENSE_AutoFarming_original.txt), pero el codigo es nuevo e independiente:
 el boton "Update" de AutoFarming no lo toca.
+Los iconos de los heroes y sus datos (nombres, habilidades) vienen de 7dshub.com, con permiso de su
+dueno. Gracias a 7ds Hub.
 
 
 INSTALAR (una vez)
@@ -160,6 +162,7 @@ CARPETAS
 --------
 assets\imagenes\   plantillas de pantalla (de AutoFarming)
 assets\modelos\    modelo de hueco vacio (de AutoFarming)
+assets\personajes\*\icono_hub.png   iconos de los heroes (de 7dshub.com, con permiso)
 personajes\        tu biblioteca: usuario.yaml (fichas) y una carpeta por personaje con sus capturas
 capturas\          fotos completas que guardes
 recompensas\       fotos de las pantallas de recompensas (indice.jsonl = lista)
