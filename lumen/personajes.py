@@ -268,6 +268,16 @@ def marcar_tengo(pid: str, tengo: bool) -> None:
         USUARIO.write_text(yaml.safe_dump(usuario, allow_unicode=True, sort_keys=False), encoding="utf-8")
 
 
+def marcar_varios(pids, tengo: bool) -> None:
+    """Marca o desmarca muchos de una vez (botones "Marcar todos" / "Quitar todos"): una sola escritura."""
+    with _lock:
+        usuario = _leer_yaml(USUARIO)
+        for pid in pids:
+            usuario.setdefault(pid, {})["tengo"] = bool(tengo)
+        CARPETA.mkdir(parents=True, exist_ok=True)
+        USUARIO.write_text(yaml.safe_dump(usuario, allow_unicode=True, sort_keys=False), encoding="utf-8")
+
+
 def borrar_propio(pid: str) -> None:
     """Quita de la biblioteca un personaje creado por el usuario (sus capturas se conservan en disco)."""
     with _lock:

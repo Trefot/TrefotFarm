@@ -13,6 +13,7 @@ from PyQt5.QtWidgets import (
     QHBoxLayout,
     QLabel,
     QLineEdit,
+    QMessageBox,
     QPushButton,
     QScrollArea,
     QVBoxLayout,
@@ -141,7 +142,7 @@ class TarjetaPersonaje(QFrame):
 
 class PaginaPersonajes(Pagina):
     titulo = "Personajes"
-    subtitulo = "Toca los que tienes. A color = lo tienes."
+    subtitulo = "Toca los que tienes. A color = lo tienes. Más rápido: «Marcar todos» y quita los que te faltan."
 
     def __init__(self, app):
         super().__init__()
@@ -174,6 +175,16 @@ class PaginaPersonajes(Pagina):
             barra.addWidget(b)
         self.atributos.buttonClicked.connect(lambda _: self._pintar())
         barra.addStretch()
+        # Con ~365 personajes, marcarlos uno a uno cansa (lo pidio un probador, 2026-11-08): se marcan todos
+        # los que se ven (con la busqueda y los filtros) y luego se quitan los que faltan.
+        for texto, tengo, ayuda in (("Marcar todos", True, "Marca como tuyos todos los que se ven ahora "
+                                                         "(con la búsqueda y los filtros). Luego quita los que te faltan."),
+                                    ("Quitar todos", False, "Desmarca todos los que se ven ahora (con la búsqueda y los filtros).")):
+            b = QPushButton(texto, objectName="chip")
+            b.setToolTip(ayuda)
+            b.clicked.connect(lambda _=False, t=tengo: self._marcar_visibles(t))
+            barra.addWidget(b)
+        barra.addSpacing(10)
         self.contador = QLabel(objectName="titulo_seccion")
         barra.addWidget(self.contador)
         self.cuerpo.addLayout(barra)
@@ -253,6 +264,30 @@ class PaginaPersonajes(Pagina):
         self.zona.setUpdatesEnabled(True)
         tengo = sum(1 for p in self.biblioteca.values() if p.tengo)
         self.contador.setText(f"Tienes {tengo} de {len(self.biblioteca)}")
+
+    def visibles(self) -> list[str]:
+        return [pj.id for pj in self.orden if self.tarjetas[pj.id].isVisibleTo(self.zona)]
+
+    def _marcar_visibles(self, tengo: bool):
+        pids = [pid for pid in self.visibles() if self.biblioteca[pid].tengo != tengo]
+        if not pids:
+            return
+        pregunta = (f"¿Marcar {len(pids)} personajes como tuyos? Luego puedes quitar los que te falten."
+                    if tengo else f"¿Quitar {len(pids)} personajes de los tuyos?")
+        if QMessageBox.question(self, "Personajes", pregunta) != QMessageBox.Yes:
+            return
+        self.aplicar_varios(pids, tengo)
+
+    def aplicar_varios(self, pids: list[str], tengo: bool):
+        P.marcar_varios(pids, tengo)
+        for pid in pids:
+            self.biblioteca[pid].tengo = tengo
+            self.tarjetas[pid].poner_tengo(tengo)
+        for modo in MODOS.values():
+            if getattr(modo, "equipo", None):
+                modo.equipo.recargar()
+        self._pintar()
+        self.app.refrescar_insignias()
 
     def _cambiar(self, pid: str, tengo: bool):
         P.marcar_tengo(pid, tengo)

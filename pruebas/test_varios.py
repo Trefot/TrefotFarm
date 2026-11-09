@@ -721,3 +721,31 @@ class PaginaPersonajesRapida(unittest.TestCase):
             antes = dict(pagina.tarjetas)
             pagina.al_mostrar()
             self.assertTrue(all(pagina.tarjetas[k] is antes[k] for k in antes), "se reutilizan entre visitas")
+
+    def test_marcar_todos_los_que_se_ven(self):
+        """Lo pidio un probador: con ~365 personajes, marcar todos y quitar los que faltan es mas rapido."""
+        entorno.app_qt()
+        from lumen import personajes as P
+        from lumen.gui.paginas import personajes as G
+
+        with tempfile.TemporaryDirectory() as d, mock.patch.object(P, "CARPETA", Path(d)), \
+                mock.patch.object(P, "USUARIO", Path(d) / "usuario.yaml"):
+            pagina = G.PaginaPersonajes(mock.Mock())
+            self.assertFalse(any(p.tengo for p in pagina.biblioteca.values()), "un jugador nuevo empieza sin ninguno")
+            rojo = next(b for b in pagina.atributos.buttons() if b.property("color") == "rojo")
+            rojo.setChecked(True)  # solo se ven los rojos
+            pagina._pintar()
+            rojos = pagina.visibles()
+            self.assertTrue(rojos)
+            with mock.patch.object(G.QMessageBox, "question", return_value=G.QMessageBox.Yes):
+                pagina._marcar_visibles(True)
+            guardado = P.cargar()
+            self.assertEqual({p for p, pj in guardado.items() if pj.tengo}, set(rojos), "solo los que se veian")
+            pagina._cambiar(rojos[0], False)  # y se quita a mano el que falta
+            self.assertFalse(P.cargar()[rojos[0]].tengo)
+            with mock.patch.object(G.QMessageBox, "question", return_value=G.QMessageBox.No):
+                pagina._marcar_visibles(False)
+            self.assertTrue(P.cargar()[rojos[1]].tengo, "si dice que no, no cambia nada")
+            with mock.patch.object(G.QMessageBox, "question", return_value=G.QMessageBox.Yes):
+                pagina._marcar_visibles(False)
+            self.assertFalse(any(pj.tengo for pj in P.cargar().values()))

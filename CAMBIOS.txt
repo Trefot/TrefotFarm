@@ -29,6 +29,10 @@ Etapas previstas:
 
 CAMBIOS
 -------
+0.16.1-alpha
+  - Personajes: botones "Marcar todos" y "Quitar todos" (piden confirmacion). Cambian todos los que se ven
+    con la busqueda y los filtros: lo mas rapido es marcar todos y quitar los que faltan.
+
 0.16.0-alpha
   - Pantallas bajas (por ejemplo 1366x768): la ventana del juego de 554x960 no cabia y el bot no funcionaba.
     Ahora, si no cabe, la ventana se pone mas pequena con la misma forma (tan alta como la pantalla sin la
