@@ -29,6 +29,10 @@ Etapas previstas:
 
 CAMBIOS
 -------
+0.30.1-alpha
+  - Publicada la huella de la contrasena de administrador (lumen/datos/admin.yaml). Solo la PC del admin, o quien
+    escriba la contrasena, ve el modo administrador.
+
 0.30.0-alpha
   - Modo administrador con contrasena (lo pidio el usuario: el link del bot lo tienen amigos). La casilla de Ajustes
     ya no basta: solo se ve y se enciende en la PC que tiene la llave de la contrasena (lumen/admin.py). En el
