@@ -158,5 +158,18 @@ class Piso2EnElJuego(unittest.TestCase):
         self.assertEqual(m.troncos_vivos(leer("rata_f2_solo_der")), {3}, "la barra se ve negra, pero sigue en pie")
         self.assertEqual(m.troncos_vivos(leer("rata_f2_solo_centro")), {1})
 
+    def test_fuera_del_centro_y_sin_poison_nada_de_area(self):
+        """Run del 2026-11-09: con la rata bajada, el area rompio el tronco 1 y quedo inmortal."""
+        cartas = [C(0, {"bleed"}), C(3), C(4, area=True), C(5, ulti=True)]
+        d = R.decidir(2, 2, None, {1}, cartas, 4, False)  # se ve la espiral del 1: no esta encima
+        self.assertTrue({0, 4, 5} <= d.bloquear)
+        self.assertNotIn(3, d.bloquear, "un ataque a un objetivo, a la rata, si")
+        self.assertEqual(d.objetivo, "rata")
+
+    def test_encima_del_centro_y_troncos_rotos_mucho_dano(self):
+        d = R.decidir(2, 2, 1, {1}, mano(), 4, False)
+        self.assertEqual(d.objetivo, "rata")
+        self.assertFalse({4, 5} & d.bloquear, "area y ulti libres")
+
     def test_la_rata_tiene_mas_tiempo(self):
         self.assertGreater(B.RataPisos1a3.MINUTOS_PELEA, 8)

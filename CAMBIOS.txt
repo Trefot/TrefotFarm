@@ -29,6 +29,11 @@ Etapas previstas:
 
 CAMBIOS
 -------
+0.29.2-alpha
+  - Ratatoskr Floor 2 (el usuario: solo romper los troncos 2 y 3 y luego mucho dano): el tronco 1 (centro) no se
+    rompe, porque roto deja a la rata inmortal (run perdida del 2026-11-09). Si la rata no esta encima del 1, la
+    devuelve con Poison; sin Poison no usa area ni ultis, que lo romperian. Con el 2 y el 3 rotos, todo a la rata.
+
 0.29.1-alpha
   - Ratatoskr Floor 2 (prueba del usuario): la barra de los troncos se ve negra o blanca y el bot los daba por rotos;
     entonces jugaba Bleed/Shock, la rata se iba al tronco 3 y el area rompia el del centro. Ahora los troncos se

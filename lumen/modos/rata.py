@@ -106,23 +106,25 @@ def decidir(piso: int, fase: int, rata_en: int | None, vivos: set[int], cartas: 
         return d
 
     if piso == 2:
+        # El usuario (2026-11-09): solo romper los troncos 2 y 3 y luego mucho dano. El 1 (centro) NO se rompe: roto,
+        # la rata queda inmortal. Subida encima del 1 lo protege; si se baja, el area lo rompe. Bleed y Shock la sacan
+        # del centro, Poison la devuelve.
         troncos = sorted(vivos & {2, 3})
-        if troncos:
-            # La rata tiene que seguir en el centro (tronco 1): Bleed y Shock la sacan, Poison la trae. Subida al 2 o
-            # al 3 protege ese tronco y el area acaba rompiendo el del centro (prueba del 2026-11-09).
-            venenos = [c.indice for c in con_desventaja if "poison" in c.desventajas and c.indice not in d.bloquear]
-            d.bloquear |= {c.indice for c in con_desventaja if c.desventajas & {"bleed", "shock"}}
-            d.objetivo = troncos[0]
-            if rata_en in (2, 3) and venenos:
-                d.forzar = set(venenos) - d.bloquear or set(venenos)
-                d.bloquear -= d.forzar
-                d.motivo = f"esta en el tronco {rata_en}: la devuelvo al centro con Poison"
-            else:
-                d.motivo = "inmortal mientras vivan los troncos 2 y 3"
+        fuera = rata_en in (2, 3) or (rata_en is None and 1 in vivos)  # la espiral del 1 se ve: no esta encima
+        venenos = [c.indice for c in con_desventaja if "poison" in c.desventajas]
+        d.bloquear |= {c.indice for c in con_desventaja if c.desventajas & {"bleed", "shock"}}
+        d.objetivo = troncos[0] if troncos else "rata"
+        if fuera and venenos:
+            d.forzar = set(venenos)
+            d.bloquear -= d.forzar
+            d.motivo = "no esta encima del tronco 1: la devuelvo al centro con Poison"
+        elif fuera:
+            d.bloquear |= {c.indice for c in cartas if c.area or c.ulti}  # que el area no rompa el tronco 1
+            d.motivo = "no esta encima del tronco 1 y no tengo Poison: nada de area para no romperlo"
+        elif troncos:
+            d.motivo = "rompo los troncos 2 y 3"
         else:
-            venenos = [c for c in con_desventaja if "poison" in c.desventajas]
-            if len(venenos) == 1 and rata_en in (1, None):
-                d.bloquear.add(venenos[0].indice)  # se guarda por si sale fuera del centro
+            d.motivo = "troncos 2 y 3 rotos: mucho dano a la rata"
         return d
 
     # Floor 3
