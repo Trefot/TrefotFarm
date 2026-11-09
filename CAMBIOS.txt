@@ -29,6 +29,12 @@ Etapas previstas:
 
 CAMBIOS
 -------
+0.24.3-alpha
+  - Pisos: el titulo del piso abierto (resaltado) a veces no se lee (el dragon no encontraba su Floor 3 abierto). Ahora
+    su numero se deduce de los titulos que si se leen: los pisos van apilados a la misma distancia.
+  - Si el juego esta en los pisos de OTRA bestia (p. ej. el dragon y se pide la rata), el bot lo nota por el nombre de
+    arriba y vuelve atras al carrusel. Antes intentaba abrir los pisos de la otra bestia en bucle.
+
 0.24.2-alpha
   - Botin: en el cubo amarillo (fondo muy claro) el "1" de las decenas no se veia: 10 se leia 1 y 15 se leia 5. Ahora
     se nota porque el numero del juego es blanco puro y el fondo tiene color. Medido en las 88 fotos guardadas: solo

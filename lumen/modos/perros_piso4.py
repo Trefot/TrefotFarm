@@ -404,7 +404,7 @@ class PerrosPiso4(Modo):
             try:
                 ruta = LOGS / "avisos" / f"{self.id}_{time.strftime('%Y%m%d_%H%M%S')}.png"
                 guardar_imagen(ruta, p)
-                self.log(f"Start no empieza la pelea: guardo una captura en logs/avisos ({ruta.name}).", "aviso")
+                self.log(f"Algo no avanza (¿un aviso?): guardo una captura en logs/avisos ({ruta.name}).", "aviso")
             except Exception:
                 pass
         if self.clic_si(juego.ok, p, o, espera=1.0):

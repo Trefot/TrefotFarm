@@ -68,9 +68,13 @@ BAJO_TITULO = 56  # del centro del titulo del piso al centro de su circulo (lo q
 LIMITE_CIRCULO = 780  # mas abajo lo tapa la barra del equipo
 # Nombres escritos de cada bestia en el carrusel, en su orden (juego.ORDEN_BESTIAS) y Surtr al final.
 NOMBRES_CARRUSEL = (("hraesvelgr",), ("eikthyrnir",), ("skoll", "hati"), ("nidhoggr",), ("ratatoskr",), ("surtr",))
+CABECERA_PISOS = (125, 170)  # alto (y) del nombre de la bestia arriba de su pantalla de pisos
+ATRAS = Plantilla("back.png")  # la flecha de volver, arriba a la izquierda
+PUNTO_ATRAS = (39, 64)
 TITULO_CARRUSEL = (570, 650)  # alto (y) del nombre grande de la bestia del centro, medido con Surtr
 FLECHA_ZONA = (15, 150, 95, 820)  # x1, y1, x2, y2: columna de la izquierda donde sale la flecha del piso abierto
 FLECHA_MIN_PIXELES = 60  # en una captura real la flecha tiene ~210 pixeles cian
+PASO_PISOS = 149  # distancia (y) entre los titulos de dos pisos seguidos, medida en Nidhoggr
 PUNTO_X_PISO = 282  # x del circulo (el retrato de la bestia) de cada piso
 CADA_OCR_S = 1.0  # leer el texto de la pantalla como mucho una vez por segundo (el OCR gasta CPU)
 
@@ -207,6 +211,14 @@ class BestiaPisos1a3(PerrosPiso4):
             self.log("Habia una pelea a medias; la doy por perdida y empiezo de nuevo.", "aviso")
             return None
         if self._en_pisos(p):  # antes que nada: el titulo "Demonic Beast Battle" sigue arriba en los pisos
+            otra = self._bestia_de_los_pisos(p)
+            if otra is not None and otra != juego.ORDEN_BESTIAS.index(self.bestia):
+                # Pisos de OTRA bestia (el juego se quedo en el dragon y se pidio la rata, 2026-11-09): el bot
+                # intentaba abrir sus pisos. Volver al carrusel con la flecha de arriba a la izquierda.
+                self.log(f"Estoy en los pisos de otra bestia: vuelvo atrás para ir a {self.titulo_juego}.", "aviso")
+                if not self.clic_si(ATRAS, p, o, umbral=0.75, espera=1.5):
+                    entrada.clic(PUNTO_ATRAS, o, espera=1.5)
+                return None
             self.log(f"En la pantalla de pisos de {self.titulo_juego}.", "ok")
             return "elegir_piso"
         if self.clic_si(juego.ok, p, o) or self.clic_si(juego.cerrar, p, o):
@@ -220,6 +232,18 @@ class BestiaPisos1a3(PerrosPiso4):
                 return None
             self.clic_si(self.bestia, p, o)
             return None
+        return None
+
+    def _bestia_de_los_pisos(self, p) -> int | None:
+        """Que bestia es la de la pantalla de pisos, por su nombre en la cabecera (None si no se lee)."""
+        if not ocr.disponible():
+            return None
+        for texto, (x, y, w, h) in ocr.lineas_con_posicion(p):
+            if CABECERA_PISOS[0] <= y + h // 2 <= CABECERA_PISOS[1]:
+                t = texto.lower()
+                for i, nombres in enumerate(NOMBRES_CARRUSEL):
+                    if any(n in t for n in nombres):
+                        return i
         return None
 
     def _bestia_en_carrusel(self, p) -> int | None:
@@ -432,6 +456,21 @@ class BestiaPisos1a3(PerrosPiso4):
                         break
                 if elegida is not None:
                     break
+            if elegida is None:
+                # El titulo del piso abierto (resaltado) a veces no se lee (el dragon, 2026-11-09: leia "Floor 2" y
+                # "Floor 1" pero no el 3 de la flecha). Los pisos van apilados (3 arriba, 1 abajo) a PASO_PISOS: el
+                # numero de la fila de la flecha sale de cualquier titulo que si se lea.
+                for y in flechas:
+                    for texto, (x, ty, w, h) in lineas:
+                        for n in [n for n in numeros_de_piso(texto) if n in (1, 2, 3)]:
+                            estimado = n + round(((ty + h // 2) - (y - BAJO_TITULO)) / PASO_PISOS)
+                            if estimado in (1, 2, 3):
+                                elegida, numero = y, estimado
+                                break
+                        if elegida is not None:
+                            break
+                    if elegida is not None:
+                        break
         if elegida is None:
             if len(flechas) != 1 or ocr.disponible():
                 return False  # no se sabe cual es la del Floor 1-3: lo de siempre

@@ -779,3 +779,44 @@ class CarruselDeBestias(unittest.TestCase):
             for _ in range(12):
                 m._deslizar_hacia_bestia(None, (0, 0))
         self.assertEqual(len(set(self.arrastres)), 2, "cambia de direccion")
+
+
+class PisosDeOtraBestia(unittest.TestCase):
+    def test_en_los_pisos_del_dragon_y_se_pide_la_rata_vuelve_atras(self):
+        """Prueba del usuario (2026-11-09): el juego estaba en el dragon, se pidio la rata y abria los del dragon."""
+        m = B.RataPisos1a3({})
+        clics = []
+        with mock.patch.object(m, "_en_pisos", lambda p: True), \
+                mock.patch.object(B.ocr, "disponible", lambda: True), \
+                mock.patch.object(B.ocr, "lineas_con_posicion", lambda p: [("Nidhoggr", (236, 137, 81, 19))]), \
+                mock.patch.object(m, "clic_si", lambda pl, p, o, **k: pl is B.ATRAS and (clics.append(pl) or True)), \
+                mock.patch.object(juego, "cancelar", PlantillaFalsa("cancelar")), mock.patch.object(m, "log", lambda *a, **k: None):
+            self.assertIsNone(m.ir_a_perros(set(), (0, 0)))
+        self.assertEqual(clics, [B.ATRAS])
+
+    def test_en_sus_propios_pisos_sigue(self):
+        m = B.SerpientePisos1a3({})
+        with mock.patch.object(m, "_en_pisos", lambda p: True), \
+                mock.patch.object(B.ocr, "disponible", lambda: True), \
+                mock.patch.object(B.ocr, "lineas_con_posicion", lambda p: [("Nidhoggr", (236, 137, 81, 19))]), \
+                mock.patch.object(juego, "cancelar", PlantillaFalsa("cancelar")), mock.patch.object(m, "log", lambda *a, **k: None):
+            self.assertEqual(m.ir_a_perros(set(), (0, 0)), "elegir_piso")
+
+
+class PisoAbiertoSinTitulo(unittest.TestCase):
+    def test_floor_3_sin_leer_su_titulo(self):
+        """El titulo del piso abierto (resaltado) no se leia: se deduce de los demas (dragon, 2026-11-09)."""
+        import cv2
+        from pathlib import Path
+
+        p = cv2.imread(str(Path(__file__).with_name("pisos_nidhoggr_f3.png")))
+        m = B.SerpientePisos1a3({})
+        m.piso = 1
+        clics = []
+        lineas = [("Corpse Farer Naglfar Floor 2", (195, 471, 177, 13)), ("Corpse Farer Naglfar Floor I", (197, 620, 174, 13))]
+        with mock.patch.object(entrada, "clic", lambda r, o, **k: clics.append(r)), \
+                mock.patch.object(B.ocr, "disponible", lambda: True), mock.patch.object(m, "_lineas", lambda p: lineas), \
+                mock.patch.object(m, "_recordar_piso", lambda: None), mock.patch.object(m, "log", lambda *a, **k: None):
+            self.assertTrue(m._ir_al_piso_abierto(p, (0, 0)))
+        self.assertEqual(m.piso, 3)
+        self.assertLess(abs(clics[0][1] - 383), 8)
