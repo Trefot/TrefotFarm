@@ -123,6 +123,11 @@ class BestiaPisos1a3(PerrosPiso4):
             self.piso = int(guardado.get("piso", 1))
             self.pedir_reset = bool(guardado.get("reset"))
         self.vuelta = 1  # cuantas veces se ha empezado el ciclo 1 -> 2 -> 3
+        self.vueltas_hechas = 0  # Floor 1, 2 y 3 superados = 1 vuelta (la opcion "victorias" cuenta vueltas)
+        self.piso_abierto_seguro = False  # se acaba de ganar el piso anterior: el que toca esta abierto
+        self.esperando_ok_reset: float | None = None  # se pulso Reset: esperar su OK sin tocar nada mas
+        self.reintentos_reset = 0
+        self.foto_sin_piso = False
         self.buscando_piso_desde: float | None = None
         self._ultimo_ocr: tuple[float, int, object] = (0.0, 0, None)  # (hora, piso, rectangulo) de la ultima lectura
         self._pisos_vistos: tuple[float, set] = (0.0, set())  # (hora, numeros de piso) de la ultima lectura
@@ -153,6 +158,19 @@ class BestiaPisos1a3(PerrosPiso4):
         self.stats.update(piso=self.piso, vuelta=self.vuelta)  # para la pagina Farmear
         super()._stats()
 
+    def _meta_cumplida(self) -> bool:
+        """Lo pidio el usuario (2026-11-09): en Floor 1-3 la meta son VUELTAS (Floor 1, 2 y 3), no peleas."""
+        if self.piso != 3:
+            return False
+        self.vueltas_hechas += 1
+        self.log(f"¡Vuelta {self.vueltas_hechas} completa (Floor 1, 2 y 3)!", "ok")
+        self.stats["vueltas"] = self.vueltas_hechas
+        meta = int(self.valores.get("victorias") or 0)
+        if meta and self.vueltas_hechas >= meta:
+            self.log(f"Llegue a {meta} vuelta{'s' if meta != 1 else ''}.", "ok")
+            return True
+        return False
+
     def victoria(self, p, o):
         try:
             siguiente = super().victoria(p, o)  # cuenta la victoria al volver a los pisos
@@ -168,6 +186,7 @@ class BestiaPisos1a3(PerrosPiso4):
             return "elegir_piso"
         if siguiente == "elegir_piso":
             self._siguiente_piso()
+            self.piso_abierto_seguro = self.piso != 1  # tras ganar el 1 o el 2, el siguiente esta abierto seguro
             self.log(f"Siguiente: Floor {self.piso}.", "ok")
         return siguiente
 
@@ -221,9 +240,27 @@ class BestiaPisos1a3(PerrosPiso4):
             self.buscando_piso_desde = None
             self._toques_piso = 0
             return "preparar"
-        if self.clic_si(juego.ok, p, o):  # confirmar al abrir el piso (o el Reset)
+        if self.esperando_ok_reset is not None:
+            # Tras pulsar Reset sale una confirmacion: el bot deslizaba la lista y la cerraba sin querer, el Reset no
+            # se hacia y daba la vuelta 1 -> 2 -> 3 (prueba del usuario, 2026-11-09). Ahora espera el OK.
+            if self.clic_si(juego.ok, p, o, espera=1.5):
+                self.log("Reset confirmado.", "debug")
+                self.esperando_ok_reset, self.reintentos_reset = None, 0
+            elif time.time() - self.esperando_ok_reset > 6:
+                self.esperando_ok_reset = None
+                if self.reintentos_reset < 2:
+                    self.reintentos_reset += 1
+                    self.pedir_reset = True  # no salio la confirmacion: volver a pulsar Reset
+            return None
+        if self.clic_si(juego.ok, p, o):  # confirmar al abrir el piso
             return None
         if self.pedir_reset and self._pulsar_reset(p, o):
+            return None
+        if self.piso != 1 and not self.piso_abierto_seguro and self._sin_vuelta_empezada(p):
+            # "Set Party" en vez de "Reset": no hay ninguna vuelta a medias, asi que el abierto es el Floor 1.
+            self.log(f"No hay ninguna vuelta empezada: voy al Floor 1 (no al {self.piso}).", "ok")
+            self.piso, self.pedir_reset, self._toques_piso = 1, False, 0
+            self._recordar_piso()
             return None
         rect = self._buscar_piso(p)
         if rect is not None:
@@ -233,7 +270,9 @@ class BestiaPisos1a3(PerrosPiso4):
             x, y, w, h = rect
             punto = (x + w // 2, y + h // 2 + BAJO_TITULO)
             if punto[1] <= LIMITE_CIRCULO:
-                if self._toques_piso >= TOQUES_PISO:
+                if self._toques_piso >= TOQUES_PISO and self.piso_abierto_seguro and self._toques_piso < 3 * TOQUES_PISO:
+                    pass  # se acaba de ganar el anterior: este esta abierto, insistir (mas despacio)
+                elif self._toques_piso >= TOQUES_PISO:
                     # Ya superado esta semana (no se abre): en la prueba de la 0.4.0, cada vez que se arrancaba el
                     # bot tocaba el Floor 1 ya superado durante 40 s antes de pasar al siguiente.
                     antes = self.piso
@@ -261,7 +300,21 @@ class BestiaPisos1a3(PerrosPiso4):
             self._ultimo_ocr = (0.0, 0, None)  # la lista se movio: volver a leer
         # Sin el piso ni desplazando (p. ej. una bestia sin Floor 3, o aun no desbloqueado): no quedarse ahi.
         self.buscando_piso_desde = self.buscando_piso_desde or time.time()
-        if time.time() - self.buscando_piso_desde > SALTAR_PISO_S:
+        if time.time() - self.buscando_piso_desde > SALTAR_PISO_S / 2 and not self.foto_sin_piso:
+            self.foto_sin_piso = True  # una por sesion: para ver que habia en pantalla (prueba del dragon, 2026-11-09)
+            try:
+                from lumen.rutas import LOGS
+                from lumen.vision import guardar_imagen
+
+                ruta = LOGS / "sin_piso" / f"{self.id}_f{self.piso}_{time.strftime('%Y%m%d_%H%M%S')}.png"
+                guardar_imagen(ruta, p)
+                self.log(f"No encuentro el Floor {self.piso}: guardo una captura en logs/sin_piso ({ruta.name}).", "aviso")
+            except Exception:
+                pass
+        # Recien ganado el anterior, el piso que toca esta abierto: antes de darlo por perdido y hacer Reset (el
+        # dragon perdio asi el Floor 3), se busca el doble de tiempo.
+        limite = SALTAR_PISO_S * (3 if self.piso_abierto_seguro else 1)
+        if time.time() - self.buscando_piso_desde > limite:
             antes = self.piso
             self._siguiente_piso()
             self.log(f"No encuentro el Floor {antes}: paso al Floor {self.piso}.", "aviso")
@@ -295,9 +348,18 @@ class BestiaPisos1a3(PerrosPiso4):
                 self.log("Pulso Reset para volver a empezar desde el Floor 1.", "ok")
                 entrada.clic((x + w // 2, y + h // 2), o, espera=1.5)
                 self.pedir_reset, self.reset_desde = False, None
+                self.esperando_ok_reset = time.time()
+                self.piso_abierto_seguro = False
                 self._recordar_piso()
                 return True
         return False
+
+    def _sin_vuelta_empezada(self, p) -> bool:
+        """En la pantalla de pisos se lee "Set Party" (y no "Reset") cuando no hay ninguna vuelta a medias."""
+        if not ocr.disponible():
+            return False
+        textos = {t.strip().lower() for t, _ in self._lineas(p)}
+        return any(t.startswith("set party") for t in textos) and not any(t.startswith("reset") for t in textos)
 
     def _buscar_piso(self, p):
         """Rectangulo del texto del piso que toca en la pantalla de pisos (sin contar "Floor N Cleared").
@@ -363,8 +425,8 @@ def _es_premio(texto: str) -> bool:
 
 def _opciones(jugar: str) -> list[Opcion]:
     return [
-        Opcion("victorias", "Victorias (0 = sin límite)", "entero", 3, maximo=9999,
-               ayuda="3 = una pasada: Floor 1, 2 y 3, Reset y para."),
+        Opcion("victorias", "Vueltas (0 = sin límite)", "entero", 1, maximo=999,
+               ayuda="1 vuelta = Floor 1, 2 y 3 superados (y Reset). Al acabar las vueltas pedidas, para."),
         Opcion("primer_piso", "Empezar en el Floor", "lista", "1", opciones=["1", "2", "3"]),
         Opcion("jugar", "Cómo jugar", "lista", jugar, opciones=["AUTO", "Inteligente", "Simple"],
                ayuda="AUTO: pone el AUTO del juego y no juega cartas (lo más rápido en los pisos fáciles). "
@@ -394,7 +456,7 @@ def _bestia(id_base: str, titulo: str, plantilla, imagen: str, piso3=None, enemi
     })
 
 
-PerrosPisos1a3 = _bestia("perros", "Skollandhati & Hati", juego.perros, "demonic_beasts/skollandhati.png",
+PerrosPisos1a3 = _bestia("perros", "Skoll & Hati", juego.perros, "demonic_beasts/skollandhati.png",
                          juego.piso3_superado, enemigos=2,  # los dos perros
                          # Como AutoFarming: en la fase 1 el perro claro (derecha), en la 2 y la 3 el oscuro (izquierda).
                          objetivos={1: "der", 2: "izq"},

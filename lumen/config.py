@@ -38,6 +38,9 @@ def _cargar() -> dict:
         if not datos.get("auto_bestias_faciles"):
             _auto_en_bestias_faciles(datos)
             cambio = True
+        if not datos.get("vueltas_pisos1a3"):
+            _victorias_a_vueltas(datos)
+            cambio = True
         if cambio:
             with CONFIG.open("w", encoding="utf-8") as f:
                 yaml.safe_dump(datos, f, allow_unicode=True, sort_keys=False)
@@ -74,6 +77,28 @@ def _auto_en_bestias_faciles(datos: dict) -> None:
             opciones[modo] = o
     datos["opciones_modos"] = opciones
     datos["auto_bestias_faciles"] = True
+
+
+def _victorias_a_vueltas(datos: dict) -> None:
+    """Desde la 0.22.0 la meta de los Floor 1-3 son vueltas (Floor 1, 2 y 3 = 1), no peleas: lo guardado se
+    divide entre 3 (redondeando hacia arriba) una sola vez, en las opciones y en el plan del dia."""
+    def vueltas(n) -> int:
+        n = int(n or 0)
+        return 0 if n == 0 else max(1, -(-n // 3))
+
+    opciones = dict(datos.get("opciones_modos") or {})
+    for modo, o in list(opciones.items()):
+        if modo.endswith("_pisos1a3") and isinstance(o, dict) and "victorias" in o:
+            opciones[modo] = {**o, "victorias": vueltas(o["victorias"])}
+    datos["opciones_modos"] = opciones
+    plan = []
+    for t in datos.get("plan") or []:
+        if isinstance(t, dict) and str(t.get("modo", "")).endswith("_pisos1a3"):
+            t = {**t, "victorias": vueltas(t.get("victorias"))}
+        plan.append(t)
+    if "plan" in datos:
+        datos["plan"] = plan
+    datos["vueltas_pisos1a3"] = True
 
 
 def obtener(clave: str, defecto=None):

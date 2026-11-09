@@ -125,7 +125,7 @@ class Personaje:
         """Imagen y cuadro del rostro para un retrato pequeno (None = la imagen entera)."""
         ruta = self.ruta_cara()
         if ruta.name == ICONO_HUB:
-            return ruta, ROSTRO_HUB
+            return ruta, None  # entero, con su marco: recortado se veia mal en Equipos e Inicio (usuario, 2026-11-09)
         if ruta.name == CARA_ARTWORK:
             return ruta, ROSTRO_ARTWORK
         return ruta, ROSTRO_ICONO if ruta.name == f"{ICONO}.png" else None

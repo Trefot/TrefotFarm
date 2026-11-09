@@ -141,7 +141,7 @@ class PanelPlan(QFrame):
                 foto.setPixmap(pix)
             capa.addWidget(foto)
             capa.addWidget(QLabel(MODOS[t["modo"]].nombre), 1)
-            spin = _spin(int(t["victorias"]), " vict.")
+            spin = _spin(int(t["victorias"]), " vueltas" if t["modo"].endswith("_pisos1a3") else " vict.")
             spin.setEnabled(not en_marcha)
             spin.valueChanged.connect(lambda v, n=i: self._cambiar(n, v))
             capa.addWidget(spin)

@@ -29,6 +29,22 @@ Etapas previstas:
 
 CAMBIOS
 -------
+0.22.0-alpha
+  Arreglos del plan de 150 peleas del usuario (2026-11-09):
+  - Bestias Floor 1-3: la meta son VUELTAS (Floor 1, 2 y 3 = 1 vuelta), no peleas. Lo guardado (opciones y plan
+    del dia) se divide entre 3 una vez: 30 victorias pasan a 10 vueltas. El plan dice "vueltas".
+  - Reset: tras pulsarlo, espera su confirmacion (OK) sin tocar nada. Antes deslizaba la lista, cerraba la
+    confirmacion y daba la vuelta Floor 1 -> 2 -> 3 sin abrir ninguno.
+  - Si la pantalla de pisos dice "Set Party" (no hay vuelta empezada), va directo al Floor 1.
+  - Recien ganado un piso, el siguiente esta abierto: insiste mas antes de rendirse (el dragon perdio asi el
+    Floor 3 e hizo Reset). Si no encuentra un piso, guarda una foto en logs/sin_piso para verlo.
+  - Jugando cartas (dragon, rata...): si el AUTO del juego sigue puesto de la tarea anterior (las casillas se
+    llenan solas), lo quita.
+  - Talento del turno 1: solo si el equipo tiene un heroe con talento (son 9, lumen/datos/talentos.yaml, de
+    7dshub). Antes lo tocaba siempre.
+  - Equipos e Inicio: los iconos de los heroes se ven enteros (recortados se veian mal).
+  - Nombre: "Skoll & Hati" (decia "Skollandhati & Hati").
+
 0.21.1-alpha
   - Ratatoskr: los huecos libres brillan en azul y el bot no los veia (0,65): creia acabado el turno con 2
     cartas por jugar y se quedaba parado. Nuevas imagenes de esos huecos.

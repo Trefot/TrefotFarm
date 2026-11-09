@@ -259,6 +259,11 @@ class Navegacion(ConPantallaSimulada):
         self._parchear(m, "capturar", lambda: (set(), (0, 0)))
         for n in ("mano_bloqueada",):
             self._parchear(juego, n, PlantillaFalsa(n))
+        self._parchear(m, "_hay_talento", lambda p: False)
+        m._empezar_turno(set(), 4)
+        self.assertEqual(self.clics, [], "sin ningun heroe con talento no toca el boton (2026-11-09)")
+        m.talento_inicial_usado, m.turno_fase, m.fase = False, 0, None
+        self._parchear(m, "_hay_talento", lambda p: True)
         m._empezar_turno(set(), 4)
         self.assertEqual(self.clics, [juego.COORD["talento"]])
         m._empezar_turno(set(), 4)
@@ -545,3 +550,71 @@ class AutoEnBestiasFaciles(unittest.TestCase):
         self.assertEqual(o["ciervo_pisos1a3"]["jugar"], "Simple", "lo elegido a proposito se respeta")
         self.assertEqual(o["serpiente_pisos1a3"]["jugar"], "Inteligente")
         self.assertTrue(datos["auto_bestias_faciles"])
+
+
+class ArreglosDelPlan(unittest.TestCase):
+    """Lo que salio en el plan de 150 peleas del usuario (2026-11-09)."""
+
+    def setUp(self):
+        self.clics = []
+        for nombre, valor in (("clic", lambda r, o, **k: self.clics.append(r)), ("arrastrar", lambda *a, **k: None)):
+            p = mock.patch.object(entrada, nombre, valor)
+            p.start()
+            self.addCleanup(p.stop)
+
+    def test_la_meta_son_vueltas_de_tres_pisos(self):
+        m = B.RataPisos1a3({"victorias": 2})
+        with mock.patch.object(m, "log", lambda *a, **k: None):
+            m.piso = 1
+            self.assertFalse(m._meta_cumplida())
+            m.piso = 2
+            self.assertFalse(m._meta_cumplida())
+            m.piso = 3
+            self.assertFalse(m._meta_cumplida(), "1 vuelta de 2")
+            m.piso = 3
+            self.assertTrue(m._meta_cumplida(), "2 vueltas")
+        self.assertEqual(m.vueltas_hechas, 2)
+
+    def test_tras_reset_espera_el_ok_sin_tocar_nada(self):
+        m = B.RataPisos1a3({})
+        m.esperando_ok_reset = __import__("time").time()
+        ok = PlantillaFalsa("ok")
+        with mock.patch.object(juego, "ok", ok), mock.patch.object(juego, "empezar", PlantillaFalsa("empezar")),                 mock.patch.object(m, "_buscar_piso", side_effect=AssertionError("no debe buscar ni deslizar")):
+            self.assertIsNone(m.elegir_piso(set(), (0, 0)))  # aun sin OK: quieto
+            self.assertIsNotNone(m.esperando_ok_reset)
+            self.assertIsNone(m.elegir_piso({"ok"}, (0, 0)))
+        self.assertIsNone(m.esperando_ok_reset, "OK pulsado: Reset hecho")
+
+    def test_set_party_es_que_toca_el_floor_1(self):
+        m = B.RataPisos1a3({})
+        m.piso = 3
+        with mock.patch.object(m, "_lineas", lambda p: [("Troublemaker's Hideout Floor 3", (0, 0, 9, 9)), ("Set Party", (0, 0, 9, 9))]),                 mock.patch.object(juego, "ok", PlantillaFalsa("ok")), mock.patch.object(juego, "empezar", PlantillaFalsa("empezar")),                 mock.patch.object(B.ocr, "disponible", lambda: True), mock.patch.object(m, "log", lambda *a, **k: None):
+            m.elegir_piso(set(), (0, 0))
+        self.assertEqual(m.piso, 1)
+
+    def test_quita_el_auto_si_el_juego_juega_solo(self):
+        from lumen.modos import perros_piso4 as P4
+
+        m = B.RataPisos1a3({"jugar": "Inteligente"})
+        m._nueva_pelea()
+        m.ultimo_turno = 0
+        lecturas = iter([4, 3, 2])
+        with mock.patch.object(P4.C, "contar_huecos", lambda p, u: next(lecturas)),                 mock.patch.object(m, "clic_si", lambda pl, p, o, **k: self.clics.append(pl) or True),                 mock.patch.object(m, "log", lambda *a, **k: None):
+            self.assertFalse(m._auto_puesto_sin_querer(None, (0, 0)))
+            self.assertFalse(m._auto_puesto_sin_querer(None, (0, 0)), "una bajada puede ser casualidad")
+            self.assertTrue(m._auto_puesto_sin_querer(None, (0, 0)))
+        self.assertEqual(self.clics, [P4.AUTO])
+
+    def test_victorias_guardadas_pasan_a_vueltas(self):
+        from lumen import config
+
+        datos = {"opciones_modos": {"pajaro_pisos1a3": {"victorias": 30}, "perros_piso4": {"victorias": 5}},
+                 "plan": [{"modo": "rata_pisos1a3", "victorias": 30}, {"modo": "indura", "victorias": 4},
+                          {"modo": "pajaro_pisos1a3", "victorias": 0}]}
+        config._victorias_a_vueltas(datos)
+        self.assertEqual(datos["opciones_modos"]["pajaro_pisos1a3"]["victorias"], 10)
+        self.assertEqual(datos["opciones_modos"]["perros_piso4"]["victorias"], 5, "el Floor 4 sigue en peleas")
+        self.assertEqual([t["victorias"] for t in datos["plan"]], [10, 4, 0])
+
+    def test_nombre_de_los_lobos(self):
+        self.assertEqual(B.PerrosPisos1a3.titulo_juego, "Skoll & Hati")

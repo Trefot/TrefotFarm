@@ -203,6 +203,21 @@ def _misma_imagen(a, b) -> bool:
 VECES_HEROE = 5  # cartas de un heroe vistas en la sesion para contarlo en el equipo
 
 
+def heroes_con_talento() -> set[str]:
+    global _TALENTOS
+    if _TALENTOS is None:
+        try:
+            import yaml
+
+            from lumen.rutas import RAIZ
+
+            _TALENTOS = set(yaml.safe_load((RAIZ / "lumen" / "datos" / "talentos.yaml").read_text(encoding="utf-8")) or [])
+        except Exception:
+            _TALENTOS = {"odin"}
+    return _TALENTOS
+
+
+_TALENTOS: set | None = None
 AUTO = Plantilla("demons/auto.jpg")  # el boton AUTO de la pelea (el mismo en demonios y bestias)
 AUTO_QUIETO = 4.0  # s con casillas libres sin que se llenen: el AUTO no esta puesto
 
@@ -269,6 +284,7 @@ class PerrosPiso4(Modo):
 
     def _nueva_pelea(self):
         self.auto_puesto = False
+        self.huecos_sin_mi, self.bajadas_solas, self.auto_quitado_en = -1, 0, 0.0
         self.auto_huecos, self.auto_quieto_desde = -1, None
         self.fase: int | None = None
         self.turno_fase = 0
@@ -415,6 +431,8 @@ class PerrosPiso4(Modo):
             return "rendirse"
         if self.jugar_auto:
             return self._pelea_auto(p, o)
+        if not self.turno_abierto and self._auto_puesto_sin_querer(p, o):
+            return None
 
         talento = self._talento_visible(p)
         # 0.75 y no 0.8: el boton del talento tapa un poco la 2.a casilla y con Nidhoggr (fase 2) el ultimo hueco
@@ -447,6 +465,20 @@ class PerrosPiso4(Modo):
             self.huecos_leidos = 0
         self._foto_sin_turno(p)
         return None
+
+    def _auto_puesto_sin_querer(self, p, o) -> bool:
+        """Jugando cartas, el AUTO del juego puede seguir puesto de la tarea anterior (una bestia en AUTO): el
+        juego llena las casillas solo y el bot nunca ve su turno quieto (prueba del usuario, 2026-11-09). Se nota
+        porque las casillas libres BAJAN sin que el bot haya jugado: a la segunda vez se toca AUTO para quitarlo."""
+        huecos = C.contar_huecos(p, 0.75)
+        if 0 <= huecos < self.huecos_sin_mi and time.time() - self.ultimo_turno > 3:
+            self.bajadas_solas += 1
+        self.huecos_sin_mi = huecos
+        if self.bajadas_solas >= 2 and time.time() - self.auto_quitado_en > 8 and self.clic_si(AUTO, p, o, umbral=0.8, espera=1.0):
+            self.log("El AUTO del juego estaba puesto: lo quito para jugar yo las cartas.", "aviso")
+            self.bajadas_solas, self.auto_quitado_en = 0, time.time()
+            return True
+        return False
 
     def _pelea_auto(self, p, o):
         """Con el AUTO del juego: no se juegan cartas. AUTO se toca cuando hay casillas libres que nadie llena
@@ -521,7 +553,8 @@ class PerrosPiso4(Modo):
         if self.rendirse_si_bloqueada and self.fase != 3 and juego.mano_bloqueada.esta(p, 0.6):
             self.log("Mano bloqueada desde el inicio: reinicio.", "aviso")
             return "rendirse"
-        if self.talento_turno_1 and self.fase == 1 and self.turno_fase == 1 and not self.talento_inicial_usado:
+        if self.talento_turno_1 and self.fase == 1 and self.turno_fase == 1 and not self.talento_inicial_usado \
+                and self._hay_talento(p):
             self.talento_inicial_usado = True
             self.log("Turno 1: activo el talento antes de jugar.")
             entrada.clic(juego.COORD["talento"], self.capturar()[1], espera=0.1)
@@ -646,6 +679,21 @@ class PerrosPiso4(Modo):
         self.log(f"No pude confirmar el perro {lado}; sigo igual.", "aviso")
         self.objetivo_actual = lado
 
+    def _meta_cumplida(self) -> bool:
+        meta = int(self.valores.get("victorias") or 0)
+        if meta and self.victorias >= meta:
+            self.log(f"Llegue a {meta} victorias.", "ok")
+            return True
+        return False
+
+    def _hay_talento(self, p) -> bool:
+        """Si el equipo tiene talento (el boton redondo sobre las casillas). Solo 9 heroes lo tienen
+        (lumen/datos/talentos.yaml, de 7dshub): el bot lo tocaba siempre y perdia tiempo (prueba del usuario,
+        2026-11-09). Vale con ver el de Odin o haber visto en la mano cartas de un heroe con talento."""
+        if self._talento_visible(p):
+            return True
+        return bool(set(getattr(self, "heroes_vistos", {})) & heroes_con_talento())
+
     def _talento_visible(self, p) -> bool:
         plantilla = EQUIPO.plantilla("odin.talento")
         return plantilla is not None and plantilla.esta(p, 0.75)
@@ -691,9 +739,7 @@ class PerrosPiso4(Modo):
             minutos = (time.time() - self.inicio_pelea) / 60
             self.log(f"¡VICTORIA #{self.victorias}! ({minutos:.1f} min)", "ok")
             self._stats()
-            meta = int(self.valores["victorias"])
-            if meta and self.victorias >= meta:
-                self.log(f"Llegue a {meta} victorias.", "ok")
+            if self._meta_cumplida():
                 raise TerminarModo()
             return "elegir_piso"
         self.ultima_pantalla_victoria = p
