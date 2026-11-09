@@ -119,6 +119,10 @@ class DemonioTiempoReal(Modo):
         self.equipo_usado: list[str] | None = None
         self.heroes_vistos: dict[str, int] = {}
 
+    def al_empezar(self):
+        if self.valores.get("jugar") == "Inteligente":
+            self.jugador.precargar()
+
     def capturar(self):
         self.t_captura_anterior, self.t_captura = self.t_captura, time.perf_counter()
         return ventana.capturar()

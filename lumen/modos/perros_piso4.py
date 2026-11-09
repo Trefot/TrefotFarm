@@ -570,6 +570,7 @@ class PerrosPiso4(Modo):
             fusiones = 0 if isinstance(idx, tuple) else self.estrategia.fusiones_al_jugar(mano, idx)
             self.esperar_corto(PAUSA_ENTRE_CARTAS + (0.6 if fusiones == 1 else 1.1 if fusiones > 1 else 0))
             ultima_accion = accion
+            self.ultimo_turno = time.time()  # la foto "sin turno" cuenta desde la ultima carta, no desde el inicio
             # Tambien la ultima carta se comprueba: el turno solo acaba cuando no quedan huecos.
             # (En la primera pelea real la ultima carta a veces no entraba y el bot no se enteraba.)
         self.log("El turno tardo demasiado; lo retomo en el siguiente paso.", "aviso")

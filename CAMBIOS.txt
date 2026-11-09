@@ -29,6 +29,13 @@ Etapas previstas:
 
 CAMBIOS
 -------
+0.16.2-alpha
+  - PC lentos: en el portatil de un probador la primera carta del turno 1 tardo casi 2 minutos (el bot cargaba
+    entonces las mas de 1000 cartas de la base para reconocerlas) y se pasaba el limite del turno. Ahora se
+    cargan en segundo plano al empezar el modo, mientras el bot va a la pelea (bestias e Indura Inteligente).
+  - La foto de "1 min sin ver mi turno" cuenta desde la ultima carta jugada, no desde el inicio del turno:
+    en un PC lento salia en medio de un turno largo sin que pasara nada malo.
+
 0.16.1-alpha
   - Personajes: botones "Marcar todos" y "Quitar todos" (piden confirmacion). Cambian todos los que se ven
     con la busqueda y los filtros: lo mas rapido es marcar todos y quitar los que faltan.

@@ -18,6 +18,7 @@ no para saber el dano real. Se puede afinar por carta con ``valores`` (p. ej. sa
 carta: "200% of Attack on all enemies").
 """
 
+import threading
 from dataclasses import dataclass
 from functools import lru_cache
 
@@ -163,14 +164,26 @@ class Jugador:
         self.razones: dict[str, list[str]] = {}  # por que valio mas o menos cada carta (para el diario)
         self.params: dict = {}  # lo que cambia el aprendizaje (lumen/ia/aprendizaje.py); vacio = los de siempre
         self._indice = self._tasador = self._lector = None  # se cargan en la primera jugada (tardan ~1 s)
+        self._carga = threading.Lock()
+
+    def _cargar(self):
+        with self._carga:  # si ya se estan cargando en segundo plano (precargar), se espera a que acaben
+            if self._indice is None:
+                from lumen import valor_cartas  # aqui: solo se cargan si se juega en modo inteligente
+                from lumen.modos.aprender import IndiceCartas
+
+                tasador = valor_cartas.Tasador(self.enemigos)
+                self._indice, self._tasador = IndiceCartas(), tasador
+
+    def precargar(self) -> None:
+        """Carga ya, en segundo plano, lo que la primera jugada tardaria en cargar. En un PC normal es ~2 s,
+        pero en el portatil lento de un probador (0.16.0) la primera carta del turno 1 tardo casi 2 min y se
+        paso el limite del turno. Se llama al empezar el modo: se carga mientras el bot va a la pelea."""
+        threading.Thread(target=self._cargar, daemon=True, name="precarga_cartas").start()
 
     def _identificar(self, carta: Carta) -> str | None:
         if self._indice is None:
-            from lumen import valor_cartas  # aqui: solo se cargan si se juega en modo inteligente
-            from lumen.modos.aprender import IndiceCartas
-
-            self._indice = IndiceCartas()
-            self._tasador = valor_cartas.Tasador(self.enemigos)
+            self._cargar()
         return self._indice.carta_de(carta)
 
     def elegir(self, mano: list[Carta], acciones: int) -> tuple | None:

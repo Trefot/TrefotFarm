@@ -93,6 +93,10 @@ class BestiaPisos1a3(PerrosPiso4):
         Opcion("max_pociones", "Máximo de pociones (0 = sin límite)", "entero", 0, maximo=999),
     ]
 
+    def al_empezar(self):
+        if isinstance(self.estrategia, EstrategiaInteligente):
+            self.estrategia.jugador.precargar()
+
     def __init__(self, valores: dict):
         super().__init__(valores)
         inteligente = self.valores.get("jugar", "Inteligente") != "Simple"

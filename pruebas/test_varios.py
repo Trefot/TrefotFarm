@@ -749,3 +749,39 @@ class PaginaPersonajesRapida(unittest.TestCase):
             with mock.patch.object(G.QMessageBox, "question", return_value=G.QMessageBox.Yes):
                 pagina._marcar_visibles(False)
             self.assertFalse(any(pj.tengo for pj in P.cargar().values()))
+
+
+class PrecargaCartas(unittest.TestCase):
+    """PC lento de un probador (0.16.0): la primera carta tardo casi 2 min en cargar el indice de cartas."""
+
+    def test_se_carga_en_segundo_plano_y_la_jugada_la_espera(self):
+        from lumen import inteligencia, valor_cartas
+        from lumen.modos import aprender
+
+        cargas = []
+
+        class IndiceLento:
+            def __init__(self):
+                time.sleep(0.3)
+                cargas.append(1)
+
+            def carta_de(self, carta):
+                return "heroe.skill_1"
+
+        with mock.patch.object(aprender, "IndiceCartas", IndiceLento), \
+                mock.patch.object(valor_cartas, "Tasador", lambda enemigos: object()):
+            jugador = inteligencia.Jugador()
+            inicio = time.perf_counter()
+            jugador.precargar()
+            self.assertLess(time.perf_counter() - inicio, 0.1, "precargar no bloquea")
+            self.assertEqual(jugador._identificar(Carta(0, tipo=T.NORMAL, rango=Rango.ORO)), "heroe.skill_1")
+            self.assertEqual(cargas, [1], "la jugada espera a la carga que ya iba y no carga otra vez")
+
+    def test_el_modo_precarga_al_empezar_a_correr(self):
+        from lumen.modos import bestias_pisos1a3 as B
+
+        modo = next(m for m in B.__dict__.values() if isinstance(m, type) and issubclass(m, B.BestiaPisos1a3)
+                    and m is not B.BestiaPisos1a3)({})
+        with mock.patch.object(modo.estrategia.jugador, "precargar") as precargar:
+            modo.al_empezar()
+        precargar.assert_called_once()

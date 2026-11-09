@@ -136,6 +136,9 @@ class Modo:
             return True
         return False
 
+    def al_empezar(self):
+        """Al empezar a correr (no al crearse): p. ej. cargar en segundo plano lo que tarda."""
+
     def al_terminar(self):
         """Resumen final; los modos lo amplian."""
 
@@ -157,6 +160,7 @@ class Modo:
         estados = self.estados()
         self._iniciar_vigilante()
         self.log(f"Iniciando {self.nombre}.", "ok")
+        self.al_empezar()
         try:
             while True:
                 control.revisar()
