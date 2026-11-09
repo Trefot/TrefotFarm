@@ -29,6 +29,13 @@ Etapas previstas:
 
 CAMBIOS
 -------
+0.29.1-alpha
+  - Ratatoskr Floor 2 (prueba del usuario): la barra de los troncos se ve negra o blanca y el bot los daba por rotos;
+    entonces jugaba Bleed/Shock, la rata se iba al tronco 3 y el area rompia el del centro. Ahora los troncos se
+    reconocen por su espiral, Bleed y Shock se guardan mientras vivan el 2 y el 3, y si la rata sale del centro la
+    devuelve con Poison. Las cartas que envenenan solo por la pasiva (area de Valenti azul) ya no se bloquean.
+  - Ratatoskr: se rinde a los 15 minutos de pelea (antes 8, y se rindio en pleno Floor 2).
+
 0.29.0-alpha
   - Pestana "Aprendido" en Farmear: lo que el bot aprendio de cada pelea, por piso y fase (que cartas prefiere y
     cuales evita). Tambien llega al movil con la orden "diario".

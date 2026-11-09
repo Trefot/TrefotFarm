@@ -134,3 +134,29 @@ class Pasivas(unittest.TestCase):
         texto = ("If the hero uses an all-target attack and deals damage, enemies hit by the attack are Poisoned for "
                  "2 turns.")
         self.assertEqual(R.desventajas_de_pasiva(texto), {"area": {"poison"}, "uno": set()})
+
+
+class Piso2EnElJuego(unittest.TestCase):
+    """Prueba del 2026-11-09: la rata se fue al tronco 3 y el area rompio el del centro."""
+
+    def test_si_sale_del_centro_la_devuelve_con_poison(self):
+        d = R.decidir(2, 1, 3, {1, 2, 3}, mano(), 4, False)
+        self.assertEqual(d.forzar, {2}, "Poison la trae al tronco 1")
+        self.assertTrue({0, 1} <= d.bloquear, "Bleed y Shock la sacarian otra vez")
+
+    def test_el_area_que_envenena_por_la_pasiva_no_se_bloquea(self):
+        valenti_area = C(4, {"poison"}, area=True, pasiva={"poison"})  # Valenti azul: su area envenena
+        d = R.decidir(2, 1, 1, {1, 2, 3}, [C(0, {"bleed"}), valenti_area], 4, False)
+        self.assertNotIn(4, d.bloquear, "el juego deja jugarla y la rata sigue en el centro")
+        self.assertIn(0, d.bloquear)
+
+    def test_troncos_del_floor_2_por_su_espiral(self):
+        m = B.RataPisos1a3({"jugar": "Inteligente"})
+        m.piso = 2
+        leer = lambda n: cv2.imread(str(Path(__file__).with_name(f"{n}.png")))  # noqa: E731
+        self.assertEqual(m.troncos_vivos(leer("rata_f2_tres")), {1, 2, 3})
+        self.assertEqual(m.troncos_vivos(leer("rata_f2_solo_der")), {3}, "la barra se ve negra, pero sigue en pie")
+        self.assertEqual(m.troncos_vivos(leer("rata_f2_solo_centro")), {1})
+
+    def test_la_rata_tiene_mas_tiempo(self):
+        self.assertGreater(B.RataPisos1a3.MINUTOS_PELEA, 8)

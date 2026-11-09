@@ -242,6 +242,7 @@ AUTO_QUIETO = 4.0  # s con casillas libres sin que se llenen: el AUTO no esta pu
 
 
 class PerrosPiso4(Modo):
+    MINUTOS_PELEA = 8  # se rinde si una pelea dura mas
     id = "perros_piso4"
     nombre = "Skoll & Hati · Floor 4"
     descripcion = (
@@ -494,7 +495,7 @@ class PerrosPiso4(Modo):
         if juego.piso3_superado.esta(p):
             self.log("Volvi a la pantalla de pisos sin ver el final de la pelea.", "aviso")
             return "elegir_piso"
-        if time.time() - self.inicio_pelea > 8 * 60:
+        if time.time() - self.inicio_pelea > self.MINUTOS_PELEA * 60:
             self.log("La pelea dura demasiado; me rindo.", "aviso")
             return "rendirse"
         if self.jugar_auto:

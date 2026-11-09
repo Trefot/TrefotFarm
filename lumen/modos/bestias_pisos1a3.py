@@ -641,6 +641,7 @@ class RataPisos1a3(_bestia("rata", "Ratatoskr", juego.rata, "rat/ratatoskr.png")
     piso y fase) estan en lumen/modos/rata.py, tal como las explico el usuario jugando una partida (2026-11-09).
     Aqui se mira la pantalla: en que tronco esta la rata y que troncos siguen en pie."""
 
+    MINUTOS_PELEA = 15  # sus pisos son largos: en la prueba del 2026-11-09 se rindio a los 8 min en pleno Floor 2
     LADOS = {"centro": 1, "izq": 2, "der": 3}
     # Encima de cada tronco hay una espiral cian; la rata siempre esta subida a uno y tapa la suya (la tapada da
     # 0,007-0,019 y las visibles 0,086-0,118). Mas fiable que buscar su dibujo, que cambia de postura.
@@ -689,6 +690,17 @@ class RataPisos1a3(_bestia("rata", "Ratatoskr", juego.rata, "rat/ratatoskr.png")
         # una espiral es mas palida: 0,027).
         return tapada if cian[tapada] < 0.025 and min(otras) >= cian[tapada] + 0.015 else None
 
+    def espirales(self, p) -> dict[str, float]:
+        """Cuanto se ve la espiral cian (o la cara morada) encima de cada tronco."""
+        if not isinstance(p, np.ndarray):
+            return {}
+        salida = {}
+        for lado, ((x1, y1, x2, y2), _) in self.ESPIRALES.items():
+            z = p[y1:y2, x1:x2].astype(int)
+            b, g, r = z[..., 0], z[..., 1], z[..., 2]
+            salida[lado] = float((((b > 180) & (g > 170) & (r < 140)) | ((b > 150) & (r > 120) & (g < 120))).mean())
+        return salida
+
     def rata_tronco(self, p) -> int | None:
         lado = self.lado_de_la_rata(p)
         return self.LADOS[lado] if lado else None
@@ -716,6 +728,10 @@ class RataPisos1a3(_bestia("rata", "Ratatoskr", juego.rata, "rat/ratatoskr.png")
     def troncos_vivos(self, p) -> set[int]:
         vida = self.vida_troncos(p)
         vivos = {n for n, v in vida.items() if v > 0.02}  # sin barra: 0,00; con barra: 0,04-0,07
+        if self.piso == 2:
+            # En el Floor 2 la barra suele verse negra o blanca: el tronco en pie se reconoce por su espiral (o la cara
+            # morada); roto queda un disco sin nada (fotos del usuario y del bot, 2026-11-09: 0,05-0,17 frente a 0,00).
+            vivos |= {self.LADOS[lado] for lado, v in self.espirales(p).items() if v > 0.03}
         rata = self.rata_tronco(p)
         if rata is not None:
             vivos.add(rata)  # la rata tapa la barra del suyo: se da por vivo
@@ -755,8 +771,8 @@ class RataPisos1a3(_bestia("rata", "Ratatoskr", juego.rata, "rat/ratatoskr.png")
             desventajas = R.desventajas_del_texto(texto)
             # Y las que anade la pasiva del heroe (Valenti azul: sus ataques de area envenenan)
             pasiva = R.desventajas_de_pasiva(((P.ficha(nombre.partition(".")[0]) or {}).get("pasiva") or {}).get("texto", ""))
-            desventajas |= pasiva["area"] if area else pasiva["uno"]
-            cartas.append(R.CartaRata(i, desventajas, c.tipo == TipoCarta.ULTI, area, c.jugable))
+            de_pasiva = (pasiva["area"] if area else pasiva["uno"]) - desventajas
+            cartas.append(R.CartaRata(i, desventajas | de_pasiva, c.tipo == TipoCarta.ULTI, area, c.jugable, de_pasiva))
         return cartas
 
     def plan_rata(self, p, fase: int, mano=None, accion: int = 0, total: int = 4):

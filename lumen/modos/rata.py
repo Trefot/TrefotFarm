@@ -66,6 +66,7 @@ class CartaRata:
     ulti: bool = False
     area: bool = False
     jugable: bool = True
+    pasiva: set[str] = field(default_factory=set)  # las que pone solo la pasiva (el juego no mira esas para dejarla)
 
 
 @dataclass
@@ -92,7 +93,8 @@ def decidir(piso: int, fase: int, rata_en: int | None, vivos: set[int], cartas: 
     d = Decision()
     con_desventaja = [c for c in cartas if c.desventajas and c.jugable]
     for c in con_desventaja:  # las que la mandarian donde ya esta: el juego no las deja
-        if rata_en is not None and all(DESTINO[x] == rata_en for x in c.desventajas):
+        propias = c.desventajas - c.pasiva
+        if rata_en is not None and propias and all(DESTINO[x] == rata_en for x in propias):
             d.bloquear.add(c.indice)
 
     if piso == 1:
@@ -106,9 +108,17 @@ def decidir(piso: int, fase: int, rata_en: int | None, vivos: set[int], cartas: 
     if piso == 2:
         troncos = sorted(vivos & {2, 3})
         if troncos:
-            d.bloquear |= {c.indice for c in con_desventaja}  # no moverla mientras haya troncos
+            # La rata tiene que seguir en el centro (tronco 1): Bleed y Shock la sacan, Poison la trae. Subida al 2 o
+            # al 3 protege ese tronco y el area acaba rompiendo el del centro (prueba del 2026-11-09).
+            venenos = [c.indice for c in con_desventaja if "poison" in c.desventajas and c.indice not in d.bloquear]
+            d.bloquear |= {c.indice for c in con_desventaja if c.desventajas & {"bleed", "shock"}}
             d.objetivo = troncos[0]
-            d.motivo = "inmortal mientras vivan los troncos 2 y 3"
+            if rata_en in (2, 3) and venenos:
+                d.forzar = set(venenos) - d.bloquear or set(venenos)
+                d.bloquear -= d.forzar
+                d.motivo = f"esta en el tronco {rata_en}: la devuelvo al centro con Poison"
+            else:
+                d.motivo = "inmortal mientras vivan los troncos 2 y 3"
         else:
             venenos = [c for c in con_desventaja if "poison" in c.desventajas]
             if len(venenos) == 1 and rata_en in (1, None):
