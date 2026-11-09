@@ -834,7 +834,7 @@ class RataPisos1a3(_bestia("rata", "Ratatoskr", juego.rata, "rat/ratatoskr.png")
             carta = next(c for c in self._cartas_rata(mano) if c.indice == indice)
         except (StopIteration, Exception):
             return
-        self._puestas_turno |= carta.desventajas
+        self._puestas_turno |= carta.desventajas | ({"ulti"} if carta.ulti else set())
 
     def objetivo_rata(self, p, fase: int) -> tuple[str, tuple[int, int]]:
         """(a quien, donde tocar) segun el piso, la fase y lo que se ve."""

@@ -218,3 +218,20 @@ class Piso3Objetivo(unittest.TestCase):
             m._cambiar_objetivo("rata")
         self.assertEqual(len(clics), 1, "una vez, y no repite si ya la tiene marcada")
         self.assertEqual(m.objetivo_actual, "rata")
+
+
+class Piso3Fase2(unittest.TestCase):
+    """Prueba del 2026-11-09: en la fase 2 tiro 4 ultis seguidas y el area rompio el tronco de destino."""
+
+    def test_en_la_fase_2_no_hay_ulti_de_recurso(self):
+        d = R.decidir(3, 2, 3, {1, 3}, [C(0, {"bleed"}), C(3), C(4, area=True), C(5, ulti=True)], 4, False)
+        self.assertFalse(d.forzar)
+        self.assertTrue({0, 4, 5} <= d.bloquear, "sin ultis ni area; solo de un objetivo")
+        self.assertNotIn(3, d.bloquear)
+
+    def test_en_la_fase_3_solo_una_ulti_por_turno(self):
+        cartas = [C(3), C(5, ulti=True), C(6, ulti=True)]
+        self.assertEqual(R.decidir(3, 3, 1, {1, 3}, cartas, 4, False).forzar, {5})
+        d = R.decidir(3, 3, 1, {1, 3}, cartas, 3, False, {"ulti"})
+        self.assertFalse(d.forzar)
+        self.assertIn(6, d.bloquear)

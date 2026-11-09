@@ -147,12 +147,15 @@ def decidir(piso: int, fase: int, rata_en: int | None, vivos: set[int], cartas: 
                         else f"tengo las 3 desventajas: la llevo al tronco {destino}")
         else:
             d.bloquear |= {c.indice for c in con_desventaja}  # guardarlas hasta tener las 3
-            if 2 not in vivos and ultis and len(trio) < 3:
-                d.forzar = set(ultis)  # ultimo recurso: la ulti la mueve al azar
-                d.motivo = "sin las 3 desventajas y el tronco 2 roto: pruebo la ulti"
+            # Solo de un objetivo mientras no este colocada: el area tambien pega al tronco de destino y, roto, ya no
+            # puede ir alli y queda inmortal (prueba del 2026-11-09, fase 2).
+            d.bloquear |= {c.indice for c in cartas if c.area and not c.ulti}
+            if fase == 3 and 2 not in vivos and ultis and "ulti" not in puestas:
+                d.forzar = {ultis[0]}  # el usuario, solo en la fase 3: una ulti, que la mueve al azar
+                d.motivo = "fase 3 sin las 3 desventajas y el tronco 2 roto: pruebo UNA ulti"
             else:
                 d.bloquear |= set(ultis)  # la moveria al azar
-                d.motivo = "guardo las desventajas hasta tener las 3; sin ultis"
+                d.motivo = "guardo las desventajas hasta tener las 3; solo ataques de un objetivo"
         otros = sorted(vivos - {destino})
         d.objetivo = 2 if 2 in otros else (otros[0] if otros else "rata")
         if d.forzar and not (d.forzar & set(ultis)):

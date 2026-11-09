@@ -29,6 +29,12 @@ Etapas previstas:
 
 CAMBIOS
 -------
+0.29.5-alpha
+  - Ratatoskr Floor 3, fase 2 (prueba del 2026-11-09): tiro 4 ultis seguidas con la regla "tronco 2 roto: prueba la
+    ulti", que el usuario enseno solo para la fase 3, y el area rompio el tronco de destino (la rata quedo inmortal).
+    Ahora: ulti de recurso solo en la fase 3 y una por turno; y mientras la rata no este colocada, solo ataques de un
+    objetivo (como juega el usuario), para no romper el tronco al que tiene que ir.
+
 0.29.4-alpha
   - Ratatoskr Floor 3 (prueba del 2026-11-09): el trio de desventajas ya salia entero, pero el Shock de Valenti es de
     un objetivo y fue al tronco marcado, no a la rata. Ahora, antes de poner el trio, marca a la rata a mitad de turno.
