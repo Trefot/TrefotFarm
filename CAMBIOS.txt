@@ -29,6 +29,13 @@ Etapas previstas:
 
 CAMBIOS
 -------
+0.30.0-alpha
+  - Modo administrador con contrasena (lo pidio el usuario: el link del bot lo tienen amigos). La casilla de Ajustes
+    ya no basta: solo se ve y se enciende en la PC que tiene la llave de la contrasena (lumen/admin.py). En el
+    repositorio solo va su huella (lumen/datos/admin.yaml), de la que no se puede sacar la contrasena; la llave se
+    guarda en config.yaml, que no se sube. Primera vez: Ajustes > Crear la contrasena de administrador; Lumen escribe
+    la huella en logs/huella_admin.txt para publicarla. En otra PC: Entrar como administrador (pide la contrasena).
+
 0.29.6-alpha
   - Ratatoskr cerrado hasta que funcione bien (lo pidio el usuario): sale en gris como "proximamente" y no se puede
     empezar ni poner en el plan. El codigo y lo aprendido se guardan; su botin viejo sigue con su nombre. Falta

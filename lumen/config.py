@@ -14,7 +14,8 @@ POR_DEFECTO = {
     "tecla_pausa": "f9",
     "tecla_detener": "f10",
     "ultimo_modo": "perros_piso4",
-    "modo_admin": False,  # muestra Capturas y el Editor de personajes
+    "modo_admin": False,  # muestra Capturas y el Editor de personajes (solo con la contrasena: lumen/admin.py)
+    "admin_llave": "",  # llave de la contrasena de admin en esta PC (nunca la contrasena)
     "skin": "auto",
     "asistente_visto": False,  # el asistente de primera vez ya salio
     "acceso_ofrecido": False,  # ya se pregunto si crear los accesos directos  # "auto" = segun la fecha; o el id de una skin de gui/tema.py
@@ -101,12 +102,22 @@ def _victorias_a_vueltas(datos: dict) -> None:
     datos["vueltas_pisos1a3"] = True
 
 
-def obtener(clave: str, defecto=None):
+def obtener_guardado(clave: str, defecto=None):
+    """Lo que hay en config.yaml, tal cual."""
     global _datos
     with _lock:
         if _datos is None:
             _datos = _cargar()
         return _datos.get(clave, POR_DEFECTO.get(clave, defecto))
+
+
+def obtener(clave: str, defecto=None):
+    valor = obtener_guardado(clave, defecto)
+    if clave == "modo_admin":  # solo con la llave de la contrasena de admin (lumen/admin.py), no basta la casilla
+        from lumen import admin
+
+        return admin.activo()
+    return valor
 
 
 def guardar(cambios: dict) -> None:

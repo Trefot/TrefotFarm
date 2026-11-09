@@ -11,6 +11,7 @@ from PyQt5.QtWidgets import (
     QFrame,
     QGridLayout,
     QHBoxLayout,
+    QInputDialog,
     QLabel,
     QLineEdit,
     QMessageBox,
@@ -19,7 +20,7 @@ from PyQt5.QtWidgets import (
     QVBoxLayout,
 )
 
-from lumen import actualizador, avisos, config
+from lumen import actualizador, admin as modo_admin, avisos, config
 from lumen.gui import iconos, tema
 from lumen.gui.comun import Pagina
 
@@ -142,7 +143,10 @@ class PaginaAjustes(Pagina):
         self.modo_admin = QCheckBox("Modo administrador: mostrar Capturas y el Editor de personajes")
         self.modo_admin.setChecked(bool(config.obtener("modo_admin")))
         c.addWidget(self.modo_admin)
-        c.addWidget(nota("Solo para quien mantiene la base del bot (cartas, retratos y equipos). "
+        self.b_admin = QPushButton(objectName="chico")
+        self.b_admin.clicked.connect(self._boton_admin)
+        c.addWidget(self.b_admin)
+        c.addWidget(nota("Solo para quien mantiene la base del bot (cartas, retratos y equipos), con su contraseña. "
                          "Los jugadores normales no lo necesitan."))
         # El repositorio de las actualizaciones: solo lo toca quien mantiene el bot
         self.caja_repo = QFrame()
@@ -153,8 +157,8 @@ class PaginaAjustes(Pagina):
         f.addRow("Repositorio", self.url_repo)
         f.addRow("", nota("De aquí se bajan las actualizaciones obligatorias. Solo cámbialo si mueves el repositorio."))
         c.addWidget(self.caja_repo)
-        self.caja_repo.setVisible(self.modo_admin.isChecked())
-        self.modo_admin.toggled.connect(self.caja_repo.setVisible)
+        self.modo_admin.toggled.connect(lambda _: self._pintar_admin())
+        self._pintar_admin()
         rejilla.addWidget(admin, 2, 0, 1, 2)
         rejilla.setColumnStretch(0, 1)
         rejilla.setColumnStretch(1, 1)
@@ -170,6 +174,51 @@ class PaginaAjustes(Pagina):
         botones.addStretch()
         self.cuerpo.addLayout(botones)
         self.cuerpo.addStretch()
+
+    # ------------------------------------------------------------------ administrador
+    def _pintar_admin(self):
+        abierto = modo_admin.desbloqueado()
+        self.modo_admin.setVisible(abierto)
+        if not abierto:
+            self.modo_admin.setChecked(False)
+        self.caja_repo.setVisible(abierto and self.modo_admin.isChecked())
+        texto = ("Salir del modo administrador" if abierto else
+                 "Entrar como administrador…" if modo_admin.hay_contrasena() else "Crear la contraseña de administrador…")
+        self.b_admin.setText(" " + texto)
+        self.b_admin.setIcon(iconos.icono("admin", tema.TEXTO))
+
+    def _pedir(self, titulo: str, texto: str) -> str | None:
+        valor, ok = QInputDialog.getText(self, titulo, texto, QLineEdit.Password)
+        return valor if ok else None
+
+    def _boton_admin(self):
+        if modo_admin.desbloqueado():
+            modo_admin.salir()
+        elif modo_admin.hay_contrasena():
+            clave = self._pedir("Administrador", "Contraseña de administrador:")
+            if clave is None:
+                return
+            if not modo_admin.entrar(clave):
+                QMessageBox.warning(self, "Administrador", "Esa contraseña no es la de administrador.")
+                return
+        else:
+            clave = self._pedir("Crear contraseña", f"Elige la contraseña de administrador (mínimo {modo_admin.MINIMO} letras):")
+            if clave is None:
+                return
+            if clave != self._pedir("Crear contraseña", "Escríbela otra vez:"):
+                QMessageBox.warning(self, "Crear contraseña", "No coinciden. Prueba otra vez.")
+                return
+            try:
+                modo_admin.crear(clave)
+            except ValueError as e:
+                QMessageBox.warning(self, "Crear contraseña", str(e))
+                return
+            QMessageBox.information(
+                self, "Crear contraseña",
+                "Contraseña creada. Guardé solo su huella (no la contraseña) en logs/huella_admin.txt.\n\n"
+                "El modo administrador se abrirá cuando esa huella llegue con la próxima actualización.")
+        self._pintar_admin()
+        self.app.ajustes_guardados()
 
     def _revisar_canal(self):
         canal = self.ntfy.text().strip()
@@ -194,7 +243,7 @@ class PaginaAjustes(Pagina):
             "minutos_atasco": self.atasco.value(),
             "tecla_pausa": self.tecla_pausa.text().strip().lower() or "f9",
             "tecla_detener": self.tecla_detener.text().strip().lower() or "f10",
-            "modo_admin": self.modo_admin.isChecked(),
+            "modo_admin": self.modo_admin.isChecked() and modo_admin.desbloqueado(),
         })
         url = self.url_repo.text().strip()
         if url and url != actualizador.url_remota():
