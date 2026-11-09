@@ -29,6 +29,10 @@ Etapas previstas:
 
 CAMBIOS
 -------
+0.21.1-alpha
+  - Ratatoskr: los huecos libres brillan en azul y el bot no los veia (0,65): creia acabado el turno con 2
+    cartas por jugar y se quedaba parado. Nuevas imagenes de esos huecos.
+
 0.21.0-alpha
   - Juego inteligente: objetivos de turno que pide el jefe. Ya no solo valora cada carta: busca la combinacion
     del turno entero. "3 o mas habilidades del mismo rango (rango 2 o mas)" (Hraesvelgr Transcendent, fase 2):

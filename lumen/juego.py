@@ -81,7 +81,10 @@ perro_der_seleccionado = P("dogs/right_target_sel.png", "dogs/right_target_sel2.
 # Las 6 "nidhoggr": casillas vacias semitransparentes de Nidhoggr (capturas de la prueba de la 0.7.6); con las
 # demas daban 0.52-0.65 y el bot no veia su turno.
 espacio_vacio = P(*[f"dogs/empty_slot_{i}.png" for i in range(1, 19)],
-                  *[f"dogs/empty_slot_nidhoggr_{i}.png" for i in range(1, 7)], nombre="espacio_vacio")
+                  *[f"dogs/empty_slot_nidhoggr_{i}.png" for i in range(1, 7)],
+                  # Ratatoskr: los huecos libres brillan en azul (prueba del usuario, 2026-11-09: daban 0,65 y el bot
+                  # creia acabado el turno con 2 cartas por jugar)
+                  *[f"dogs/empty_slot_ratatoskr_{i}.png" for i in range(1, 3)], nombre="espacio_vacio")
 
 # ------------------------------------------------------------------- cartas
 rango_bronce = P("bronze_card.png")
