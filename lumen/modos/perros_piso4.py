@@ -658,6 +658,9 @@ class PerrosPiso4(Modo):
         # Cartas que se jugaron y no entraron en su hueco: el juego no las acepta (bloqueadas aunque no se vean
         # oscuras). Se tratan como bloqueadas el resto del turno en vez de repetirlas (prueba de la 0.2.4).
         ultima_carta, rechazadas = None, []
+        # Antes de darla por bloqueada se toca otra vez: el juego a veces no registra el toque (justo tras apuntar a
+        # un perro o usar el talento) y el guion de los lobos reiniciaba con la pelea bien (2026-11-10).
+        retocadas = []
         limite = time.time() + 45
         while time.time() < limite:
             p, o = self.capturar()
@@ -677,7 +680,10 @@ class PerrosPiso4(Modo):
                 if repeticiones < 8:
                     self.esperar_corto(0.25)
                     continue
-                if ultima_carta is not None and ultima_carta.imagen is not None:
+                if ultima_carta is not None and ultima_carta.imagen is not None and                         not any(_misma_imagen(ultima_carta.imagen, r) for r in retocadas):
+                    retocadas.append(ultima_carta.imagen)
+                    self.log(f"{ultima_carta} no entró: el toque no llegó, la vuelvo a tocar.", "aviso")
+                elif ultima_carta is not None and ultima_carta.imagen is not None:
                     rechazadas.append(ultima_carta.imagen)
                     self.log(f"{ultima_carta} no entra en su hueco: la trato como bloqueada este turno.", "aviso")
                 else:
@@ -710,7 +716,10 @@ class PerrosPiso4(Modo):
             self.diario.decision(self.fase, self.turno_fase, accion, mano, idx,
                                  getattr(getattr(self.estrategia, "jugador", None), "razones", None))
             if objetivo:
+                antes = self.objetivo_actual
                 self._apuntar(objetivo)
+                if self.objetivo_actual != antes:
+                    self.esperar_corto(0.4)  # que el juego acabe de marcar al perro antes de tocar la carta
             if isinstance(idx, tuple):  # mover una carta sobre otra (gasta el hueco sin atacar)
                 origen, destino = mano[idx[0]], mano[idx[1]]
                 self.log(f"Accion {accion + 1}: muevo {origen} sobre {destino}")

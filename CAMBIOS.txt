@@ -29,6 +29,12 @@ Etapas previstas:
 
 CAMBIOS
 -------
+0.30.4-alpha
+  - Lobos Floor 4, revisadas las 31 peleas del 2026-11-10: ademas de la casilla falsa del principio (0.30.3), a veces
+    el juego no registra el toque de una carta (justo tras apuntar a un perro o usar el talento); el bot la daba por
+    bloqueada y el guion reiniciaba en cualquier turno con la pelea bien. Ahora la toca otra vez antes de darla por
+    bloqueada, y espera 0,4 s tras cambiar de perro antes de tocar la carta.
+
 0.30.3-alpha
   - Lobos Floor 4: la espera de la 0.30.2 no bastaba. Al empezar la pelea, durante las animaciones "Active Unique",
     el circulo magico del suelo parece una casilla libre unos 5 s (fotos del 2026-11-10). Ahora, con 1 sola casilla
