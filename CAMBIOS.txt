@@ -29,6 +29,14 @@ Etapas previstas:
 
 CAMBIOS
 -------
+0.31.1-alpha
+  - El plan del dia fallaba: la 0.31.0 rompio una funcion de los perros Floor 4 que se usa al ganar o perder
+    ("NameError: self"); cada pelea acababa en error y el plan saltaba a la siguiente tarea. Arreglado.
+  - Pajaro y ciervo Floor 4: si el juego esta en los pisos de OTRA bestia (el plan venia de los perros), vuelve
+    atras en vez de quedarse quieto; y si su imagen de "Floor 3 Cleared" no coincide, abre el Floor 4 por su
+    nombre ("Transcendent ...").
+  - La ventana del juego ya no se mueve ni se pone delante si ya esta bien: el plan la recolocaba en cada tarea.
+
 0.31.0-alpha
   - Nuevos: Hraesvelgr (pajaro) Floor 4 y Eikthyrnir (ciervo) Floor 4 (lumen/modos/bestias_piso4.py), con los
     guiones de AutoFarming (licencia MIT) traducidos a cartas con nombre: lo que hace cada carta se lee de su texto

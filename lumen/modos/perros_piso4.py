@@ -904,8 +904,7 @@ class PerrosPiso4(Modo):
             return "elegir_piso"
         return None
 
-    @staticmethod
-    def _volvio_a_pisos(p) -> bool:
+    def _volvio_a_pisos(self, p) -> bool:
         """La pelea termino del todo: pantalla de carga de las bestias o ya en la pantalla de pisos.
         (Tras rendirse, el juego puede volver a los pisos sin que el bot llegue a ver la carga.)"""
         return juego.carga_bestias.esta(p) or self._piso4().esta(p)

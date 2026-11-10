@@ -229,6 +229,13 @@ def ajustar_tamano() -> bool:
             ultimo_error = f"No encuentro la ventana '{config.obtener('titulo_ventana')}'."
             return False
         try:
+            # Ya esta bien: no moverla (el plan del dia la recolocaba en cada tarea y "saltaba", 2026-11-10)
+            if not win32gui.IsIconic(hwnd) and tamano_correcto():
+                ultimo_error = ""
+                return True
+        except win32gui.error:
+            pass
+        try:
             izq, arr, _, _ = win32gui.GetWindowRect(hwnd)
             # Que quede entera dentro de la pantalla
             pantalla_ancho = ctypes.windll.user32.GetSystemMetrics(0)
@@ -254,6 +261,8 @@ def traer_al_frente() -> None:
     hwnd = buscar_ventana()
     if hwnd:
         try:
+            if win32gui.GetForegroundWindow() == hwnd and not win32gui.IsIconic(hwnd):
+                return  # ya esta delante: no tocarla
             if win32gui.IsIconic(hwnd):
                 win32gui.ShowWindow(hwnd, win32con.SW_RESTORE)
             win32gui.SetForegroundWindow(hwnd)

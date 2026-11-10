@@ -142,3 +142,53 @@ class Modos(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class Navegacion(unittest.TestCase):
+    """2026-11-10: el plan del dia fallaba (error al ganar o perder) y el pajaro se quedaba quieto en los pisos
+    de los perros."""
+
+    def setUp(self):
+        self.guardado = {n: getattr(juego, n) for n in ("carga_bestias", "piso3_superado", "piso3_superado_pajaro",
+                                                        "piso3_superado_ciervo", "cancelar")}
+        for n in self.guardado:
+            setattr(juego, n, entorno.PlantillaFalsa(n))
+        self.atras = B4.ATRAS
+        B4.ATRAS = entorno.PlantillaFalsa("atras")
+
+    def tearDown(self):
+        for n, v in self.guardado.items():
+            setattr(juego, n, v)
+        B4.ATRAS = self.atras
+
+    def modo(self, clave):
+        m = MODOS[clave]({"victorias": 0, "extra": 0, "pociones": True, "max_pociones": 0})
+        if clave != "perros_piso4":  # su imagen de "Floor 3 Cleared", la falsa de la prueba
+            m.piso3_superado = getattr(juego, "piso3_superado_" + clave.split("_")[0])
+        return m
+
+    def test_al_ganar_o_perder_no_se_rompe(self):
+        for clave in ("perros_piso4", "pajaro_piso4"):
+            m = self.modo(clave)
+            self.assertTrue(m._volvio_a_pisos({"carga_bestias"}))
+            self.assertFalse(m._volvio_a_pisos(set()))
+
+    def test_sale_de_los_pisos_de_otra_bestia(self):
+        m = self.modo("pajaro_piso4")
+        clics = []
+        m.clic_si = lambda plantilla, p, o, **k: clics.append(plantilla) or plantilla is B4.ATRAS
+        m.log = lambda *a, **k: None
+        m._bestia_de_los_pisos = None
+        original = B4.B13.BestiaPisos1a3._bestia_de_los_pisos
+        B4.B13.BestiaPisos1a3._bestia_de_los_pisos = lambda self, p: 2  # la cabecera dice Skoll and Hati
+        try:
+            self.assertIsNone(m.ir_a_perros({"atras", "piso3_superado"}, (0, 0)))
+        finally:
+            B4.B13.BestiaPisos1a3._bestia_de_los_pisos = original
+        self.assertIn(B4.ATRAS, clics, "vuelve atras")
+
+    def test_en_sus_pisos_elige_el_piso(self):
+        m = self.modo("pajaro_piso4")
+        m.log = lambda *a, **k: None
+        m.clic_si = lambda *a, **k: False
+        self.assertEqual(m.ir_a_perros({"piso3_superado_pajaro"}, (0, 0)), "elegir_piso")

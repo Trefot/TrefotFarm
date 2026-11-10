@@ -18,10 +18,11 @@ Equipos (BOTS_README de AutoFarming):
 import re
 from functools import lru_cache
 
-from lumen import inteligencia, juego
+from lumen import entrada, inteligencia, juego, ocr
 from lumen import personajes as P
 from lumen.cartas import Carta, Rango, TipoCarta
-from lumen.modos.bestias_pisos1a3 import EstrategiaInteligente
+from lumen.modos import bestias_pisos1a3 as B13
+from lumen.modos.bestias_pisos1a3 import ATRAS, PUNTO_ATRAS, EstrategiaInteligente
 from lumen.modos.perros_piso4 import PerrosPiso4
 
 # ------------------------------------------------------------------ las cartas
@@ -590,6 +591,51 @@ class Piso4(PerrosPiso4):
         super()._nueva_pelea()
         if getattr(self, "estrategia", None) is not None and hasattr(self.estrategia, "nueva_pelea"):
             self.estrategia.nueva_pelea()
+
+    # ------------------------------------------------------------- navegacion
+    def _otros_pisos4(self):
+        return [x for x in (juego.piso3_superado, juego.piso3_superado_pajaro, juego.piso3_superado_ciervo)
+                if x is not self._piso4()]
+
+    def ir_a_perros(self, p, o):
+        """Como los perros, pero sabiendo salir de los pisos de OTRA bestia (el plan del dia venia de los perros y el
+        pajaro se quedaba quieto en sus pisos, 2026-11-10)."""
+        if self.clic_si(juego.cancelar, p, o):
+            self.log("Habia una pelea a medias; la doy por perdida y empiezo de nuevo.", "aviso")
+            return None
+        if self._piso4().esta(p):
+            self.log(f"En la pantalla de pisos de {self.titulo_juego}.", "ok")
+            return "elegir_piso"
+        mia = juego.ORDEN_BESTIAS.index(self.bestia)
+        en_pisos = ATRAS.esta(p, 0.75) or any(x.esta(p) for x in self._otros_pisos4())
+        if en_pisos:
+            cabecera = B13.BestiaPisos1a3._bestia_de_los_pisos(self, p)
+            if cabecera == mia:
+                self.log(f"En la pantalla de pisos de {self.titulo_juego}.", "ok")
+                return "elegir_piso"
+            if cabecera is not None or any(x.esta(p) for x in self._otros_pisos4()):
+                self.log(f"Estoy en los pisos de otra bestia: vuelvo atrás para ir a {self.titulo_juego}.", "aviso")
+                if not self.clic_si(ATRAS, p, o, umbral=0.75, espera=1.5):
+                    entrada.clic(PUNTO_ATRAS, o, espera=1.5)
+                return None
+        return super().ir_a_perros(p, o)
+
+    def elegir_piso(self, p, o):
+        siguiente = super().elegir_piso(p, o)
+        if siguiente is None and not juego.ok.esta(p) and not juego.empezar.esta(p) and not self._piso4().esta(p):
+            self._tocar_piso4_por_texto(p, o)  # por si su imagen de "Floor 3 Cleared" ya no coincide
+        return siguiente
+
+    def _tocar_piso4_por_texto(self, p, o) -> bool:
+        """El Floor 4 es el panel de arriba, "Transcendent <bestia>": se busca por su texto."""
+        if not ocr.disponible():
+            return False
+        for texto, (x, y, w, h) in ocr.lineas_con_posicion(p):
+            if "transcend" in texto.lower():
+                self.log("Abro el Floor 4 (por su nombre).", "debug")
+                entrada.clic((x + w // 2, y + h + 50), o, espera=1.0)
+                return True
+        return False
 
     def _verificar_equipo(self, p):
         self.equipo_verificado = True
