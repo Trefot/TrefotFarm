@@ -55,6 +55,9 @@ PROTEGIDAS_FASE2 = ("gawain.area", "odin.area", "freyja_roja.ulti", "thonar_azul
 TURNOS_MAXIMOS = {1: 2, 2: 1, 3: 1}
 PAUSA_ENTRE_CARTAS = 0.5  # tras colocarse una carta, antes de la siguiente (animacion)
 HUECOS_QUIETOS = 0.6  # segundos con la misma cantidad de huecos antes de empezar un turno (PC lentos)
+# Primer turno de la pelea con menos de 3 huecos: tienen que llevar asi este tiempo. Los lobos (2026-11-10) empezaban
+# la mitad de las peleas con "1 cartas por jugar" en plena animacion; la postura no entraba y reiniciaba el nivel.
+HUECOS_QUIETOS_PRIMER_TURNO = 2.5
 
 
 class Reiniciar(Exception):
@@ -524,7 +527,10 @@ class PerrosPiso4(Modo):
             # menos. Antes hacian falta 3 huecos: con Nidhoggr (fase 2) y Ratatoskr, que dejan menos, el bot jugaba
             # el primer turno y se quedaba quieto hasta rendirse (prueba de la 0.7.4). Ademas la cuenta tiene que
             # llevar quieta un momento: en un PC normal ya lo esta al llegar a esas lecturas.
-            quieta = time.time() - self.huecos_quietos_desde >= HUECOS_QUIETOS
+            espera = HUECOS_QUIETOS
+            if huecos < 3 and not getattr(self, "turnos_pelea", 0):
+                espera = HUECOS_QUIETOS_PRIMER_TURNO
+            quieta = time.time() - self.huecos_quietos_desde >= espera
             if talento or (quieta and self.lecturas_turno >= (2 if huecos >= 3 else 3)):
                 self.lecturas_turno = 0
                 self.huecos_leidos = 0

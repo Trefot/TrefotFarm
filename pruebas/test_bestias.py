@@ -244,9 +244,16 @@ class Navegacion(ConPantallaSimulada):
 
     def test_turno_con_pocos_huecos(self):
         """Nidhoggr y Ratatoskr dejan menos de 3 huecos: el turno empieza igual, tras 3 lecturas seguidas."""
-        r = self._pelea_con_huecos([(2, 0), (2, 0.5), (2, 1.0)])
+        r = self._pelea_con_huecos([(2, 0), (2, 0.5), (2, 1.0), (2, 2.6)])
         self.assertEqual(r[1], [], "con 2 huecos no basta con 2 lecturas")
-        self.assertEqual(r[2], [2])
+        self.assertEqual(r[2], [], "primer turno de la pelea: con pocos huecos espera un poco mas")
+        self.assertEqual(r[3], [2])
+
+    def test_primer_turno_no_empieza_en_la_animacion(self):
+        """Lobos, 2026-11-10: empezaba con 1 hueco mientras salian los otros; la postura no entraba y reiniciaba."""
+        r = self._pelea_con_huecos([(1, 0), (1, 0.6), (1, 1.2), (4, 1.5), (4, 2.1)])
+        self.assertEqual(r[2], [], "1 hueco al empezar la pelea: aun no")
+        self.assertEqual(r[4], [4], "empieza con los 4")
 
     def test_turno_espera_a_que_salgan_todos_los_huecos(self):
         """PC lento (maquina virtual): los huecos aparecen poco a poco. No empieza con 2 si luego salen 4."""
