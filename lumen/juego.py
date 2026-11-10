@@ -72,6 +72,20 @@ extra = P("demonic_beasts/extra.png")
 fase_1 = P("demonic_beasts/phase_1.png")
 fase_2 = P("demonic_beasts/phase_2.png")
 fase_3_perros = P("dogs/phase_3_dogs.png")
+# Floor 4 del pajaro y del ciervo (imagenes de AutoFarming, licencia MIT)
+fase_3 = P("demonic_beasts/phase_3.png")
+fase_4 = P("demonic_beasts/phase_4.png")
+piso3_superado_pajaro = P("demonic_beasts/floor_3_cleared_bird.png", "demonic_beasts/floor_3_cleared_2_bird.png",
+                          "demonic_beasts/floor_3_cleared_bird_2.png", nombre="piso3_superado_pajaro")
+piso3_superado_ciervo = P("demonic_beasts/floor_3_cleared_deer.png", "demonic_beasts/floor_3_cleared_2_deer.png",
+                          "demonic_beasts/floor_3_cleared_deer_2.png", nombre="piso3_superado_ciervo")
+bloqueo_habilidades = P("demonic_beasts/block_skill_debuff.png")  # el pajaro bloquea habilidades: hay que limpiar
+evasion = P("demonic_beasts/evasion.png")  # el pajaro con evasion (fase 4)
+inmortalidad = P("demonic_beasts/immortality.png")  # cada icono de inmortalidad del pajaro (fase 3)
+buff_rojo = P("deer/red_buff.png", "deer/red_buff_tiny.png", nombre="buff_rojo")  # la ruleta de colores del ciervo
+buff_azul = P("deer/blue_buff.png", "deer/blue_buff_tiny.png", nombre="buff_azul")
+buff_verde = P("deer/green_buff.png", "deer/green_buff_tiny.png", nombre="buff_verde")
+contraataque = P("snake/f3p2_counter.png")  # el ciervo con contraataque (fase 4): ulti de Hel
 victoria = P("demonic_beasts/db_victory.png")
 criatura_destruida = P("demonic_beasts/creature_destroyed.png")
 derrota = P("demonic_beasts/defeat.png")

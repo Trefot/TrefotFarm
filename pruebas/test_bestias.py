@@ -48,7 +48,7 @@ class Catalogo(unittest.TestCase):
     def test_modos_listos(self):
         listos = {d.id for c in CATALOGO for d in c.destinos if d.id in MODOS}
         self.assertEqual(listos, {"perros_pisos1a3", "pajaro_pisos1a3", "ciervo_pisos1a3", "serpiente_pisos1a3",
-                                  "perros_piso4", "demonio_rojo", "demonio_gris", "howlex",
+                                  "perros_piso4", "pajaro_piso4", "ciervo_piso4", "demonio_rojo", "demonio_gris", "howlex",
                                   "bellmoth", "demonio_original", "indura", "oro", "monedas_sa"})
 
     def test_ratatoskr_cerrado_hasta_que_funcione(self):

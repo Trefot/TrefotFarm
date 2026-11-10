@@ -285,6 +285,8 @@ class PerrosPiso4(Modo):
         "rendirse": "Rindiéndose para repetir la pelea",
     }
     equipo = EQUIPO
+    bestia = juego.perros  # la bestia en el carrusel (el pajaro y el ciervo del Floor 4 ponen la suya)
+    piso3_superado = None  # su "Floor 3 Cleared" (el boton que abre el Floor 4); None = el de los perros
     opciones = [
         Opcion("victorias", "Victorias (0 = sin límite)", "entero", 0, maximo=9999),
         Opcion("extra", "Marcar 'Extra' al abrir el piso (primeras N)", "entero", 0, maximo=99),
@@ -370,18 +372,21 @@ class PerrosPiso4(Modo):
             return None
         self.clic_si(juego.menu_batalla, p, o, umbral=0.6)
         self.clic_si(juego.nido_criaturas, p, o)
-        if juego.pantalla_bestias.esta(p) and not juego.perros.esta(p):
+        if juego.pantalla_bestias.esta(p) and not self.bestia.esta(p):
             self._deslizar_hacia_perros(p, o)
             return None
-        self.clic_si(juego.perros, p, o)
-        if juego.piso3_superado.esta(p):
+        self.clic_si(self.bestia, p, o)
+        if self._piso4().esta(p):
             self.log("En la pantalla de pisos de los Perros.", "ok")
             return "elegir_piso"
         return None
 
+    def _piso4(self):
+        return self.piso3_superado or juego.piso3_superado
+
     def _deslizar_hacia_perros(self, p, o):
         actual = next((i for i, b in enumerate(juego.ORDEN_BESTIAS) if b.esta(p)), None)
-        objetivo = juego.ORDEN_BESTIAS.index(juego.perros)
+        objetivo = juego.ORDEN_BESTIAS.index(self.bestia)
         hacia_derecha = actual is None or actual < objetivo
         desde, hasta = juego.COORD["deslizar_der"], juego.COORD["deslizar_izq"]
         if not hacia_derecha:
@@ -395,7 +400,7 @@ class PerrosPiso4(Modo):
                 self.log(f"Usado 'extra' {self.extras}/{self.valores['extra']}.")
             self.clic_si(juego.ok, p, o)
             return None
-        self.clic_si(juego.piso3_superado, p, o)
+        self.clic_si(self._piso4(), p, o)
         if juego.empezar.esta(p):
             return "preparar"
         return None
@@ -513,7 +518,7 @@ class PerrosPiso4(Modo):
         if self.destruida_desde and time.time() - self.destruida_desde > 5 and time.time() - self.ultimo_boton_texto > 2:
             self.ultimo_boton_texto = time.time()
             self.clic_boton_por_texto(p, o)
-        if juego.piso3_superado.esta(p):
+        if self._piso4().esta(p):
             self.log("Volvi a la pantalla de pisos sin ver el final de la pelea.", "aviso")
             return "elegir_piso"
         if time.time() - self.inicio_pelea > self.MINUTOS_PELEA * 60:
@@ -903,7 +908,7 @@ class PerrosPiso4(Modo):
     def _volvio_a_pisos(p) -> bool:
         """La pelea termino del todo: pantalla de carga de las bestias o ya en la pantalla de pisos.
         (Tras rendirse, el juego puede volver a los pisos sin que el bot llegue a ver la carga.)"""
-        return juego.carga_bestias.esta(p) or juego.piso3_superado.esta(p)
+        return juego.carga_bestias.esta(p) or self._piso4().esta(p)
 
     def rendirse(self, p, o):
         self.reinicio_pedido = True

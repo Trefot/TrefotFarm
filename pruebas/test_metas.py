@@ -116,10 +116,10 @@ class Interfaz(Base):
 
     def test_ir_a_farmearla_gira_la_rueda_y_pone_meta(self):
         ini = self.v.paginas["inicio"]
-        metas.poner("esencia_azul", 0, 100)  # sale en el pajaro Floor 1-3, pero mas en los perros Floor 4
+        metas.poner("esencia_azul", 0, 100)  # sale en el pajaro Floor 1-3, pero mas en su Floor 4 (desde la 0.31.0)
         ini.abrir_meta("esencia_azul", "pajaro_pisos1a3")
         ini.editor.b_ir.click()
-        self.assertEqual(ini.modo_id, "perros_piso4")
+        self.assertEqual(ini.modo_id, "pajaro_piso4")
         self.assertTrue(ini.b_meta.isChecked())
         self.assertTrue(ini.editor.isHidden())
 
