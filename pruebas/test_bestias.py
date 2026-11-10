@@ -251,9 +251,11 @@ class Navegacion(ConPantallaSimulada):
 
     def test_primer_turno_no_empieza_en_la_animacion(self):
         """Lobos, 2026-11-10: empezaba con 1 hueco mientras salian los otros; la postura no entraba y reiniciaba."""
-        r = self._pelea_con_huecos([(1, 0), (1, 0.6), (1, 1.2), (4, 1.5), (4, 2.1)])
-        self.assertEqual(r[2], [], "1 hueco al empezar la pelea: aun no")
-        self.assertEqual(r[4], [4], "empieza con los 4")
+        r = self._pelea_con_huecos([(1, 0), (1, 0.6), (1, 1.2), (1, 3.0), (1, 5.0), (4, 5.4), (4, 6.0)])
+        self.assertEqual(r[4], [], "1 hueco falso durante 5 s (el circulo del suelo): aun no")
+        self.assertEqual(r[6], [4], "empieza con los 4")
+        r = self._pelea_con_huecos([(1, 0), (1, 0.6), (1, 8.1)])
+        self.assertEqual(r[2], [1], "si de verdad es 1, empieza igual a los 8 s")
 
     def test_turno_espera_a_que_salgan_todos_los_huecos(self):
         """PC lento (maquina virtual): los huecos aparecen poco a poco. No empieza con 2 si luego salen 4."""

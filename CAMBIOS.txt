@@ -29,6 +29,11 @@ Etapas previstas:
 
 CAMBIOS
 -------
+0.30.3-alpha
+  - Lobos Floor 4: la espera de la 0.30.2 no bastaba. Al empezar la pelea, durante las animaciones "Active Unique",
+    el circulo magico del suelo parece una casilla libre unos 5 s (fotos del 2026-11-10). Ahora, con 1 sola casilla
+    en el primer turno de la pelea, espera hasta 8 s a que salgan las de verdad.
+
 0.30.2-alpha
   - Lobos Floor 4 (prueba del 2026-11-10): la mitad de las peleas empezaban con "1 cartas por jugar" mientras las
     casillas aun salian; la postura de Thonar no entraba y el guion reiniciaba el nivel aunque iba bien (9 reinicios

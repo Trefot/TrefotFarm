@@ -58,6 +58,9 @@ HUECOS_QUIETOS = 0.6  # segundos con la misma cantidad de huecos antes de empeza
 # Primer turno de la pelea con menos de 3 huecos: tienen que llevar asi este tiempo. Los lobos (2026-11-10) empezaban
 # la mitad de las peleas con "1 cartas por jugar" en plena animacion; la postura no entraba y reiniciaba el nivel.
 HUECOS_QUIETOS_PRIMER_TURNO = 2.5
+# Con 1 solo "hueco" al empezar la pelea, aun mas: en los lobos el circulo magico del suelo, durante las animaciones
+# "Active Unique" del principio, parece una casilla (0,79-0,81) unos 5 s antes de que salgan las 4 de verdad (0,9+).
+HUECOS_QUIETOS_UN_HUECO = 8.0
 
 
 class Reiniciar(Exception):
@@ -529,7 +532,7 @@ class PerrosPiso4(Modo):
             # llevar quieta un momento: en un PC normal ya lo esta al llegar a esas lecturas.
             espera = HUECOS_QUIETOS
             if huecos < 3 and not getattr(self, "turnos_pelea", 0):
-                espera = HUECOS_QUIETOS_PRIMER_TURNO
+                espera = HUECOS_QUIETOS_UN_HUECO if huecos == 1 else HUECOS_QUIETOS_PRIMER_TURNO
             quieta = time.time() - self.huecos_quietos_desde >= espera
             if talento or (quieta and self.lecturas_turno >= (2 if huecos >= 3 else 3)):
                 self.lecturas_turno = 0
