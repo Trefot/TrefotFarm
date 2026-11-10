@@ -61,3 +61,27 @@ class Retoque(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class RellenoTurno2(unittest.TestCase):
+    """Lobos, 2026-11-10: con 2 singles de Odin y 2 areas de Gawain reiniciaba ("solo quedan cartas de Odin...")."""
+
+    def mano(self, nombres_rangos):
+        T, R = TipoCarta, Rango
+        return [Carta(i, (0, 0, 1, 1), None, T.SUELO if n is None else T.NORMAL, R.NINGUNO if n is None else r, n)
+                for i, (n, r) in enumerate(nombres_rangos)]
+
+    def test_usa_la_copia_de_sobra(self):
+        R = Rango
+        mano = self.mano([(None, None), (None, None), ("gawain.area", R.BRONCE), ("odin.area", R.BRONCE),
+                          ("odin.single", R.BRONCE), ("odin.single", R.PLATA), ("odin.area", R.PLATA),
+                          ("gawain.area", R.PLATA)])
+        idx, _, _ = P4.Estrategia()._f1t2(mano, 2, 4)
+        self.assertEqual(idx, 4, "la single de Odin de bronce; la de plata queda para la cuarta")
+
+    def test_sin_copias_sigue_reiniciando(self):
+        R = Rango
+        mano = self.mano([(None, None), (None, None), ("gawain.area", R.BRONCE), ("odin.area", R.BRONCE),
+                          ("odin.single", R.PLATA), (None, None), (None, None), (None, None)])
+        with self.assertRaises(P4.Reiniciar):
+            P4.Estrategia()._f1t2(mano, 2, 4)

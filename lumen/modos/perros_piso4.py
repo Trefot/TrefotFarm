@@ -115,6 +115,12 @@ class Estrategia:
         for carta in reversed(mano):
             if carta.jugable and carta.nombre not in PROTEGIDAS_FASE2 and not (carta.nombre or "").startswith("odin."):
                 return carta.posicion, None, False
+        # Una copia de sobra de las que se guardan (la single de Odin para el final, lo de la fase 2), quedandose con la
+        # mejor: con 2 singles de Odin y 2 areas de Gawain reiniciaba sin necesidad (2026-11-10). El guion original de
+        # AutoFarming ya usaba la single de Odin de relleno.
+        idx = self.sobrante(mano, ("odin.single",) + PROTEGIDAS_FASE2)
+        if idx is not None:
+            return idx, None, False
         raise Reiniciar("F1T2: solo quedan cartas de Odin o que se necesitan en la fase 2")
 
     def _f2(self, mano, accion):
@@ -167,6 +173,15 @@ class Estrategia:
         if not candidatas:
             return None
         return max(candidatas, key=lambda c: (c.rango.value if c.rango != Rango.NINGUNO else -1, c.posicion)).posicion
+
+    @staticmethod
+    def sobrante(mano: list[Carta], nombres: Sequence[str]) -> int | None:
+        """La peor copia de una carta que esta repetida en la mano (se queda la mejor), en el orden de ``nombres``."""
+        for nombre in nombres:
+            copias = [c for c in mano if c.jugable and c.nombre == nombre]
+            if len(copias) >= 2:
+                return min(copias, key=lambda c: (c.rango.value if c.rango != Rango.NINGUNO else -1, -c.posicion)).posicion
+        return None
 
     def _o_reiniciar(self, mano, nombres, motivo) -> int:
         idx = self.mejor(mano, nombres)

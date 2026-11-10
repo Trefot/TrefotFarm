@@ -29,6 +29,11 @@ Etapas previstas:
 
 CAMBIOS
 -------
+0.30.5-alpha
+  - Lobos Floor 4 (prueba con la 0.30.4: el turno 1 ya sale bien): en el turno 2 la carta de relleno no podia ser de
+    Odin ni de lo que se guarda para la fase 2, y con 2 singles de Odin y 2 areas de Gawain reiniciaba sin necesidad.
+    Ahora usa una copia de sobra (la peor) y se queda con la mejor, como el guion original de AutoFarming.
+
 0.30.4-alpha
   - Lobos Floor 4, revisadas las 31 peleas del 2026-11-10: ademas de la casilla falsa del principio (0.30.3), a veces
     el juego no registra el toque de una carta (justo tras apuntar a un perro o usar el talento); el bot la daba por
