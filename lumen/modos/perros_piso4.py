@@ -687,7 +687,13 @@ class PerrosPiso4(Modo):
                 self.turno_abierto = False
                 self.log("Turno terminado.", "debug")
                 return None
-            self.huecos_turno = max(self.huecos_turno, huecos)
+            if ultima_accion is not None and self.huecos_turno - huecos < ultima_accion:
+                # Las casillas libres solo bajan en un turno: si suben es una mala lectura (la animacion de una ulti).
+                # Con la ulti de Freyja ya jugada leyo 2 libres, volvio a "la 3.a carta" y reinicio (2026-11-10).
+                self.esperar_corto(0.3)
+                continue
+            if ultima_accion is None:
+                self.huecos_turno = max(self.huecos_turno, huecos)
             accion = self.huecos_turno - huecos
             if accion == ultima_accion:
                 # La carta anterior aun no ocupa su hueco (animacion/fusion): esperar un poco.

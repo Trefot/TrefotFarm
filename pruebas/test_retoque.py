@@ -85,3 +85,40 @@ class RellenoTurno2(unittest.TestCase):
                           ("odin.single", R.PLATA), (None, None), (None, None), (None, None)])
         with self.assertRaises(P4.Reiniciar):
             P4.Estrategia()._f1t2(mano, 2, 4)
+
+
+class CasillasQueSuben(unittest.TestCase):
+    """Lobos, 2026-11-10: tras la ulti de Freyja leyo 2 casillas libres (ya no quedaba ninguna), volvio a pedir
+    "la 3.a carta" y reinicio con la pelea bien."""
+
+    def test_una_lectura_que_sube_no_repite_cartas(self):
+        m = P4.PerrosPiso4({})
+        m._nueva_pelea()
+        m.fase, m.turno_fase, m.huecos_turno = 2, 1, 4
+        img = np.full((10, 10, 3), 77, np.uint8)
+        lecturas = iter([4, 3, 2, 1, 2, 2, 0])  # tras la 4.a carta, una mala lectura (2) y despues 0
+        estado = {"huecos": 4}
+        pedidas = []
+
+        def capturar():
+            estado["huecos"] = next(lecturas, 0)
+            return set(), (0, 0)
+
+        def decidir(fase, turno, accion, mano, total):
+            pedidas.append(accion)
+            return 0, None, False
+
+        with mock.patch.object(m, "capturar", capturar), \
+                mock.patch.object(P4.C, "contar_huecos", lambda p, u=0.7: estado["huecos"]), \
+                mock.patch.object(P4.C, "leer_mano", lambda p: [Carta(0, (1, 2, 3, 4), img, TipoCarta.NORMAL, Rango.PLATA)]), \
+                mock.patch.object(P4.EQUIPO, "etiquetar", lambda mano: mano), \
+                mock.patch.object(m.estrategia, "decidir", decidir), \
+                mock.patch.object(m.estrategia, "fusiones_al_jugar", lambda mano, i: 0), \
+                mock.patch.object(m, "_esperar_hueco", lambda h, limite=1.6: True), \
+                mock.patch.object(entrada, "clic", lambda *a, **k: None), \
+                mock.patch.object(m, "esperar_corto", lambda s: None), \
+                mock.patch.object(m, "log", lambda *a, **k: None), \
+                mock.patch.object(juego, "victoria", entorno.PlantillaFalsa("victoria")), \
+                mock.patch.object(juego, "derrota", entorno.PlantillaFalsa("derrota")):
+            m._jugar_turno()
+        self.assertEqual(pedidas, [0, 1, 2, 3], "cada carta una vez; la lectura que sube se ignora")

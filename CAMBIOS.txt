@@ -29,6 +29,11 @@ Etapas previstas:
 
 CAMBIOS
 -------
+0.30.6-alpha
+  - Lobos Floor 4 (prueba con la 0.30.5): con las 4 cartas de la fase 2 bien jugadas, en la animacion de la ulti de
+    Freyja leyo 2 casillas libres, creyo volver a la 3.a carta (la ulti, ya jugada) y reiniciaba. Dentro de un turno
+    las casillas libres solo bajan: si una lectura sube, es mala y espera en vez de jugar otra vez.
+
 0.30.5-alpha
   - Lobos Floor 4 (prueba con la 0.30.4: el turno 1 ya sale bien): en el turno 2 la carta de relleno no podia ser de
     Odin ni de lo que se guarda para la fase 2, y con 2 singles de Odin y 2 areas de Gawain reiniciaba sin necesidad.
