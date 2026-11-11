@@ -1,0 +1,5 @@
+Taberna viva
+------------
+La ilustracion taberna.png se genero para el fondo de la interfaz de Lumen Farm.
+Es una escena de fantasia inspirada en una taberna; no es una captura del juego.
+No se utiliza como plantilla de reconocimiento ni modifica la automatizacion.

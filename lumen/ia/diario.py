@@ -42,18 +42,35 @@ class Diario:
 
     def empezar(self, equipo: list[str] | None = None, **extra):
         self.pelea = {"destino": self.destino, "inicio": time.time(), "version": lumen.__version__,
-                      "equipo": list(equipo or []), "turnos": [], "notas": [], **extra}
+                      "equipo": list(equipo or []), "turnos": [], "notas": [], "origen": "juego", **extra}
+        if extra.get("memoria_por_equipo"):
+            from lumen.ia import perfiles
+            self.pelea["conocimiento"] = perfiles.firma_conocimiento()
 
-    def decision(self, fase, turno, accion: int, mano: list, eleccion, razones: dict | None = None):
+    def decision(self, fase, turno, accion: int, mano: list, eleccion, razones: dict | None = None,
+                 confirmada: bool = True):
         if self.pelea is None:
             return
         jugada = _jugada(mano, eleccion)
         paso = {"t": round(time.time() - self.pelea["inicio"], 1), "fase": fase, "turno": turno, "accion": accion,
-                "mano": [str(c) for c in mano], "jugada": jugada}
+                "mano": [str(c) for c in mano], "jugada": jugada, "confirmada": confirmada,
+                "estado_accion": "confirmada" if confirmada else "propuesta"}
         motivos = {n: r for n, r in (razones or {}).items() if n.split("@")[0] in {j.split("@")[0] for j in jugada[1:]}}
         if motivos:
             paso["razones"] = motivos
         self.pelea["turnos"].append(paso)
+        return paso
+
+    def confirmar(self, paso, aceptada: bool) -> bool:
+        """Solo una observacion posterior confirma la propuesta; las dudosas no ensenan."""
+        if self.pelea is None or paso is None or not any(p is paso for p in self.pelea["turnos"]):
+            return False
+        if paso.get("estado_accion") != "propuesta":
+            return False
+        paso["confirmada"] = bool(aceptada)
+        paso["estado_accion"] = "confirmada" if aceptada else "no_confirmada"
+        paso["observada_en"] = round(time.time() - self.pelea["inicio"], 1)
+        return True
 
     def nota(self, texto: str):
         if self.pelea is not None:
@@ -79,9 +96,10 @@ class Diario:
         """Paso 5 de IA.md: cada pelea terminada ensena algo (lumen/ia/lecciones.py). Nunca para el bot."""
         try:
             from lumen.control import control
-            from lumen.ia import lecciones
+            from lumen.ia import lecciones, perfiles
 
-            for frase in lecciones.aprender({**pelea, "destino": pelea.get("lecciones") or pelea.get("destino")},
+            aprender = perfiles.aprender if pelea.get("memoria_por_equipo") else lecciones.aprender
+            for frase in aprender({**pelea, "destino": pelea.get("lecciones") or pelea.get("destino")},
                                             es_area=lecciones.es_area_por_defecto):
                 control.log(f"Aprendo: {frase}", "ok")
         except Exception:
@@ -113,7 +131,7 @@ def resumen(peleas: list[dict]) -> dict:
     jugadas = {}
     for p in victorias:
         for paso in p.get("turnos") or []:
-            if paso.get("jugada", [""])[0] == "jugar":
+            if paso.get("confirmada", True) and paso.get("jugada", [""])[0] == "jugar":
                 jugadas.setdefault(paso.get("fase"), Counter())[paso["jugada"][1].split("@")[0]] += 1
     return {
         "peleas": len(peleas),

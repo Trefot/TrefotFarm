@@ -3,25 +3,26 @@
 import sys
 import threading
 
-from PyQt5.QtCore import QObject, QProcess, QSize, Qt, QTimer, pyqtSignal
+from PyQt5.QtCore import QObject, QProcess, QSize, Qt, QTimer, pyqtSignal, QPropertyAnimation, QEasingCurve
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtWidgets import (
     QApplication,
     QButtonGroup,
     QFrame,
+    QGraphicsOpacityEffect,
     QHBoxLayout,
     QLabel,
     QMainWindow,
     QMessageBox,
-    QPushButton,
     QStackedWidget,
+    QScrollArea,
     QToolButton,
     QVBoxLayout,
     QWidget,
 )
 
 import lumen
-from lumen import accesos, actualizador, config, ventana
+from lumen import accesos, actualizador, admin, config, ventana
 from lumen.control import control
 from lumen.gui import iconos, tema
 from lumen.gui.arranque import EMBLEMA
@@ -31,6 +32,8 @@ from lumen.gui.paginas.ayuda import PaginaAyuda
 from lumen.gui.paginas.farmear import PaginaFarmear
 from lumen.gui.paginas.equipos import PaginaEquipos
 from lumen.gui.paginas.inicio import PaginaInicio
+from lumen.gui.paginas.resumen import PaginaResumen, PaginaContenidos, PaginaPlan, PaginaMisEquipos, PaginaObjetivos
+from lumen.gui.paginas.laboratorio import PaginaLaboratorio
 from lumen.gui.paginas.personajes import PaginaPersonajes
 from lumen.gui.paginas.recompensas import PaginaRecompensas
 from lumen.gui.puente import Puente
@@ -40,16 +43,14 @@ MINUTOS_ENTRE_REVISIONES = 30
 SEGUNDOS_PUBLICAR = 20  # al abrir, despues de buscar actualizaciones (los dos usan git)
 
 MENU = [
-    ("inicio", "Inicio"),
-    ("farmear", "Farmear"),
-    ("personajes", "Personajes"),
-    ("ayuda", "Ayuda"),
-    ("ajustes", "Ajustes"),
-    # Solo con el modo administrador (Ajustes): herramientas para mantener la base del bot.
-    ("equipos", "Equipos"),
-    ("recompensas", "Botín"),
+    ("inicio", "Inicio"), ("contenidos", "Contenidos"),
+    ("farmear", "Sesión en directo"), ("plan", "Plan del día"),
+    ("personajes", "Personajes"), ("mis_equipos", "Mis equipos"),
+    ("objetivos", "Objetivos"), ("ajustes", "Ajustes"), ("ayuda", "Ayuda"),
+    ("equipos", "Editor de equipos"), ("recompensas", "Botín"),
+    ("laboratorio", "Laboratorio"),
 ]
-SOLO_ADMIN = {"equipos", "recompensas"}  # lo demas esta en Farmear
+SOLO_ADMIN = {"equipos", "recompensas", "laboratorio"}  # lo demas esta en Farmear
 
 
 class _Senales(QObject):
@@ -83,7 +84,7 @@ class VentanaPrincipal(QMainWindow):
 
         # ---- menu lateral
         lateral = QFrame(objectName="lateral")
-        lateral.setFixedWidth(96)
+        lateral.setFixedWidth(210)
         capa_lat = QVBoxLayout(lateral)
         capa_lat.setContentsMargins(8, 14, 8, 12)
         capa_lat.setSpacing(4)
@@ -103,9 +104,16 @@ class VentanaPrincipal(QMainWindow):
         self.grupo = QButtonGroup(self, exclusive=True)
         self.botones: dict[str, QToolButton] = {}
         self.insignias: dict[str, QLabel] = {}
+        self.rotulo_admin = None
         for clave, texto in MENU:
+            seccion = {"inicio": "JUGAR", "personajes": "COLECCIÓN", "ajustes": "APLICACIÓN", "equipos": "ADMINISTRACIÓN"}.get(clave)
+            if seccion:
+                rotulo = QLabel(seccion, objectName="eyebrow")
+                capa_lat.addWidget(rotulo)
+                if clave == "equipos":
+                    self.rotulo_admin = rotulo
             b = QToolButton(objectName="menu", checkable=True, text=texto)
-            b.setToolButtonStyle(Qt.ToolButtonTextUnderIcon)
+            b.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
             b.setIcon(iconos.icono(clave, tema.TENUE, tema.ACENTO))
             b.setIconSize(QSize(24, 24))
             b.setCursor(Qt.PointingHandCursor)
@@ -113,19 +121,39 @@ class VentanaPrincipal(QMainWindow):
             self.grupo.addButton(b)
             self.botones[clave] = b
             insignia = QLabel(b, objectName="insignia")  # punto rojo en la esquina del boton
-            insignia.move(52, 2)
+            insignia.move(132 if tema.SKIN.moderno else 52, 2)
             insignia.hide()
             self.insignias[clave] = insignia
             capa_lat.addWidget(b)
         capa_lat.addStretch()
-        fila.addWidget(lateral)
+        scroll_menu = QScrollArea(widgetResizable=True, frameShape=QFrame.NoFrame)
+        scroll_menu.setFixedWidth(212)
+        scroll_menu.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        scroll_menu.setWidget(lateral)
+        fila.addWidget(scroll_menu)
 
         # ---- paginas
         self.pila = QStackedWidget()
+        self.transicion = None
+        if tema.SKIN.id == "taberna_viva":
+            self.velo = QGraphicsOpacityEffect(self.pila)
+            self.velo.setOpacity(1.0)
+            self.velo.setEnabled(False)
+            self.pila.setGraphicsEffect(self.velo)
+            self.transicion = QPropertyAnimation(self.velo, b"opacity", self)
+            self.transicion.setDuration(160)
+            self.transicion.setEasingCurve(QEasingCurve.OutCubic)
+            self.transicion.finished.connect(lambda: self.velo.setEnabled(False))
         self.farmear = PaginaFarmear(self)
         self.paginas = {
-            "inicio": PaginaInicio(self),
+            "inicio": PaginaResumen(self),
+            "preparar": PaginaInicio(self),
+            "contenidos": PaginaContenidos(self),
+            "plan": PaginaPlan(self),
+            "mis_equipos": PaginaMisEquipos(self),
+            "objetivos": PaginaObjetivos(self),
             "farmear": self.farmear,
+            "laboratorio": PaginaLaboratorio(self),
             "personajes": PaginaPersonajes(self),
             "equipos": PaginaEquipos(self),
             "recompensas": PaginaRecompensas(self),
@@ -181,13 +209,21 @@ class VentanaPrincipal(QMainWindow):
 
     # ---------------------------------------------------------------- navegacion
     def navegar(self, clave: str):
+        if clave in SOLO_ADMIN and not admin.activo():
+            return
         if self.update_bloqueante:
             self.mostrar_bloqueo()
             return
         pagina = self.paginas[clave]
-        self.botones[clave].setChecked(True)
+        self.botones["contenidos" if clave == "preparar" else clave].setChecked(True)
         self.pila.setCurrentWidget(pagina)
         pagina.al_mostrar()
+        if self.transicion is not None:
+            self.transicion.stop()
+            self.velo.setEnabled(True)
+            self.transicion.setStartValue(0.72)
+            self.transicion.setEndValue(1.0)
+            self.transicion.start()
 
     def refrescar_insignias(self):
         self._insignia("inicio", "1" if self.estado_update and self.estado_update.hay_update else "")
@@ -198,11 +234,14 @@ class VentanaPrincipal(QMainWindow):
 
     def aplicar_modo_admin(self):
         """Muestra u oculta las herramientas de administrador del menu."""
-        admin = bool(config.obtener("modo_admin"))
+        autorizado = admin.activo()
+        self.rotulo_admin.setVisible(autorizado)
         for clave in SOLO_ADMIN:
-            self.botones[clave].setVisible(admin)
-            self.insignias[clave].setVisible(admin and bool(self.insignias[clave].text()))
-        if not admin and self.pila.currentWidget() in (self.paginas[c] for c in SOLO_ADMIN):
+            self.botones[clave].setVisible(autorizado)
+            self.insignias[clave].setVisible(autorizado and bool(self.insignias[clave].text()))
+        if not autorizado:
+            self.paginas["laboratorio"].revocar()
+        if not autorizado and self.pila.currentWidget() in (self.paginas[c] for c in SOLO_ADMIN):
             self.navegar("inicio")
 
     def ajustes_guardados(self):
@@ -212,6 +251,8 @@ class VentanaPrincipal(QMainWindow):
         self._barra()
 
     def _barra(self):
+        if not admin.activo() and self.pila.currentWidget() in (self.paginas[c] for c in SOLO_ADMIN):
+            self.aplicar_modo_admin()
         tam = ventana.tamano_actual()
         if tam is None:
             self.barra_juego.setText(f"<span style='color:{tema.ERROR}'>●</span> Juego cerrado")

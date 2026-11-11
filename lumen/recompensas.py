@@ -13,6 +13,7 @@ from pathlib import Path
 import numpy as np
 
 from lumen import botin, juego, premios
+from lumen.archivos import escribir_texto
 from lumen.rutas import RAIZ
 from lumen.vision import guardar_imagen, leer_imagen
 
@@ -100,11 +101,11 @@ def reanalizar_pendientes(todas: bool = False) -> int:
             if pantalla is None:
                 continue
             r.pop("sin_premios", None)
-            r.update(_analizar(pantalla))
+            r.update(_analizar(pantalla, primera=bool(r.get("primera"))))
             r["analizado"], r["lectura"] = True, LECTURA
             hechas += 1
         if hechas:
-            INDICE.write_text("".join(json.dumps(r, ensure_ascii=False) + "\n" for r in registros), encoding="utf-8")
+            escribir_texto(INDICE, "".join(json.dumps(r, ensure_ascii=False) + "\n" for r in registros))
         return hechas
 
 
@@ -114,7 +115,7 @@ def _reescribir_objetos(cambio) -> None:
         registros = _leer_indice()
         for r in registros:
             r["objetos"] = cambio(dict(r.get("objetos") or {}))
-        INDICE.write_text("".join(json.dumps(r, ensure_ascii=False) + "\n" for r in registros), encoding="utf-8")
+        escribir_texto(INDICE, "".join(json.dumps(r, ensure_ascii=False) + "\n" for r in registros))
 
 
 def unir_objeto(origen: str, destino: str) -> None:

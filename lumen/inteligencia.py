@@ -201,8 +201,11 @@ class Jugador:
         self.solo_area = False  # True: las cartas de un objetivo casi no valen (todos los enemigos a la vez)
         # Lo que pide el jefe en esta fase (lumen/ia/decidir.py): mecanicas_de(destino, fase). Vacio = como siempre.
         self.mecanicas: list = []
+        self.observacion: dict = {}
         self.color_turno: str | None = None  # color que ya se esta jugando este turno ("mismo atributo")
         self.razones: dict[str, list[str]] = {}  # por que valio mas o menos cada carta (para el diario)
+        self.equipo = None  # None: API historica; () en modos reales: equipo aun desconocido
+        self.usar_aprendizaje = True
         self.params: dict = {}  # lo que cambia el aprendizaje (lumen/ia/aprendizaje.py); vacio = los de siempre
         self._indice = self._tasador = self._lector = None  # se cargan en la primera jugada (tardan ~1 s)
         self.jugadas_turno: list = []  # (rango | None, color) de lo jugado este turno, para los objetivos del jefe
@@ -240,28 +243,39 @@ class Jugador:
             resto = self.params.get("solo_area_resto", SOLO_AREA_RESTO)
             valores = {n: v if self._tasador.es_area(n) else v * resto for n, v in valores.items()}
         self.razones = {}
+        def motivos(nuevos):
+            for nombre, lista in nuevos.items():
+                self.razones.setdefault(nombre, []).extend(lista)
         if self.destino and valores and self._tasador:
             from lumen.ia import pasivas  # la pasiva de cada heroe en este jefe (paso 1 de IA.md)
 
             valores, por_pasiva = pasivas.aplicar(valores, self.destino, self._tasador.es_area)
-            self.razones.update(por_pasiva)
+            motivos(por_pasiva)
         if self.destino and valores and self._tasador:
             from lumen.ia import conocimiento  # lo que el jugador ensena de este jefe (lumen/datos/conocimiento.yaml)
 
             valores, ensenado = conocimiento.aplicar(valores, self.destino, self.fase, self._tasador.es_area)
-            self.razones.update(ensenado)
+            motivos(ensenado)
         if self.destino and self.fase and valores and self._tasador:
             from lumen.ia import lecciones
 
-            valores, aprendido = lecciones.aplicar(valores, self.destino, self.fase, self._tasador.es_area)
-            self.razones.update(aprendido)
-        if self.mecanicas and valores:
+            from lumen.ia import perfiles
+            carpeta = perfiles.carpeta(self.destino, self.equipo) if self.equipo is not None and perfiles.habilitado(self.destino, self.equipo) else None
+            if self.usar_aprendizaje and (self.equipo is None or carpeta is not None):
+                valores, aprendido = lecciones.aplicar(valores, self.destino, self.fase, self._tasador.es_area, carpeta=carpeta)
+                motivos(aprendido)
+        from lumen.ia import estado as estado_ia
+        mecanicas = list(self.mecanicas)
+        tipos = {m.tipo for m in mecanicas}
+        mecanicas += [m for m in estado_ia.mecanicas(self.observacion, self.destino, self.fase) if m.tipo not in tipos]
+        if mecanicas and valores:
             from lumen.ia import decidir
 
             if self._lector is None:
                 self._lector = decidir.LectorCartas()
-            valores, self.razones = decidir.ajustar(valores, self.mecanicas, self._lector.efectos_de,
+            valores, por_mecanica = decidir.ajustar(valores, mecanicas, self._lector.efectos_de,
                                                     self._lector.color_de, self.color_turno)
+            motivos(por_mecanica)
         if acciones >= self._acciones_antes:  # quedan mas acciones que en la jugada anterior: turno nuevo
             self.jugadas_turno = []
         self._acciones_antes = acciones
@@ -320,7 +334,11 @@ def agrupar_por_dibujo(mano: list[Carta], identificar=None) -> None:
     distintas >= 26 (salvo versiones de color de un mismo heroe, que comparten dibujo)."""
     vistos: list[tuple[np.ndarray, str]] = []
     for c in mano:
-        if c.nombre or c.imagen is None or c.tipo in (TipoCarta.SUELO, TipoCarta.NINGUNA, TipoCarta.ULTI):
+        if c.nombre or c.imagen is None or c.tipo in (TipoCarta.SUELO, TipoCarta.NINGUNA):
+            continue
+        if c.tipo == TipoCarta.ULTI:
+            # Identidad para mecanicas y aprendizaje, sin agruparla con normales ni fusionarla.
+            c.nombre = identificar(c) if identificar else None
             continue
         d = _dibujo(c.imagen)
         for otro, nombre in vistos:

@@ -19,6 +19,7 @@ import json
 import threading
 from pathlib import Path
 
+from lumen.archivos import escribir_texto
 from lumen.rutas import LOGS
 
 CARPETA = LOGS / "lecciones"
@@ -60,7 +61,7 @@ def _guardar(destino: str, datos: dict, carpeta: Path | None = None) -> None:
     ruta = _ruta(destino, carpeta)
     try:
         ruta.parent.mkdir(parents=True, exist_ok=True)
-        ruta.write_text(json.dumps(datos, ensure_ascii=False, indent=1), encoding="utf-8")
+        escribir_texto(ruta, json.dumps(datos, ensure_ascii=False, indent=1))
     except OSError:
         pass  # aprender nunca debe parar el bot
 
@@ -96,10 +97,10 @@ def aprender(pelea: dict, es_area=None, carpeta: Path | None = None) -> list[str
     if not destino or resultado not in ("victoria", "derrota", "reinicio"):
         return []
     # Solo las cartas reconocidas ("heroe.carta"): de una sin reconocer ("dibujo_2", "?") no se aprende nada
-    jugadas = [t for t in pelea.get("turnos") or [] if (t.get("jugada") or [""])[0] == "jugar" and t.get("fase")
+    jugadas = [t for t in pelea.get("turnos") or [] if t.get("confirmada", True) and (t.get("jugada") or [""])[0] == "jugar" and t.get("fase")
                and "." in _base(t["jugada"][1])]
-    if not jugadas:
-        return []
+    if not jugadas or any(t.get("turno") is None for t in jugadas):
+        return []  # diarios antiguos de demonios: no se conoce en que turno se jugo cada carta
     frases = []
     with _lock:
         datos = cargar(destino, carpeta)
@@ -207,6 +208,11 @@ def claves_de(modo_id: str, carpeta: Path | None = None) -> list[str]:
 
 def texto_modo(modo_id: str, carpeta: Path | None = None) -> str:
     """Todo lo aprendido en un modo, por piso/nivel y fase, para la pagina Farmear y el movil."""
+    if carpeta is None:
+        from lumen.ia import perfiles
+        por_equipo = perfiles.texto_modo(modo_id)
+        if por_equipo:
+            return por_equipo
     claves = claves_de(modo_id, carpeta)
     if not claves:
         return "Todavía no he aprendido nada en este modo: aprendo de cada pelea que gano o pierdo."

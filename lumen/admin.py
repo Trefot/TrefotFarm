@@ -108,3 +108,9 @@ def salir() -> None:
     from lumen import config
 
     config.guardar({"admin_llave": "", "modo_admin": False})
+
+
+def exigir() -> None:
+    """La casilla sola no autoriza herramientas administrativas."""
+    if not activo():
+        raise PermissionError("Desbloquea el modo administrador en Ajustes para usar esta herramienta.")

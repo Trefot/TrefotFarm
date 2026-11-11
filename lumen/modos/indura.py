@@ -101,7 +101,11 @@ class DemonioTiempoReal(Modo):
         self.estrategias = estrategias.cargar(self.id)
         self.estrategia: estrategias.Estrategia | None = None
         self.jugador = inteligencia.Jugador(enemigos=1, arrastrar=False)
+        self.jugador.equipo = ()
         self.turnos_sin_equipo = 0
+        self.turno_diario = 0
+        self.libres_observados = 0
+        self.decision_pendiente = None
         self.libres_antes = -1  # casillas libres cuando se toco la ultima carta
         self.ultima_tocada = None  # la ultima carta tocada (por si no entra en su casilla)
         self.rechazadas: list = []  # dibujos de cartas que no entraron este turno
@@ -291,14 +295,19 @@ class DemonioTiempoReal(Modo):
         return [p for p in diario.leer(self.id, 1000) if p.get("nivel") == nivel]
 
     def _abrir_diario(self):
+        self.turno_diario = 0
+        self.libres_observados = 0
+        self.decision_pendiente = None
         self._cerrar_diario("abandonada")  # la anterior acabo sin verse el final
         jugar = self.valores.get("jugar")
-        extra = {"nivel": self.valores.get("nivel"), "jugar": jugar,
+        self.jugador.equipo = self.equipo_de_la_sesion() or ()
+        extra = {"nivel": self.valores.get("nivel"), "jugar": jugar, "memoria_por_equipo": True,
                  "lecciones": f"{self.id}_{str(self.valores.get('nivel', '')).lower()}"}
         self.jugador.destino, self.jugador.fase = extra["lecciones"], 1  # lo aprendido en este demonio y nivel
         if jugar == "Inteligente":
-            peleas = self.peleas_del_nivel()
-            config, prueba = aprendizaje.elegir(peleas, explorar=bool(self.valores.get("aprender", True)))
+            from lumen.ia import perfiles
+            peleas = perfiles.filtrar(self.peleas_del_nivel(), extra["lecciones"], self.jugador.equipo)
+            config, prueba = perfiles.elegir(peleas, extra["lecciones"], self.jugador.equipo, explorar=bool(self.valores.get("aprender", True)))
             self.jugador.params = config
             extra.update(config=config, prueba=prueba)
             if not self.aprendizaje_dicho:
@@ -328,12 +337,31 @@ class DemonioTiempoReal(Modo):
     def _apuntar(self, mano, idx):
         self._contar_heroes(mano)
         if self.diario.pelea is not None:
-            self.diario.decision(1, None, len(self.diario.pelea["turnos"]) + 1, mano, idx)
+            self.diario.confirmar(self.decision_pendiente, False)
+            self.decision_pendiente = self.diario.decision(
+                1, self.turno_diario or None, len(self.diario.pelea["turnos"]) + 1, mano, idx,
+                getattr(self.jugador, "razones", None), confirmada=False)
+            if self.decision_pendiente is not None:
+                self.decision_pendiente["observacion"] = self.jugador.observacion
 
     # ------------------------------------------------------------------ pelea
+    def _confirmar_accion(self, libres):
+        if self.decision_pendiente is None:
+            return
+        if 0 <= libres < self.libres_antes:
+            self.diario.confirmar(self.decision_pendiente, True)
+            self.decision_pendiente = None
+        elif libres > self.libres_antes or time.time() - self.tocado_en >= 2.0:
+            self.diario.confirmar(self.decision_pendiente, False)
+            self.decision_pendiente = None
+
     def _jugar_carta(self, p, o):
         """Si es nuestro turno, juega la carta que toca segun la estrategia del equipo."""
         libres = cartas.casillas_libres_demonio(p)
+        self._confirmar_accion(libres)
+        if libres > 0 and (self.libres_observados == 0 or libres > self.libres_observados):
+            self.turno_diario += 1
+        self.libres_observados = libres
         if libres == 0:
             return
         # Tras tocar una carta, esperar a que ocupe su casilla antes de elegir la siguiente.
@@ -353,6 +381,8 @@ class DemonioTiempoReal(Modo):
                                             for r in self.rechazadas):
                 c.tipo = cartas.TipoCarta.BLOQUEADA
         if self.valores.get("jugar") == "Inteligente":
+            from lumen.ia import estado as estado_ia
+            self.jugador.observacion = estado_ia.observar(p)
             self._jugar_inteligente(mano, libres, o)
             return
         if self.estrategia is None:
@@ -379,6 +409,7 @@ class DemonioTiempoReal(Modo):
     def _jugar_inteligente(self, mano, libres: int, o):
         """La carta que deja mejor el turno entero (lumen/inteligencia.py), sin arrastrar cartas: en los
         demonios aun no se ha comprobado que se pueda."""
+        self.jugador.equipo = self.equipo_de_la_sesion() or ()
         paso = self.jugador.elegir(mano, libres)
         if paso is None:
             return

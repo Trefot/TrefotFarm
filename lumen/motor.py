@@ -162,10 +162,11 @@ class Modo:
     # ------------------------------------------------------------------ bucle principal
     def ejecutar(self):
         estados = self.estados()
-        self._iniciar_vigilante()
-        self.log(f"Iniciando {self.nombre}.", "ok")
-        self.al_empezar()
         try:
+            control.ejecutando = True
+            self._iniciar_vigilante()
+            self.log(f"Iniciando {self.nombre}.", "ok")
+            self.al_empezar()
             while True:
                 control.revisar()
                 if control.parar_en_zona_segura and self.en_zona_segura():
@@ -189,14 +190,17 @@ class Modo:
             self.log("Detenido por el usuario.", "aviso")
         finally:
             self._vigilante_activo = False
-            self.al_terminar()
-            sesion = {k: v for k, v in self.stats.items() if isinstance(v, (int, float, str))}
-            sesion.update(modo=self.id, nombre=self.nombre, fin=time.time(), version=lumen.__version__)
-            equipo = self.equipo_de_la_sesion()
-            if equipo:  # para medir que equipo rinde mas (pagina Equipos e Inicio)
-                sesion["equipo"] = equipo
-            if self.guardar_historial and sesion["fin"] - sesion.get("inicio", sesion["fin"]) > 30:  # no guardar arranques en falso
-                historial.registrar(sesion)
+            try:
+                self.al_terminar()
+                sesion = {k: v for k, v in self.stats.items() if isinstance(v, (int, float, str))}
+                sesion.update(modo=self.id, nombre=self.nombre, fin=time.time(), version=lumen.__version__)
+                equipo = self.equipo_de_la_sesion()
+                if equipo:  # para medir que equipo rinde mas (pagina Equipos e Inicio)
+                    sesion["equipo"] = equipo
+                if self.guardar_historial and sesion["fin"] - sesion.get("inicio", sesion["fin"]) > 30:  # no guardar arranques en falso
+                    historial.registrar(sesion)
+            finally:
+                control.ejecutando = False
 
     def equipo_de_la_sesion(self) -> list[str] | None:
         """Los personajes con que se jugo (para medir que equipo es mas rapido): el equipo fijo del modo, si
@@ -246,6 +250,8 @@ class Modo:
             estado, desde, avisado_bucle = None, time.time(), False
             while self._vigilante_activo:
                 time.sleep(5)
+                if not self._vigilante_activo:
+                    return
                 if control.en_pausa:
                     continue
                 minutos = float(config.obtener("minutos_atasco") or 0)

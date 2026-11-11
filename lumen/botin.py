@@ -27,6 +27,7 @@ import cv2
 import numpy as np
 import yaml
 
+from lumen.archivos import escribir_texto
 from lumen.rutas import ASSETS, RAIZ
 from lumen.vision import guardar_imagen, leer_imagen
 
@@ -303,7 +304,7 @@ def guardar_catalogo(catalogo: dict) -> None:
             if base.get(oid) != propio:
                 local[oid] = propio
         CARPETA.mkdir(parents=True, exist_ok=True)
-        CATALOGO.write_text(yaml.safe_dump(local, allow_unicode=True, sort_keys=False), encoding="utf-8")
+        escribir_texto(CATALOGO, yaml.safe_dump(local, allow_unicode=True, sort_keys=False))
 
 
 def ruta_icono(oid: str) -> Path:
@@ -338,7 +339,7 @@ def cargar_galeria_local() -> dict[str, dict]:
 def guardar_galeria_local(galeria: dict) -> None:
     with _lock:
         CARPETA_GALERIA.mkdir(parents=True, exist_ok=True)
-        GALERIA.write_text(yaml.safe_dump(galeria, allow_unicode=True, sort_keys=False, width=110), encoding="utf-8")
+        escribir_texto(GALERIA, yaml.safe_dump(galeria, allow_unicode=True, sort_keys=False, width=110))
 
 
 def cargar_galeria() -> dict[str, dict]:

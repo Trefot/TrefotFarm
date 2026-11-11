@@ -72,3 +72,53 @@ pasiva más). **Un héroe puede tener más de una reliquia distinta** (ya hay un
 - Reglas que ensena el jugador: `lumen/modos/rata.py` (Ratatoskr), a convertir en un formato por jefe (paso 3).
 - 0.29.0: conocimiento por jefe en `lumen/datos/conocimiento.yaml` (`lumen/ia/conocimiento.py`): por destino y fase, `preferir` (x1,6) y `evitar` (x0,3) un tipo de carta; se aplica en `Jugador.elegir` tras las pasivas. Lo que necesita mirar la pantalla (troncos de la rata) sigue en `rata.py`.
 - 0.29.0: lo aprendido se ve en la pestana "Aprendido" y en la orden "diario" (`lecciones.texto_modo`). Talentos: se usan cada vez que se recargan (cooldown y limite leidos del texto del talento).
+
+## 0.31.2: correcciones de estabilidad del aprendizaje
+
+El reconocimiento generico identifica las ultis sin permitir fusionarlas. Los demonios registran cambios de turno
+observados en las casillas libres. Las lecciones omiten diarios antiguos con turnos desconocidos para evitar
+castigar toda una pelea como si fuera un turno. Falta confirmar la deteccion de turnos con capturas del juego.
+
+## 0.32.0: primer reproductor de capturas
+
+Laboratorio (con llave de administrador) abre una secuencia de imagenes de ventana de 550x940. El lector real de mano y la IA general
+proponen una accion y la dibujan, sin ejecutar entradas ni escribir diarios. Cada captura se analiza desde cero;
+no reconstruye acciones previas ni ejecuta los guiones de cada modo. Piso/fase/acciones son controles explicitos.
+Siguiente: casos con secuencias reales del juego y comparacion entre estrategias/versiones.
+
+## 0.32.0: propuestas y confirmaciones
+
+El diario de bestias y demonios distingue propuestas, confirmaciones por bajada de casillas y acciones
+no confirmadas. Las lecciones y el resumen de cartas ganadoras omiten propuestas e intentos sin confirmar.
+La confirmacion es evidencia visual de consumo de casilla, no una lectura exacta del dano o del resultado
+de esa carta. Los registros historicos conservan su compatibilidad; no se reescriben lecciones antiguas.
+El reproductor queda en Laboratorio, oculto sin llave y con comprobacion de permisos en el backend.
+
+## 0.33.0: memoria aislada, comparacion y recuperacion
+
+`ia/perfiles.py` separa lecciones y estadisticas por destino (incluye piso/nivel), equipo completo y huella de
+los YAML de conocimiento. Los modos reales no aplican la memoria global historica. Sin equipo identificado
+no exploran variantes ni reutilizan lecciones; el juego general y los guiones siguen disponibles. Las
+estadisticas nuevas requieren acciones confirmadas y conocimiento compatible. Exploracion tras 5 partidas
+de base; adopcion exige mejora de victorias/h sin bajar la tasa de victoria.
+
+Laboratorio compara base y aprendida con la misma captura. Incluye copias y restauracion de lecciones y
+parametros con autorizacion administrativa, corte de estadisticas anteriores y copia previa. Si una escritura
+interrumpe la restauracion, el perfil queda suspendido hasta recuperarlo. Un equipo distinto no comparte memoria.
+
+Conocimiento 7DS muestra el inventario y huecos de reconocimiento. Los destinos de pajaro/ciervo F4 se unifican
+con jefes.yaml. Esto no completa el estado vivo de buffs/vida/orbes ni aporta un simulador, nuevos guiones
+validados ni equipos probados automaticamente. Esos pasos siguen pendientes de capturas y partidas reales.
+
+## 0.34.0: observacion y evaluacion de resultados
+
+`ia/estado.py` detecta iconos conocidos en una zona superior que excluye las cartas y registra coincidencia
+y posicion. Vida, orbes y postura se mantienen desconocidos. Ajustes solo para evasion del pajaro F4/fase4
+y bloqueo del pajaro F4/fase1; otros contextos registran evidencia sin deducir contramedidas. No elimina
+reglas de fase por no ver un icono. Falta calibracion con capturas reales de combate.
+
+`ia/evaluacion.py` evalua diarios sin importarlos a la memoria: separa version/origen/configuracion, informa
+acciones sin confirmar, fallos por fase, partidas/h e intervalo orientativo de tasa. El origen se declara
+en el diario; no se certifica como real a partir del archivo. `ia/equipos.py` ordena equipos registrados
+por disponibilidad, compatibilidad y medidas comparables de la version actual; no crea ni ejecuta equipos
+nuevos. Laboratorio incluye estas operaciones con la llave administrativa.

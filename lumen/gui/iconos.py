@@ -17,11 +17,16 @@ except ImportError:  # pragma: no cover - solo si falta la dependencia
 
 # Nombre logico -> icono de Material Design Icons (https://pictogrammers.com/library/mdi/)
 NOMBRES = {
+    "contenidos": "mdi6.view-grid-outline",
+    "plan": "mdi6.format-list-checks",
+    "mis_equipos": "mdi6.shield-account",
+    "objetivos": "mdi6.bullseye-arrow",
     "inicio": "mdi6.home-variant",
     "farmear": "mdi6.sword-cross",
     "capturas": "mdi6.camera",
     "personajes": "mdi6.account-group",
     "equipos": "mdi6.shield-account",
+    "laboratorio": "mdi6.flask-outline",
     "recompensas": "mdi6.treasure-chest",
     "ajustes": "mdi6.cog",
     "ayuda": "mdi6.help-circle-outline",

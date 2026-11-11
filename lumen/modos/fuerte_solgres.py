@@ -194,6 +194,10 @@ class Oro(FuerteSolgres):
         return None
 
     def usar_tickets(self, p, o):
+        limite = int(self.valores["max_tickets"])
+        if limite and self.tickets + 30 > limite:
+            self.log("La tanda de 30 tickets supera el máximo elegido. Termino sin gastarla.", "aviso")
+            raise TerminarModo()
         if RESULTADO.esta(p):
             return "pelea"
         if MAX_TICKETS.esta(p):  # MAX dos veces y Start del auto-clear (como AutoFarming)

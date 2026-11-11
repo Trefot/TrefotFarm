@@ -87,10 +87,11 @@ class PaginaAjustes(Pagina):
             self.skin.addItem(skin.nombre, skin.id)
         self.skin.setCurrentIndex(max(0, self.skin.findData(config.obtener("skin"))))
         f = QFormLayout()
-        f.addRow("Skin", self.skin)
+        f.addRow("Tema", self.skin)
         c.addLayout(f)
-        c.addWidget(nota("En automática, la interfaz se viste para Halloween, Navidad, Año Nuevo, San Valentín "
-                         "y el aniversario del juego."))
+        c.addWidget(nota("Elige Noche azul, Día claro o Arcano. El estilo original sigue como Boar Hat. "
+                         "En automática se usa Noche azul, con los temas de temporada en sus fechas. "
+                         "Reinicia la aplicación para aplicar el cambio."))
         rejilla.addWidget(aspecto, 0, 1)
 
         teclas, c = seccion("Teclas rápidas", "teclado")

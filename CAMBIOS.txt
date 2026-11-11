@@ -29,6 +29,73 @@ Etapas previstas:
 
 CAMBIOS
 -------
+0.36.2-alpha — Selector de aventuras
+- Explorar contenidos deja la cuadricula: destino protagonista y tira horizontal de medallones.
+- Flechas, busqueda y filtros para recorrer destinos; piso y disponibilidad antes de preparar.
+- La ilustracion destacada cambia con el piso; si no hay foto propia, usa la de la bestia.
+- Seleccion con luz y acercamiento suave; navegacion por teclado y nombres accesibles.
+
+0.36.1-alpha — Taberna viva
+- Inicio ilustrado con una taberna calida, luz ambar, madera y marcos dorados.
+- Accesos y contenidos con ilustraciones, acercamiento suave al pasar el cursor y transicion breve entre paginas.
+- Tema Taberna disponible en Ajustes y como estilo automatico fuera de temporada.
+- Se conservan los accesos claros, los objetivos integrados y la proteccion de Administracion.
+
+0.36.0-alpha — Navegación y pantallas por tareas
+- Nuevo Inicio con acciones directas y actividad real del día.
+- Catálogo con imágenes, buscador y filtros; preparación separada con requisitos y materiales.
+- Plan, equipos de consulta y objetivos con acceso directo; editores bajo llave.
+- Navegación agrupada y desplazable para ventanas pequeñas.
+
+0.35.0-alpha
+  - Nuevo estilo Noche azul, con superficies planas, tipografia sencilla y navegacion lateral con texto.
+    Tambien disponibles Dia claro y Arcano en Ajustes -> Tema. Boar Hat y las temporadas se conservan.
+  - Fuera de temporada, el tema automatico usa Noche azul; los temas elegidos expresamente se respetan.
+  - Farmear: los equipos pasan a una pestana accesible en ventanas estrechas, evitando una columna recortada.
+    En ventanas amplias se pueden seguir consultando junto al registro.
+  - El Laboratorio y las herramientas de administracion mantienen su llave y controles de acceso.
+
+0.34.0-alpha
+  - La huella de memoria incluye datos y motor de decisiones para separar mediciones incompatibles.
+  - Laboratorio: evaluacion de diarios locales/importados sin entrenar, incidencias de confirmacion y metricas
+    separadas por version, configuracion y origen declarado. Incluye intervalos orientativos con la muestra.
+  - Recomendacion de equipos registrados: heroes disponibles, orden del guion, compatibilidad declarada y
+    mediciones de esta version; no cuenta demos como partidas ni activa contenidos cerrados.
+  - Observacion de iconos conocidos de evasion, inmortalidad y bloqueo; se registra la evidencia en los diarios.
+    Los ajustes por icono se limitan a los contextos del pajaro F4 contemplados por su guion. Vida/orbes siguen
+    sin lectura calibrada; ver un icono de inmortalidad no inventa su contramedida.
+  - Todas las herramientas de evaluacion/recomendacion permanecen bajo llave. Falta validar con juego real.
+
+0.33.0-alpha
+  - Memoria por destino, equipo y revision de conocimiento; no se mezclan equipos ni bases de datos distintas.
+    Si no se identifica el equipo completo, no se aplican lecciones de otros. La base se mide antes de explorar.
+  - Laboratorio: comparacion de propuesta base y aprendida, copias de memoria, restauracion y vuelta a la base
+    bajo llave; nunca durante el bot o un plan. Conserva una copia y suspende la memoria si la restauracion falla.
+  - Conocimiento 7DS: inventario de personajes, habilidades, pasivas y mecanicas reconocidas; muestra huecos.
+  - Pajaro y ciervo Floor 4 usan los mismos identificadores que sus fichas de jefe. Se conservan todos los
+    motivos al combinar pasivas, conocimiento, lecciones y mecanicas.
+  - No adopta variantes con menor tasa de victoria, parametros invalidos ni duraciones no validas.
+  - Pendiente validacion en Windows con partidas reales; no es un simulador completo del juego.
+
+0.32.0-alpha
+  - Laboratorio requiere la llave vigente de administrador, incluso al llamar al analizador directamente.
+    Al cerrar ese acceso se limpia el panel y se descartan resultados en curso. Capturas sale de Farmear.
+  - El diario diferencia propuestas de acciones confirmadas por las casillas; las lecciones no aprenden de
+    intentos sin confirmacion ni el resumen los cuenta como cartas jugadas.
+  - Laboratorio (solo administrador): abre varias imagenes, avanza/retrocede y muestra la mano y propuesta de la IA sobre la
+    captura. Analiza en segundo plano; no envia clics ni guarda diarios. Cada imagen es independiente del guion.
+  - El reproductor permite indicar piso, fase y acciones. Acepta capturas de ventana de 550x940, avisa ante errores
+    y bloquea el analisis mientras corre el bot o un plan. Se puede copiar el analisis para revisarlo.
+  - El raton se suelta aunque falle un clic o un arrastre; detener tambien corta el movimiento.
+  - Oro: una tanda de 30 tickets no se inicia si supera el maximo elegido.
+  - Reanalizar conserva el tipo de recompensa semanal. El reconocedor generico identifica tambien las ultis.
+  - Demonios: el diario distingue turnos observados; no se aprende de diarios antiguos sin turno.
+  - El vigilante se apaga tambien si falla la inicializacion del modo.
+  - Guardado atomico y copia .bak en ajustes, personajes, equipos, botin, galeria, indices reescritos y lecciones.
+  - Actualizaciones: prepara dependencias antes de cambiar codigo, limita pip a 5 minutos y recupera el codigo,
+    ediciones y cambios preparados si falla. Intenta reinstalar los requisitos anteriores e informa si no puede.
+  - Regresiones automaticas; pendiente confirmar entrada, tickets y actualizacion final en Windows.
+
 0.31.1-alpha
   - El plan del dia fallaba: la 0.31.0 rompio una funcion de los perros Floor 4 que se usa al ganar o perder
     ("NameError: self"); cada pelea acababa en error y el plan saltaba a la siguiente tarea. Arreglado.

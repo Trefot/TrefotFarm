@@ -4,6 +4,7 @@ import threading
 
 import yaml
 
+from lumen.archivos import escribir_texto
 from lumen.rutas import CONFIG
 
 POR_DEFECTO = {
@@ -43,8 +44,7 @@ def _cargar() -> dict:
             _victorias_a_vueltas(datos)
             cambio = True
         if cambio:
-            with CONFIG.open("w", encoding="utf-8") as f:
-                yaml.safe_dump(datos, f, allow_unicode=True, sort_keys=False)
+            escribir_texto(CONFIG, yaml.safe_dump(datos, allow_unicode=True, sort_keys=False))
     return datos
 
 
@@ -125,9 +125,9 @@ def guardar(cambios: dict) -> None:
     with _lock:
         if _datos is None:
             _datos = _cargar()
-        _datos.update(cambios)
-        with CONFIG.open("w", encoding="utf-8") as f:
-            yaml.safe_dump(_datos, f, allow_unicode=True, sort_keys=False)
+        nuevos = {**_datos, **cambios}
+        escribir_texto(CONFIG, yaml.safe_dump(nuevos, allow_unicode=True, sort_keys=False))
+        _datos = nuevos  # la memoria solo cambia cuando el archivo ya se ha publicado
 
 
 def todo() -> dict:

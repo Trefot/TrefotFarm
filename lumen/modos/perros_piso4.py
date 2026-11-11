@@ -435,7 +435,8 @@ class PerrosPiso4(Modo):
             self.diario.terminar("abandonada")  # la anterior acabo sin verse el final
             config, prueba = self._configuracion()
             lecciones = getattr(self.estrategia, "destino", "")  # p. ej. "rata_f2": se aprende por piso
-            self.diario.empezar(equipo=getattr(self.equipo, "orden", None), estrategia=self.stats.get("estrategia", ""),
+            self.diario.empezar(equipo=self.equipo_de_la_sesion(), memoria_por_equipo=True,
+                                estrategia=self.stats.get("estrategia", ""),
                                 **({"config": config, "prueba": prueba} if config else {}),
                                 **({"lecciones": lecciones} if lecciones else {}))
             self.log("¡A pelear!", "ok")
@@ -481,7 +482,12 @@ class PerrosPiso4(Modo):
             return None, False
         from lumen.ia import aprendizaje, diario
 
-        config, prueba = aprendizaje.elegir(diario.leer(self.id, 1000), explorar=bool(self.valores.get("aprender", True)))
+        from lumen.ia import perfiles
+        equipo = self.equipo_de_la_sesion() or ()
+        jugador.equipo = equipo
+        destino = getattr(self.estrategia, "destino", "") or self.id
+        historia = perfiles.filtrar(diario.leer(self.id, 1000), destino, equipo)
+        config, prueba = perfiles.elegir(historia, destino, equipo, explorar=bool(self.valores.get("aprender", True)))
         jugador.params = config
         if prueba:
             self.log(f"Aprendiendo: esta pelea pruebo {aprendizaje.diferencia(config) or 'lo de siempre'}.")
@@ -675,6 +681,7 @@ class PerrosPiso4(Modo):
     def _jugar_turno(self):
         """Juega cartas hasta llenar los huecos. Se puede retomar si se corta a medias."""
         ultima_accion, repeticiones = None, 0
+        pendiente, huecos_pendientes = None, None
         # Cartas que se jugaron y no entraron en su hueco: el juego no las acepta (bloqueadas aunque no se vean
         # oscuras). Se tratan como bloqueadas el resto del turno en vez de repetirlas (prueba de la 0.2.4).
         ultima_carta, rechazadas = None, []
@@ -688,6 +695,9 @@ class PerrosPiso4(Modo):
                 self.turno_abierto = False
                 return None
             huecos = C.contar_huecos(p, 0.7)
+            if pendiente is not None and huecos < huecos_pendientes:
+                self.diario.confirmar(pendiente, True)
+                pendiente = None
             if huecos == 0:
                 self.turno_abierto = False
                 self.log("Turno terminado.", "debug")
@@ -722,8 +732,15 @@ class PerrosPiso4(Modo):
                     c.tipo = TipoCarta.BLOQUEADA
             self.log("Mano: " + " ".join(str(c) for c in mano), "debug")
             try:
+                jugador = getattr(self.estrategia, "jugador", None)
+                if jugador is not None:
+                    from lumen.ia import estado as estado_ia
+                    jugador.observacion = estado_ia.observar(p)
+                    jugador.equipo = self.equipo_de_la_sesion() or ()
                 idx, objetivo, talento = self.estrategia.decidir(self.fase, self.turno_fase, accion, mano, self.huecos_turno)
                 self._anotar_heroes(mano)
+                if self.diario.pelea is not None:
+                    self.diario.pelea["equipo"] = self.equipo_de_la_sesion() or []
             except Reiniciar as motivo:
                 if not self.rendirse_si_bloqueada:
                     # Floor 1-3: rendirse estropea la vuelta entera (la rata, 2026-11-09: mano leida como bloqueada
@@ -739,8 +756,13 @@ class PerrosPiso4(Modo):
             if talento and not self.talento_usado:
                 self._activar_talento_odin()
                 self.talento_usado = True
-            self.diario.decision(self.fase, self.turno_fase, accion, mano, idx,
-                                 getattr(getattr(self.estrategia, "jugador", None), "razones", None))
+            if pendiente is not None:
+                self.diario.confirmar(pendiente, False)  # no se observo que el intento anterior entrara
+            pendiente = self.diario.decision(self.fase, self.turno_fase, accion, mano, idx,
+                                 getattr(getattr(self.estrategia, "jugador", None), "razones", None), confirmada=False)
+            if pendiente is not None and jugador is not None:
+                pendiente["observacion"] = jugador.observacion
+            huecos_pendientes = huecos
             if objetivo:
                 antes = self.objetivo_actual
                 self._apuntar(objetivo)
@@ -758,6 +780,8 @@ class PerrosPiso4(Modo):
             es_ulti = not isinstance(idx, tuple) and mano[idx].tipo == TipoCarta.ULTI
             # La ulti tiene una animacion larga: con 1,6 s la rata la dio por "no entra" y la aparto (2026-11-09).
             if self._esperar_hueco(huecos, 4.0 if es_ulti else 1.6):
+                self.diario.confirmar(pendiente, True)
+                pendiente = None
                 self.log("Carta colocada.", "debug")
             else:
                 self.log("La carta aun no ocupa su hueco; lo vuelvo a comprobar.", "debug")

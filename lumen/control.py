@@ -22,6 +22,7 @@ class Control:
         self.al_stats: Callable[[dict], None] = lambda stats: None
         self.ultima_actividad = time.time()  # lo usa el vigilante de atascos
         self.estado_actual = ""
+        self.ejecutando = False
         self.parar_en_zona_segura = False  # p. ej. hay una actualizacion: terminar la pelea y parar
 
     # ------------------------------------------------------------- ordenes de la interfaz

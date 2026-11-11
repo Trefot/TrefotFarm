@@ -3,6 +3,7 @@
 Seguridad: llevar el raton a una esquina de la pantalla detiene pyautogui (FailSafe).
 """
 
+from contextlib import contextmanager
 import random
 import time
 
@@ -38,11 +39,22 @@ def apuntar(objetivo, origen) -> None:
     pyautogui.moveTo(*_punto(objetivo, origen))
 
 
+@contextmanager
+def _boton_izquierdo():
+    """Suelta el boton incluso si falla un movimiento o se cancela la entrada."""
+    win32api.mouse_event(win32con.MOUSEEVENTF_LEFTDOWN, 0, 0)
+    try:
+        yield
+    finally:
+        win32api.mouse_event(win32con.MOUSEEVENTF_LEFTUP, 0, 0)
+
+
 def pulsar() -> None:
     """Pulsa donde este el raton, sin moverlo ni esperar antes (ver ``apuntar``)."""
-    win32api.mouse_event(win32con.MOUSEEVENTF_LEFTDOWN, 0, 0)
-    time.sleep(DURACION_CLIC)
-    win32api.mouse_event(win32con.MOUSEEVENTF_LEFTUP, 0, 0)
+    control.revisar()
+    with _boton_izquierdo():
+        time.sleep(DURACION_CLIC)
+
     control.actividad()
 
 
@@ -52,9 +64,9 @@ def clic_rapido(objetivo, origen) -> None:
     control.revisar()
     pyautogui.moveTo(*_punto(objetivo, origen))
     time.sleep(0.1)
-    win32api.mouse_event(win32con.MOUSEEVENTF_LEFTDOWN, 0, 0)
-    time.sleep(0.01)
-    win32api.mouse_event(win32con.MOUSEEVENTF_LEFTUP, 0, 0)
+    with _boton_izquierdo():
+        time.sleep(0.01)
+
     control.actividad()
 
 
@@ -66,10 +78,10 @@ def clic(objetivo, origen, espera: float = 0.05, jitter: int = JITTER_PX):
         y += random.randint(-jitter, jitter)
     pyautogui.moveTo(x, y)
     time.sleep(0.05)  # que el juego "vea" el raton encima antes de pulsar
-    win32api.mouse_event(win32con.MOUSEEVENTF_LEFTDOWN, 0, 0)
-    # En la primera pelea real, pulsaciones de 30-70 ms se perdian a menudo: ~120 ms entran siempre.
-    time.sleep(DURACION_CLIC + random.random() * 0.04)
-    win32api.mouse_event(win32con.MOUSEEVENTF_LEFTUP, 0, 0)
+    with _boton_izquierdo():
+        # En la primera pelea real, pulsaciones de 30-70 ms se perdian a menudo: ~120 ms entran siempre.
+        time.sleep(DURACION_CLIC + random.random() * 0.04)
+
     control.actividad()
     if espera:
         control.esperar(espera)
@@ -89,14 +101,18 @@ def arrastrar(desde, hasta, origen, duracion: float = 0.4):
     x2, y2 = _punto(hasta, origen)
     pyautogui.moveTo(x1, y1)
     time.sleep(0.05)
-    win32api.mouse_event(win32con.MOUSEEVENTF_LEFTDOWN, 0, 0)
-    time.sleep(DURACION_CLIC)  # que el juego "agarre" la carta antes de moverla
-    pasos = max(10, int(duracion * 60))
-    for i in range(1, pasos + 1):
-        t = i / pasos
-        pyautogui.moveTo(int(x1 + (x2 - x1) * t), int(y1 + (y2 - y1) * t))
-        time.sleep(duracion / pasos)
-    time.sleep(0.1)  # soltar quieto sobre el destino
-    win32api.mouse_event(win32con.MOUSEEVENTF_LEFTUP, 0, 0)
+    with _boton_izquierdo():
+        time.sleep(DURACION_CLIC)  # que el juego "agarre" la carta antes de moverla
+        pasos = max(10, int(duracion * 60))
+        for i in range(1, pasos + 1):
+            if control.detenido:
+                from lumen.control import Detenido
+
+                raise Detenido()
+            t = i / pasos
+            pyautogui.moveTo(int(x1 + (x2 - x1) * t), int(y1 + (y2 - y1) * t))
+            time.sleep(duracion / pasos)
+        time.sleep(0.1)  # soltar quieto sobre el destino
+
     control.actividad()
     control.esperar(0.15)

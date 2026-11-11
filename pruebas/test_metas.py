@@ -86,7 +86,7 @@ class Interfaz(Base):
             p.stop()
 
     def test_fila_metas_y_franja_en_inicio(self):
-        ini, f = self.v.paginas["inicio"], self.v.farmear
+        ini, f = self.v.paginas["preparar"], self.v.farmear
         ini.ir_a_destino("perros_piso4")
         self.assertEqual(ini.fila_metas.objetos.count("garra_skoll_hati"), 1, "cada material una sola vez")
         self.assertFalse(ini.b_meta.isEnabled(), "sin metas, el chip Meta no vale")
@@ -105,7 +105,7 @@ class Interfaz(Base):
         self.assertFalse(ini.caja_equipo.isHidden())
 
     def test_desde_farmear_abre_la_franja_en_inicio(self):
-        ini, f = self.v.paginas["inicio"], self.v.farmear
+        ini, f = self.v.paginas["preparar"], self.v.farmear
         ini.ir_a_destino("indura")
         f.preparar("perros_piso4", {})
         f.fila_metas.tocado.emit("orbe_skoll_hati")
@@ -115,7 +115,7 @@ class Interfaz(Base):
         ini.editor.cerrar()
 
     def test_ir_a_farmearla_gira_la_rueda_y_pone_meta(self):
-        ini = self.v.paginas["inicio"]
+        ini = self.v.paginas["preparar"]
         metas.poner("esencia_azul", 0, 100)  # sale en el pajaro Floor 1-3, pero mas en su Floor 4 (desde la 0.31.0)
         ini.abrir_meta("esencia_azul", "pajaro_pisos1a3")
         ini.editor.b_ir.click()

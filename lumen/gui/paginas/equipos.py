@@ -32,6 +32,7 @@ from PyQt5.QtWidgets import (
     QWidget,
 )
 
+from lumen.archivos import escribir_texto
 from lumen import config, historial
 from lumen import personajes as P
 from lumen.gui import iconos, tema
@@ -86,7 +87,7 @@ def guardar_propio(clave: str, datos: dict, anterior: tuple[str, int] | None = N
             propios.pop(vieja, None)
     propios.setdefault(clave, []).append(datos)
     PROPIOS.parent.mkdir(parents=True, exist_ok=True)
-    PROPIOS.write_text(yaml.safe_dump(propios, allow_unicode=True, sort_keys=False, width=110), encoding="utf-8")
+    escribir_texto(PROPIOS, yaml.safe_dump(propios, allow_unicode=True, sort_keys=False, width=110))
 
 
 def borrar_propio(clave: str, indice: int) -> None:
@@ -94,7 +95,7 @@ def borrar_propio(clave: str, indice: int) -> None:
     propios.get(clave, []).pop(indice)
     if not propios.get(clave):
         propios.pop(clave, None)
-    PROPIOS.write_text(yaml.safe_dump(propios, allow_unicode=True, sort_keys=False, width=110), encoding="utf-8")
+    escribir_texto(PROPIOS, yaml.safe_dump(propios, allow_unicode=True, sort_keys=False, width=110))
 
 
 def medidas(clave: str) -> dict[frozenset, dict]:

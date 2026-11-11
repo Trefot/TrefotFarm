@@ -16,15 +16,30 @@ Se puede apagar por modo ("Aprender solo" en las opciones): entonces juega siemp
 """
 
 import json
+import math
 import random
 from dataclasses import dataclass
 
 from lumen.inteligencia import PARAMS_DEFECTO
 
-PARAMETROS: dict[str, tuple[float, ...]] = {  # valores posibles, de menos a mas (el de siempre en medio)
-    "peso_futuro": (0.3, 0.45, 0.6),  # cuanto cuenta guardar cartas para el turno siguiente
-    "valor_ulti": (3.0, 4.0, 5.0),  # cuanto vale jugar una ulti frente a una carta normal
-    "solo_area_resto": (0.1, 0.2, 0.35),  # en fases de "solo area", cuanto vale una carta de un objetivo
+PARAMETROS: dict[
+    str, tuple[float, ...]
+] = {  # valores posibles, de menos a mas (el de siempre en medio)
+    "peso_futuro": (
+        0.3,
+        0.45,
+        0.6,
+    ),  # cuanto cuenta guardar cartas para el turno siguiente
+    "valor_ulti": (
+        3.0,
+        4.0,
+        5.0,
+    ),  # cuanto vale jugar una ulti frente a una carta normal
+    "solo_area_resto": (
+        0.1,
+        0.2,
+        0.35,
+    ),  # en fases de "solo area", cuanto vale una carta de un objetivo
 }
 DEFECTO = {k: PARAMS_DEFECTO[k] for k in PARAMETROS}
 EXPLORAR = 0.1
@@ -32,8 +47,11 @@ MIN_PELEAS = 5
 MEJORA = 1.05
 DESCARTAR_TASA = 50.0  # % de victorias
 DESCARTAR_LENTA = 0.7  # victorias por hora frente a la base
-NOMBRES = {"peso_futuro": "guardar para el turno siguiente", "valor_ulti": "valor de la ulti",
-           "solo_area_resto": "cartas de un objetivo en fases de área"}
+NOMBRES = {
+    "peso_futuro": "guardar para el turno siguiente",
+    "valor_ulti": "valor de la ulti",
+    "solo_area_resto": "cartas de un objetivo en fases de área",
+}
 
 
 def clave(config: dict) -> str:
@@ -55,11 +73,36 @@ class Cifras:
         return self.victorias / (self.segundos / 3600) if self.segundos > 0 else 0.0
 
 
+def valida(config) -> bool:
+    return (
+        isinstance(config, dict)
+        and set(config) == set(PARAMETROS)
+        and all(
+            isinstance(config[k], (int, float))
+            and not isinstance(config[k], bool)
+            and math.isfinite(config[k])
+            and config[k] in valores
+            for k, valores in PARAMETROS.items()
+        )
+    )
+
+
 def cifras(peleas: list[dict]) -> dict[str, Cifras]:
     """Por configuracion: peleas terminadas, victorias y tiempo total (las abandonadas no cuentan)."""
     salida: dict[str, Cifras] = {}
     for p in peleas:
-        if not p.get("config") or p.get("resultado") not in ("victoria", "derrota", "reinicio"):
+        if not valida(p.get("config")) or p.get("resultado") not in (
+            "victoria",
+            "derrota",
+            "reinicio",
+        ):
+            continue
+        duracion = p.get("duracion")
+        if (
+            not isinstance(duracion, (int, float))
+            or not math.isfinite(duracion)
+            or duracion <= 0
+        ):
             continue
         c = salida.setdefault(clave(p["config"]), Cifras())
         c.peleas += 1
@@ -68,14 +111,19 @@ def cifras(peleas: list[dict]) -> dict[str, Cifras]:
     return salida
 
 
-def base(peleas: list[dict]) -> dict:
+def base(peleas: list[dict], inicial: dict | None = None) -> dict:
     """La configuracion con la que jugar: la de siempre, salvo que otra haya demostrado ser mejor."""
     datos = cifras(peleas)
-    mejor, mejor_cifras = dict(DEFECTO), datos.get(clave(DEFECTO))
+    inicial = inicial if valida(inicial) else DEFECTO
+    mejor, mejor_cifras = dict(inicial), datos.get(clave(inicial))
     if mejor_cifras is None or mejor_cifras.peleas < MIN_PELEAS:
         return mejor  # primero hay que conocer bien la de siempre
     for k, c in datos.items():
-        if c.peleas >= MIN_PELEAS and c.por_hora > mejor_cifras.por_hora * MEJORA:
+        if (
+            c.peleas >= MIN_PELEAS
+            and c.tasa >= mejor_cifras.tasa
+            and c.por_hora > mejor_cifras.por_hora * MEJORA
+        ):
             mejor, mejor_cifras = {**DEFECTO, **json.loads(k)}, c
     return mejor
 
@@ -84,7 +132,11 @@ def variantes(config: dict) -> list[dict]:
     """Las que cambian un solo parametro un solo paso."""
     salida = []
     for nombre, valores in PARAMETROS.items():
-        i = valores.index(config[nombre]) if config[nombre] in valores else valores.index(DEFECTO[nombre])
+        i = (
+            valores.index(config[nombre])
+            if config[nombre] in valores
+            else valores.index(DEFECTO[nombre])
+        )
         for j in (i - 1, i + 1):
             if 0 <= j < len(valores):
                 salida.append({**config, nombre: valores[j]})
@@ -94,28 +146,43 @@ def variantes(config: dict) -> list[dict]:
 def descartada(c: Cifras | None, de_la_base: Cifras | None) -> bool:
     if c is None or c.peleas < 3:
         return False
-    lenta = de_la_base is not None and de_la_base.peleas >= MIN_PELEAS and c.por_hora < de_la_base.por_hora * DESCARTAR_LENTA
+    lenta = (
+        de_la_base is not None
+        and de_la_base.peleas >= MIN_PELEAS
+        and c.por_hora < de_la_base.por_hora * DESCARTAR_LENTA
+    )
     return c.tasa < DESCARTAR_TASA or lenta
 
 
-def elegir(peleas: list[dict], explorar: bool = True, rng: random.Random | None = None) -> tuple[dict, bool]:
+def elegir(
+    peleas: list[dict],
+    explorar: bool = True,
+    rng: random.Random | None = None,
+    inicial: dict | None = None,
+) -> tuple[dict, bool]:
     """(configuracion para la proxima pelea, si es una prueba)."""
     rng = rng or random
-    actual = base(peleas)
+    actual = base(peleas, inicial)
     if not explorar or rng.random() >= EXPLORAR:
         return actual, False
     datos = cifras(peleas)
     de_la_base = datos.get(clave(actual))
-    candidatas = [v for v in variantes(actual) if not descartada(datos.get(clave(v)), de_la_base)]
+    candidatas = [
+        v for v in variantes(actual) if not descartada(datos.get(clave(v)), de_la_base)
+    ]
     if not candidatas:
         return actual, False
     menos = min((datos.get(clave(v)) or Cifras()).peleas for v in candidatas)
-    return rng.choice([v for v in candidatas if (datos.get(clave(v)) or Cifras()).peleas == menos]), True
+    return rng.choice(
+        [v for v in candidatas if (datos.get(clave(v)) or Cifras()).peleas == menos]
+    ), True
 
 
 def diferencia(config: dict) -> str:
     """'valor de la ulti 5' (lo que cambia respecto a lo de siempre), o '' si es lo de siempre."""
-    return ", ".join(f"{NOMBRES[k]} {config[k]:g}" for k in PARAMETROS if config.get(k) != DEFECTO[k])
+    return ", ".join(
+        f"{NOMBRES[k]} {config[k]:g}" for k in PARAMETROS if config.get(k) != DEFECTO[k]
+    )
 
 
 def _coma(x: float) -> str:
@@ -128,15 +195,19 @@ def texto(peleas: list[dict]) -> str:
     datos = cifras(peleas)
     c = datos.get(clave(actual)) or Cifras()
     cambios = diferencia(actual)
-    lineas = [f"Aprendizaje: juega {'con ' + cambios if cambios else 'como siempre'}"
-              + (f" ({c.peleas} peleas, {_coma(c.por_hora)} victorias/h)" if c.peleas else "")]
+    lineas = [
+        f"Aprendizaje: juega {'con ' + cambios if cambios else 'como siempre'}"
+        + (f" ({c.peleas} peleas, {_coma(c.por_hora)} victorias/h)" if c.peleas else "")
+    ]
     probadas = [(k, v) for k, v in datos.items() if k != clave(actual)]
     if probadas:
         de_la_base = datos.get(clave(actual))
         partes = []
         for k, v in sorted(probadas, key=lambda kv: -kv[1].peleas)[:3]:
             estado = " ✗" if descartada(v, de_la_base) else ""
-            partes.append(f"{diferencia({**DEFECTO, **json.loads(k)}) or 'lo de siempre'}: {v.peleas} peleas, "
-                          f"{_coma(v.por_hora)}/h{estado}")
+            partes.append(
+                f"{diferencia({**DEFECTO, **json.loads(k)}) or 'lo de siempre'}: {v.peleas} peleas, "
+                f"{_coma(v.por_hora)}/h{estado}"
+            )
         lineas.append("Probado: " + " · ".join(partes))
     return "\n".join(lineas)

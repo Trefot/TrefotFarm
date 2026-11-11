@@ -41,13 +41,14 @@ Versiones y lista de cambios: CAMBIOS.txt.
 
 LA INTERFAZ (menu de la izquierda)
 ----------------------------------
-Inicio            4 iconos (Juego, Ventana, Equipo, Cartas: en verde = listo), la rueda para elegir
-                  que farmear y su piso, el equipo mas rapido medido, victorias y Empezar.
-Farmear           todo en una pantalla: arriba el modo (en Floor 1-3, el piso y la vuelta) con
-                  Iniciar / Pausar / Detener; las cifras; el botin que lleva (esta sesion; parado, el
-                  de hoy en ese modo); y abajo el Registro (o Plan u Opciones) junto a los 5 mejores
-                  equipos. Metas (Inicio y Farmear): los materiales del contenido; toca uno para poner
-                  cuantos tienes y quieres. El botin suma solo y el chip "Meta" para el bot al cumplirla.
+Inicio            resumen de actividad real del dia y accesos a las tareas principales.
+Contenidos        destino destacado y medallones horizontales con flechas, busqueda y filtro por grupo.
+                  Elige el piso y pulsa Preparar esta aventura para revisar la sesion.
+Preparar sesion   requisitos, piso o dificultad, materiales, equipo y condicion de parada.
+Sesion en directo controles Iniciar / Pausar / Detener, cifras, botin, registro y opciones.
+Plan del dia      lista de tareas en orden para una secuencia de farmeo.
+Mis equipos       consulta de equipos por contenido, sin acceso a los editores de administracion.
+Objetivos         progreso de materiales y acceso a su edicion integrada en Preparar sesion.
 Capturas          sacar y comprobar las imagenes de tus cartas (la insignia roja = las que faltan).
 Personajes        tu biblioteca: ficha de cada personaje (color, raza, roles, lo tengo), sus cartas y su
                   retrato. Una captura sirve para todos los modos. Los retratos se sacan aqui, en la
@@ -61,7 +62,7 @@ Botin (admin)     suma de todo lo conseguido (oro y cada objeto, por dia o por s
 Ajustes           ventana del juego, teclas rapidas, avisos al movil y modo administrador (con el
                   repositorio de GitHub).
 
-Para farmear: juego abierto y visible, equipo puesto, Inicio -> gira la rueda -> "Empezar".
+Para farmear: juego abierto y visible, equipo puesto, Contenidos -> Preparar sesion -> "Iniciar sesion".
 Floor 1-3 (las 5 Demonic Beasts): juega Floor 1, 2 y 3 seguidos y vuelve a empezar. Sirve cualquier
 equipo fuerte (juega primero las ultis y luego las cartas de mas rango). El piso se busca leyendo el
 texto del piso en la pantalla ("... Floor N" o "Piso N ...", en cualquier parte del nombre); si un piso
@@ -103,7 +104,7 @@ Ya viene conectado a su repositorio de GitHub (se cambia en Ajustes si hiciera f
 
 PLAN DEL DIA
 ------------
-Farmear -> Plan: una lista de tareas (modo + victorias) que el bot hace en orden, sin nadie delante.
+Plan del dia: una lista de tareas (modo + victorias) que el bot hace en orden, sin nadie delante.
 Al acabar una tarea empieza la siguiente; si una no puede empezar, la salta. Si se acaba la estamina,
 salta las tareas que la usan (Indura sigue). Una tarea con victorias en "Meta" (0) farmea hasta
 completar las metas de material que da ese modo. Detener o F10 paran el plan entero. Al final sale un
@@ -184,3 +185,34 @@ Para programar uno: copia modos\perros_piso4.py, usa el mismo id que tiene en el
 
 
 Ojo: usar bots va contra las reglas de Netmarble y puede costar un baneo.
+
+REVISAR CAPTURAS SIN EL JUEGO
+----------------------------
+Ajustes -> desbloquear modo administrador -> Laboratorio -> Abrir capturas. Selecciona imagenes PNG/JPG de la ventana (550x940).
+Avanza con las flechas. Elige el modo arriba, piso/fase y acciones (Detectar o cantidad manual), y Analizar.
+Amarillo marca la propuesta, verde las cartas jugables y rojo las no jugables. Copiar analisis permite compartir
+el texto. La IA general analiza cada imagen por separado: no reproduce el guion del modo ni supone acciones
+entre imagenes. Deten el bot y el plan antes de analizar. No mueve el raton ni guarda decisiones en el diario. Si desactivas el modo administrador, se limpia el panel.
+
+MEMORIA Y CONOCIMIENTO (ADMINISTRADOR)
+-----------------------------------
+Laboratorio -> Capturas y comparacion: indica los IDs del equipo (3 o 4 heroes) y compara la propuesta base
+con la que usa la memoria de ese equipo. En demonios elige tambien el nivel. Sin equipo conocido no se
+aplican lecciones de otros. Cada imagen sigue siendo independiente; un cambio no demuestra una mejora.
+Laboratorio -> Memoria: ver, guardar copia, restaurar o volver a la base. Solo con el bot, plan y analisis
+detenidos. Se guarda copia antes de restaurar; las estadisticas anteriores no deshacen la restauracion.
+Laboratorio -> Conocimiento 7DS: cantidad de personajes/textos, mecanicas reconocidas y destinos sin ficha.
+La memoria se separa por equipo, destino y revision de los datos. Las variantes se exploran tras medir la
+base y solo se adoptan si mejoran victorias/h sin bajar la tasa observada de victorias.
+Esto no convierte los textos en conocimiento completo del estado de combate: faltan validaciones del juego.
+
+VALIDAR PARTIDAS Y EQUIPOS (ADMINISTRADOR)
+--------------------------------------
+Laboratorio -> Validacion y equipos: elige contexto y equipo en Capturas. Evaluar diarios locales lee
+las ultimas partidas guardadas. Abrir diario JSONL abre un archivo para evaluarlo sin entrenar ni cambiar
+memoria. Las metricas separan versiones, configuraciones y origen declarado (juego/simulacion/desconocido).
+Recomendar equipos registrados considera los heroes marcados y sus partidas comparables. No cambia el
+equipo ni inicia partidas. Una referencia publicada o pocas victorias no equivalen a una prueba de tu cuenta.
+
+Aspecto Taberna viva: ilustracion calida, luz ambar y tarjetas que responden al cursor.
+Se selecciona en Ajustes -> Tema. En automatico se usa fuera de las temporadas.

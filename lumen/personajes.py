@@ -17,6 +17,7 @@ from pathlib import Path
 
 import yaml
 
+from lumen.archivos import escribir_texto
 from lumen.rutas import ASSETS, EQUIPO, IMAGENES, RAIZ
 from lumen.vision import Plantilla, guardar_imagen
 
@@ -235,7 +236,7 @@ def _primera_vez():
     en la pagina Personajes). Tambien mueve capturas de la version anterior (assets/equipo/perros_trefot)."""
     CARPETA.mkdir(parents=True, exist_ok=True)
     if not USUARIO.is_file():
-        USUARIO.write_text("{}\n", encoding="utf-8")
+        escribir_texto(USUARIO, "{}\n")
     viejo = EQUIPO / "perros_trefot"
     nombres_viejos = {
         "odin_single": ("odin", "single"), "odin_area": ("odin", "area"), "odin_ulti": ("odin", "ulti"),
@@ -294,7 +295,7 @@ def guardar(p: Personaje) -> None:
             registro["cartas_quitadas"] = quitadas
         usuario[p.id] = registro
         CARPETA.mkdir(parents=True, exist_ok=True)
-        USUARIO.write_text(yaml.safe_dump(usuario, allow_unicode=True, sort_keys=False), encoding="utf-8")
+        escribir_texto(USUARIO, yaml.safe_dump(usuario, allow_unicode=True, sort_keys=False))
 
 
 def marcar_tengo(pid: str, tengo: bool) -> None:
@@ -303,7 +304,7 @@ def marcar_tengo(pid: str, tengo: bool) -> None:
         usuario = _leer_yaml(USUARIO)
         usuario.setdefault(pid, {})["tengo"] = bool(tengo)
         CARPETA.mkdir(parents=True, exist_ok=True)
-        USUARIO.write_text(yaml.safe_dump(usuario, allow_unicode=True, sort_keys=False), encoding="utf-8")
+        escribir_texto(USUARIO, yaml.safe_dump(usuario, allow_unicode=True, sort_keys=False))
 
 
 def marcar_varios(pids, tengo: bool) -> None:
@@ -313,7 +314,7 @@ def marcar_varios(pids, tengo: bool) -> None:
         for pid in pids:
             usuario.setdefault(pid, {})["tengo"] = bool(tengo)
         CARPETA.mkdir(parents=True, exist_ok=True)
-        USUARIO.write_text(yaml.safe_dump(usuario, allow_unicode=True, sort_keys=False), encoding="utf-8")
+        escribir_texto(USUARIO, yaml.safe_dump(usuario, allow_unicode=True, sort_keys=False))
 
 
 def borrar_propio(pid: str) -> None:
@@ -322,7 +323,7 @@ def borrar_propio(pid: str) -> None:
         usuario = _leer_yaml(USUARIO)
         if pid in usuario and pid not in _leer_yaml(BASE):
             del usuario[pid]
-            USUARIO.write_text(yaml.safe_dump(usuario, allow_unicode=True, sort_keys=False), encoding="utf-8")
+            escribir_texto(USUARIO, yaml.safe_dump(usuario, allow_unicode=True, sort_keys=False))
 
 
 def nuevo_id(nombre: str, existentes) -> str:

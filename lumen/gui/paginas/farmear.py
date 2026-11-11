@@ -24,12 +24,14 @@ from PyQt5.QtWidgets import (
     QTextEdit,
     QToolButton,
     QVBoxLayout,
+    QWidget,
 )
 
 from lumen import actualizador, avisos, botin, config, informe, metas, ordenes, recompensas, ventana
 from lumen.control import control
 from lumen.gui import iconos, plan, resumen, tema
 from lumen.gui.metas import FilaMateriales
+from lumen.gui.reproductor import PanelReproductor
 from lumen.gui.arranque import EMBLEMA
 from lumen.gui.comun import Pagina, formatear_tiempo
 from lumen.gui.paginas.equipos import clave_de_equipos, tarjetas_equipos
@@ -77,7 +79,7 @@ class VentanaInforme(QDialog):
         capa.addLayout(fila)
 
 class PaginaFarmear(Pagina):
-    titulo = "Farmear"
+    titulo = "Sesión en directo"
 
     def __init__(self, app):
         super().__init__()
@@ -202,7 +204,7 @@ class PaginaFarmear(Pagina):
         self.raya_premios = QFrame(frameShape=QFrame.VLine, objectName="raya")
         capa_botin.addWidget(self.raya_premios)
         self.fila_metas = FilaMateriales(34, "premio_mini", centrar=False, titulo_arriba=True)
-        self.fila_metas.tocado.connect(lambda o: self.app.paginas["inicio"].abrir_meta(o, self.modo_cls.id))
+        self.fila_metas.tocado.connect(lambda o: self.app.paginas["preparar"].abrir_meta(o, self.modo_cls.id))
         capa_botin.addWidget(self.fila_metas)
         self._firma_metas = None
         self.cuerpo.addWidget(caja_botin)
@@ -227,6 +229,9 @@ class PaginaFarmear(Pagina):
         panel_equipos = QScrollArea(objectName="area_pagina", widgetResizable=True, frameShape=QFrame.NoFrame)
         panel_equipos.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         panel_equipos.setWidget(contenedor_eq)
+        self.vista_equipos = QFrame()
+        self.capa_vista_equipos = QVBoxLayout(self.vista_equipos)
+        self.capa_vista_equipos.setContentsMargins(0, 0, 0, 0)
         self.panel_plan = plan.PanelPlan()
         self.panel_plan.iniciar.connect(self.iniciar_plan)
         self.panel_plan.saltar.connect(self.saltar_tarea)
@@ -244,9 +249,14 @@ class PaginaFarmear(Pagina):
         self._ultima_revision_metas = 0.0
         # Lo que la IA aprendio de cada pelea en este modo (lumen/ia/lecciones.py), por piso y fase
         self.aprendido = QTextEdit(readOnly=True, objectName="registro")
-        for i, (texto, ic, vista) in enumerate((("Registro", "registro", self.registro), ("Plan", "mdi6.format-list-checks", self.panel_plan),
+        self.reproductor = PanelReproductor(
+            lambda: (self.modo_cls.id, self.modo_cls.id in {"indura", "demonio_rojo", "demonio_gris", "howlex", "bellmoth", "demonio_original"}),
+            lambda: self.puente.corriendo or self.plan_paso is not None,
+        )
+        for i, (texto, ic, vista) in enumerate((("Registro", "registro", self.registro), ("Plan", "mdi6.format-list-checks", QWidget()),
                                                ("Opciones", "ajustes", panel_opciones),
-                                               ("Aprendido", "mdi6.school-outline", self.aprendido))):
+                                               ("Aprendido", "mdi6.school-outline", self.aprendido),
+                                               ("Equipos", "equipos", self.vista_equipos))):
             b = QPushButton(" " + texto, objectName="chip", checkable=True, checked=i == 0)
             b.setIcon(iconos.icono(ic, tema.TENUE, tema.SOBRE_ACENTO))
             b.clicked.connect(lambda _, n=i: self._ver_vista(n))
@@ -275,9 +285,13 @@ class PaginaFarmear(Pagina):
         derecha.addLayout(titulo_eq)
         derecha.addWidget(panel_equipos, 1)
         abajo = QHBoxLayout()
+        self.abajo = abajo
+        self.equipos_en_tab = False
         abajo.setSpacing(14)
         abajo.addLayout(izquierda, 4)
-        abajo.addLayout(derecha, 5)
+        self.contenedor_equipos = QFrame()
+        self.contenedor_equipos.setLayout(derecha)
+        abajo.addWidget(self.contenedor_equipos, 5)
         self.cuerpo.addLayout(abajo, 1)
 
         self.combo.currentIndexChanged.connect(self._mostrar_opciones)
@@ -299,12 +313,32 @@ class PaginaFarmear(Pagina):
 
     def _ver_vista(self, n: int):
         """Registro (0), Plan (1), Opciones (2) o Aprendido (3) abajo a la izquierda."""
+        if n == 1:
+            self.app.navegar("plan")
+            return
         if n == 3:
             self._pintar_aprendido()
+        if n == 4 and not self.equipos_en_tab:
+            self.abajo.removeWidget(self.contenedor_equipos)
+            self.capa_vista_equipos.addWidget(self.contenedor_equipos)
+            self.equipos_en_tab = True
+        elif n != 4 and self.equipos_en_tab:
+            self.capa_vista_equipos.removeWidget(self.contenedor_equipos)
+            self.abajo.addWidget(self.contenedor_equipos, 5)
+            self.equipos_en_tab = False
         self.pila_vista.setCurrentIndex(n)
+        self._adaptar_equipos()
         self.grupo_vista.buttons()[n].setChecked(True)
         for w in self.solo_registro:
             w.setVisible(n == 0)
+
+    def _adaptar_equipos(self):
+        if hasattr(self, "contenedor_equipos"):
+            self.contenedor_equipos.setVisible(self.equipos_en_tab or self.width() >= 1120)
+
+    def resizeEvent(self, evento):
+        super().resizeEvent(evento)
+        self._adaptar_equipos()
 
     # ------------------------------------------------------------------ opciones
     @property
@@ -417,6 +451,9 @@ class PaginaFarmear(Pagina):
 
     def iniciar(self, remoto: bool = False, meta: bool = False):
         """``meta``: parar al completar las metas que llena este modo (el chip "Meta" de Inicio)."""
+        if self.reproductor.ocupado:
+            self._problema("Analizando captura", "Espera a que termine el análisis antes de iniciar el bot.", remoto)
+            return
         self.parar_en_meta, self.metas_objetivo = False, []
         if meta:
             self.metas_objetivo = [m.objeto for m in metas.del_destino(self.modo_cls.id, metas.cargar(fresco=True))]
@@ -487,6 +524,9 @@ class PaginaFarmear(Pagina):
 
     def ejecutar_herramienta(self, modo) -> bool:
         """Arranca un modo que no es de farmeo (la captura de heroes) y muestra su avance aqui."""
+        if self.reproductor.ocupado:
+            self._problema("Analizando captura", "Espera a que termine el análisis.", False)
+            return False
         if self.puente.corriendo or not self._preparar_ventana():
             return False
         self.modo_externo = type(modo)
@@ -638,6 +678,9 @@ class PaginaFarmear(Pagina):
     # ------------------------------------------------------------ plan del dia
     def iniciar_plan(self, remoto: bool = False, tareas: list[dict] | None = None, prueba: bool = False):
         """Empieza el plan del dia (o las ``tareas`` dadas) por la primera tarea."""
+        if self.reproductor.ocupado:
+            self._problema("Analizando captura", "Espera a que termine el análisis antes de iniciar el plan.", remoto)
+            return
         if self.puente.corriendo:
             return
         tareas = tareas if tareas is not None else plan.cargar()
@@ -873,6 +916,8 @@ class PaginaFarmear(Pagina):
     def ver_equipos(self):
         """Abre Farmear, donde estan los mejores equipos (p. ej. desde el icono Equipo de Inicio)."""
         self.app.navegar("farmear")
+        if self.width() < 1120:
+            self._ver_vista(4)
 
     def _pintar_equipos(self):
         while self.lista_equipos.count():

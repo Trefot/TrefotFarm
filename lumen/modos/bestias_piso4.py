@@ -229,7 +229,7 @@ class EstrategiaPiso4(EstrategiaInteligente):
 
 
 class EstrategiaPajaro4(EstrategiaPiso4):
-    destino = "pajaro_f4"
+    destino = "pajaro_piso4"
 
     def nueva_pelea(self):
         super().nueva_pelea()
@@ -404,7 +404,7 @@ class EstrategiaPajaro4(EstrategiaPiso4):
 
 
 class EstrategiaCiervo4(EstrategiaPiso4):
-    destino = "ciervo_f4"
+    destino = "ciervo_piso4"
 
     def nueva_pelea(self):
         super().nueva_pelea()

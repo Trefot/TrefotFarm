@@ -43,21 +43,128 @@ class Interfaz(unittest.TestCase):
     def test_todas_las_paginas(self):
         for clave in self.v.paginas:
             with self.subTest(pagina=clave):
-                self.v.navegar(clave)
-                self.eventos()
-                self.assertIs(self.v.pila.currentWidget(), self.v.paginas[clave])
+                with mock.patch("lumen.admin.activo", return_value=True):
+                    self.v.navegar(clave)
+                    self.eventos()
+                    self.assertIs(self.v.pila.currentWidget(), self.v.paginas[clave])
+
+    def test_equipos_accesibles_en_ventana_compacta(self):
+        tamano = self.v.size()
+        try:
+            self.v.resize(1100, 740)
+            self.v.navegar("farmear")
+            f = self.v.farmear
+            f._ver_vista(0)
+            self.eventos()
+            self.assertTrue(f.contenedor_equipos.isHidden())
+            f.ver_equipos()
+            self.eventos()
+            self.assertIs(f.pila_vista.currentWidget(), f.vista_equipos)
+            self.assertFalse(f.contenedor_equipos.isHidden())
+            self.v.resize(1440, 900)
+            f._ver_vista(0)
+            self.eventos()
+            self.assertFalse(f.equipos_en_tab)
+            self.assertFalse(f.contenedor_equipos.isHidden())
+        finally:
+            self.v.resize(tamano)
+            self.v.farmear._ver_vista(0)
 
     def test_menu_normal(self):
         entorno.ajustes()["modo_admin"] = False
         self.v.aplicar_modo_admin()
         visibles = [c for c, b in self.v.botones.items() if not b.isHidden()]
-        self.assertEqual(visibles, ["inicio", "farmear", "personajes", "ayuda", "ajustes"])
+        self.assertEqual(visibles, ["inicio", "contenidos", "farmear", "plan", "personajes", "mis_equipos", "objetivos", "ajustes", "ayuda"])
+
+    def test_laboratorio_requiere_llave_y_sale_al_revocar(self):
+        with mock.patch("lumen.admin.activo", return_value=False):
+            self.v.aplicar_modo_admin()
+            self.v.navegar("farmear")
+            self.v.navegar("laboratorio")
+            self.assertIs(self.v.pila.currentWidget(), self.v.farmear)
+            self.assertTrue(self.v.botones["laboratorio"].isHidden())
+            self.assertNotIn("Capturas", [b.text().strip() for b in self.v.farmear.grupo_vista.buttons()], "el laboratorio no esta en Farmear")
+        with mock.patch("lumen.admin.activo", return_value=True):
+            self.v.aplicar_modo_admin()
+            self.v.navegar("laboratorio")
+            self.assertIs(self.v.pila.currentWidget(), self.v.paginas["laboratorio"])
+        with mock.patch("lumen.admin.activo", return_value=False):
+            self.v.aplicar_modo_admin()
+            self.assertIs(self.v.pila.currentWidget(), self.v.paginas["inicio"])
+            self.assertEqual(self.v.farmear.reproductor.rutas, [])
 
     def test_icono_equipo_lleva_a_farmear(self):
         self.v.navegar("inicio")
-        self.v.paginas["inicio"].pasos["equipo"].click()
+        self.v.paginas["preparar"].pasos["equipo"].click()
         self.eventos()
         self.assertIs(self.v.pila.currentWidget(), self.v.farmear)
+
+    def test_catalogo_lleva_a_preparacion_y_plan_es_accesible(self):
+        pagina = self.v.paginas["contenidos"]
+        pagina.catalogo.elegido.emit("pajaro_pisos1a3")
+        self.eventos()
+        self.assertIs(self.v.pila.currentWidget(), self.v.paginas["preparar"])
+        self.assertEqual(self.v.paginas["preparar"].modo_id, "pajaro_pisos1a3")
+        self.assertTrue(self.v.botones["contenidos"].isChecked())
+        self.v.farmear._ver_vista(1)
+        self.assertIs(self.v.pila.currentWidget(), self.v.paginas["plan"])
+        self.assertTrue(self.v.paginas["plan"].isAncestorOf(self.v.farmear.panel_plan))
+
+    def test_catalogo_busqueda_y_contenido_no_disponible(self):
+        catalogo = self.v.paginas["contenidos"].catalogo
+        try:
+            catalogo.buscar.setText("contenido inexistente 123")
+            self.assertTrue(all(w.isHidden() for _, w in catalogo.tarjetas))
+            self.assertFalse(catalogo.vacio.isHidden())
+            from lumen.modos import MODOS
+            cerrado = next(d.id for c, _ in catalogo.tarjetas for d in c.destinos if d.id not in MODOS)
+            catalogo.elegido.emit(cerrado)
+            self.assertFalse(self.v.paginas["preparar"].b_empezar.isEnabled())
+        finally:
+            catalogo.buscar.clear()
+
+    def test_preparacion_apila_columnas_en_ventana_compacta(self):
+        from PyQt5.QtWidgets import QBoxLayout, QScrollArea
+        tamano = self.v.size()
+        try:
+            self.v.resize(1100, 740)
+            self.v.navegar("preparar")
+            self.eventos()
+            pagina = self.v.paginas["preparar"]
+            self.assertEqual(pagina.columnas_preparacion.direction(), QBoxLayout.TopToBottom)
+            area = pagina.findChild(QScrollArea, "area_pagina")
+            self.assertLessEqual(area.widget().width(), area.viewport().width())
+        finally:
+            self.v.resize(tamano)
+
+    def test_selector_destinos_filtra_y_prepara_el_piso_elegido(self):
+        from lumen.modos.catalogo import CATALOGO
+        catalogo = self.v.paginas["contenidos"].catalogo
+        try:
+            catalogo.buscar.setText("Hraesvelgr")
+            self.assertEqual(len(catalogo.visibles), 1)
+            self.assertFalse(catalogo.siguiente.isEnabled())
+            self.assertEqual(catalogo.seleccion.id, "pajaro")
+            catalogo.pisos.setCurrentIndex(0)
+            imagen_base = catalogo.escena.imagen.toImage()
+            catalogo.pisos.setCurrentIndex(1)
+            self.assertNotEqual(catalogo.escena.imagen.toImage(), imagen_base)
+            catalogo.pisos.setCurrentIndex(0)
+            self.assertEqual(catalogo.escena.imagen.toImage(), imagen_base)
+            catalogo.buscar.clear()
+            siguiente = CATALOGO[1]
+            next(b for c, b in catalogo.tarjetas if c.id == siguiente.id).click()
+            self.assertEqual(catalogo.seleccion.id, siguiente.id)
+            catalogo.pisos.setCurrentIndex(0)
+            esperado = siguiente.destinos[0].id
+            catalogo.preparar.click()
+            self.assertIs(self.v.pila.currentWidget(), self.v.paginas["preparar"])
+            self.assertEqual(self.v.paginas["preparar"].modo_id, esperado)
+            catalogo.buscar.setText("sin resultados 999")
+            self.assertIsNone(catalogo.destino_id)
+            self.assertTrue(catalogo.escena.isHidden())
+        finally:
+            catalogo.buscar.clear()
 
     def test_plan_del_dia(self):
         from lumen.gui import plan, resumen

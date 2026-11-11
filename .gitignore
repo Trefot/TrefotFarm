@@ -6,3 +6,5 @@ config.yaml
 assets/equipo/
 /recompensas/
 /personajes/
+/config.yaml.bak
+/.config.yaml.*.tmp
