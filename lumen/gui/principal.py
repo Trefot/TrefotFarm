@@ -65,8 +65,8 @@ class VentanaPrincipal(QMainWindow):
         super().__init__()
         self.version_cargada = lumen.__version__  # la que esta corriendo (la del disco puede ser mas nueva)
         self.setWindowTitle(f"LumenFarm v{self.version_cargada}")
-        self.resize(1320, 800)
-        self.setMinimumSize(1100, 680)
+        self.setFixedSize(1100, 800)
+        self.setWindowFlag(Qt.WindowMaximizeButtonHint, False)
         self.puente = Puente()
         self.senales = _Senales()
         self.estado_update: actualizador.Estado | None = None

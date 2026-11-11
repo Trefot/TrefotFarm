@@ -65,7 +65,7 @@ class Interfaz(unittest.TestCase):
             f._ver_vista(0)
             self.eventos()
             self.assertFalse(f.equipos_en_tab)
-            self.assertFalse(f.contenedor_equipos.isHidden())
+            self.assertTrue(f.contenedor_equipos.isHidden())
         finally:
             self.v.resize(tamano)
             self.v.farmear._ver_vista(0)
@@ -165,6 +165,51 @@ class Interfaz(unittest.TestCase):
             self.assertTrue(catalogo.escena.isHidden())
         finally:
             catalogo.buscar.clear()
+
+    def test_tamano_definitivo_y_categorias_separadas(self):
+        from PyQt5.QtCore import QSize, Qt
+        from lumen.modos.catalogo import BESTIAS, DEMONIOS, FUERTE
+        self.assertEqual(self.v.size(), QSize(1100, 800))
+        self.assertEqual(self.v.minimumSize(), self.v.maximumSize())
+        self.assertFalse(self.v.windowFlags() & Qt.WindowMaximizeButtonHint)
+        catalogo = self.v.paginas["contenidos"].catalogo
+        self.v.navegar("contenidos")
+        try:
+            for indice, grupo, cantidad in ((0, BESTIAS, 6), (1, DEMONIOS, 6), (2, FUERTE, 2)):
+                catalogo.grupo.setCurrentIndex(indice)
+                self.eventos()
+                self.assertEqual(len(catalogo.visibles), cantidad)
+                self.assertTrue(all(c.grupo == grupo for c in catalogo.visibles))
+                self.assertEqual(catalogo.tira.horizontalScrollBar().maximum(), 0)
+                self.assertTrue(all(b.isHidden() == (c.grupo != grupo) for c, b in catalogo.tarjetas))
+            catalogo.buscar.setText("Oro")
+            self.assertEqual(len(catalogo.visibles), 1)
+            catalogo.grupo.setCurrentIndex(0)
+            self.assertEqual(catalogo.buscar.text(), "")
+            self.assertEqual(len(catalogo.visibles), 6)
+        finally:
+            catalogo.grupo.setCurrentIndex(0)
+            catalogo.buscar.clear()
+
+    def test_proximamente_se_muestra_en_gris_y_permite_consultar(self):
+        from lumen.modos.catalogo import CATALOGO
+        catalogo = self.v.paginas["contenidos"].catalogo
+        catalogo.grupo.setCurrentIndex(0)
+        rata = next(c for c in CATALOGO if c.id == "rata")
+        catalogo.seleccionar(rata)
+        for pix in (catalogo.escena.imagen, next(b.imagen for c, b in catalogo.tarjetas if c.id == "rata")):
+            imagen = pix.toImage()
+            for x in range(0, imagen.width(), 11):
+                for y in range(0, imagen.height(), 11):
+                    color = imagen.pixelColor(x, y)
+                    if color.alpha():
+                        self.assertEqual(color.red(), color.green())
+                        self.assertEqual(color.green(), color.blue())
+        self.assertEqual(catalogo.preparar.text(), "Ver detalles  →")
+        self.assertTrue(catalogo.preparar.isEnabled())
+        catalogo.preparar.click()
+        self.assertEqual(self.v.paginas["preparar"].modo_id, rata.destinos[0].id)
+        self.assertFalse(self.v.paginas["preparar"].b_empezar.isEnabled())
 
     def test_plan_del_dia(self):
         from lumen.gui import plan, resumen

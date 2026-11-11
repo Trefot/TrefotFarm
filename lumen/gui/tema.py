@@ -394,30 +394,42 @@ QProgressBar::chunk {{ background: {_s.acento}; border-radius: 5px; }}
 """
 
 if SKIN.id == "taberna_viva":
-    HOJA += f"""
-    QWidget {{ font-size: 10pt; }}
-    QLabel#titulo_pagina {{ font-family: 'Cinzel', 'Georgia'; font-size: 23pt; color: #f6d797; }}
-    QLabel#titulo_card, QLabel#titulo_hero {{ font-family: 'Cinzel', 'Georgia'; color: #f5dcac; }}
-    QLabel#titulo_card {{ font-size: 15pt; }}
-    QLabel#titulo_hero {{ font-size: 27pt; }}
-    QLabel#eyebrow {{ color: #d3ab68; letter-spacing: 1px; }}
-    QFrame#lateral {{ background: qlineargradient(x1:0,y1:0,x2:1,y2:0,stop:0 #130e0b,stop:1 #251b14); border-right: 1px solid #715331; }}
-    QLabel#marca {{ color: #f0ca82; font-size: 18pt; }}
-    QToolButton#menu {{ min-width: 164px; border: 1px solid transparent; border-radius: 6px; padding: 9px 8px; color: #cbb493; }}
-    QToolButton#menu:hover {{ background: #3c2b1d; color: #ffe1a4; border: 1px solid #705132; }}
-    QToolButton#menu:checked {{ background: qlineargradient(x1:0,y1:0,x2:1,y2:0,stop:0 #664324,stop:1 #302117); border: 1px solid #b68b48; color: #ffe2a8; }}
-    QFrame#contenido_card, QFrame#seccion, QFrame#tarjeta {{ background: qlineargradient(x1:0,y1:0,x2:0,y2:1,stop:0 #32251b,stop:1 #241b15); border: 1px solid #634b33; border-radius: 10px; }}
-    QFrame#contenido_card:hover {{ border-color: #ba8c4c; }}
-    QFrame#escena_aventura, QFrame#aventura_card {{ background: transparent; border: none; }}
-    QFrame#escena_aventura QLabel, QFrame#aventura_card QLabel {{ background: transparent; }}
-    QLabel#rotulo_aventura {{ color: #e9c989; font-size: 10pt; letter-spacing: 2px; }}
-    QLabel#detalle_aventura {{ color: #e1cdb0; font-size: 11pt; }}
-    QLabel#nota_pergamino {{ background: #c8aa76; color: #392619; padding: 16px; border: 1px solid #e2c18b; border-radius: 5px; }}
-    QPushButton#primario, QPushButton#empezar {{ background: qlineargradient(x1:0,y1:0,x2:0,y2:1,stop:0 #f2d18d,stop:1 #b8843c); color: #2c1a0b; border: 1px solid #f9d99b; padding: 12px 18px; font-weight: 700; border-radius: 6px; }}
-    QPushButton#primario:hover {{ background: #ffe1a1; }}
-    QPushButton#accion_card {{ color: #f1ce8b; background: rgba(50,37,27,215); border: 1px solid #856239; border-radius: 5px; }}
-    QPushButton#accion_card:hover {{ background: #5a3f23; border-color: #e2b96e; }}
-    QLabel#badge_listo {{ color: #c5dda4; background: #283022; border: 1px solid #52603a; }}
-    QLabel#badge_pronto {{ background: #362b23; color: #c7af8b; }}
-    QFrame#tarjeta QLabel#cifra {{ color: #efd29b; }}
+    HOJA += """
+    QWidget { font-size: 10pt; }
+    QLabel#titulo_pagina { font-family: 'Cinzel', 'Georgia'; font-size: 23pt; color: #f6d797; }
+    QLabel#titulo_card, QLabel#titulo_hero { font-family: 'Cinzel', 'Georgia'; color: #f5dcac; }
+    QLabel#titulo_card { font-size: 15pt; }
+    QLabel#titulo_hero { font-size: 27pt; }
+    QLabel#eyebrow { color: #d3ab68; letter-spacing: 1px; }
+    QFrame#lateral { background: qlineargradient(x1:0,y1:0,x2:1,y2:0,stop:0 #130e0b,stop:1 #251b14); border-right: 1px solid #715331; }
+    QLabel#marca { color: #f0ca82; font-size: 18pt; }
+    QToolButton#menu { min-width: 164px; border: 1px solid transparent; border-radius: 6px; padding: 9px 8px; color: #cbb493; }
+    QToolButton#menu:hover { background: #3c2b1d; color: #ffe1a4; border: 1px solid #705132; }
+    QToolButton#menu:checked { background: qlineargradient(x1:0,y1:0,x2:1,y2:0,stop:0 #664324,stop:1 #302117); border: 1px solid #b68b48; color: #ffe2a8; }
+    QFrame#contenido_card, QFrame#seccion, QFrame#tarjeta { background: qlineargradient(x1:0,y1:0,x2:0,y2:1,stop:0 #32251b,stop:1 #241b15); border: 1px solid #634b33; border-radius: 10px; }
+    QFrame#contenido_card:hover { border-color: #ba8c4c; }
+    QFrame#escena_aventura, QFrame#aventura_card { background: transparent; border: none; }
+    QFrame#escena_aventura QLabel, QFrame#aventura_card QLabel { background: transparent; }
+    QLabel#rotulo_aventura { color: #e9c989; font-size: 10pt; letter-spacing: 2px; }
+    QLabel#detalle_aventura { color: #e1cdb0; font-size: 11pt; }
+    QLabel#nota_pergamino { background: #c8aa76; color: #392619; padding: 16px; border: 1px solid #e2c18b; border-radius: 5px; }
+    QPushButton#primario, QPushButton#empezar { background: qlineargradient(x1:0,y1:0,x2:0,y2:1,stop:0 #f2d18d,stop:1 #b8843c); color: #2c1a0b; border: 1px solid #f9d99b; padding: 12px 18px; font-weight: 700; border-radius: 6px; }
+    QPushButton#primario:hover { background: #ffe1a1; }
+    QPushButton#accion_card { color: #f1ce8b; background: rgba(50,37,27,215); border: 1px solid #856239; border-radius: 5px; }
+    QPushButton#accion_card:hover { background: #5a3f23; border-color: #e2b96e; }
+    QLabel#badge_listo { color: #c5dda4; background: #283022; border: 1px solid #52603a; }
+    QLabel#badge_pronto { background: #362b23; color: #c7af8b; }
+    QFrame#tarjeta QLabel#cifra { color: #efd29b; }
     """
+
+# Categorias visibles y controles legibles en la ventana definitiva.
+HOJA += f"""
+QTabBar#categorias_contenido::tab {{ font-family: 'Segoe UI'; font-size: 11pt; font-weight: 600; padding: 10px 24px; color: {_s.tenue}; background: transparent; border: none; border-bottom: 2px solid {_s.borde}; }}
+QTabBar#categorias_contenido::tab:selected {{ color: {_s.acento}; border-bottom: 2px solid {_s.acento}; background: {_s.seleccion}; }}
+QTabBar#categorias_contenido::tab:hover {{ color: {_s.texto}; }}
+QFrame#escena_destino QLabel#tenue {{ font-size: 10.5pt; }}
+QFrame#escena_destino QLabel#detalle_aventura {{ font-size: 11pt; }}
+QFrame#escena_destino QComboBox {{ font-size: 11pt; padding: 7px 12px; }}
+QPushButton#consultar_destino {{ background: {_s.hundido}; color: {_s.tenue}; border: 1px solid {_s.tenue}; border-radius: 6px; padding: 12px 18px; }}
+QPushButton#consultar_destino:hover {{ background: {_s.panel}; color: {_s.texto}; }}
+"""

@@ -42,7 +42,8 @@ Versiones y lista de cambios: CAMBIOS.txt.
 LA INTERFAZ (menu de la izquierda)
 ----------------------------------
 Inicio            resumen de actividad real del dia y accesos a las tareas principales.
-Contenidos        destino destacado y medallones horizontales con flechas, busqueda y filtro por grupo.
+Contenidos        pestanas Bestias, Demonios y Solgres; destino destacado y medallones de cada grupo.
+                  Lo proximo aparece en gris y la busqueda se limita a la categoria elegida.
                   Elige el piso y pulsa Preparar esta aventura para revisar la sesion.
 Preparar sesion   requisitos, piso o dificultad, materiales, equipo y condicion de parada.
 Sesion en directo controles Iniciar / Pausar / Detener, cifras, botin, registro y opciones.
@@ -216,3 +217,5 @@ equipo ni inicia partidas. Una referencia publicada o pocas victorias no equival
 
 Aspecto Taberna viva: ilustracion calida, luz ambar y tarjetas que responden al cursor.
 Se selecciona en Ajustes -> Tema. En automatico se usa fuera de las temporadas.
+
+Tamano definitivo de la ventana: 1100 x 800, sin redimensionar ni maximizar.

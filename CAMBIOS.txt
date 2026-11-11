@@ -29,6 +29,12 @@ Etapas previstas:
 
 CAMBIOS
 -------
+0.36.3-alpha — Tamaño definitivo y categorias de contenido
+- Ventana fija de 1100 x 800, sin maximizar, como referencia de todas las pantallas.
+- Contenidos separados en Bestias (6), Demonios (6) y Solgres (2), con pestañas propias.
+- Los seis destinos de cada categoria caben juntos; selector de piso y textos sin recortes.
+- Contenidos proximamente en gris, incluidos el retrato destacado y los medallones; conservan sus detalles.
+
 0.36.2-alpha — Selector de aventuras
 - Explorar contenidos deja la cuadricula: destino protagonista y tira horizontal de medallones.
 - Flechas, busqueda y filtros para recorrer destinos; piso y disponibilidad antes de preparar.
