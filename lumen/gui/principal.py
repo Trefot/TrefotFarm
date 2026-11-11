@@ -296,10 +296,15 @@ class VentanaPrincipal(QMainWindow):
         else:
             self.mostrar_bloqueo()
 
+    def _refrescar_actualizaciones(self):
+        for clave in ("inicio", "ajustes"):
+            self.paginas[clave].actualizaciones.refrescar()
+
     def buscar_updates(self, manual: bool = False):
         if self.revisando or self.actualizando:
             return
         self.revisando = True
+        self._refrescar_actualizaciones()
         if manual:
             self.paginas["inicio"].refrescar()
 
@@ -343,6 +348,7 @@ class VentanaPrincipal(QMainWindow):
     def _resultado_revision(self, estado):
         self.revisando = False
         self.estado_update = estado
+        self._refrescar_actualizaciones()
         self.refrescar_insignias()
         self._barra()
         self.paginas["inicio"].refrescar()
@@ -373,6 +379,7 @@ class VentanaPrincipal(QMainWindow):
         if self.puente.corriendo or self.actualizando:
             return
         self.actualizando = True
+        self._refrescar_actualizaciones()
         self.bloqueo.boton.setEnabled(False)
 
         def correr():
@@ -386,6 +393,7 @@ class VentanaPrincipal(QMainWindow):
 
     def _fin_update(self, ok: bool, texto: str):
         self.actualizando = False
+        self._refrescar_actualizaciones()
         if not ok:
             self.bloqueo.mensaje(f"No se pudo actualizar: {texto}")
             self.bloqueo.boton.setEnabled(True)

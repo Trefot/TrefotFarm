@@ -11,6 +11,7 @@ from PyQt5.QtWidgets import (
 )
 from lumen import config, historial, metas
 from lumen.gui import tema
+from lumen.gui.actualizaciones import PanelActualizaciones
 from lumen.gui.aventura import PanelAventura, escena_taberna
 from lumen.rutas import ASSETS
 from lumen.gui.comun import Pagina, tarjeta, formatear_tiempo
@@ -48,6 +49,8 @@ class PaginaResumen(Pagina):
             self.subtitulo = "Un descanso entre batallas. Todo listo para tu próxima aventura."
         super().__init__()
         self.app = app
+        self.actualizaciones = PanelActualizaciones(app)
+        self.cuerpo.addWidget(self.actualizaciones)
         if tema.SKIN.id == "taberna_viva":
             self._construir_taberna(app)
             return
@@ -202,6 +205,7 @@ class PaginaResumen(Pagina):
         self.cuerpo.addStretch()
 
     def refrescar(self):
+        self.actualizaciones.refrescar()
         t = historial.totales(historial.hoy(historial.leer()))
         for clave, cifra in self.cifras.items():
             cifra.setText(

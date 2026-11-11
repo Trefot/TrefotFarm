@@ -29,6 +29,11 @@ Etapas previstas:
 
 CAMBIOS
 -------
+0.36.4-alpha — Actualizaciones visibles
+- Buscar actualizaciones siempre visible en Inicio y Ajustes, con texto y version instalada.
+- Estado de busqueda y errores de conexion visibles; boton para actualizar o reiniciar cuando corresponda.
+- Ajustes permite desplazamiento para mantener todos los controles accesibles en la ventana fija.
+
 0.36.3-alpha — Tamaño definitivo y categorias de contenido
 - Ventana fija de 1100 x 800, sin maximizar, como referencia de todas las pantallas.
 - Contenidos separados en Bestias (6), Demonios (6) y Solgres (2), con pestañas propias.

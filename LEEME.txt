@@ -219,3 +219,6 @@ Aspecto Taberna viva: ilustracion calida, luz ambar y tarjetas que responden al 
 Se selecciona en Ajustes -> Tema. En automatico se usa fuera de las temporadas.
 
 Tamano definitivo de la ventana: 1100 x 800, sin redimensionar ni maximizar.
+
+Actualizar: Inicio o Ajustes -> Buscar actualizaciones. El estado y los errores
+de conexion se muestran junto al boton. Tambien se comprueba al abrir la app.

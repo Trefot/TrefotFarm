@@ -23,6 +23,7 @@ from PyQt5.QtWidgets import (
 from lumen import actualizador, admin as modo_admin, avisos, config
 from lumen.gui import iconos, tema
 from lumen.gui.comun import Pagina
+from lumen.gui.actualizaciones import PanelActualizaciones
 
 
 def seccion(titulo: str, icono: str) -> tuple[QFrame, QVBoxLayout]:
@@ -54,10 +55,13 @@ def canal_secreto() -> str:
 
 class PaginaAjustes(Pagina):
     titulo = "Ajustes"
+    desplazable = True
 
     def __init__(self, app):
         super().__init__()
         self.app = app
+        self.actualizaciones = PanelActualizaciones(app)
+        self.cuerpo.addWidget(self.actualizaciones)
         rejilla = QGridLayout()
         rejilla.setSpacing(14)
 
@@ -89,10 +93,10 @@ class PaginaAjustes(Pagina):
         f = QFormLayout()
         f.addRow("Tema", self.skin)
         c.addLayout(f)
-        c.addWidget(nota("Elige Noche azul, Día claro o Arcano. El estilo original sigue como Boar Hat. "
+        c.addWidget(nota("Elige Taberna, Noche azul, Día claro o Arcano. El estilo original sigue como Boar Hat. "
                          "En automática se usa Noche azul, con los temas de temporada en sus fechas. "
                          "Reinicia la aplicación para aplicar el cambio."))
-        rejilla.addWidget(aspecto, 0, 1)
+        rejilla.addWidget(aspecto, 1, 0)
 
         teclas, c = seccion("Teclas rápidas", "teclado")
         f = QFormLayout()
@@ -102,7 +106,7 @@ class PaginaAjustes(Pagina):
         f.addRow("Detener", self.tecla_detener)
         c.addLayout(f)
         c.addWidget(nota("Funcionan aunque el juego esté al frente. Nombres como f9, f10, pause, end..."))
-        rejilla.addWidget(teclas, 1, 0)
+        rejilla.addWidget(teclas, 2, 0)
 
         movil, c = seccion("Avisos al móvil", "movil")
         f = QFormLayout()
@@ -137,7 +141,7 @@ class PaginaAjustes(Pagina):
         b_probar.clicked.connect(self.probar)
         fila.addWidget(b_probar)
         c.addLayout(fila)
-        rejilla.addWidget(movil, 1, 1)
+        rejilla.addWidget(movil, 3, 0)
         self._revisar_canal()
 
         admin, c = seccion("Administrador", "admin")
@@ -160,9 +164,8 @@ class PaginaAjustes(Pagina):
         c.addWidget(self.caja_repo)
         self.modo_admin.toggled.connect(lambda _: self._pintar_admin())
         self._pintar_admin()
-        rejilla.addWidget(admin, 2, 0, 1, 2)
+        rejilla.addWidget(admin, 4, 0)
         rejilla.setColumnStretch(0, 1)
-        rejilla.setColumnStretch(1, 1)
         self.cuerpo.addLayout(rejilla)
 
         botones = QHBoxLayout()
@@ -177,6 +180,9 @@ class PaginaAjustes(Pagina):
         self.cuerpo.addStretch()
 
     # ------------------------------------------------------------------ administrador
+    def al_mostrar(self):
+        self.actualizaciones.refrescar()
+
     def _pintar_admin(self):
         abierto = modo_admin.desbloqueado()
         self.modo_admin.setVisible(abierto)

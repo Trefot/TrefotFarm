@@ -211,6 +211,49 @@ class Interfaz(unittest.TestCase):
         self.assertEqual(self.v.paginas["preparar"].modo_id, rata.destinos[0].id)
         self.assertFalse(self.v.paginas["preparar"].b_empezar.isEnabled())
 
+    def test_actualizaciones_visibles_en_inicio_y_ajustes(self):
+        from PyQt5.QtWidgets import QScrollArea
+        estado_anterior = self.v.estado_update
+        try:
+            self.v.estado_update = None
+            self.v.revisando = False
+            for clave in ("inicio", "ajustes"):
+                self.v.navegar(clave)
+                self.eventos()
+                panel = self.v.paginas[clave].actualizaciones
+                self.assertTrue(panel.boton.isVisible())
+                self.assertEqual(panel.boton.text(), "Buscar actualizaciones")
+                area = self.v.paginas[clave].findChild(QScrollArea, "area_pagina")
+                self.assertLessEqual(panel.boton.mapTo(area.viewport(), panel.boton.rect().bottomRight()).y(), area.viewport().height())
+                self.assertLessEqual(panel.boton.mapTo(area.viewport(), panel.boton.rect().bottomRight()).x(), area.viewport().width())
+                self.assertLessEqual(area.widget().width(), area.viewport().width())
+                with mock.patch.object(self.v, "buscar_updates") as buscar:
+                    panel.boton.click()
+                    buscar.assert_called_once_with(manual=True)
+            self.v.revisando = True
+            self.v._refrescar_actualizaciones()
+            self.assertFalse(self.v.paginas["inicio"].actualizaciones.boton.isEnabled())
+            self.v.revisando = False
+            self.v.estado_update = actualizador.Estado(error="Sin conexion de prueba")
+            self.v._refrescar_actualizaciones()
+            for clave in ("inicio", "ajustes"):
+                self.assertIn("Sin conexion de prueba", self.v.paginas[clave].actualizaciones.estado.text())
+                self.assertEqual(self.v.paginas[clave].actualizaciones.boton.text(), "Reintentar búsqueda")
+            self.v.estado_update = actualizador.Estado(hay_update=True, version_remota="0.99.0-prueba")
+            self.v._refrescar_actualizaciones()
+            panel = self.v.paginas["inicio"].actualizaciones
+            self.assertEqual(panel.boton.text(), "Actualizar app")
+            with mock.patch.object(self.v, "accion_actualizar") as actualizar:
+                panel.boton.click()
+                actualizar.assert_called_once_with()
+            with mock.patch.object(type(self.v), "reinicio_pendiente", new_callable=mock.PropertyMock, return_value=True):
+                panel.refrescar()
+                self.assertEqual(panel.boton.text(), "Reiniciar app")
+        finally:
+            self.v.revisando = False
+            self.v.estado_update = estado_anterior
+            self.v._refrescar_actualizaciones()
+
     def test_plan_del_dia(self):
         from lumen.gui import plan, resumen
 
