@@ -741,7 +741,15 @@ class EstrategiaCiervo4(EstrategiaPiso4):
                     return i
         return None
 
+    TURNOS_SEMAFORO = 3  # fase 4: los turnos de la ruleta de colores; despues, a matar
+
     def _fase4(self, turno, accion, mano):
+        if turno > self.TURNOS_SEMAFORO:
+            # El usuario (2026-11-13), con este mismo equipo: si se siguio el semaforo en los 3 primeros turnos (fuera
+            # inmortalidades), se le mata a full dano y se aguanta el contraataque un turno.
+            if self.ve(juego.contraataque):
+                self._avisar("Fase 4: semáforo hecho; a full daño aunque tenga el contraataque.")
+            return self._golpe_maximo(mano)
         if self.ve(juego.contraataque):
             # Defensive Horn: postura que devuelve 1500 % al atacarle. Quitarle la postura o la ulti de Hel; si no hay
             # nada, se sigue atacando: quedarse quieto (0.38.0) solo le daba tiempo y mataba al equipo igual (el

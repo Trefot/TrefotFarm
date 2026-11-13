@@ -108,9 +108,9 @@ class Ciervo(unittest.TestCase):
         e = estrategia(B4.EstrategiaCiervo4)
         m = mano((THOR + ".skill_1", R.BRONCE), (JORM + ".skill_1", R.BRONCE), (FREYR + ".skill_2", R.BRONCE))
         e.jugadas = mano((FREYR + ".skill_1", R.BRONCE))
-        self.assertEqual(e.guion(4, 4, 1, m), 1, "despues de roja, verde")
+        self.assertEqual(e.guion(4, 2, 1, m), 1, "despues de roja, verde")
         e.jugadas = mano((JORM + ".skill_2", R.BRONCE))
-        self.assertEqual(e.guion(4, 4, 1, m), 0, "despues de verde, azul")
+        self.assertEqual(e.guion(4, 2, 1, m), 0, "despues de verde, azul")
 
     def test_fase3_guarda_la_ulti_de_freyr(self):
         e = estrategia(B4.EstrategiaCiervo4)

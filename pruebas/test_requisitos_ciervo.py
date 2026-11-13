@@ -78,9 +78,9 @@ class Estilos(unittest.TestCase):
     def test_contraataque_quita_la_postura_o_no_ataca(self):
         e = ciervo(RQ.WHALE, ve=(juego.contraataque,))
         m = mano((THOR + ".skill_1", R.BRONCE), (MELI + ".ulti", R.ULTI))
-        self.assertEqual(e.guion(4, 2, 0, m), 1, "la ulti de Meliodas traidor quita posturas")
+        self.assertEqual(e.guion(4, 2, 0, m), 1, "la ulti de Meliodas traidor quita posturas (turnos del semaforo)")
         sin = mano((THOR + ".skill_1", R.BRONCE), (FREYR + ".skill_2", R.BRONCE))
-        self.assertNotIsInstance(e.guion(4, 4, 0, sin), tuple, "sin nada que la quite: no se queda moviendo cartas")
+        self.assertNotIsInstance(e.guion(4, 2, 0, sin), tuple, "sin nada que la quite: no se queda moviendo cartas")
 
     def test_otro_equipo_en_la_fase_1(self):
         e = ciervo(RQ.CAUTELOSO)
@@ -186,17 +186,17 @@ class Fase4SinColor(unittest.TestCase):
 
     def test_sin_el_color_que_toca_mueve(self):
         e = ciervo(RQ.CAUTELOSO)
-        e.decidir(4, 4, 0, mano((JORM + ".skill_1", R.BRONCE)))  # la primera fue verde: toca azul
+        e.decidir(4, 2, 0, mano((JORM + ".skill_1", R.BRONCE)))  # la primera fue verde: toca azul
         m = mano((FREYR + ".skill_1", R.BRONCE), (FREYR + ".skill_2", R.BRONCE), (JORM + ".skill_2", R.BRONCE))
-        self.assertIsInstance(e.decidir(4, 4, 1, m)[0], tuple, "no hay azul: mover, no romper la ruleta")
+        self.assertIsInstance(e.decidir(4, 2, 1, m)[0], tuple, "no hay azul: mover, no romper la ruleta")
         self.assertIsNone(e.pedir_reinicio)
 
     def test_dos_turnos_seguidos_pide_reiniciar(self):
         e = ciervo(RQ.CAUTELOSO, ve=(juego.buff_azul,))
         m = mano((FREYR + ".skill_1", R.BRONCE), (JORM + ".skill_2", R.BRONCE))
-        e.guion(4, 3, 0, m)
+        e.guion(4, 2, 0, m)
         self.assertIsNone(e.pedir_reinicio, "un turno sin azul: aun no")
-        e.guion(4, 4, 0, m)
+        e.guion(4, 3, 0, m)
         self.assertIn("dos turnos seguidos", e.pedir_reinicio)
 
     def test_el_modo_reinicia_al_empezar_el_turno(self):
@@ -205,3 +205,18 @@ class Fase4SinColor(unittest.TestCase):
         m.estrategia.pedir_reinicio = "prueba"
         self.assertTrue(m._reiniciar_por_bloqueo(object()))
         self.assertIsNone(m.estrategia.pedir_reinicio)
+
+
+class Fase4Remate(unittest.TestCase):
+    """El usuario, 2026-11-13: semaforo 3 turnos y luego a full dano aguantando el contraataque un turno."""
+
+    def test_desde_el_turno_4_full_dano_aunque_haya_contraataque(self):
+        e = ciervo(RQ.CAUTELOSO, ve=(juego.contraataque, juego.buff_azul))
+        m = mano((THOR + ".skill_1", R.BRONCE), (JORM + ".skill_1", R.PLATA), (FREYR + ".ulti", R.ULTI))
+        self.assertEqual(e.guion(4, 4, 0, m), 2, "la ulti de Freyr: ya no se guarda")
+        self.assertIsNone(e.pedir_reinicio, "fuera del semaforo no cuenta que falte un color")
+
+    def test_los_3_primeros_turnos_semaforo(self):
+        e = ciervo(RQ.CAUTELOSO, ve=(juego.buff_azul,))
+        m = mano((THOR + ".skill_1", R.BRONCE), (FREYR + ".ulti", R.ULTI))
+        self.assertEqual(e.guion(4, 2, 0, m), 0, "toca azul (buff): la de Thor, no la ulti roja")

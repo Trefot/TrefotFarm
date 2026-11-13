@@ -39,6 +39,8 @@ ciervo_piso4:  # el destino del bot (en bestias_7dshub.yaml es "ciervo_f4")
       nota: >-
         Pierde 1 inmortalidad (y se pone Corrosion) al recibir golpes en cierto orden de atributos. Los buffs de color
         de la pantalla dicen cual toca.
+        El usuario (2026-11-13): seguir el semaforo los 3 primeros turnos y despues matarlo a full dano, aguantando el
+        contraataque un turno (asi lo pasa con Tyr verde, Freyja roja, Thor azul y Freyr rojo).
     - tipo: postura_contraataque
       obligatorio: true
       nota: >-

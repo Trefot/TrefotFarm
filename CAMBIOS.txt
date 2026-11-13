@@ -29,6 +29,12 @@ Etapas previstas:
 
 CAMBIOS
 -------
+0.38.5-alpha
+  - Ciervo Floor 4, fase 4 (el usuario lo pasa asi con Tyr verde, Freyja roja, Thor azul y Freyr rojo): semaforo de
+    colores los 3 primeros turnos (fuera inmortalidades) y desde el 4.o a full dano, tambien la ulti de Freyr,
+    aguantando el contraataque un turno. Con el contraataque y nada que lo quite, atacar o quedarse quieto antes del
+    remate mataba al equipo.
+
 0.38.4-alpha
   - Ciervo Floor 4, fase 2 (el usuario: con 4 rojas jugaba 2 y movia; con 3 verdes, 2): juega todas las cartas del
     color del turno que tenga y solo mueve (fusionando) cuando no quedan. Fuera la "doble roja" y el movimiento fijo
