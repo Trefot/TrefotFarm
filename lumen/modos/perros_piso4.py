@@ -352,6 +352,8 @@ class PerrosPiso4(Modo):
         self.destruida_desde: float | None = None  # cuando se vio "Creature Destroyed" (fin de la pelea)
         self.ultimo_boton_texto = 0.0
         self.ultima_pantalla_victoria = None
+        self.primera_vista_desde = None
+        self.previa_primera = None
         self.previa_recompensa = None  # captura anterior de la pantalla de recompensas (para verla quieta)
         self.ok_visto_desde: float | None = None
 
@@ -700,6 +702,9 @@ class PerrosPiso4(Modo):
                 self.diario.confirmar(pendiente, True)
                 pendiente = None
             if huecos == 0:
+                completado = getattr(self.estrategia, "turno_completado", None)
+                if completado is not None:
+                    completado(self.fase, self.turno_fase)
                 self.turno_abierto = False
                 self.log("Turno terminado.", "debug")
                 return None
@@ -886,8 +891,15 @@ class PerrosPiso4(Modo):
         if not getattr(self, "foto_primera", False) and PRIMERA_RECOMPENSA.esta(p, 0.8):
             # "First Reward": lo que da la primera vez de la semana cada piso. Salia tras la victoria y el bot no lo
             # apuntaba en el Botin (solo la pantalla VICTORY). Lo pidio el usuario al empezar la semana (2026-11-09).
+            ahora = time.time()
+            desde = getattr(self, "primera_vista_desde", None) or ahora
+            self.primera_vista_desde = desde
+            estable = botin.quieta_primera(getattr(self, "previa_primera", None), p)
+            if not estable and ahora - desde < 6:
+                self.previa_primera = p
+                return None
             self.foto_primera = True
-            self.guardar_recompensa(p, self.victorias + 1, primera=True)
+            self.guardar_recompensa(p, self.victorias + 1, primera=True, estable=estable)
             self.log("Recompensa de la primera vez de la semana: la apunto en el Botín.", "ok")
             entrada.clic(PUNTO_CONTINUAR, o, espera=1.0)  # tocar para seguir (si no, tarda unos segundos sola)
             return None
@@ -896,16 +908,17 @@ class PerrosPiso4(Modo):
             # La pantalla con el boton OK tras ganar es la que lista las recompensas: foto antes de cerrarla,
             # pero con la pantalla quieta (si no, salen cofres a medio abrir como objetos). Maximo 6 s.
             self.ok_visto_desde = self.ok_visto_desde or time.time()
-            if not botin.quieta(self.previa_recompensa, p) and time.time() - self.ok_visto_desde < 6:
+            estable = botin.quieta(self.previa_recompensa, p)
+            if not estable and time.time() - self.ok_visto_desde < 6:
                 self.previa_recompensa = p
                 return None
-            self.guardar_recompensa(p, self.victorias + 1)
+            self.guardar_recompensa(p, self.victorias + 1, estable=estable)
             self.foto_recompensa = True
         self.clic_si(juego.ok, p, o)
         if self._volvio_a_pisos(p):
             if not self.foto_recompensa and self.ultima_pantalla_victoria is not None:
                 # No se vio el OK: la ultima pantalla antes de la carga es lo mas parecido.
-                self.guardar_recompensa(self.ultima_pantalla_victoria, self.victorias + 1)
+                self.guardar_recompensa(self.ultima_pantalla_victoria, self.victorias + 1, estable=False)
                 self.foto_recompensa = True
             self.victorias += 1
             self.diario.terminar("victoria", self.fase)

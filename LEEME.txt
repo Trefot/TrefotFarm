@@ -222,3 +222,15 @@ Tamano definitivo de la ventana: 1100 x 800, sin redimensionar ni maximizar.
 
 Actualizar: Inicio o Ajustes -> Buscar actualizaciones. El estado y los errores
 de conexion se muestran junto al boton. Tambien se comprueba al abrir la app.
+
+MECANICAS Y BOTIN (0.37.0)
+-------------------------
+Preparar sesion muestra requisitos del jefe. El pajaro F4 puede elegir ciertas
+contramedidas por efecto y rango de la carta, cuando el estado esta observado.
+No significa que todos los equipos ni todos los jefes esten validados.
+
+Botin reconoce contra la galeria que mantiene el administrador y las tablas del
+contenido. Los recortes dudosos quedan pendientes en la foto, sin crear items
+nuevos ni contarlos como materiales. Las fotos con animacion se conservan como
+pendientes; esas capturas y las casillas sin identificar no se suman a los totales.
+La lectura de cantidades conserva sus limites de digitos calibrados.

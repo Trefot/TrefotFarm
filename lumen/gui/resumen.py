@@ -133,7 +133,7 @@ class TarjetaResumen(QDialog):
                 c.setContentsMargins(4, 4, 4, 2)
                 c.setSpacing(0)
                 dibujo = QLabel(alignment=Qt.AlignCenter)
-                p = QPixmap(str(botin.ruta_icono(oid)))
+                p = QPixmap(str(botin.ruta_miniatura(oid)))
                 if not p.isNull():
                     dibujo.setPixmap(p.scaled(44, 38, Qt.KeepAspectRatio, Qt.SmoothTransformation))
                 c.addWidget(dibujo)

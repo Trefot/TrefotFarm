@@ -254,6 +254,18 @@ class Interfaz(unittest.TestCase):
             self.v.estado_update = estado_anterior
             self.v._refrescar_actualizaciones()
 
+    def test_preparacion_f4_no_promete_compatibilidad_de_cualquier_equipo(self):
+        pagina = self.v.paginas["preparar"]
+        anterior = pagina.modo_id
+        try:
+            with mock.patch("lumen.gui.paginas.equipos.mas_rapido", return_value=None):
+                pagina.ir_a_destino("pajaro_piso4")
+                self.assertIn("Revisar", pagina.pasos["equipo"].text())
+                self.assertIn("no comprobado", pagina.lbl_estado.text())
+                self.assertIn("3 habilidades del mismo rango", pagina.lbl_mecanicas.text())
+        finally:
+            pagina.ir_a_destino(anterior)
+
     def test_plan_del_dia(self):
         from lumen.gui import plan, resumen
 

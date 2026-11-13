@@ -36,6 +36,7 @@ FILAS_Y = {1: [405], 2: [362, 449], 3: [319, 406, 493]}
 LADO = 63
 ZONA_ORO = (85, 540, 175, 572)  # x1, y1, x2, y2: "24,000" a la derecha de la moneda
 UMBRAL_OBJETO = 0.88  # parecido minimo de forma para decir que dos iconos son el mismo objeto
+MARGEN_IDENTIDAD = 0.025  # coincidencias casi empatadas quedan pendientes
 DIF_COLOR_MAX = 18.0  # y diferencia maxima de color medio (cubo azul y cubo gris: misma forma)
 
 CARPETA = RAIZ / "recompensas" / "objetos"
@@ -61,14 +62,33 @@ ZONA_BOTIN = (280, 600)
 DIF_QUIETA = 5.0
 
 
-def quieta(anterior, actual) -> bool:
-    """True si la pantalla de recompensas ya no se mueve (para no fotografiar cofres a medio abrir)."""
-    y1, y2 = ZONA_BOTIN
+def _quieta(anterior, actual, detector) -> bool:
     if anterior is None or anterior.shape != actual.shape:
         return False
+    y1, y2 = ZONA_BOTIN
     if float(cv2.absdiff(anterior[y1:y2], actual[y1:y2]).mean()) >= DIF_QUIETA:
         return False
-    return len(casillas(anterior)) == len(casillas(actual))
+    antes, ahora = detector(anterior), detector(actual)
+    if not ahora or len(antes) != len(ahora):
+        return False
+    for a, b in zip(antes, ahora):
+        if a != b:
+            return False
+        x, y = b[:2]
+        lado = b[2] if len(b) > 2 else LADO
+        # Una animacion pequena puede pasar desapercibida en la media de toda
+        # la pantalla. Cada casilla tambien tiene que estar quieta.
+        if float(cv2.absdiff(anterior[y:y+lado, x:x+lado], actual[y:y+lado, x:x+lado]).mean()) >= DIF_QUIETA:
+            return False
+    return True
+
+
+def quieta(anterior, actual) -> bool:
+    return _quieta(anterior, actual, casillas)
+
+
+def quieta_primera(anterior, actual) -> bool:
+    return _quieta(anterior, actual, casillas_primera)
 
 
 # ------------------------------------------------------------------ casillas
@@ -94,11 +114,22 @@ def casillas(pantalla) -> list[tuple[int, int]]:
     """Esquinas (x, y) de las casillas con objeto, en orden de lectura."""
     detectadas = _cajas_por_borde(pantalla)
     if detectadas:
-        y_arriba = min(y for _, y in detectadas)
-        filas = min(FILAS_Y, key=lambda n: abs(FILAS_Y[n][0] - y_arriba))
-        candidatas = {n: FILAS_Y[n] for n in (filas,)}
-    else:  # sin bordes claros: probar las tres disposiciones y quedarse con la que mas objetos ve
-        candidatas = FILAS_Y
+        encontradas = []
+        for x, y in sorted(detectadas, key=lambda xy: (xy[1], xy[0])):
+            # La rejilla conocida corrige el px de dilatacion, solo si el
+            # borde detectado esta a <= 3 px. Otros desplazamientos se respetan.
+            nx = min(COLUMNAS_X, key=lambda v: abs(v - x))
+            ny = min({v for fila in FILAS_Y.values() for v in fila}, key=lambda v: abs(v - y))
+            x = nx if abs(nx - x) <= 3 else x
+            y = ny if abs(ny - y) <= 3 else y
+            celda = pantalla[y:y+LADO, x:x+LADO]
+            if celda.shape[:2] != (LADO, LADO) or not _hay_objeto(celda):
+                continue
+            if not any(abs(x-a) <= 8 and abs(y-b) <= 8 for a, b in encontradas):
+                encontradas.append((x, y))
+        if encontradas:
+            return sorted(encontradas, key=lambda xy: (xy[1], xy[0]))
+    candidatas = FILAS_Y
     mejor = []
     for ys in candidatas.values():
         encontradas = [(x, y) for y in ys for x in COLUMNAS_X if _hay_objeto(pantalla[y : y + LADO, x : x + LADO])]
@@ -358,6 +389,21 @@ def ruta_ficha(gid: str) -> Path:
     return local if local.is_file() else CARPETA_BASE / f"{gid}_ficha.png"
 
 
+def ruta_miniatura(oid: str, catalogo: dict | None = None) -> Path:
+    """Imagen completa de la base para la interfaz, separada del recorte del reconocedor."""
+    from lumen import premios
+    catalogo = cargar_catalogo() if catalogo is None else catalogo
+    real = destino(oid, catalogo) or oid
+    datos = catalogo.get(real) or {}
+    gid = datos.get("galeria")
+    if gid and ruta_ficha(gid).is_file():
+        return ruta_ficha(gid)
+    premio = datos.get("premio")
+    if premio and (premios.ICONOS / f"{premio}.png").is_file():
+        return premios.ICONOS / f"{premio}.png"
+    return ruta_icono(real)
+
+
 def guardar_ficha(gid: str, icono_ficha) -> None:
     guardar_imagen(CARPETA_GALERIA / f"{gid}_ficha.png", icono_ficha)
 
@@ -370,26 +416,46 @@ def _icono_de_ficha(gid: str):
     return icono(cv2.resize(img, (LADO_FICHA, LADO_FICHA), interpolation=cv2.INTER_AREA))
 
 
-_cache_galeria: dict[str, object] = {}
+_cache_galeria: dict[str, tuple] = {}
+
+
+def _parecido(img, ref):
+    if img is None or ref is None or img.shape != ref.shape or img.ndim != 3 or img.shape[2] != 3:
+        return None
+    if float(img.std(axis=(0, 1)).max()) < 8 or float(ref.std(axis=(0, 1)).max()) < 8:
+        return None
+    ampliada = cv2.copyMakeBorder(ref, 2, 2, 2, 2, cv2.BORDER_REFLECT)
+    mapa = cv2.matchTemplate(ampliada, img, cv2.TM_CCOEFF_NORMED)
+    _, valor, _, (x, y) = cv2.minMaxLoc(mapa)
+    alineada = ampliada[y:y+img.shape[0], x:x+img.shape[1]]
+    dif_color = float(np.abs(img.reshape(-1, 3).mean(0) - alineada.reshape(-1, 3).mean(0)).max())
+    return valor if dif_color <= DIF_COLOR_MAX else None
+
+
+def _con_margen(puntajes, umbral):
+    ordenados = sorted(puntajes, key=lambda p: (-p[1], p[0]))
+    if not ordenados or ordenados[0][1] < umbral:
+        return None
+    if len(ordenados) > 1 and ordenados[0][1] - ordenados[1][1] < MARGEN_IDENTIDAD:
+        return None
+    return ordenados[0][0]
 
 
 def en_galeria(img_icono, galeria: dict) -> str | None:
-    """El objeto de la galeria con ese icono (o None)."""
-    mejor, mejor_valor = None, UMBRAL_GALERIA
+    puntajes = []
     for gid in galeria:
-        if gid not in _cache_galeria:
-            _cache_galeria[gid] = _icono_de_ficha(gid)
-        ref = _cache_galeria[gid]
-        if ref is None or ref.shape != img_icono.shape:
-            continue
-        valor = float(cv2.matchTemplate(img_icono, ref, cv2.TM_CCOEFF_NORMED).max())
-        dif_color = float(np.abs(img_icono.reshape(-1, 3).mean(0) - ref.reshape(-1, 3).mean(0)).max())
-        if valor >= mejor_valor and dif_color <= DIF_COLOR_MAX:
-            mejor, mejor_valor = gid, valor
-    return mejor
+        ruta = ruta_ficha(gid)
+        firma = (str(ruta), ruta.stat().st_mtime_ns if ruta.is_file() else None)
+        anterior = _cache_galeria.get(gid)
+        if anterior is None or anterior[0] != firma:
+            _cache_galeria[gid] = (firma, _icono_de_ficha(gid))
+        valor = _parecido(img_icono, _cache_galeria[gid][1])
+        if valor is not None:
+            puntajes.append((gid, valor))
+    return _con_margen(puntajes, UMBRAL_GALERIA)
 
 
-_cache_premios: dict[str, np.ndarray | None] = {}
+_cache_premios: dict[str, tuple] = {}
 
 
 def en_premios(img_icono, candidatos) -> str | None:
@@ -399,18 +465,18 @@ def en_premios(img_icono, candidatos) -> str | None:
     se busca solo entre lo que puede salir en ese contenido."""
     from lumen import premios
 
-    mejor, mejor_valor = None, UMBRAL_PREMIO
-    for objeto in candidatos:
-        if objeto not in _cache_premios:
-            ref = leer_imagen(premios.ICONOS / f"{objeto}.png")
-            _cache_premios[objeto] = None if ref is None else cv2.resize(ref, (LADO, LADO), interpolation=cv2.INTER_AREA)
-        ref = _cache_premios[objeto]
-        if ref is None:
-            continue
-        valor = float(cv2.matchTemplate(ref, img_icono, cv2.TM_CCOEFF_NORMED).max())
-        if valor >= mejor_valor:
-            mejor, mejor_valor = objeto, valor
-    return mejor
+    puntajes = []
+    for objeto in sorted(candidatos):
+        ruta = premios.ICONOS / f"{objeto}.png"
+        firma = (str(ruta), ruta.stat().st_mtime_ns if ruta.is_file() else None)
+        anterior = _cache_premios.get(objeto)
+        if anterior is None or anterior[0] != firma:
+            ref = leer_imagen(ruta)
+            _cache_premios[objeto] = (firma, None if ref is None else icono(cv2.resize(ref, (LADO, LADO), interpolation=cv2.INTER_AREA)))
+        valor = _parecido(img_icono, _cache_premios[objeto][1])
+        if valor is not None:
+            puntajes.append((objeto, valor))
+    return _con_margen(puntajes, UMBRAL_PREMIO)
 
 
 def _datos_galeria(g: dict) -> dict:
@@ -487,6 +553,53 @@ def identificar(img_icono, catalogo: dict) -> str | None:
     return oid
 
 
+def identificar_verificado(img_icono, catalogo, modo=""):
+    """La galeria y las tablas publicadas mandan; un recorte nuevo no crea un item."""
+    from lumen import premios
+
+    # Las exclusiones y uniones manuales se respetan si su foto coincide con claridad.
+    locales = []
+    for oid in catalogo:
+        valor = _parecido(img_icono, leer_imagen(ruta_icono(oid)))
+        if valor is not None:
+            locales.append((oid, valor))
+    local = _con_margen(locales, UMBRAL_OBJETO)
+    if local and ((catalogo[local] or {}).get("descartado") or
+                  ((catalogo[local] or {}).get("unido_a") and not (catalogo[local] or {}).get("unido_auto"))):
+        return destino(local, catalogo)
+    galeria = cargar_galeria()
+    gid = en_galeria(img_icono, galeria)
+    candidatos = premios.objetos_de(modo) if modo else set()
+    premio = en_premios(img_icono, candidatos) if candidatos else None
+    gid_premio = premios.info(premio).get("galeria") if premio else None
+    if gid and gid_premio and gid != gid_premio:
+        return None  # dos referencias se contradicen: revisar la captura
+    gid = gid or gid_premio
+    if not gid and not premio:
+        return None  # un recorte viejo con nombre no sustituye a una referencia de la base
+    existentes = [o for o in visibles(catalogo) if
+                  (gid and (catalogo[o] or {}).get("galeria") == gid) or
+                  (premio and (catalogo[o] or {}).get("premio") == premio)]
+    oid = local if local in existentes else (sorted(existentes)[0] if existentes else f"galeria_{gid}" if gid else f"premio_{premio}")
+    datos = catalogo.setdefault(oid, {})
+    nombre_previo = datos.get("nombre")
+    if gid:
+        datos.update(_datos_galeria(galeria.get(gid) or {}), galeria=gid)
+    if premio:
+        info = premios.info(premio)
+        datos.update(premio=premio)
+        if info.get("nombre"):
+            datos["nombre"] = info["nombre"]
+    nombres_oficiales = {(galeria.get(gid) or {}).get("nombre"), premios.info(premio).get("nombre") if premio else None}
+    if nombre_previo and nombre_previo not in nombres_oficiales:
+        datos["nombre"] = nombre_previo
+    ruta = CARPETA / f"{oid}.png"
+    if not ruta.exists():
+        oficial = _icono_de_ficha(gid) if gid else None
+        guardar_imagen(ruta, oficial if oficial is not None else img_icono)
+    return oid
+
+
 # "First Reward" (la primera vez que se supera cada piso en la semana): sus objetos van en casillas grandes (~89 px)
 # en el centro. Se reducen al tamano de las del botin normal (LADO) para leerlas igual. Medido el 2026-11-09.
 ZONA_PRIMERA = (420, 580)  # alto (y) donde van sus casillas
@@ -553,34 +666,38 @@ MAX_DIF_PRIMERA = 32.0
 MARGEN_PRIMERA = 8.0
 
 
-def analizar_primera(pantalla) -> dict:
+def analizar_primera(pantalla, modo="") -> dict:
     """Los objetos de la pantalla "First Reward" (sin oro)."""
     with _lock:
         catalogo = cargar_catalogo()
         objetos: dict[str, int] = {}
+        pendientes = []
         for x, y, lado in casillas_primera(pantalla):
             celda = cv2.resize(pantalla[y:y + lado, x:x + lado], (LADO, LADO), interpolation=cv2.INTER_AREA)
-            oid = identificar(icono(celda), catalogo)
+            oid = identificar_verificado(icono(celda), catalogo, modo)
             if oid is None:
+                pendientes.append({"x": int(x), "y": int(y), "lado": int(lado)})
                 continue
             objetos[oid] = objetos.get(oid, 0) + cantidad_primera(pantalla[y:y + lado, x:x + lado])
         guardar_catalogo(catalogo)
-        return {"objetos": objetos, "oro": None}
+        return {"objetos": objetos, "oro": None, "pendientes": pendientes, "lectura_incompleta": bool(pendientes)}
 
 
-def analizar(pantalla) -> dict:
+def analizar(pantalla, modo="") -> dict:
     """{'objetos': {id: cantidad}, 'oro': int | None}. Agrega al catalogo los objetos nuevos."""
     with _lock:
         catalogo = cargar_catalogo()
         objetos: dict[str, int] = {}
+        pendientes = []
         for x, y in casillas(pantalla):
             celda = pantalla[y : y + LADO, x : x + LADO]
-            oid = identificar(icono(celda), catalogo)
-            if oid is None:  # descartado: no es un objeto
+            oid = identificar_verificado(icono(celda), catalogo, modo)
+            if oid is None:
+                pendientes.append({"x": int(x), "y": int(y), "lado": LADO})
                 continue
             objetos[oid] = objetos.get(oid, 0) + leer_cantidad(celda)
         guardar_catalogo(catalogo)
-        return {"objetos": objetos, "oro": leer_oro(pantalla)}
+        return {"objetos": objetos, "oro": leer_oro(pantalla), "pendientes": pendientes, "lectura_incompleta": bool(pendientes)}
 
 
 def nombre(oid: str, catalogo: dict | None = None) -> str:

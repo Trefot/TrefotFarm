@@ -32,6 +32,7 @@ def firma_conocimiento() -> str:
         "inteligencia.py",
         "valor_cartas.py",
         "ia/decidir.py",
+        "ia/resolver.py",
         "ia/efectos.py",
         "ia/estado.py",
         "modos/bestias_piso4.py",

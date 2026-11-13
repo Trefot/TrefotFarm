@@ -19,6 +19,7 @@ partida: la pieza 6 (aprender solo) los ajustara con los resultados.
 from collections.abc import Callable
 from functools import lru_cache
 from pathlib import Path
+import re
 
 import yaml
 
@@ -66,12 +67,14 @@ def mecanicas_de(id_destino: str, fase: int) -> list[Mecanica]:
 class LectorCartas:
     """Los efectos y el color de cada carta "heroe.carta", con los textos de la captura de heroes."""
 
-    def __init__(self, biblioteca: dict | None = None, textos: dict[str, str] | None = None):
+    def __init__(self, biblioteca: dict | None = None, textos: dict[str, str] | None = None, fichas: dict | None = None):
         from lumen import personajes as P
 
         self.biblioteca = P.cargar() if biblioteca is None else biblioteca
         self.textos = textos_por_habilidad() if textos is None else textos
         self._cache: dict[str, list[Efecto]] = {}
+        self.fichas = fichas
+        self._por_rango = {}
 
     def efectos_de(self, nombre: str) -> list[Efecto]:
         clave = base(nombre)
@@ -83,6 +86,32 @@ class LectorCartas:
             texto = self.textos.get(nombre_de_habilidad(carta.descripcion)) if carta else None
             self._cache[clave] = efectos(texto) if texto else []
         return self._cache[clave]
+
+    def efectos_carta(self, carta) -> list[Efecto]:
+        """Efectos del rango que esta en la mano, sin mezclar bronce/plata/oro."""
+        from lumen import personajes as P
+        from lumen.cartas import Rango, TipoCarta
+
+        nombre = base(carta.nombre or "")
+        clave = (nombre, carta.rango, carta.tipo == TipoCarta.ULTI)
+        if clave not in self._por_rango:
+            pid, _, cid = nombre.partition(".")
+            ficha = (P.ficha(pid) if self.fichas is None else self.fichas.get(pid, {})) or {}
+            habilidad = ficha.get(cid) or {}
+            texto = ""
+            if cid == "ulti" or carta.tipo == TipoCarta.ULTI:
+                texto = habilidad.get("texto", "")
+            elif carta.rango in (Rango.BRONCE, Rango.PLATA, Rango.ORO):
+                rangos = habilidad.get("rangos") or []
+                if carta.rango.value < len(rangos):
+                    texto = rangos[carta.rango.value]
+            limpio = re.sub(r"\[[0-9A-Fa-f]{6}\]|\[-\]", "", texto).replace("\\n", " ")
+            # Las condiciones de una habilidad no equivalen a un efecto seguro.
+            # Sin comprobarlas en pantalla, el selector funcional no las usa.
+            principal = re.sub(r"\[[0-9A-Fa-f]{6}\]|\[-\]", "", texto).replace("\\n", "\n").split("\n\n", 1)[0]
+            condicion = re.search(r"\b(?:if|when|upon|at the start|for every)\b", principal, re.I)
+            self._por_rango[clave] = efectos(limpio) if limpio and not condicion else []
+        return self._por_rango[clave]
 
     def color_de(self, nombre: str) -> str | None:
         pj = self.biblioteca.get(base(nombre).partition(".")[0])

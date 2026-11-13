@@ -15,7 +15,6 @@ Equipos (BOTS_README de AutoFarming):
   ~60 % con Tyr y ~30 % con Hel.
 """
 
-import re
 from functools import lru_cache
 
 from lumen import entrada, inteligencia, juego, ocr
@@ -106,22 +105,31 @@ def texto(c: Carta | None) -> str:
         return ""
 
 
+@lru_cache(maxsize=1)
+def _lector_funcional():
+    from lumen.ia.decidir import LectorCartas
+    return LectorCartas(biblioteca={}, textos={})
+
+
+def efectos_carta(c):
+    return _lector_funcional().efectos_carta(c) if c is not None else []
+
+
 def es_curacion(c) -> bool:
-    return bool(re.search(r"\bheals?\b|restores? the hp|recover", texto(c), re.I))
+    return any(e.tipo == "curar" for e in efectos_carta(c))
 
 
 def quita_buffs(c) -> bool:
-    return bool(re.search(r"removes? buffs", texto(c), re.I))
+    return any(e.tipo == "quitar_buffs" and e.objetivo in ("uno", "todos") for e in efectos_carta(c))
 
 
 def contra_inmortalidad(c) -> bool:
-    """Las "amplify" de AutoFarming: Amplify o Power Strike (quitan inmortalidades del pajaro en la fase 3)."""
-    return bool(re.search(r"amplify damage|power strike damage", texto(c), re.I))
+    from lumen.ia.resolver import satisface
+    return satisface(efectos_carta(c), "amplify_power_strike")
 
 
 def dano(c) -> float:
-    m = re.findall(r"(\d+)% of attack", texto(c), re.I)
-    return max((float(x) for x in m), default=0.0)
+    return max((e.valor or 0 for e in efectos_carta(c) if e.tipo == "dano"), default=0.0)
 
 
 def es_fuerte(c) -> bool:
@@ -189,6 +197,8 @@ class EstrategiaPiso4(EstrategiaInteligente):
             inteligencia.agrupar_por_dibujo(mano, self.jugador._identificar)  # nombres de las cartas
         except Exception:
             pass
+        self._total_turno = total
+        self.jugador.razones = {}
         contexto = (fase, turno)
         if contexto != self._contexto_jugadas:
             self._cartas_por_accion = {}
@@ -255,6 +265,17 @@ class EstrategiaPajaro4(EstrategiaPiso4):
         super().nueva_pelea()
         self.escudo = False  # fase 2: con 3 cartas de plata en un turno el siguiente se pega con todo
 
+    def turno_completado(self, fase, turno):
+        """El motor ya observo todas las casillas ocupadas: comprobar el requisito real."""
+        if fase != 2:
+            return
+        from collections import Counter
+        from lumen.ia import resolver
+        cantidad, minimo = resolver.requisito_rango(self.destino, 2) or (3, 2)
+        por_rango = Counter(c.rango for c in self.jugadas if not es_ulti(c) and
+                            c.rango in (Rango.BRONCE, Rango.PLATA, Rango.ORO) and c.rango.value + 1 >= minimo)
+        self.escudo = any(n >= cantidad for n in por_rango.values())
+
     # --- ayudas
     def _plata_por_fusion(self, mano):
         """Mover una carta de bronce sobre su pareja (no contigua) para hacer una de plata."""
@@ -292,6 +313,13 @@ class EstrategiaPajaro4(EstrategiaPiso4):
         return None
 
     def guion(self, fase, turno, accion, mano):
+        if self.jugador.observacion.get("senales"):
+            from lumen.ia import resolver
+            lector = self.jugador._lector or _lector_funcional()
+            eleccion = resolver.por_estado(self.destino, fase, mano, self.jugador.observacion, lector)
+            if eleccion is not None:
+                self.jugador.razones[mano[eleccion.indice].nombre] = [eleccion.motivo]
+                return eleccion.indice
         if fase == 1:
             return self._fase1(turno, accion, mano)
         if fase == 2:
@@ -325,8 +353,14 @@ class EstrategiaPajaro4(EstrategiaPiso4):
         return (sueltas or candidatas)[0]
 
     def _fase2(self, turno, accion, mano):
-        platas = [i for i in indices(mano, lambda c: c.rango == Rango.PLATA, orden=lambda c: 0)]
-        platas_jugadas = [c for c in self.jugadas if c.rango == Rango.PLATA]
+        from lumen.ia import resolver
+        requisito = resolver.requisito_rango(self.destino, 2) or (3, 2)
+        cantidad, minimo = requisito
+        libres = max(0, getattr(self, "_total_turno", 4) - accion)
+        grupo = resolver.grupo_de_rango(mano, self.jugadas, libres, requisito)
+        objetivo = grupo[0] if grupo else (Rango.ORO if minimo >= 3 else Rango.PLATA)
+        platas = [i for i in indices(mano, lambda c: c.rango == objetivo, orden=lambda c: 0)]
+        platas_jugadas = [c for c in self.jugadas if c.rango == objetivo]
         bloqueadas = any(c.tipo == TipoCarta.BLOQUEADA for c in mano)
         curas = indices(mano, es_curacion)
         if bloqueadas and curas:
@@ -339,12 +373,11 @@ class EstrategiaPajaro4(EstrategiaPiso4):
             if accion == 3:
                 self.escudo = False
         else:  # sin escudo: 3 de plata en el turno
-            if len(platas) + len(platas_jugadas) <= 2 and (m := self._plata_por_fusion(mano)) is not None:
+            if objetivo == Rango.PLATA and len(platas) + len(platas_jugadas) < cantidad and (m := self._plata_por_fusion(mano)) is not None:
                 return m
-            libres = 4 - accion
-            if min(len(platas), libres) + len(platas_jugadas) >= 3 and platas and len(platas_jugadas) < 3:
+            if min(len(platas), libres) + len(platas_jugadas) >= cantidad and platas and len(platas_jugadas) < cantidad:
                 jugada = platas[-1]
-                if len(platas_jugadas) + 1 == 3 and accion == 3:
+                if len(platas_jugadas) + 1 == cantidad and accion == getattr(self, "_total_turno", 4) - 1:
                     self.escudo = True
         if jugada is not None:
             return jugada

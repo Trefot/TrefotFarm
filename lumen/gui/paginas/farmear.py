@@ -970,7 +970,7 @@ class PaginaFarmear(Pagina):
             capa.setContentsMargins(4, 4, 4, 2)
             capa.setSpacing(0)
             dibujo = QLabel(alignment=Qt.AlignCenter)
-            pix = QPixmap(str(botin.ruta_icono(oid)))
+            pix = QPixmap(str(botin.ruta_miniatura(oid, catalogo)))
             if not pix.isNull():
                 dibujo.setPixmap(pix.scaled(44, 38, Qt.KeepAspectRatio, Qt.SmoothTransformation))
             capa.addWidget(dibujo)

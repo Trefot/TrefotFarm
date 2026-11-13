@@ -55,6 +55,7 @@ class Validacion(unittest.TestCase):
                 "inteligencia.py",
                 "valor_cartas.py",
                 "ia/decidir.py",
+                "ia/resolver.py",
                 "ia/efectos.py",
                 "ia/estado.py",
                 "modos/bestias_piso4.py",
@@ -67,7 +68,7 @@ class Validacion(unittest.TestCase):
                 with mock.patch.object(perfiles, "RAIZ", raiz):
                     perfiles.firma_conocimiento.cache_clear()
                     antes = perfiles.firma_conocimiento()
-                    for nombre in ("inteligencia.py", "modos/bestias_piso4.py", "modos/perros_piso4.py"):
+                    for nombre in ("inteligencia.py", "modos/bestias_piso4.py", "modos/perros_piso4.py", "ia/resolver.py"):
                         (raiz / "lumen" / nombre).write_text("# motor nuevo")
                         perfiles.firma_conocimiento.cache_clear()
                         despues = perfiles.firma_conocimiento()

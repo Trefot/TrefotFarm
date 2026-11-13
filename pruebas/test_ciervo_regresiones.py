@@ -72,7 +72,7 @@ class RitmoCartas(unittest.TestCase):
                 modo.fase, modo.turno_fase, modo.huecos_turno = 1, 1, 4
                 modo.log = lambda *a: None
                 modo.capturar = mock.Mock(side_effect=[({"huecos": 4}, (0, 0)), ({"huecos": 0}, (0, 0))])
-                modo.estrategia = SimpleNamespace(decidir=lambda *a: (0, None, False), fusiones_al_jugar=lambda *a: fusiones)
+                modo.estrategia = SimpleNamespace(decidir=lambda *a: (0, None, False), fusiones_al_jugar=lambda *a: fusiones, turno_completado=mock.Mock())
                 carta = Carta(0, (0, 0, 1, 1), None, tipo, Rango.ULTI if tipo == TipoCarta.ULTI else Rango.BRONCE, "odin.single")
                 with mock.patch.object(juego, "victoria", entorno.PlantillaFalsa("victoria")), \
                      mock.patch.object(juego, "derrota", entorno.PlantillaFalsa("derrota")), \
@@ -84,6 +84,7 @@ class RitmoCartas(unittest.TestCase):
                      mock.patch.object(modo, "esperar_corto") as esperar:
                     modo._jugar_turno()
                 clic.assert_called_once()
+                modo.estrategia.turno_completado.assert_called_once_with(1, 1)
                 confirmar.assert_called_once_with(4, 4.0 if tipo == TipoCarta.ULTI else 1.6)
                 pausa = esperar.call_args.args[0]
                 if confirmada and not fusiones and tipo == TipoCarta.NORMAL:

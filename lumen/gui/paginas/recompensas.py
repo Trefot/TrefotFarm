@@ -105,7 +105,7 @@ class CasillaObjeto(QFrame):
         capa.setSpacing(4)
         foto = QLabel(objectName="foto_objeto", alignment=Qt.AlignCenter)
         foto.setFixedSize(76, 64)
-        pix = QPixmap(str(botin.ruta_icono(oid)))
+        pix = QPixmap(str(botin.ruta_miniatura(oid)))
         if not pix.isNull():
             foto.setPixmap(pix.scaled(68, 56, Qt.KeepAspectRatio, Qt.SmoothTransformation))
         capa.addWidget(foto, 0, Qt.AlignHCenter)
@@ -456,9 +456,17 @@ class PaginaRecompensas(Pagina):
         self.grande.setPixmap(pix.scaled(self.grande.size(), Qt.KeepAspectRatio, Qt.SmoothTransformation))
         catalogo = botin.cargar_catalogo()
         objetos = ", ".join(f"{botin.nombre(oid, catalogo)} x{n}" for oid, n in (r.get("objetos") or {}).items())
+        oro = _miles(int(r["oro"])) if r.get("oro") is not None else ("no aplica" if r.get("primera") else "sin confirmar")
+        aviso = ""
+        if r.get("captura_inestable"):
+            aviso = "<br>Captura en animación: no se han contado sus objetos."
+        elif r.get("error_lectura"):
+            aviso = "<br>No se pudo leer esta captura; sus objetos no se han contado."
+        elif r.get("pendientes"):
+            aviso = f"<br>{len(r['pendientes'])} casilla(s) sin identificar con certeza: pendientes de revisión en la foto."
         self.info.setText(
             f"Victoria #{r.get('victoria', '?')} · {time.strftime('%d/%m/%Y %H:%M', time.localtime(r['fecha']))}<br>"
-            f"{r.get('nombre_modo', r['modo'])}<br>Oro: {_miles(int(r.get('oro') or 0))}<br>{objetos}"
+            f"{r.get('nombre_modo', r['modo'])}<br>Oro: {oro}<br>{objetos}{aviso}"
         )
 
     def _abrir_imagen(self):

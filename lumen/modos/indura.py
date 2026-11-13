@@ -440,10 +440,11 @@ class DemonioTiempoReal(Modo):
             # La foto del botin, en la pantalla de recompensas (la del OK) y quieta: antes se sacaba al ver
             # "destroyed" y no salian los objetos. Como mucho se esperan 6 s a que se quede quieta.
             self._ok_desde = self._ok_desde or time.time()
-            if not botin.quieta(self._previa, p) and time.time() - self._ok_desde < 6:
+            estable = botin.quieta(self._previa, p)
+            if not estable and time.time() - self._ok_desde < 6:
                 self._previa = p
                 return None
-            self.guardar_recompensa(p, self.victorias)
+            self.guardar_recompensa(p, self.victorias, estable=estable)
             self._foto_pendiente = False
         if juego.ok.esta(p) or juego.menu_batalla.esta(p, 0.6) or TIEMPO_REAL.esta(p, 0.75):
             if not getattr(self, "_contada", False):

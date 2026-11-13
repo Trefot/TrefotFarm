@@ -145,11 +145,11 @@ class Modo:
     def al_terminar(self):
         """Resumen final; los modos lo amplian."""
 
-    def guardar_recompensa(self, pantalla, victoria: int, primera: bool = False) -> None:
+    def guardar_recompensa(self, pantalla, victoria: int, primera: bool = False, estable: bool = True) -> None:
         """Foto de la pantalla de recompensas para la pagina Recompensas. Un fallo aqui nunca para el bot."""
         try:
             recompensas.guardar(pantalla, modo=self.id, nombre_modo=self.nombre, sesion=self.stats["inicio"], victoria=victoria,
-                                primera=primera)
+                                primera=primera, estable=estable)
             self.publicar_stats(fotos_recompensas=self.stats.get("fotos_recompensas", 0) + 1)
             self.log("Foto de recompensas guardada.", "debug")
         except Exception as error:

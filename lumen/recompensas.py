@@ -22,24 +22,26 @@ INDICE = CARPETA / "indice.jsonl"
 _lock = threading.Lock()
 # Version de la lectura del botin: al subirla, las fotos leidas con una anterior se vuelven a leer solas
 # (2: cantidades con los digitos del juego y fotos sin boton OK fuera, 0.3.0; 3: el "3" sobre fondo claro, 0.7.1).
-LECTURA = 4  # 4: el "10" sobre fondos claros (cubo amarillo) se leia 1
+LECTURA = 5  # galeria verificada, casillas desplazadas y capturas inestables pendientes
 
 
-def _analizar(pantalla, primera: bool = False) -> dict:
+def _analizar(pantalla, primera: bool = False, modo: str = "", estable: bool = True) -> dict:
     try:
+        if not estable:
+            return {"objetos": {}, "oro": None, "captura_inestable": True, "lectura_incompleta": True}
         if primera:  # "First Reward": la recompensa de la primera vez de la semana (sin boton OK)
-            return {**botin.analizar_primera(pantalla), "primera": True}
+            return {**botin.analizar_primera(pantalla, modo=modo), "primera": True}
         if not juego.ok.esta(pantalla):
             # Sin el boton OK no es la pantalla de premios: las fotos de Indura de antes de la 0.2.3 se
             # hicieron en "HEART DESTROYED" y el bot guardo como objetos 14 trozos del fondo de lava.
             return {"objetos": {}, "oro": None, "sin_premios": True}
-        return botin.analizar(pantalla)
+        return botin.analizar(pantalla, modo=modo)
     except Exception:  # una lectura fallida nunca debe parar el bot
         return {"objetos": {}, "oro": None, "error_lectura": True}
 
 
 def guardar(pantalla: np.ndarray, *, modo: str, nombre_modo: str, sesion: float, victoria: int,
-            primera: bool = False) -> Path:
+            primera: bool = False, estable: bool = True) -> Path:
     ahora = time.time()
     carpeta = CARPETA / time.strftime("%Y-%m-%d", time.localtime(ahora))
     ruta = carpeta / f"{time.strftime('%H%M%S', time.localtime(ahora))}_{modo}_v{victoria}{'_primera' if primera else ''}.png"
@@ -51,7 +53,8 @@ def guardar(pantalla: np.ndarray, *, modo: str, nombre_modo: str, sesion: float,
         "nombre_modo": nombre_modo,
         "sesion": sesion,
         "victoria": victoria,
-        **_analizar(pantalla, primera),
+        "primera": bool(primera),
+        **_analizar(pantalla, primera, modo=modo, estable=estable),
         "analizado": True,
         "lectura": LECTURA,
     }
@@ -100,8 +103,10 @@ def reanalizar_pendientes(todas: bool = False) -> int:
             pantalla = leer_imagen(CARPETA / r["ruta"])
             if pantalla is None:
                 continue
-            r.pop("sin_premios", None)
-            r.update(_analizar(pantalla, primera=bool(r.get("primera"))))
+            estable = not r.get("captura_inestable", False)
+            for campo in ("sin_premios", "error_lectura", "pendientes", "lectura_incompleta"):
+                r.pop(campo, None)
+            r.update(_analizar(pantalla, primera=bool(r.get("primera")), modo=r.get("modo", ""), estable=estable))
             r["analizado"], r["lectura"] = True, LECTURA
             hechas += 1
         if hechas:

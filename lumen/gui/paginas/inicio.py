@@ -152,6 +152,8 @@ class PaginaInicio(Pagina):
         ce.addLayout(self.fila_equipo)
         self.lbl_estado = QLabel(objectName="tenue", wordWrap=True)
         ce.addWidget(self.lbl_estado)
+        self.lbl_mecanicas = QLabel(objectName="tenue", wordWrap=True)
+        ce.addWidget(self.lbl_mecanicas)
         izquierda.addWidget(self.caja_equipo)
         izquierda.addStretch()
         checklist = QFrame(objectName="seccion")
@@ -323,6 +325,8 @@ class PaginaInicio(Pagina):
     def _pintar_contenido(self):
         """Nombre, descripcion y pisos del contenido del centro de la rueda."""
         c = self.contenido
+        from lumen.ia.resolver import resumen_requisitos
+        self.lbl_mecanicas.setText(resumen_requisitos(self.modo_id))
         self.lbl_nombre.setText(c.nombre)
         self.lbl_descripcion.setText(c.descripcion)
         pix = iconos.redondo(foto_de(self.modo_id) or c.foto, 108, tema.BORDE)
@@ -455,7 +459,10 @@ class PaginaInicio(Pagina):
                 if faltan
                 else "Todas capturadas.",
             )
-        elif self.listo:  # modo que juega con cualquier equipo
+        elif self.listo and self.modo_id in ("pajaro_piso4", "ciervo_piso4"):
+            self.pasos["equipo"].poner("nada", "Revisar", "El equipo puesto no esta comprobado. Revisa sus efectos y las mecanicas de la fase.")
+            self.pasos["cartas"].poner("nada", "Reconocer", "Lumen intentara reconocer las cartas al jugar; los efectos requieren su ficha por rango.")
+        elif self.listo:  # otros modos sin equipo obligatorio
             self.pasos["equipo"].poner(
                 "ok", "Cualquiera", "Sirve el equipo que tengas puesto en el juego."
             )
@@ -502,11 +509,15 @@ class PaginaInicio(Pagina):
             self.fila_equipo.addWidget(
                 QLabel(
                     "⚡ Equipo más rápido: aún sin medir"
-                    + (" · sirve cualquiera" if not equipo else ""),
+                    + (" · revisa las mecánicas" if self.modo_id in ("pajaro_piso4", "ciervo_piso4") else " · equipo libre" if not equipo else ""),
                     objectName="tenue",
                 )
             )
         self.fila_equipo.addStretch()
+        if self.modo_id in ("pajaro_piso4", "ciervo_piso4"):
+            self.lbl_estado.show()
+            self.lbl_estado.setText(f"<span style='color:{tema.AVISO}'>Equipo no comprobado: revisa las mecánicas antes de iniciar.</span>")
+            return
         listo = all(p.listo for k, p in self.pasos.items() if k in ("equipo", "cartas"))
         self.lbl_estado.setText(
             f"<span style='color:{tema.OK}'>Listo</span>"

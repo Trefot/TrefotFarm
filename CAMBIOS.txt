@@ -29,6 +29,16 @@ Etapas previstas:
 
 CAMBIOS
 -------
+0.37.0-alpha — Mecánicas por efectos y botín contra la galería
+- Lector de cartas por rango real de la ficha de 7DSHub, sin atribuir efectos de oro a bronce ni asumir condiciones o reliquias.
+- Pájaro F4: contramedidas por función ante bloqueo, inmortalidad y evasión observados; la fase 2 lee del jefe el requisito de mismo rango y contempla oro.
+- Preparar sesión muestra requisitos documentados sin prometer que sirva cualquier equipo; Laboratorio contrasta el equipo indicado con los textos del jefe.
+- Botín: galería de ítems y tablas de premios como referencias; recortes desconocidos o ambiguos quedan pendientes sin crear objetos nuevos ni sumarlos.
+- Coordenadas de casillas detectadas, margen de color/identidad y caché renovada al cambiar una ficha. Miniaturas completas de la base, separadas del recorte de reconocimiento.
+- Espera por estabilidad de cada casilla, incluidos premios semanales. Las fotos aún en animación se conservan sin inventar cantidades.
+- Relectura de fotos antiguas con la versión 5 del lector y avisos de lectura pendiente en Botín.
+- Verificado sin partidas en Windows; no implica compatibilidad universal de equipos ni reconocimiento completo de todos los estados del jefe.
+
 0.36.5-alpha — Movimientos del ciervo y ritmo de cartas
 - Ciervo F4: los movimientos de la fase 2 eligen otra carta real, incluso con huecos vacios; no se sustituyen por ataques de la IA general.
 - Sin movimiento valido, espera otra lectura sin rendirse; los reintentos no duplican el historial de colores ni bloquean la carta del ataque anterior.

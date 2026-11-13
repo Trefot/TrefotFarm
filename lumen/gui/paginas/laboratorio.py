@@ -205,7 +205,12 @@ class PaginaLaboratorio(Pagina):
 
     def ver_conocimiento(self):
         try:
-            self.conocimiento.setPlainText(cobertura.informe())
+            from lumen.ia import resolver
+            ids = [p.strip() for p in self.panel.equipo.text().split(",") if p.strip()]
+            destino = self.contexto()[0]
+            if destino.endswith("_pisos1a3"):
+                destino = destino.replace("_pisos1a3", f"_f{self.panel.piso.value()}")
+            self.conocimiento.setPlainText(cobertura.informe() + "\n\n" + resolver.informe_equipo(destino, ids))
         except Exception as error:
             self.conocimiento.setPlainText(str(error))
 

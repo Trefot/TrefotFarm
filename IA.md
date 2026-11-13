@@ -131,3 +131,17 @@ nuevos. Laboratorio incluye estas operaciones con la llave administrativa.
 - Pausa de 0,25 s solo tras una normal confirmada sin fusiones. Los otros margenes no cambian.
 - La firma de perfiles incluye ambos motores F4 para no mezclar memoria entre versiones del guion.
 - Pendiente: equipo exacto y registro/captura del turno de la derrota real de F2; no se ha validado una victoria en el juego en esta revision.
+
+## Mecánicas y efectos por rango (0.37.0-alpha)
+
+- `LectorCartas.efectos_carta` lee el rango que está en la mano desde `fichas.yaml`. Los efectos de rangos superiores, reliquias y condiciones no comprobadas no se atribuyen a esa carta.
+- `ia/resolver.py` relaciona contramedidas con efectos, sin exigir un ID de héroe. En pájaro F4 se conecta a bloqueo F1, inmortalidad F3 y evasión F4 con señal positiva >= 0,90. Los guiones conservan las otras decisiones.
+- La fase 2 del pájaro obtiene cantidad y rango mínimo del texto del jefe y contempla grupos de oro además de plata.
+- Preparación resume mecánicas documentadas; Conocimiento 7DS del Laboratorio informa capacidades por rango para el equipo indicado. No simula una victoria ni verifica el equipo puesto.
+- Pendiente: validar estas sustituciones en partidas, completar la observación de estados/vida/orbes y ampliar contramedidas a los demás contextos. Los guiones aún tienen prioridades específicas de personajes; no es un planificador universal.
+
+## Calidad de observación de botín (lectura 5)
+
+- Se coteja contra la galería publicada/local y las tablas del contenido, con forma, color y margen entre identidades. Un recorte sin coincidencia queda localizado en la foto como pendiente; no genera ítems sin nombre ni se suma a materiales.
+- Los contornos detectados determinan las coordenadas; cada casilla debe estar quieta antes de guardar. Un timeout de animación conserva la foto, pero no acredita objetos.
+- Se conservan capturas originales, contexto del contenido y marca de premio semanal para relectura. La exactitud en nuevas capturas reales requiere contrastarlas; no se inventan los dígitos que aún faltan calibrar.
