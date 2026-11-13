@@ -71,7 +71,8 @@ class CiervoRegresiones(unittest.TestCase):
 
 
 class RitmoCartas(unittest.TestCase):
-    def test_acorta_solo_una_normal_confirmada_sin_fusiones(self):
+    def test_nunca_menos_de_medio_segundo_entre_cartas(self):
+        """Con 0,25 s (0.36.5) los toques perdidos subieron del 6 % al 22-34 % (2026-11-13): siempre >= 0,5 s."""
         for confirmada, fusiones, tipo in ((True, 0, TipoCarta.NORMAL), (False, 0, TipoCarta.NORMAL),
                                           (True, 1, TipoCarta.NORMAL), (True, 0, TipoCarta.ULTI)):
             with self.subTest(confirmada=confirmada, fusiones=fusiones, tipo=tipo):
@@ -95,10 +96,7 @@ class RitmoCartas(unittest.TestCase):
                 modo.estrategia.turno_completado.assert_called_once_with(1, 1)
                 confirmar.assert_called_once_with(4, 4.0 if tipo == TipoCarta.ULTI else 1.6)
                 pausa = esperar.call_args.args[0]
-                if confirmada and not fusiones and tipo == TipoCarta.NORMAL:
-                    self.assertLess(pausa, 0.5)
-                else:
-                    self.assertGreaterEqual(pausa, 0.5)
+                self.assertGreaterEqual(pausa, 0.5)
 
 
 class ReintentosMovimientos(unittest.TestCase):
@@ -124,7 +122,7 @@ class ReintentosMovimientos(unittest.TestCase):
              mock.patch.object(P4, "_misma_imagen", return_value=True), \
              mock.patch.object(P4.entrada, "clic"), \
              mock.patch.object(P4.entrada, "arrastrar"), \
-             mock.patch.object(modo, "_esperar_hueco", side_effect=[True, False, False, False]), \
+             mock.patch.object(modo, "_esperar_hueco", side_effect=[True] + [False] * 20), \
              mock.patch.object(modo, "esperar_corto"):
             modo._jugar_turno()
         self.assertGreaterEqual(len(tipos), 4)

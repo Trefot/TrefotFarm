@@ -54,7 +54,10 @@ THONAR_OTRA = ("thonar_azul.otra",)
 PROTEGIDAS_FASE2 = ("gawain.area", "odin.area", "freyja_roja.ulti", "thonar_azul.postura")
 TURNOS_MAXIMOS = {1: 2, 2: 1, 3: 1}
 PAUSA_ENTRE_CARTAS = 0.5  # sin confirmacion o con fusiones: conservar margen de animacion
-PAUSA_CARTA_CONFIRMADA = 0.25  # casilla ya ocupada y sin fusiones: no esperar otros 0.5 s
+# Era 0,25 (0.36.5) y los toques perdidos pasaron del 6 % a 22-34 % (logs del 2026-11-13): el juego aun anima la
+# carta anterior e ignora el toque, y cada fallo cuesta ~5 s. Igual que las demas.
+PAUSA_CARTA_CONFIRMADA = 0.5
+REPETICIONES_HUECO = 3  # comprobaciones extra (0,25 s) antes de dar por perdido el toque de una carta
 HUECOS_QUIETOS = 0.6  # segundos con la misma cantidad de huecos antes de empezar un turno (PC lentos)
 # Primer turno de la pelea con menos de 3 huecos: tienen que llevar asi este tiempo. Los lobos (2026-11-10) empezaban
 # la mitad de las peleas con "1 cartas por jugar" en plena animacion; la postura no entraba y reiniciaba el nivel.
@@ -733,7 +736,9 @@ class PerrosPiso4(Modo):
             if accion == ultima_accion:
                 # La carta anterior aun no ocupa su hueco (animacion/fusion): esperar un poco.
                 repeticiones += 1
-                if repeticiones < 8:
+                # Una carta que entra lo hace en <= 1 s (medido en 313 cartas) y ya se espero 1,6 s: reintentar pronto
+                # (antes, 8 x 0,25 s mas: ~5 s por toque perdido).
+                if repeticiones < REPETICIONES_HUECO:
                     self.esperar_corto(0.25)
                     continue
                 if ultima_carta is not None and ultima_carta.imagen is not None and                         not any(_misma_imagen(ultima_carta.imagen, r) for r in retocadas):

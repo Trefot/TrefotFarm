@@ -29,6 +29,12 @@ Etapas previstas:
 
 CAMBIOS
 -------
+0.38.8-alpha
+  - Toques perdidos (el usuario: "a veces va demasiado rapido y no las lanza"): desde la 0.36.5 la pausa tras una
+    carta confirmada era 0,25 s y el juego, aun animando la anterior, ignoraba el toque. Medido en los logs: del 6 %
+    de toques perdidos (2026-11-10) al 22-34 % (2026-11-13), ~5 s cada uno (mas de 8 min en una tarde). Vuelve a 0,5 s
+    siempre, y un toque perdido se reintenta antes (una carta que entra lo hace en <= 1 s): ~2 s por fallo.
+
 0.38.7-alpha
   - Ciervo Floor 4, fase 4 (prueba del usuario): en el turno 1 empezaba por rojo sin tener verdes (lo que sigue al
     rojo) y la ruleta se cortaba a la primera. Ahora elige el color de inicio que da la cadena mas larga con la mano
