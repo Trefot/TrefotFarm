@@ -626,8 +626,28 @@ class EstrategiaCiervo4(EstrategiaPiso4):
             raise Reiniciar("Ciervo: no hay dos cartas para mover sin atacar; espero otra lectura")
         return origen, min(otros, key=lambda i: abs(i - origen))
 
+    @staticmethod
+    def _mover_fusionando(mano):
+        """Una carta sobre otra igual del mismo rango (bronce o plata): se fusionan, suben de rango y cargan la ulti.
+        El usuario (2026-11-13): "aunque tenga cartas iguales para combinar, no lo hace"."""
+        pares = [(i, j) for i, a in enumerate(mano) for j, b in enumerate(mano)
+                 if i != j and abs(i - j) > 1 and fusionan(a, b)]
+        if not pares:
+            return None
+        return max(pares, key=lambda ij: (rango(mano[ij[0]]), -abs(ij[0] - ij[1])))  # primero las de plata
+
+    @staticmethod
+    def _preferir_fusion(candidatas, mano):
+        """De las cartas que valen ahora, la que esta entre dos iguales (al jugarla se juntan y se fusionan)."""
+        for i in reversed(candidatas):
+            if 0 < i < len(mano) - 1 and fusionan(mano[i - 1], mano[i + 1]):
+                return i
+        return candidatas[-1] if candidatas else None
+
     def _mover_para_ulti(self, mano):
-        """Mover una carta del heroe que aun no tiene la ulti (asi se carga)."""
+        """Mover sin atacar: primero una fusion; si no, una carta del heroe que aun no tiene la ulti (asi se carga)."""
+        if (fusion := self._mover_fusionando(mano)) is not None:
+            return fusion
         todas = list(mano) + list(self.jugadas)
         unidades = [(es_tyr, self._por_rango(mano, es_tyr)), (es_hel, self._por_rango(mano, es_hel)),
                     (es_freyr, self._por_rango(mano, lambda c: color(c) == "rojo")),
@@ -671,7 +691,7 @@ class EstrategiaCiervo4(EstrategiaPiso4):
                 curas = self._por_rango(mano, lambda c: es_jorm(c) and es_curacion(c))
                 if curas:
                     return curas[-1]
-            return elegidas[-1]
+            return self._preferir_fusion(elegidas, mano)
         return self._mover_para_ulti(mano)
 
     def _fase3(self, turno, accion, mano):
@@ -690,7 +710,7 @@ class EstrategiaCiervo4(EstrategiaPiso4):
             self.color_turno = max(("rojo", "verde", "azul"), key=lambda k: len(grupos[k]))
         elegidas = grupos[self.color_turno]
         if accion <= 2 and elegidas:
-            return elegidas[-1]
+            return self._preferir_fusion(elegidas, mano)
         if accion > 2:
             mayor = max(grupos.values(), key=len)
             for i in reversed(mayor):

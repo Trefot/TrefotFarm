@@ -29,6 +29,12 @@ Etapas previstas:
 
 CAMBIOS
 -------
+0.38.3-alpha
+  - Ciervo Floor 4, fusiones (el usuario: "aunque tenga cartas iguales para combinar, no lo hace"): al mover sin
+    atacar (cargar ultis, contraataque, sin cartas del color), primero mueve una carta sobre otra igual del mismo
+    rango (se fusiona y sube de rango); y entre las cartas del color del turno juega la que esta entre dos iguales
+    (al quitarla se juntan y se fusionan solas).
+
 0.38.2-alpha
   - Colores de los personajes (el usuario: "no esta detectando bien el color"): el reconocedor del equipo de los
     perros (Odin, Gawain, Freyja roja, Thonar) se aplicaba en todos los modos y la Freyja verde del ciervo salia

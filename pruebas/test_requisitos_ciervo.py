@@ -162,3 +162,20 @@ class ColoresDelEquipo(unittest.TestCase):
         indice.fijar_equipo({THOR})
         self.assertEqual(indice.equipo, {THOR})
         self.assertEqual(indice._memoria, [], "lo recordado antes se olvida")
+
+
+class Fusiones(unittest.TestCase):
+    """El usuario, 2026-11-13: "aunque tenga cartas iguales para combinar, no lo hace"."""
+
+    def test_al_mover_fusiona_dos_iguales(self):
+        e = ciervo(RQ.CAUTELOSO)
+        m = mano((THOR + ".skill_1", R.BRONCE), (FREYR + ".skill_1", R.BRONCE), (JORM + ".skill_2", R.BRONCE),
+                 (THOR + ".skill_1", R.BRONCE))
+        self.assertEqual(e._mover_para_ulti(m), (0, 3), "Thor sobre Thor (bronce): sube a plata")
+
+    def test_juega_la_que_junta_dos_iguales(self):
+        e = ciervo(RQ.CAUTELOSO)
+        e.color_turno = "verde"
+        m = mano((THOR + ".skill_1", R.BRONCE), (JORM + ".skill_1", R.BRONCE), (THOR + ".skill_1", R.BRONCE),
+                 (TYR + ".skill_1", R.BRONCE), (JORM + ".skill_2", R.BRONCE))
+        self.assertEqual(e.guion(3, 2, 0, m), 1, "la verde de en medio: al jugarla, los dos Thor se fusionan")
