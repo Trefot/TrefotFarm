@@ -29,6 +29,12 @@ Etapas previstas:
 
 CAMBIOS
 -------
+0.37.2-alpha
+  - Lumen arranca mas rapido (medido sin los datos del usuario: de 5,1 a 2,0 s): el lector de YAML en C cuando
+    esta instalado, los archivos de personajes se leen una vez (se leian 8), y las paginas Personajes (comprobaba
+    ~10.000 imagenes de cartas) y Botin se construyen al abrirlas, no al arrancar. Botin ademas volvia a leer todas
+    las fotos al arrancar tras cada cambio de lectura: ahora lo hace al abrir esa pagina.
+
 0.37.1-alpha
   - Botin: solo cuenta lo que esta en la galeria de objetos del usuario (lo pidio el: "que use solo nuestra propia
     galeria") y nunca crea un objeto con una foto; lo que no esta en la galeria queda pendiente. Si el catalogo ya

@@ -10,6 +10,7 @@ Una carta se nombra "personaje.carta", p. ej. "odin.single" o "thonar_azul.postu
 """
 
 import re
+import pickle
 import shutil
 import threading
 from dataclasses import dataclass, field
@@ -192,11 +193,23 @@ class Personaje:
 CARGADOR_YAML = getattr(yaml, "CSafeLoader", yaml.SafeLoader)
 
 
+_cache_yaml: dict[str, tuple] = {}
+
+
 def _leer_yaml(ruta: Path) -> dict:
-    if not ruta.is_file():
+    """Leido una vez por version del archivo (al arrancar se leia 8 veces, 2026-11-13); se devuelve una copia para
+    que nadie cambie la guardada."""
+    try:
+        st = ruta.stat()
+    except OSError:
         return {}
-    with ruta.open(encoding="utf-8") as f:
-        return yaml.load(f, Loader=CARGADOR_YAML) or {}
+    firma = (st.st_mtime_ns, st.st_size)
+    guardado = _cache_yaml.get(str(ruta))
+    if guardado is None or guardado[0] != firma:
+        with ruta.open(encoding="utf-8") as f:
+            guardado = (firma, pickle.dumps(yaml.load(f, Loader=CARGADOR_YAML) or {}, -1))
+        _cache_yaml[str(ruta)] = guardado
+    return pickle.loads(guardado[1])
 
 
 FICHAS = Path(__file__).resolve().parent / "datos" / "fichas.yaml"  # de 7dshub: cartas, pasiva, talento, reliquia

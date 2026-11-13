@@ -194,7 +194,7 @@ class PaginaRecompensas(Pagina):
 
         app.puente.stats.connect(self._quizas_nueva_foto)
         self._ultimas_fotos = 0
-        self.al_mostrar()
+        # Se llena al abrir la pagina (al_mostrar), no al arrancar Lumen (~0,6 s, 2026-11-13)
 
     # ------------------------------------------------------------------ construccion
     def _crear_botin(self) -> QWidget:

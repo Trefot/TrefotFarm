@@ -516,6 +516,8 @@ class PaginaPersonajesRapida(unittest.TestCase):
         with tempfile.TemporaryDirectory() as d, mock.patch.object(P, "CARPETA", Path(d)), \
                 mock.patch.object(P, "USUARIO", Path(d) / "usuario.yaml"):
             pagina = G.PaginaPersonajes(mock.Mock())
+            self.assertFalse(pagina.tarjetas, "al arrancar Lumen no se construye (se ganaba ~1,2 s)")
+            pagina.al_mostrar()  # al abrir la pagina
             self.assertTrue(pagina.tarjetas)
             for t in pagina.tarjetas.values():
                 self.assertIsNotNone(t.parentWidget(), "sin padre seria una ventana suelta")
@@ -533,6 +535,7 @@ class PaginaPersonajesRapida(unittest.TestCase):
         with tempfile.TemporaryDirectory() as d, mock.patch.object(P, "CARPETA", Path(d)), \
                 mock.patch.object(P, "USUARIO", Path(d) / "usuario.yaml"):
             pagina = G.PaginaPersonajes(mock.Mock())
+            pagina.al_mostrar()
             self.assertFalse(any(p.tengo for p in pagina.biblioteca.values()), "un jugador nuevo empieza sin ninguno")
             rojo = next(b for b in pagina.atributos.buttons() if b.property("color") == "rojo")
             rojo.setChecked(True)  # solo se ven los rojos

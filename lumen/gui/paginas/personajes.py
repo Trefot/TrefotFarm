@@ -309,7 +309,8 @@ class PaginaPersonajes(Pagina):
         self.cuerpo.addWidget(self.desplazar, 1)
         self.tarjetas: dict[str, TarjetaPersonaje] = {}
         self.columnas = 0
-        self.al_mostrar()
+        self.biblioteca = {}  # se carga al abrir la pagina (al_mostrar): construirla al arrancar tardaba ~1,2 s
+        self.orden = []
 
     def al_mostrar(self):
         self.biblioteca = P.cargar()
