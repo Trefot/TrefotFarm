@@ -29,6 +29,22 @@ Etapas previstas:
 
 CAMBIOS
 -------
+0.38.0-alpha
+  - Fichas de las 6 bestias (21 pisos) de 7dshub en lumen/datos/bestias_7dshub.yaml: pasivas y habilidades del jefe
+    por fase. Base para que el bot juegue cualquier bestia con cualquier equipo.
+  - Requisitos por fase (lumen/datos/requisitos_bestias.yaml, lumen/ia/requisitos.py): cada uno OBLIGATORIO
+    (inmortalidad, golpes mortales, contraataques) o que SE SALTA CON DANO. Empieza con el ciervo Floor 4.
+  - Ciervo Floor 4 segun su ficha, con la opcion "Como pelear":
+      Cauteloso (por defecto): cumple todo, como hasta ahora.
+      Whale: maximo dano en lo que se salta con dano (fases 1 y 2 y los turnos pares de la 3).
+      Automatico: empieza con todo y, si una fase no cae en 1 turno, la juega con cautela (y lo recuerda).
+    Siempre, en cualquier estilo: fase 3 impar = 3 del mismo color (Fierce Rush, 20000 %, si no mata a un heroe);
+    fase 4 = la secuencia de colores (inmortalidad) y, con la postura de contraataque (Defensive Horn, 1500 %),
+    una carta que quite posturas, la ulti de Hel o no atacar. Con otro equipo, la fase 1 limpia el Torrente con
+    ultis y mueve cartas para cargarlas, y la carga de ultis vale para cualquier heroe.
+  - Ratatoskr sigue cerrado: su ficha (solo 1 desventaja a la vez; con la postura del tronco 2 no se mueve) no
+    explica el bloqueo de cartas del Floor 1. Surtr, para cuando todo lo demas funcione (decision del usuario).
+
 0.37.3-alpha
   - Pajaro Floor 4 (lo pidio el usuario): si en la fase 2 empieza un turno con TODAS las cartas bloqueadas (no se
     juntaron las 3 de plata y el pajaro las bloqueo), reinicia en vez de pasar 6-9 turnos moviendo cartas hasta

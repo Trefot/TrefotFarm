@@ -24,6 +24,7 @@ from lumen.cartas import Carta, Rango, TipoCarta
 from lumen.modos import bestias_pisos1a3 as B13
 from lumen.modos.bestias_pisos1a3 import ATRAS, PUNTO_ATRAS, EstrategiaInteligente
 from lumen.modos.perros_piso4 import PerrosPiso4, Reiniciar
+from lumen.motor import Opcion
 
 # ------------------------------------------------------------------ las cartas
 
@@ -458,11 +459,28 @@ class EstrategiaPajaro4(EstrategiaPiso4):
 
 
 class EstrategiaCiervo4(EstrategiaPiso4):
+    """El ciervo segun lo que pide en cada fase (lumen/datos/requisitos_bestias.yaml, de 7dshub, 2026-11-13): lo
+    obligatorio se cumple siempre; lo que se salta con dano depende del estilo (cauteloso, whale o automatico)."""
+
     destino = "ciervo_piso4"
+
+    def __init__(self):
+        from lumen.ia.requisitos import CAUTELOSO, Estilo
+
+        self.estilo = Estilo(CAUTELOSO)  # por defecto, lo de siempre; el modo pone el que elija el usuario
+        super().__init__()
 
     def nueva_pelea(self):
         super().nueva_pelea()
         self.color_turno = None
+
+    def _golpe_maximo(self, mano, guardar_ulti_freyr=False):
+        """Whale: la ulti (la de mas a la derecha) o la carta que mas dano hace, de mas rango."""
+        ultis = indices(mano, lambda c: es_ulti(c) and not (guardar_ulti_freyr and es_freyr(c)), orden=lambda c: 0)
+        if ultis:
+            return ultis[-1]
+        normales = indices(mano, lambda c: not es_ulti(c), orden=lambda c: (rango(c), dano(c)))
+        return normales[-1] if normales else None
 
     @staticmethod
     def _por_rango(mano, cond, ultis_al_final=False):
@@ -474,17 +492,31 @@ class EstrategiaCiervo4(EstrategiaPiso4):
                 for col in ("verde", "rojo", "azul")}
 
     def guion(self, fase, turno, accion, mano):
+        from lumen.ia import requisitos
+
+        whale = self.estilo.whale(self.destino, fase, turno)
         if fase == 1:
-            return self._fase1(turno, accion, mano)
+            return self._golpe_maximo(mano) if whale else self._fase1(turno, accion, mano)
         if fase == 2:
-            return self._fase2(turno, accion, mano)
+            return self._golpe_maximo(mano) if whale else self._fase2(turno, accion, mano)
         if fase == 3:
-            return self._fase3(turno, accion, mano)
-        return self._fase4(turno, accion, mano)
+            # Obligatorio en los turnos impares: si no, Fierce Rush (20000 %) mata a un heroe
+            if requisitos.aplica(requisitos.pide(self.destino, 3, "mismo_color"), turno) or not whale:
+                return self._fase3(turno, accion, mano)
+            return self._golpe_maximo(mano, guardar_ulti_freyr=True)
+        return self._fase4(turno, accion, mano)  # inmortalidad y contraataque: obligatorio siempre
+
+    def _fase1_general(self, accion, mano):
+        """Cualquier equipo: el Torrente se quita usando la ulti; la 4.a accion carga ultis moviendo una carta."""
+        if accion == 3:
+            return self._mover_para_ulti(mano)
+        return self._golpe_maximo(mano)
 
     def _fase1(self, turno, accion, mano):
         thor = self._por_rango(mano, es_thor)
         tyr_hel = self._por_rango(mano, lambda c: es_tyr(c) or es_hel(c))
+        if not thor and not tyr_hel:  # no es el equipo de AutoFarming: lo que pide la fase, con lo que haya
+            return self._fase1_general(accion, mano)
         jorm = self._por_rango(mano, es_jorm)
         freyr = self._por_rango(mano, es_freyr)
         rojas = self._por_rango(mano, lambda c: color(c) == "rojo")
@@ -534,6 +566,12 @@ class EstrategiaCiervo4(EstrategiaPiso4):
         for cond, cartas in unidades:
             if cartas and not self._tiene_ulti(todas, cond):
                 return self._movimiento_valido(mano, cartas[0])
+        # Cualquier equipo: el heroe de la mano que aun no tiene su ulti
+        for h in dict.fromkeys(heroe(c) for c in mano if con_carta(c) and heroe(c)):
+            if not self._tiene_ulti(todas, lambda c, h=h: heroe(c) == h):
+                suyas = self._por_rango(mano, lambda c, h=h: heroe(c) == h)
+                if suyas:
+                    return self._movimiento_valido(mano, suyas[0])
         cartas = [i for i, c in enumerate(mano) if con_carta(c)]
         if len(cartas) < 2:
             raise Reiniciar("Ciervo: no hay dos cartas para mover sin atacar; espero otra lectura")
@@ -592,8 +630,14 @@ class EstrategiaCiervo4(EstrategiaPiso4):
 
     def _fase4(self, turno, accion, mano):
         if self.ve(juego.contraataque):
+            # Defensive Horn: postura que devuelve 1500 % al atacarle. Quitarle la postura, la ulti de Hel o no atacar.
+            from lumen.ia.resolver import satisface
+
+            if quita := indices(mano, lambda c: satisface(efectos_carta(c), "quitar_postura"), orden=lambda c: 0):
+                return quita[-1]
             if hel_ulti := self._por_rango(mano, lambda c: es_hel(c) and es_ulti(c)):
                 return hel_ulti[-1]
+            return self._mover_para_ulti(mano)  # sin nada que la quite: no atacar (mover carga ultis)
         rojas = self._por_rango(mano, lambda c: color(c) == "rojo")
         azules = self._por_rango(mano, lambda c: color(c) == "azul")
         verdes = self._por_rango(mano, lambda c: color(c) == "verde")
@@ -767,6 +811,18 @@ class CiervoPiso4(Piso4):
     bestia = juego.ciervo
     piso3_superado = juego.piso3_superado_ciervo
     clase_estrategia = EstrategiaCiervo4
+    opciones = PerrosPiso4.opciones + [
+        Opcion("estilo", "Cómo pelear", "lista", "Cauteloso", opciones=["Cauteloso", "Automático", "Whale"],
+               ayuda="Cauteloso: cumple todo lo que pide cada fase (equipos normales). Whale: máximo daño y solo lo "
+                     "obligatorio (inmortalidad, golpe mortal de la fase 3, contraataque). Automático: empieza con "
+                     "todo y, si una fase no cae en 1 turno, la juega con cautela."),
+    ]
+
+    def __init__(self, valores: dict):
+        super().__init__(valores)
+        from lumen.ia.requisitos import Estilo
+
+        self.estrategia.estilo = Estilo(str(valores.get("estilo") or "Cauteloso"))
 
 
 TODOS = (PajaroPiso4, CiervoPiso4)

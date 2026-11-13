@@ -1,0 +1,2460 @@
+# Fichas de las bestias (Demonic Beast) de 7dshub.com (con permiso de su dueno, 2026-11-08), descargadas el
+# 2026-11-13 de /api/creaturenest/<id>. Por piso y fase: pasivas aleatorias, enemigos con su atributo, pasivas y
+# habilidades (texto del juego en ingles). Base para las fichas de requisitos (lumen/datos/requisitos_bestias.yaml).
+pajaro_f1:
+  nombre: Hraesvelgr's Nest Floor 1
+  id_7dshub: 1001
+  fases:
+    1:
+      aleatorias: []
+      enemigos:
+      - nombre: Hraesvelgr
+        atributo: rojo
+        pasivas:
+        - 'Skill Use Increase: Increases the number of skill uses by 2.'
+        - 'Effect Immunity: Immune to Petrify, Stun, Freeze, Corrosion, Attack Disable, Buff Disable, Debuff Disable, Stat
+          Decrease, Poison, Bleed, Shock, Oxidize, Burn, Blackout, and Coerce.'
+        - 'Debuff Cancel: Removes 1 Debuff from the hero at the start of every turn.'
+        - 'Remove Attribute Leverage: No change in damage from attribute advantage or disadvantage.'
+        - 'Ultimate Move Damage Decrease: Decreases the hero''s damage taken from Ultimate Moves by 30%.'
+        - 'HP-related Stats Decrease: Decreases the enemy''s Regeneration Rate, Recovery Rate, and Lifesteal by 40%.'
+        - 'Ignore Evasion: Ignores Evasion when attacking.'
+        habilidades:
+        - 'Inflicts Spike damage equal to 240% of Attack on one enemy.\n\n*Spike: 2x Crit Damage Increase.'
+        - 'Inflicts Spike damage equal to 400% of Attack on one enemy.\n\n*Spike: 2x Crit Damage Increase.'
+        - 'Inflicts damage equal to 150% of Attack on all enemies. Makes target(s) Bleed for 2 turn(s).\n\n*Bleed: Additional
+          damage equal to 90% of damage dealt at the end of every turn.'
+        - 'Inflicts damage equal to 250% of Attack on all enemies. Makes target(s) Bleed for 2 turn(s).\n\n*Bleed: Additional
+          damage equal to 90% of damage dealt at the end of every turn.'
+    2:
+      aleatorias: []
+      enemigos:
+      - nombre: Hraesvelgr
+        atributo: rojo
+        pasivas:
+        - 'Skill Use Increase: Increases the number of skill uses by 2.'
+        - 'Effect Immunity: Immune to Petrify, Stun, Freeze, Corrosion, Attack Disable, Buff Disable, Debuff Disable, Stat
+          Decrease, Poison, Bleed, Shock, Oxidize, Burn, Blackout, and Coerce.'
+        - 'Debuff Cancel: Removes 1 Debuff from the hero at the start of every turn.'
+        - 'Remove Attribute Leverage: No change in damage from attribute advantage or disadvantage.'
+        - 'Ultimate Move Damage Decrease: Decreases the hero''s damage taken from Ultimate Moves by 30%.'
+        - 'HP-related Stats Decrease: Decreases the enemy''s Regeneration Rate, Recovery Rate, and Lifesteal by 40%.'
+        - 'Ignore Evasion: Ignores Evasion when attacking.'
+        habilidades:
+        - 'Inflicts Spike damage equal to 260% of Attack on one enemy.\n\n*Spike: 2x Crit Damage Increase.'
+        - 'Inflicts Spike damage equal to 420% of Attack on one enemy.\n\n*Spike: 2x Crit Damage Increase.'
+        - 'Inflicts damage equal to 150% of Attack on all enemies. Makes target(s) Bleed for 2 turn(s).\n\n*Bleed: Additional
+          damage equal to 90% of damage dealt at the end of every turn.'
+        - 'Inflicts damage equal to 250% of Attack on all enemies. Makes target(s) Bleed for 2 turn(s).\n\n*Bleed: Additional
+          damage equal to 90% of damage dealt at the end of every turn.'
+    3:
+      aleatorias:
+      - Increases the hero's Crit Damage by 30% for each orb removed from the hero's Ultimate Move Gauge.\n(Limit 3% times,
+        excludes depletion from Ultimate Move use)
+      - Decreases all enemies' Crit Resistance and Crit Defense by 30%.
+      - When an enemy takes Critical Strike damage from the hero's attack, an effect is applied on that enemy which decreases
+        Defense-related stats by 40% for 2 turns.
+      enemigos:
+      - nombre: Hraesvelgr
+        atributo: rojo
+        pasivas:
+        - 'Purgatory Energy: Uses "Lightning Strike" every 2 turn(s).'
+        - 'Skill Use Increase: Increases the number of skill uses by 2.'
+        - 'Effect Immunity: Immune to Petrify, Stun, Freeze, Corrosion, Attack Disable, Buff Disable, Debuff Disable, Stat
+          Decrease, Poison, Bleed, Shock, Oxidize, Burn, Blackout, and Coerce.'
+        - 'Debuff Cancel: Removes 1 Debuff from the hero at the start of every turn.'
+        - 'Remove Attribute Leverage: No change in damage from attribute advantage or disadvantage.'
+        - 'Ultimate Move Damage Decrease: Decreases the hero''s damage taken from Ultimate Moves by 30%.'
+        - 'Suppress Damage Taken: The hero''s damage taken from skills during the enemy turn does not exceed 50% of Max HP.'
+        - 'HP-related Stats Decrease: Decreases the enemy''s Regeneration Rate, Recovery Rate, and Lifesteal by 40%.'
+        - 'Ignore Evasion: Ignores Evasion when attacking.'
+        habilidades:
+        - 'Removes Buffs from one enemy and inflicts damage equal to 250% of Attack. Ignites for 3 turn(s).\n\n*Ignite: Damage
+          taken by target(s) +10% (Can be stacked).'
+        - 'Removes Buffs from one enemy and inflicts damage equal to 400% of Attack. Applies 2 Ignite effects for 4 turn(s).\n\n*Ignite:
+          Damage taken by target(s) +10% (Can be stacked).'
+        - 'Inflicts damage equal to 160% of Attack on all enemies. Makes target(s) Bleed for 2 turn(s).\n\n*Bleed: Additional
+          damage equal to 90% of damage dealt at the end of every turn.'
+        - 'Inflicts damage equal to 280% of Attack on all enemies. Makes target(s) Bleed for 2 turn(s).\n\n*Bleed: Additional
+          damage equal to 90% of damage dealt at the end of every turn.'
+        - 'Inflicts Weak Point damage equal to 300% of Attack on one enemy.\n\n*Weak Point: 3x damage against Debuffed enemies.'
+    4:
+      aleatorias: []
+      enemigos:
+      - nombre: Hraesvelgr
+        atributo: rojo
+        pasivas:
+        - 'Purgatory Energy: Uses "Hunting Dive" every 2 turn(s).'
+        - 'Skill Use Increase: Increases the number of skill uses by 2.'
+        - 'Effect Immunity: Immune to Petrify, Stun, Freeze, Corrosion, Attack Disable, Buff Disable, Debuff Disable, Stat
+          Decrease, Poison, Bleed, Shock, Oxidize, Burn, Blackout, and Coerce.'
+        - 'Debuff Cancel: Removes 1 Debuff from the hero at the start of every turn.'
+        - 'Remove Attribute Leverage: No change in damage from attribute advantage or disadvantage.'
+        - 'Ultimate Move Damage Decrease: Decreases the hero''s damage taken from Ultimate Moves by 30%.'
+        - 'Suppress Damage Taken: The hero''s damage taken from skills during the enemy turn does not exceed 50% of Max HP.'
+        - 'HP-related Stats Decrease: Decreases the enemy''s Regeneration Rate, Recovery Rate, and Lifesteal by 40%.'
+        - 'Ignore Evasion: Ignores Evasion when attacking.'
+        habilidades:
+        - 'Inflicts damage equal to 220% of Attack on one enemy and Releases 100%.\n\n*Release: Deals additional damage using
+          remaining damage in Shock, Poison, and Bleed Debuffs.'
+        - 'Inflicts damage equal to 400% of Attack on one enemy and Releases 130%.\n\n*Release: Deals additional damage using
+          remaining damage in Shock, Poison, and Bleed Debuffs.'
+        - 'Inflicts damage equal to 180% of Attack on all enemies. Makes target(s) Bleed for 2 turn(s).\n\n*Bleed: Additional
+          damage equal to 90% of damage dealt at the end of every turn.'
+        - 'Inflicts damage equal to 300% of Attack on all enemies. Makes target(s) Bleed for 2 turn(s).\n\n*Bleed: Additional
+          damage equal to 90% of damage dealt at the end of every turn.'
+        - Inflicts damage equal to 400% of Attack on one enemy. Disables Attack Skills for 2 turn(s).
+pajaro_f2:
+  nombre: Hraesvelgr's Nest Floor 2
+  id_7dshub: 1002
+  fases:
+    1:
+      aleatorias: []
+      enemigos:
+      - nombre: Hraesvelgr
+        atributo: rojo
+        pasivas:
+        - 'Purgatory Energy: Uses "Wind Explosion" every 2 turn(s).'
+        - 'Ominous Aura: Uses "Lightning Strike" every 3 turn(s).'
+        - 'Skill Use Increase: Increases the number of skill uses by 2.'
+        - 'Effect Immunity: Immune to Petrify, Stun, Freeze, Corrosion, Attack Disable, Buff Disable, Debuff Disable, Stat
+          Decrease, Poison, Bleed, Shock, Oxidize, Burn, Blackout, and Coerce.'
+        - 'Debuff Cancel: Removes 1 Debuff from the hero at the start of every turn.'
+        - 'Remove Attribute Leverage: No change in damage from attribute advantage or disadvantage.'
+        - 'Ultimate Move Damage Decrease: Decreases the hero''s damage taken from Ultimate Moves by 30%.'
+        - 'Suppress Damage Taken: The hero''s damage taken from skills during the enemy turn does not exceed 50% of Max HP.'
+        - 'HP-related Stats Decrease: Decreases the enemy''s Regeneration Rate, Recovery Rate, and Lifesteal by 40%.'
+        - 'Ignore Evasion: Ignores Evasion when attacking.'
+        habilidades:
+        - 'Inflicts Weak Point damage equal to 180% of Attack on one enemy.\n\n*Weak Point: 3x damage against Debuffed enemies.'
+        - 'Inflicts Weak Point damage equal to 300% of Attack on one enemy.\n\n*Weak Point: 3x damage against Debuffed enemies.'
+        - 'Inflicts damage equal to 150% of Attack on all enemies. Makes target(s) Bleed for 2 turn(s).\n\n*Bleed: Additional
+          damage equal to 90% of damage dealt at the end of every turn.'
+        - 'Inflicts damage equal to 250% of Attack on all enemies. Makes target(s) Bleed for 2 turn(s).\n\n*Bleed: Additional
+          damage equal to 90% of damage dealt at the end of every turn.'
+        - Increases basic stats by 20% for 2 turn(s).
+        - 'Inflicts Amplify damage equal to 270% of Attack on one enemy.\n\n*Amplify: Damage dealt +30% per active Buff on
+          self.'
+    2:
+      aleatorias:
+      - Fills the hero's Ultimate Move Gauge by 3 orb(s) at the start of the battle.
+      - Decreases enemy Attack and Defense by 5% for 5 turns at the end of every turn.\n(Can be stacked up to 5 times)
+      - Decreases all enemies' Max HP by the value of 200% of the hero's Defense.
+      enemigos:
+      - nombre: Hraesvelgr
+        atributo: rojo
+        pasivas:
+        - 'Purgatory Energy: Uses "Air Break" every 3 turn(s).'
+        - 'Ominous Aura: Uses "Air Blast" every 1 turn(s).'
+        - 'Skill Use Increase: Increases the number of skill uses by 2.'
+        - 'Effect Immunity: Immune to Petrify, Stun, Freeze, Corrosion, Attack Disable, Buff Disable, Debuff Disable, Stat
+          Decrease, Poison, Bleed, Shock, Oxidize, Burn, Blackout, and Coerce.'
+        - 'Debuff Cancel: Removes 1 Debuff from the hero at the start of every turn.'
+        - 'Remove Attribute Leverage: No change in damage from attribute advantage or disadvantage.'
+        - 'Ultimate Move Damage Decrease: Decreases the hero''s damage taken from Ultimate Moves by 30%.'
+        - 'Suppress Damage Taken: The hero''s damage taken from skills during the enemy turn does not exceed 50% of Max HP.'
+        - 'HP-related Stats Decrease: Decreases the enemy''s Regeneration Rate, Recovery Rate, and Lifesteal by 40%.'
+        - 'Revive: Heals for 100% of Defense when the hero''s HP reaches 0.\n(Once per battle)'
+        habilidades:
+        - 'Inflicts Co-destruction damage equal to 240% of Attack on one enemy.\n\n*Co-destruction: 20% increased damage per
+          Debuff on the target.'
+        - 'Inflicts Co-destruction damage equal to 400% of Attack on one enemy.\n\n*Co-destruction: 20% increased damage per
+          Debuff on the target.'
+        - 'Inflicts damage equal to 150% of Attack on all enemies. Makes target(s) Bleed for 2 turn(s).\n\n*Bleed: Additional
+          damage equal to 90% of damage dealt at the end of every turn.'
+        - 'Inflicts damage equal to 250% of Attack on all enemies. Makes target(s) Bleed for 2 turn(s).\n\n*Bleed: Additional
+          damage equal to 90% of damage dealt at the end of every turn.'
+        - Decreases Attack of all enemies by 20% and disables Buff and Debuff Skills for 2 turn(s).
+        - Inflicts damage equal to 3500% of Attack on all enemies, then restores HP equal to 100% of damage dealt.\n(Misses
+          when attacking enemies using Taunt)
+    3:
+      aleatorias: []
+      enemigos:
+      - nombre: Hraesvelgr
+        atributo: rojo
+        pasivas:
+        - 'Purgatory Energy: Uses "Flap Tornado" every 2 turn(s).'
+        - 'Ominous Aura: Uses "Air Break" every 3 turn(s).'
+        - 'Skill Use Increase: Increases the number of skill uses by 2.'
+        - 'Effect Immunity: Immune to Petrify, Stun, Freeze, Corrosion, Attack Disable, Buff Disable, Debuff Disable, Stat
+          Decrease, Poison, Bleed, Shock, Oxidize, Burn, Blackout, and Coerce.'
+        - 'Debuff Cancel: Removes 1 Debuff from the hero at the start of every turn.'
+        - 'Remove Attribute Leverage: No change in damage from attribute advantage or disadvantage.'
+        - 'Ultimate Move Damage Decrease: Decreases the hero''s damage taken from Ultimate Moves by 30%.'
+        - 'Suppress Damage Taken: The hero''s damage taken from skills during the enemy turn does not exceed 50% of Max HP.'
+        - 'HP-related Stats Decrease: Decreases the enemy''s Regeneration Rate, Recovery Rate, and Lifesteal by 40%.'
+        - 'Ignore Evasion: Ignores Evasion when attacking.'
+        habilidades:
+        - 'Inflicts damage equal to 220% of Attack on one enemy and Releases 100%.\n\n*Release: Deals additional damage using
+          remaining damage in Shock, Poison, and Bleed Debuffs.'
+        - 'Inflicts damage equal to 400% of Attack on one enemy and Releases 130%.\n\n*Release: Deals additional damage using
+          remaining damage in Shock, Poison, and Bleed Debuffs.'
+        - 'Inflicts damage equal to 180% of Attack on all enemies. Makes target(s) Bleed and Infects them for 2 turn(s).\n\n*Bleed:
+          Additional damage equal to 90% of damage dealt at the end of every turn.\n*Infect: Restricts Recovery-related stats.'
+        - 'Inflicts damage equal to 280% of Attack on all enemies. Makes target(s) Bleed and Infects them for 2 turn(s).\n\n*Bleed:
+          Additional damage equal to 90% of damage dealt at the end of every turn.\n*Infect: Restricts Recovery-related stats.'
+        - Inflicts damage equal to 180% of Attack on all enemies. Disables Attack Skills for 2 turn(s).
+        - Decreases Defense-related stats of all enemies by 40% for 3 turn(s).
+    4:
+      aleatorias:
+      - Decreases damage taken from single-target attacks by 40% and all-target attacks by 30%.
+      - Decreases the damage this hero takes from enemies by 40%.
+      - Applies an effect on the hero which decreases damage taken by 15% for 2 turns when attacked.\n(Can be stacked up to
+        4 times)
+      enemigos:
+      - nombre: Hraesvelgr
+        atributo: rojo
+        pasivas:
+        - 'Purgatory Energy: Uses "Air Blast" every 2 turn(s).'
+        - 'Ominous Aura: Uses "Wind Explosion" every 3 turn(s).'
+        - 'Skill Use Increase: Increases the number of skill uses by 2.'
+        - 'Effect Immunity: Immune to Petrify, Stun, Freeze, Corrosion, Attack Disable, Buff Disable, Debuff Disable, Stat
+          Decrease, Poison, Bleed, Shock, Oxidize, Burn, Blackout, and Coerce.'
+        - 'Debuff Cancel: Removes 1 Debuff from the hero at the start of every turn.'
+        - 'Remove Attribute Leverage: No change in damage from attribute advantage or disadvantage.'
+        - 'Ultimate Move Damage Decrease: Decreases the hero''s damage taken from Ultimate Moves by 30%.'
+        - 'Lunacy: Inflicting Explosion damage on an enemy heals the hero''s HP by 20% of Max HP and fills the Ultimate Move
+          Gauge by 1 orb(s).'
+        - 'Suppress Damage Taken: The hero''s damage taken from skills during the enemy turn does not exceed 50% of Max HP.'
+        - 'HP-related Stats Decrease: Decreases the enemy''s Regeneration Rate, Recovery Rate, and Lifesteal by 40%.'
+        habilidades:
+        - Inflicts damage equal to 270% of Attack on one enemy and depletes 1 Ultimate Move Gauge orb(s).
+        - Inflicts damage equal to 450% of Attack on one enemy and depletes 3 Ultimate Move Gauge orb(s).
+        - 'Inflicts Power Strike damage equal to 160% of Attack on all enemies.\n\n*Power Strike: Additional damage equal
+          to enemy Resistance.'
+        - 'Inflicts Power Strike damage equal to 300% of Attack on all enemies.\n\n*Power Strike: Additional damage equal
+          to enemy Resistance.'
+        - 'Inflicts damage equal to 150% of Attack on all enemies and Explodes after 1 turn(s).\n\n*Explosion: Additional
+          damage equal to 100% of damage dealt after a certain number of turns.'
+        - Increases basic stats by 20% for 2 turn(s).
+pajaro_f3:
+  nombre: Hraesvelgr's Nest Floor 3
+  id_7dshub: 1003
+  fases:
+    1:
+      aleatorias: []
+      enemigos:
+      - nombre: Hraesvelgr
+        atributo: rojo
+        pasivas:
+        - 'Purgatory Energy: Uses "Wind Explosion" every 2 turn(s).'
+        - 'Ominous Aura: Uses "Air Break" every 3 turn(s).'
+        - 'Skill Use Increase: Increases the number of skill uses by 2.'
+        - 'Debuff Immunity: The hero becomes immune to all Debuff effects.'
+        - 'Remove Attribute Leverage: No change in damage from attribute advantage or disadvantage.'
+        - 'Ultimate Move Damage Decrease: Decreases the hero''s damage taken from Ultimate Moves by 30%.'
+        - 'Damage Decrease: Decreases damage taken from Rank 1 Skills by 50%.'
+        - 'HP-related Stats Decrease: Decreases the enemy''s Regeneration Rate, Recovery Rate, and Lifesteal by 40%.'
+        - 'Suppress Damage Taken: The hero''s damage taken from skills during the enemy turn does not exceed 50% of Max HP.'
+        - 'Ignore Evasion: Ignores Evasion when attacking.'
+        habilidades:
+        - 'Inflicts Charge damage equal to 230% of Attack on one enemy.\n\n*Charge: Ignores Defense.'
+        - 'Inflicts Charge damage equal to 400% of Attack on one enemy.\n\n*Charge: Ignores Defense.'
+        - Inflicts damage equal to 180% of Attack on all enemies and allows the use of only Rank 1 skills for 1 turn(s).
+        - Inflicts damage equal to 270% of Attack on all enemies and allows the use of only Rank 1 skills for 2 turn(s).
+        - 'Inflicts Ruin and Rupture damage equal to 250% of Attack on all enemies.\n\n*Ruin: Increases damage dealt by 30%
+          per Debuff on the target and removes Debuffs.\n*Rupture: 2x damage against Buffed enemies.'
+        - Increases damage taken by all enemies by 30% for 2 turn(s).
+    2:
+      aleatorias:
+      - Attacking an enemy with a Debuff results in a critical strike.
+      - Increases the hero's Attack-related stats by 5% for 3 turns every time an enemy Ultimate Move Gauge reaches 5 orb(s)
+        or more.
+      - Increases the hero's attack by 8% for each Stance or Buff on the enemy when using a skill.\n(Applies before skill
+        activation)
+      - Applies an effect which Reflects 25% of the hero's damage taken at the start of the battle.
+      enemigos:
+      - nombre: Hraesvelgr
+        atributo: rojo
+        pasivas:
+        - 'Purgatory Energy: Uses "Wind Explosion" every 2 turn(s).'
+        - 'Ominous Aura: Uses "Air Break" every 3 turn(s).'
+        - 'Skill Use Increase: Increases the number of skill uses by 2.'
+        - 'Debuff Immunity: The hero becomes immune to all Debuff effects.'
+        - 'Remove Attribute Leverage: No change in damage from attribute advantage or disadvantage.'
+        - 'Ultimate Move Damage Decrease: Decreases the hero''s damage taken from Ultimate Moves by 30%.'
+        - 'Ultimate Move Gauge Decrease: Depletes 5 orb(s) from the Ultimate Move Gauge(s) of all enemies at the end of the
+          turn when the hero defeats an enemy.'
+        - 'HP-related Stats Decrease: Decreases the enemy''s Regeneration Rate, Recovery Rate, and Lifesteal by 40%.'
+        - 'Suppress Damage Taken: The hero''s damage taken from skills during the enemy turn does not exceed 50% of Max HP.'
+        - 'Ignore Evasion: Ignores Evasion when attacking.'
+        habilidades:
+        - 'Inflicts damage equal to 200% of Attack on one enemy, removes 1 orb(s) from the target''s Ultimate Move Gauge,
+          and Deletes 2 skill(s) at random.\n\n*Delete: Randomly removes skills from the target (Excluding Ultimate Moves)\n(Deletes
+          Ultimate Moves if there is no skill to remove)'
+        - 'Inflicts damage equal to 320% of Attack on one enemy, removes 2 orb(s) from the target''s Ultimate Move Gauge,
+          and Deletes 2 skill(s) at random.\n\n*Delete: Randomly removes skills from the target (Excluding Ultimate Moves)\n(Deletes
+          Ultimate Moves if there is no skill to remove)'
+        - 'Inflicts damage equal to 160% of Attack on all enemies. Shocks for 4 turn(s).\n\n*Shock: Additional damage equal
+          to 45% of damage dealt at the end of every turn.'
+        - 'Inflicts damage equal to 240% of Attack on all enemies. Shocks for 4 turn(s).\n\n*Shock: Additional damage equal
+          to 45% of damage dealt at the end of every turn.'
+        - Inflicts damage equal to 300% of Attack on one enemy.\nDecreases Defense-related stats by 40% for 2 turn(s).
+        - Inflicts damage equal to 180% of Attack on all enemies and depletes 2 Ultimate Move Gauge orb(s) at the end of the
+          enemy's turn for 2 turn(s).
+    3:
+      aleatorias: []
+      enemigos:
+      - nombre: Hraesvelgr
+        atributo: rojo
+        pasivas:
+        - 'Purgatory Energy: Uses "Wind Explosion" every 2 turn(s).'
+        - 'Ominous Aura: Uses "Air Break" every 1 turn(s).'
+        - 'Skill Use Increase: Increases the number of skill uses by 2.'
+        - 'Debuff Immunity: The hero becomes immune to all Debuff effects.'
+        - 'Remove Attribute Leverage: No change in damage from attribute advantage or disadvantage.'
+        - 'Ultimate Move Damage Decrease: Decreases the hero''s damage taken from Ultimate Moves by 30%.'
+        - 'Strong Body: The hero''s damage taken from skills during the enemy turn does not exceed 35% of Max HP. Increases
+          Attack-related stats by 1% for every 5% of remaining HP when using skills.\n(Applies before skill activation)'
+        - 'HP-related Stats Decrease: Decreases the enemy''s Regeneration Rate, Recovery Rate, and Lifesteal by 40%.'
+        - 'Ignore Evasion: Ignores Evasion when attacking.'
+        habilidades:
+        - Inflicts damage equal to 210% of Attack on one enemy and fills 1 Ultimate Move Gauge orb(s).
+        - Inflicts damage equal to 350% of Attack on one enemy and fills 2 Ultimate Move Gauge orb(s).
+        - 'Inflicts Wave damage equal to 250% of Attack on all enemies.\n\n*Wave: Damage dealt -8% per enemy on the battlefield.'
+        - 'Inflicts Wave damage equal to 420% of Attack on all enemies.\n\n*Wave: Damage dealt -12% per enemy on the battlefield.'
+        - 'Increases basic stats by 30% for 2 turn(s) and gains Evasion for 1 turn(s).\n\n*Evasion: Immune to Attack and Debuff
+          Atk Skills.'
+        - 'Disables skill usage of all enemies in the following order: Stance, Debuff, Buff, Attack, Ultimate Move.'
+    4:
+      aleatorias:
+      - Revives with 50% of Max HP when the hero dies.\n(Once per battle)
+      - Removes the hero's Debuffs, fully heals their HP, and increases all stats by 15% when the hero survives with 25% HP
+        or less.\n(Limit once)
+      - If the hero inflicts damage on an enemy using a single-target attack, applies an effect on the target which decreases
+        Attack-related stats by 30% for 2 turns.
+      enemigos:
+      - nombre: Hraesvelgr
+        atributo: rojo
+        pasivas:
+        - 'Purgatory Energy: Uses "Wind Explosion" every 2 turn(s).'
+        - 'Ominous Aura: Uses "Air Break" every 3 turn(s).'
+        - 'Skill Use Increase: Increases the number of skill uses by 2.'
+        - 'Debuff Immunity: The hero becomes immune to all Debuff effects.'
+        - 'Remove Attribute Leverage: No change in damage from attribute advantage or disadvantage.'
+        - 'Ultimate Move Damage Decrease: Decreases the hero''s damage taken from Ultimate Moves by 30%.'
+        - 'Strong Body: The hero''s damage taken from skills during the enemy turn does not exceed 35% of Max HP. Increases
+          Attack-related stats by 1% for every 5% of remaining HP when using skills.\n(Applies before skill activation)'
+        - 'HP-related Stats Decrease: Decreases the enemy''s Regeneration Rate, Recovery Rate, and Lifesteal by 40%.'
+        - 'Ignore Evasion: Ignores Evasion when attacking.'
+        habilidades:
+        - 'Inflicts Flood damage equal to 250% of Attack on one enemy.\n\n*Flood: 0.8% additional damage for every percent
+          of remaining HP on self.'
+        - 'Inflicts Flood damage equal to 400% of Attack on one enemy.\n\n*Flood: 0.8% additional damage for every percent
+          of remaining HP on self.'
+        - 'Inflicts damage equal to 120% of Attack on all enemies and Lifesteals 30% of the damage.\n\n*Lifesteal: Heals for
+          a portion of the damage dealt.'
+        - 'Inflicts damage equal to 180% of Attack on all enemies and Lifesteals 30% of the damage.\n\n*Lifesteal: Heals for
+          a portion of the damage dealt.'
+        - 'Increases basic stats by 30% for 2 turn(s) and gains Evasion for 1 turn(s).\n\n*Evasion: Immune to Attack and Debuff
+          Atk Skills.'
+        - Decreases Attack of all enemies by 40% and disables everything but Attack Skills for 2 turn(s).
+pajaro_f4:
+  nombre: Transcendent Hraesvelgr
+  id_7dshub: 1101
+  fases:
+    1:
+      aleatorias:
+      - Increases own basic stats by 1000% when an enemy uses a Purify skill during the enemy's turn.
+      enemigos:
+      - nombre: Hraesvelgr
+        atributo: rojo
+        pasivas:
+        - 'Purgatory Energy: Uses "Air Break" every 2 turn(s).'
+        - 'Ominous Aura: Uses "Flap Tornado" every 1 turn(s).'
+        - 'Skill Use Increase: Increases the number of skill uses by 2.'
+        - 'Debuff Immunity: Becomes immune to all Debuff effects, as well as Coerce, Expel, Darkness, and Seed of the End.'
+        - 'HP-related Stats Decrease: Decreases the enemy''s Regeneration Rate, Recovery Rate, and Lifesteal by 40%.'
+        - 'Suppress Damage Taken: The hero''s damage taken from skills during the enemy turn does not exceed 20% of Max HP.'
+        - 'Yggdrasil''s Wind: Increases the hero''s Defense by 50% for every Debuff applied on all enemies.'
+        - 'Attack-related Stats Increase: When taking damage results in Patience, it increases the hero''s own Attack-related
+          stats by 10% for 2 turns.\n(Can be stacked 5 times)'
+        - 'Counter and Reflect Damage Decrease: Decreases the hero''s damage taken from Counterattacks and Reflect by 1000%.'
+        - 'Basic Stat Increase: Increases own basic stats by 1000% when an enemy''s skill is ranked up with a Unique ability
+          or Holy Relic effect.\n(Limit 1% time(s))'
+        - 'Basic Stat Increase: Increases own basic stats by 1000% when an enemy''s Ultimate Move Gauge is filled with a Unique
+          ability or Holy Relic effect.\n(Limit 1% time(s))'
+        habilidades:
+        - 'Inflicts Charge damage equal to 250% of Attack on one enemy. Makes target(s) Bleed for 2 turn(s).\n\n*Charge: Ignores
+          Defense.\n*Bleed: Additional damage equal to 90% of damage dealt at the end of every turn.'
+        - 'Inflicts Charge damage equal to 350% of Attack on one enemy. Makes target(s) Bleed for 2 turn(s).\n\n*Charge: Ignores
+          Defense.\n*Bleed: Additional damage equal to 90% of damage dealt at the end of every turn.'
+        - 'Inflicts Co-destruction damage equal to 250% of Attack on one enemy.\n\n*Co-destruction: 40% increased damage per
+          Debuff on the target.'
+        - 'Inflicts Co-destruction damage equal to 350% of Attack on one enemy.\n\n*Co-destruction: 40% increased damage per
+          Debuff on the target.'
+        - Blocks all skill effects of all enemies including those of Ultimate Moves and decreases their Attack-related stats
+          by 20%.\n(Excludes Stance and Recovery Skills)
+        - Inflicts damage equal to 350% of Defense on all enemies.
+    2:
+      aleatorias: []
+      enemigos:
+      - nombre: Hraesvelgr
+        atributo: rojo
+        pasivas:
+        - 'Purgatory Energy: Uses "Air Blast" every 2 turn(s).'
+        - 'Ominous Aura: Uses "Flap Tornado" every 2 turn(s).'
+        - 'Skill Use Increase: Increases the number of skill uses by 2.'
+        - 'Debuff Immunity: Becomes immune to all Debuff effects, as well as Coerce, Expel, Darkness, and Seed of the End.'
+        - 'HP-related Stats Decrease: Decreases the enemy''s Regeneration Rate, Recovery Rate, and Lifesteal by 40%.'
+        - 'Suppress Damage Taken: The hero''s damage taken from skills during the enemy turn does not exceed 20% of Max HP.'
+        - 'Yggdrasil''s Wind: Applies Hraesvelgr''s Protection on all enemies if the enemy uses 3 or more skills of the same
+          rank (Rank 2 or higher) during the enemy''s turn.'
+        - 'Damage Taken Increase / Decrease: Increases own damage taken from enemies with Hraesvelgr''s Protection by 300%.
+          Decreases own damage taken from enemies without Hraesvelgr''s Protection by 300%.'
+        - 'Counter and Reflect Damage Decrease: Decreases the hero''s damage taken from Counterattacks and Reflect by 1000%.'
+        - 'Basic Stat Increase: Increases own basic stats by 1000% when an enemy''s skill is ranked up with a Unique ability
+          or Holy Relic effect.\n(Limit 1% time(s))'
+        - 'Basic Stat Increase: Increases own basic stats by 1000% when an enemy''s Ultimate Move Gauge is filled with a Unique
+          ability or Holy Relic effect.\n(Limit 1% time(s))'
+        habilidades:
+        - 'Inflicts Charge damage equal to 250% of Attack on one enemy. Makes target(s) Bleed for 2 turn(s).\n\n*Charge: Ignores
+          Defense.\n*Bleed: Additional damage equal to 90% of damage dealt at the end of every turn.'
+        - 'Inflicts Charge damage equal to 350% of Attack on one enemy. Makes target(s) Bleed for 2 turn(s).\n\n*Charge: Ignores
+          Defense.\n*Bleed: Additional damage equal to 90% of damage dealt at the end of every turn.'
+        - 'Inflicts Flood damage equal to 250% of Attack on one enemy.\n\n*Flood: 0.8% additional damage for every percent
+          of remaining HP on self.'
+        - 'Inflicts Flood damage equal to 350% of Attack on one enemy.\n\n*Flood: 0.8% additional damage for every percent
+          of remaining HP on self.'
+        - Inflicts damage equal to 1000% of Attack on all enemies and disables their Attack, Buff, Debuff, Stance, and Ultimate
+          Move skills.\n(Attacks against enemies with Hraesvelgr's Protection miss)
+        - 'Inflicts Co-destruction damage equal to 350% of Attack on all enemies.\n\n*Co-destruction: 40% increased damage
+          per Debuff on the target.'
+    3:
+      aleatorias: []
+      enemigos:
+      - nombre: Hraesvelgr
+        atributo: rojo
+        pasivas:
+        - 'Purgatory Energy: Uses "Air Break" every 1 turn(s).'
+        - 'Ominous Aura: Uses "Hunting Dive" every 2 turn(s).'
+        - 'Skill Use Increase: Increases the number of skill uses by 2.'
+        - 'Debuff Immunity: Becomes immune to all Debuff effects, as well as Coerce, Expel, Darkness, and Seed of the End.'
+        - 'HP-related Stats Decrease: Decreases the enemy''s Regeneration Rate, Recovery Rate, and Lifesteal by 40%.'
+        - 'Suppress Damage Taken: The hero''s damage taken from skills during the enemy turn does not exceed 25% of Max HP.'
+        - 'Yggdrasil''s Wind: Applies 8 Immortality effect(s) on self at the start of the battle. Immortality is added or
+          removed when taking damage from a skill with a certain effect during the enemy''s turn. Increases all of own stats
+          by +100% when Immortality reaches 15 stacks.'
+        - 'Counter and Reflect Damage Decrease: Decreases the hero''s damage taken from Counterattacks and Reflect by 1000%.'
+        - 'Basic Stat Increase: Increases own basic stats by 1000% when an enemy''s skill is ranked up with a Unique ability
+          or Holy Relic effect.\n(Limit 1% time(s))'
+        - 'Basic Stat Increase: Increases own basic stats by 1000% when an enemy''s Ultimate Move Gauge is filled with a Unique
+          ability or Holy Relic effect.\n(Limit 1% time(s))'
+        habilidades:
+        - 'Inflicts damage equal to 300% of Attack on one enemy and Releases 100%.\n\n*Release: Deals additional damage using
+          remaining damage in Shock, Poison, and Bleed Debuffs.'
+        - 'Inflicts damage equal to 450% of Attack on one enemy and Releases 130%.\n\n*Release: Deals additional damage using
+          remaining damage in Shock, Poison, and Bleed Debuffs.'
+        - 'Inflicts Charge damage equal to 200% of Attack on all enemies. Makes target(s) Bleed for 2 turn(s).\n\n*Charge:
+          Ignores Defense.\n*Bleed: Additional damage equal to 90% of damage dealt at the end of every turn.'
+        - 'Inflicts Charge damage equal to 300% of Attack on all enemies. Makes target(s) Bleed for 2 turn(s).\n\n*Charge:
+          Ignores Defense.\n*Bleed: Additional damage equal to 90% of damage dealt at the end of every turn.'
+        - 'Disables skill usage of all enemies in the following order: Stance, Debuff, Buff, Attack, Ultimate Move.'
+        - Inflicts damage equal to 500% of Attack on one enemy and blocks all skill effects including those of Ultimate Moves
+          for 2 turn(s).\n(Excludes Stance and Recovery Skills)
+    4:
+      aleatorias: []
+      enemigos:
+      - nombre: Hraesvelgr
+        atributo: rojo
+        pasivas:
+        - 'Purgatory Energy: Uses "Air Blast" every 2 turn(s).'
+        - 'Ominous Aura: Uses "Wind Explosion" every 2 turn(s).'
+        - 'Skill Use Increase: Increases the number of skill uses by 2.'
+        - 'Debuff Immunity: Becomes immune to all Debuff effects, as well as Coerce, Expel, Darkness, and Seed of the End.'
+        - 'HP-related Stats Decrease: Decreases the enemy''s Regeneration Rate, Recovery Rate, and Lifesteal by 40%.'
+        - 'Suppress Damage Taken: The hero''s damage taken from skills during the enemy turn does not exceed 25% of Max HP.'
+        - 'Yggdrasil''s Wind: Using a skill applies Hraesvelgr''s Wrath on enemies that take damage from it, applied differentially
+          based on the section of Hraesvelgr''s remaining HP.\n\n*Hraesvelgr''s Wrath: Damage dealt -10%\nInflicts 500000
+          fixed damage on the target with max stacks, then removes the effect.\n(Can be stacked 7 time(s))'
+        - 'Counter and Reflect Damage Decrease: Decreases the hero''s damage taken from Counterattacks and Reflect by 1000%.'
+        - 'Basic Stat Increase: Increases own basic stats by 1000% when an enemy''s skill is ranked up with a Unique ability
+          or Holy Relic effect.\n(Limit 1% time(s))'
+        - 'Basic Stat Increase: Increases own basic stats by 1000% when an enemy''s Ultimate Move Gauge is filled with a Unique
+          ability or Holy Relic effect.\n(Limit 1% time(s))'
+        habilidades:
+        - 'Inflicts Spike damage equal to 250% of Attack on one enemy.\n\n*Spike: 2x Crit Damage Increase.'
+        - 'Inflicts Spike damage equal to 350% of Attack on one enemy.\n\n*Spike: 2x Crit Damage Increase.'
+        - 'Inflicts Charge damage equal to 200% of Attack on all enemies. Makes target(s) Bleed for 2 turn(s).\n\n*Charge:
+          Ignores Defense.\n*Bleed: Additional damage equal to 90% of damage dealt at the end of every turn.'
+        - 'Inflicts Charge damage equal to 300% of Attack on all enemies. Makes target(s) Bleed for 2 turn(s).\n\n*Charge:
+          Ignores Defense.\n*Bleed: Additional damage equal to 90% of damage dealt at the end of every turn.'
+        - 'Inflicts damage equal to 350% of Attack on all enemies. Infects for 1 turn(s).\n\n*Infect: Restricts Recovery-related
+          stats.'
+        - 'Increases basic stats by 30% for 2 turn(s) and gains Evasion for 1 turn(s).\n\n*Evasion: Immune to Attack and Debuff
+          Atk Skills.'
+ciervo_f1:
+  nombre: Eikthyrnir's Refuge Floor 1
+  id_7dshub: 1004
+  fases:
+    1:
+      aleatorias: []
+      enemigos:
+      - nombre: Eikthyrnir
+        atributo: verde
+        pasivas:
+        - 'Skill Use Increase: Increases the number of skill uses by 2.'
+        - 'Effect Immunity: Immune to Petrify, Stun, Freeze, Corrosion, Attack Disable, Buff Disable, Debuff Disable, Stat
+          Decrease, Poison, Bleed, Shock, Oxidize, Burn, Blackout, and Coerce.'
+        - 'Debuff Cancel: Removes 1 Debuff from the hero at the start of every turn.'
+        - 'Remove Attribute Leverage: No change in damage from attribute advantage or disadvantage.'
+        - 'Ultimate Move Damage Decrease: Decreases the hero''s damage taken from Ultimate Moves by 30%.'
+        - 'HP-related Stats Decrease: Decreases the enemy''s Regeneration Rate, Recovery Rate, and Lifesteal by 40%.'
+        - 'Ignore Evasion: Ignores Evasion when attacking.'
+        habilidades:
+        - 'Inflicts Spike damage equal to 220% of Attack on one enemy.\n\n*Spike: 2x Crit Damage Increase.'
+        - 'Inflicts Spike damage equal to 360% of Attack on one enemy.\n\n*Spike: 2x Crit Damage Increase.'
+        - 'Inflicts Pierce damage equal to 150% of Attack on all enemies.\n\n*Pierce: 3x Pierce Rate Increase.'
+        - 'Inflicts Pierce damage equal to 250% of Attack on all enemies.\n\n*Pierce: 3x Pierce Rate Increase.'
+    2:
+      aleatorias:
+      - Increases the hero's basic stats by 100% when an enemy uses a Rank Up Skill during the enemy's turn.\n(Limit 10 times)
+      enemigos:
+      - nombre: Eikthyrnir
+        atributo: verde
+        pasivas:
+        - 'Skill Use Increase: Increases the number of skill uses by 2.'
+        - 'Effect Immunity: Immune to Petrify, Stun, Freeze, Corrosion, Attack Disable, Buff Disable, Debuff Disable, Stat
+          Decrease, Poison, Bleed, Shock, Oxidize, Burn, Blackout, and Coerce.'
+        - 'Debuff Cancel: Removes 1 Debuff from the hero at the start of every turn.'
+        - 'Remove Attribute Leverage: No change in damage from attribute advantage or disadvantage.'
+        - 'Ultimate Move Damage Decrease: Decreases the hero''s damage taken from Ultimate Moves by 30%.'
+        - 'HP-related Stats Decrease: Decreases the enemy''s Regeneration Rate, Recovery Rate, and Lifesteal by 40%.'
+        - 'Attack-related Stats Increase: Increases the hero''s Pierce Rate, Crit Chance, and Crit Damage by 10% for every
+          Debuff applied on enemies.\n(Limit 15 time(s), applies when entering battle)'
+        - 'Ignore Evasion: Ignores Evasion when attacking.'
+        habilidades:
+        - 'Inflicts Detonate damage equal to 200% of Attack on one enemy.\n\n*Detonate: 20% additional damage per orb in the
+          target''s Ultimate Move Gauge.'
+        - 'Inflicts Detonate damage equal to 350% of Attack on one enemy.\n\n*Detonate: 20% additional damage per orb in the
+          target''s Ultimate Move Gauge.'
+        - Inflicts damage equal to 190% of Attack on all enemies.\nDisables Ultimate Moves for 1 turn(s).
+        - Inflicts damage equal to 285% of Attack on all enemies.\nDisables Ultimate Moves for 2 turn(s).
+    3:
+      aleatorias:
+      - Fills the hero's Ultimate Move Gauge by 2 orb(s) at the start of the battle.
+      - When an enemy takes Critical Strike damage from the hero's attack, an effect is applied on that enemy which decreases
+        Defense-related stats by 40% for 2 turns.
+      - Decreases the damage this hero takes from enemies by 30%.
+      enemigos:
+      - nombre: Eikthyrnir
+        atributo: verde
+        pasivas:
+        - 'Purgatory Energy: Uses "Splash Shower" every 2 turn(s).'
+        - 'Skill Use Increase: Increases the number of skill uses by 2.'
+        - 'Effect Immunity: Immune to Petrify, Stun, Freeze, Corrosion, Attack Disable, Buff Disable, Debuff Disable, Stat
+          Decrease, Poison, Bleed, Shock, Oxidize, Burn, Blackout, and Coerce.'
+        - 'Debuff Cancel: Removes 1 Debuff from the hero at the start of every turn.'
+        - 'Remove Attribute Leverage: No change in damage from attribute advantage or disadvantage.'
+        - 'Ultimate Move Damage Decrease: Decreases the hero''s damage taken from Ultimate Moves by 30%.'
+        - 'HP-related Stats Decrease: Decreases the enemy''s Regeneration Rate, Recovery Rate, and Lifesteal by 40%.'
+        - 'Crit Chance Increase: Increases Crit Chance by 10% per hero skill use.'
+        - 'Lifesteal Increase: Increases Lifesteal by 25% when using a skill while the hero''s HP is 50% or less.\n(Applies
+          before skill activation)'
+        - 'Suppress Damage Taken: The hero''s damage taken from skills during the enemy turn does not exceed 25% of Max HP.'
+        habilidades:
+        - 'Inflicts Spike damage equal to 230% of Attack on one enemy.\n\n*Spike: 2x Crit Damage Increase.'
+        - 'Inflicts Spike damage equal to 360% of Attack on one enemy.\n\n*Spike: 2x Crit Damage Increase.'
+        - Inflicts damage equal to 200% of Attack on all enemies and fills 1 Ultimate Move Gauge orb(s).
+        - Inflicts damage equal to 300% of Attack on all enemies and fills 2 Ultimate Move Gauge orb(s).
+        - 'Inflicts Despair damage equal to 350% of Attack on all enemies.\n\n*Despair: Recovers 30% of diminished HP upon
+          successful critical strike.'
+    4:
+      aleatorias: []
+      enemigos:
+      - nombre: Eikthyrnir
+        atributo: verde
+        pasivas:
+        - 'Purgatory Energy: Uses "Defensive Horn" every 2 turn(s).'
+        - 'Skill Use Increase: Increases the number of skill uses by 2.'
+        - 'Effect Immunity: Immune to Petrify, Stun, Freeze, Corrosion, Attack Disable, Buff Disable, Debuff Disable, Stat
+          Decrease, Poison, Bleed, Shock, Oxidize, Burn, Blackout, and Coerce.'
+        - 'Debuff Cancel: Removes 1 Debuff from the hero at the start of every turn.'
+        - 'Remove Attribute Leverage: No change in damage from attribute advantage or disadvantage.'
+        - 'Ultimate Move Damage Decrease: Decreases the hero''s damage taken from Ultimate Moves by 30%.'
+        - 'HP-related Stats Decrease: Decreases the enemy''s Regeneration Rate, Recovery Rate, and Lifesteal by 40%.'
+        - 'Crit Chance Increase: Increases Crit Chance by 10% per hero skill use.'
+        - 'Crit Damage Increase: Increases the hero''s Crit Damage by 20% for every orb in the hero''s Ultimate Move Gauge.'
+        - 'Suppress Damage Taken: The hero''s damage taken from skills during the enemy turn does not exceed 35% of Max HP.'
+        habilidades:
+        - 'Inflicts Sever damage equal to 240% of Attack on one enemy.\n\n*Sever: 3x Crit Chance Increase.'
+        - 'Inflicts Sever damage equal to 400% of Attack on one enemy.\n\n*Sever: 3x Crit Chance Increase.'
+        - 'Inflicts damage equal to 150% of Attack on all enemies. Infects for 1 turn(s).\n\n*Infect: Restricts Recovery-related
+          stats.'
+        - 'Inflicts damage equal to 250% of Attack on all enemies. Infects for 1 turn(s).\n\n*Infect: Restricts Recovery-related
+          stats.'
+        - Assumes a Stance for 2 turn(s) and inflicts damage equal to 1500% of Attack via counter when attacked.\n\n(Results
+          in a miss when attacking enemies with barriers)
+ciervo_f2:
+  nombre: Eikthyrnir's Refuge Floor 2
+  id_7dshub: 1005
+  fases:
+    1:
+      aleatorias: []
+      enemigos:
+      - nombre: Eikthyrnir
+        atributo: verde
+        pasivas:
+        - 'Purgatory Energy: Uses "Refresh" every 2 turn(s).'
+        - 'Ominous Aura: Uses "Splash Shower" every 3 turn(s).'
+        - 'Skill Use Increase: Increases the number of skill uses by 2.'
+        - 'Debuff Immunity: The hero becomes immune to all Debuff effects.'
+        - 'Remove Attribute Leverage: No change in damage from attribute advantage or disadvantage.'
+        - 'Ultimate Move Damage Decrease: Decreases the hero''s damage taken from Ultimate Moves by 30%.'
+        - 'HP-related Stats Decrease: Decreases the enemy''s Regeneration Rate, Recovery Rate, and Lifesteal by 40%.'
+        - 'Damage Dealt Increase: Deals 200% additional damage when the hero attacks an enemy with a lower Attack.'
+        - 'Ignore Evasion: Ignores Evasion when attacking.'
+        - 'Suppress Damage Taken: The hero''s damage taken from skills during the enemy turn does not exceed 30% of Max HP.'
+        habilidades:
+        - 'Inflicts Charge damage equal to 220% of Attack on one enemy.\n\n*Charge: Ignores Defense.'
+        - 'Inflicts Charge damage equal to 360% of Attack on one enemy.\n\n*Charge: Ignores Defense.'
+        - 'Inflicts Spike damage equal to 180% of Attack on all enemies.\n\n*Spike: 2x Crit Damage Increase.'
+        - 'Inflicts Spike damage equal to 300% of Attack on all enemies.\n\n*Spike: 2x Crit Damage Increase.'
+        - Increases Attack by 200% for 2 turn(s).
+        - Inflicts damage equal to 300% of Attack on all enemies and depletes 4 Ultimate Move Gauge orb(s).
+    2:
+      aleatorias:
+      - Increases HP-related stats by 2% at the start of the allies' turn if the hero takes damage.\n(Limit 10% time(s))
+      - Applies an effect on the hero which increases max HP by 15% at the start of the battle.\n(Applies when entering battle)
+      - Increases Defense-related stats by 30% when surviving an Ultimate Move.\n(Limit 1% time(s))
+      enemigos:
+      - nombre: Eikthyrnir
+        atributo: verde
+        pasivas:
+        - 'Purgatory Energy: Uses "Life Force" every 1 turn(s).'
+        - 'Ominous Aura: Uses "Icy Pond" every 2 turn(s).'
+        - 'Skill Use Increase: Increases the number of skill uses by 2.'
+        - 'Debuff Immunity: The hero becomes immune to all Debuff effects.'
+        - 'Remove Attribute Leverage: No change in damage from attribute advantage or disadvantage.'
+        - 'Ultimate Move Damage Decrease: Decreases the hero''s damage taken from Ultimate Moves by 30%.'
+        - 'HP-related Stats Decrease: Decreases the enemy''s Regeneration Rate, Recovery Rate, and Lifesteal by 40%.'
+        - 'Continuous Damage Increase: Increases damage dealt by 10% for each consecutive skill used by the hero in 1 turn.\n(Resets
+          at the end of every turn)'
+        - 'Capture: Prioritizes attacking Frozen enemies.'
+        - 'Suppress Damage Taken: The hero''s damage taken from skills during the enemy turn does not exceed 30% of Max HP.'
+        habilidades:
+        - 'Inflicts Shatter damage equal to 240% of Attack on one enemy.\n\n*Shatter: Ignores Resistance.'
+        - 'Inflicts Shatter damage equal to 400% of Attack on one enemy.\n\n*Shatter: Ignores Resistance.'
+        - 'Inflicts Sever damage equal to 180% of Attack on all enemies.\n\n*Sever: 3x Crit Chance Increase.'
+        - 'Inflicts Sever damage equal to 250% of Attack on all enemies.\n\n*Sever: 3x Crit Chance Increase.'
+        - Cancels Buffs and Stances on one enemy and inflicts damage equal to 300% of Attack.
+        - Inflicts damage equal to 10000% of Attack on all enemies.\n(Misses Frozen targets)
+    3:
+      aleatorias: []
+      enemigos:
+      - nombre: Eikthyrnir
+        atributo: verde
+        pasivas:
+        - 'Purgatory Energy: Uses "Splash Shower" every 2 turn(s).'
+        - 'Ominous Aura: Uses "Life Force" every 3 turn(s).'
+        - 'Skill Use Increase: Increases the number of skill uses by 2.'
+        - 'Debuff Immunity: The hero becomes immune to all Debuff effects.'
+        - 'Remove Attribute Leverage: No change in damage from attribute advantage or disadvantage.'
+        - 'Ultimate Move Damage Decrease: Decreases the hero''s damage taken from Ultimate Moves by 30%.'
+        - 'HP-related Stats Decrease: Decreases the enemy''s Regeneration Rate, Recovery Rate, and Lifesteal by 40%.'
+        - 'Basic Stats Increase: Increases the hero''s basic stats by 40% when using a skill with the Skill Deletion effect.\n(Limit
+          once)'
+        - 'Ignore Evasion: Ignores Evasion when attacking.'
+        - 'Suppress Damage Taken: The hero''s damage taken from skills during the enemy turn does not exceed 30% of Max HP.'
+        habilidades:
+        - Removes Buffs from one enemy and inflicts damage equal to 220% of Attack.
+        - Cancels Buffs and Stances on one enemy and inflicts damage equal to 360% of Attack.
+        - 'Inflicts damage equal to 150% of Attack on all enemies. Infects for 1 turn(s).\n\n*Infect: Restricts Recovery-related
+          stats.'
+        - 'Inflicts damage equal to 250% of Attack on all enemies. Infects for 1 turn(s).\n\n*Infect: Restricts Recovery-related
+          stats.'
+        - 'Inflicts Weak Point damage equal to 170% of Attack on all enemies.\n\n*Weak Point: 3x damage against Debuffed enemies.'
+        - 'Inflicts damage equal to 360% of Attack on one enemy, removes 2 orb(s) from the target''s Ultimate Move Gauge,
+          and Deletes 2 skill(s) at random.\n\n*Delete: Randomly removes skills from the target (Excluding Ultimate Moves)\n(Deletes
+          Ultimate Moves if there is no skill to remove)'
+    4:
+      aleatorias:
+      - Increases the hero's basic stats by 0.5% for every orb in Ultimate Move Gauges on the battlefield.
+      - Decreases enemies' Ultimate Move Gauges by 2 orb(s) when the hero enters the battle.
+      - Increases the hero's Attack by 50% at the start of the next turn if the hero doesn't take damage.\n(Resets upon taking
+        damage)
+      enemigos:
+      - nombre: Eikthyrnir
+        atributo: verde
+        pasivas:
+        - 'Purgatory Energy: Uses "Bubble Bomb" every 2 turn(s).'
+        - 'Ominous Aura: Uses "Defensive Horn" every 3 turn(s).'
+        - 'Skill Use Increase: Increases the number of skill uses by 2.'
+        - 'Debuff Immunity: The hero becomes immune to all Debuff effects.'
+        - 'Remove Attribute Leverage: No change in damage from attribute advantage or disadvantage.'
+        - 'Ultimate Move Damage Decrease: Decreases the hero''s damage taken from Ultimate Moves by 30%.'
+        - 'HP-related Stats Decrease: Decreases the enemy''s Regeneration Rate, Recovery Rate, and Lifesteal by 40%.'
+        - 'Evolved Stance: Increases the hero''s Attack-related stats by 15% for 2 turns when using Stance Skills.\n(Excluding
+          Ultimate Moves)'
+        - 'Ignore Evasion: Ignores Evasion when attacking.'
+        - 'Suppress Damage Taken: The hero''s damage taken from skills during the enemy turn does not exceed 30% of Max HP.'
+        habilidades:
+        - Inflicts damage equal to 250% of Attack on one enemy and depletes 1 Ultimate Move Gauge orb(s).
+        - Inflicts damage equal to 380% of Attack on one enemy and depletes 3 Ultimate Move Gauge orb(s).
+        - Inflicts damage equal to 180% of Attack on all enemies and fills 1 Ultimate Move Gauge orb(s).
+        - Inflicts damage equal to 270% of Attack on all enemies and fills 2 Ultimate Move Gauge orb(s).
+        - Increases damage taken by all enemies by 30% for 2 turn(s).
+        - Assumes a Stance for 2 turn(s) and inflicts damage equal to 1500% of Attack via counter when attacked.\n\n(Results
+          in a miss when attacking enemies with barriers)
+ciervo_f3:
+  nombre: Eikthyrnir's Refuge Floor 3
+  id_7dshub: 1006
+  fases:
+    1:
+      aleatorias: []
+      enemigos:
+      - nombre: Eikthyrnir
+        atributo: verde
+        pasivas:
+        - 'Purgatory Energy: Uses "Hazy Crush" every 2 turn(s).'
+        - 'Ominous Aura: Uses "Icy Pond" every 3 turn(s).'
+        - 'Skill Use Increase: Increases the number of skill uses by 2.'
+        - 'Debuff Immunity: The hero becomes immune to all Debuff effects.'
+        - 'Remove Attribute Leverage: No change in damage from attribute advantage or disadvantage.'
+        - 'Ultimate Move Damage Decrease: Decreases the hero''s damage taken from Ultimate Moves by 30%.'
+        - 'HP-related Stats Decrease: Decreases the enemy''s Regeneration Rate, Recovery Rate, and Lifesteal by 40%.'
+        - 'Damage Dealt Increase: Increases the hero''s damage dealt by 35% when attacking enemies afflicted with the Shock
+          Debuff.'
+        - 'Ignore Evasion: Ignores Evasion when attacking.'
+        - 'Suppress Damage Taken: The hero''s damage taken from skills during the enemy turn does not exceed 30% of Max HP.'
+        habilidades:
+        - Inflicts damage equal to 190% of Attack on one enemy. Disables Attack Skills for 1 turn(s).
+        - Inflicts damage equal to 285% of Attack on one enemy. Disables Attack Skills for 1 turn(s).
+        - 'Inflicts damage equal to 150% of Attack on all enemies. Shocks for 4 turn(s).\n\n*Shock: Additional damage equal
+          to 45% of damage dealt at the end of every turn.'
+        - 'Inflicts damage equal to 220% of Attack on all enemies. Shocks for 4 turn(s).\n\n*Shock: Additional damage equal
+          to 45% of damage dealt at the end of every turn.'
+        - Inflicts damage equal to 250% of Attack on all enemies and allows the use of only Rank 1 skills for 1 turn(s).
+        - Inflicts damage equal to 180% of Attack on all enemies. Prevents Ultimate Move Gauge(s) from filling up for 2 turn(s).
+    2:
+      aleatorias:
+      - Increases the hero's Crit Damage by 50%.
+      - Increases the hero's Crit Damage by 5% per hero skill use.\n(Limit 20% time(s))
+      - Increases Attack-related stats by 2% at the start of the allies' turn if the hero took damage during the enemy's previous
+        turn.\n(Limit 10% time(s))
+      - Increases Crit Chance/Crit Damage as the hero's remaining HP decreases.\n(1% of max HP lost increases the stats by
+        0.2%)
+      enemigos:
+      - nombre: Eikthyrnir
+        atributo: verde
+        pasivas:
+        - 'Purgatory Energy: Uses "Refresh" every 2 turn(s).'
+        - 'Ominous Aura: Uses "Icy Pond" every 3 turn(s).'
+        - 'Skill Use Increase: Increases the number of skill uses by 2.'
+        - 'Debuff Immunity: The hero becomes immune to all Debuff effects.'
+        - 'Remove Attribute Leverage: No change in damage from attribute advantage or disadvantage.'
+        - 'HP-related Stats Decrease: Decreases the enemy''s Regeneration Rate, Recovery Rate, and Lifesteal by 40%.'
+        - 'Damage Dealt Increase: Increases the hero''s damage dealt by 5% for every orb in the hero''s Ultimate Move Gauge.'
+        - 'Crit Damage Increase: Increases the hero''s Crit Damage by 30% for each orb removed from the hero''s Ultimate Move
+          Gauge.\n(Limit 3% times, excludes depletion from Ultimate Move use)'
+        - 'Ignore Evasion: Ignores Evasion when attacking.'
+        - 'Suppress Damage Taken: The hero''s damage taken from skills during the enemy turn does not exceed 30% of Max HP.'
+        habilidades:
+        - 'Inflicts Sever damage equal to 200% of Attack on one enemy.\n\n*Sever: 3x Crit Chance Increase.'
+        - 'Inflicts Sever damage equal to 300% of Attack on one enemy.\n\n*Sever: 3x Crit Chance Increase.'
+        - 'Inflicts Power Strike damage equal to 140% of Attack on all enemies.\n\n*Power Strike: Additional damage equal
+          to enemy Resistance.'
+        - 'Inflicts Power Strike damage equal to 220% of Attack on all enemies.\n\n*Power Strike: Additional damage equal
+          to enemy Resistance.'
+        - Increases the monster's damage taken from certain attributes by 500%.
+        - 'Inflicts damage equal to 300% of Attack on all enemies and Lifesteals 30% of the damage.\n\n*Lifesteal: Heals for
+          a portion of the damage dealt.'
+    3:
+      aleatorias: []
+      enemigos:
+      - nombre: Eikthyrnir
+        atributo: verde
+        pasivas:
+        - 'Purgatory Energy: Uses "Splash Shower" every 2 turn(s).'
+        - 'Ominous Aura: Uses "Refresh" every 3 turn(s).'
+        - 'Skill Use Increase: Increases the number of skill uses by 2.'
+        - 'Debuff Immunity: The hero becomes immune to all Debuff effects.'
+        - 'Remove Attribute Leverage: No change in damage from attribute advantage or disadvantage.'
+        - 'HP-related Stats Decrease: Decreases the enemy''s Regeneration Rate, Recovery Rate, and Lifesteal by 40%.'
+        - 'Ignore Evasion: Ignores Evasion when attacking.'
+        - 'Suppress Damage Taken: The hero''s damage taken from skills during the enemy turn does not exceed 30% of Max HP.'
+        habilidades:
+        - Inflicts damage equal to 190% of Attack on one enemy and fills 1 Ultimate Move Gauge orb(s).
+        - Inflicts damage equal to 300% of Attack on one enemy and fills 2 Ultimate Move Gauge orb(s).
+        - 'Inflicts Charge damage equal to 150% of Attack on all enemies.\n\n*Charge: Ignores Defense.'
+        - 'Inflicts Charge damage equal to 240% of Attack on all enemies.\n\n*Charge: Ignores Defense.'
+        - 'Inflicts Amplify damage equal to 250% of Attack on all enemies.\n\n*Amplify: Damage dealt +30% per active Buff
+          on self.'
+        - Increases basic stats by 50% for 3 turn(s).
+    4:
+      aleatorias:
+      - Applies 4 Ignite effects on all enemies when assuming a Stance.
+      - Increases Attack by a value equal to 15% of the hero's Defense at the start of the battle.
+      - Decreases all enemies' Max HP by the value of 150% of the hero's Defense.
+      enemigos:
+      - nombre: Eikthyrnir
+        atributo: verde
+        pasivas:
+        - 'Purgatory Energy: Uses "Refresh" every 2 turn(s).'
+        - 'Ominous Aura: Uses "Defensive Horn" every 3 turn(s).'
+        - 'Skill Use Increase: Increases the number of skill uses by 2.'
+        - 'Debuff Immunity: The hero becomes immune to all Debuff effects.'
+        - 'Remove Attribute Leverage: No change in damage from attribute advantage or disadvantage.'
+        - 'HP-related Stats Decrease: Decreases the enemy''s Regeneration Rate, Recovery Rate, and Lifesteal by 40%.'
+        - 'Evolved Stance: Increases the hero''s Attack-related stats by 15% for 2 turns when using Stance Skills.\n(Excluding
+          Ultimate Moves)'
+        - 'Blessing in Disguise: Removes the hero''s Debuffs, fully heals their HP, and increases all stats by 10% when the
+          hero survives with 20% HP or less.\n(Limit once)'
+        - 'Ignore Evasion: Ignores Evasion when attacking.'
+        - 'Suppress Damage Taken: The hero''s damage taken from skills during the enemy turn does not exceed 30% of Max HP.'
+        habilidades:
+        - 'Inflicts Flood damage equal to 150% of Attack on one enemy.\n\n*Flood: 0.8% additional damage for every percent
+          of remaining HP on self.'
+        - 'Inflicts Flood damage equal to 220% of Attack on one enemy.\n\n*Flood: 0.8% additional damage for every percent
+          of remaining HP on self.'
+        - Inflicts damage equal to 140% of Attack on all enemies and depletes 1 Ultimate Move Gauge orb(s).
+        - Inflicts damage equal to 210% of Attack on all enemies and depletes 1 Ultimate Move Gauge orb(s).
+        - 'Increases basic stats by 30% for 2 turn(s) and gains Evasion for 1 turn(s).\n\n*Evasion: Immune to Attack and Debuff
+          Atk Skills.'
+        - Assumes a Stance for 2 turn(s) and inflicts damage equal to 1500% of Attack via counter when attacked.\n\n(Results
+          in a miss when attacking enemies with barriers)
+ciervo_f4:
+  nombre: Transcendent Eikthyrnir
+  id_7dshub: 1102
+  fases:
+    1:
+      aleatorias:
+      - Recovers HP equal to 50% of the damage dealt to enemies with Torrent.
+      enemigos:
+      - nombre: Eikthyrnir
+        atributo: verde
+        pasivas:
+        - 'Purgatory Energy: Uses "Splash Shower" every odd-numbered turn.'
+        - 'Ominous Aura: Uses "Icy Pond" every 2 turn(s).'
+        - 'Skill Use Increase: Increases the number of skill uses by 2.'
+        - 'Elk of Life: All Torrent effects applied to enemies are removed when they use an Ultimate Move or are hit by "Icy
+          Pond".'
+        - 'Debuff Immunity: Becomes immune to all Debuff effects, as well as Coerce, Expel, Darkness, and Seed of the End.'
+        - 'Counter and Reflect Damage Decrease: Decreases the hero''s damage taken from Counterattacks and Reflect by 1000%.'
+        - 'Attribute Superiority: Decreases the hero''s damage taken from Light and Darkness heroes by 1000%.'
+        - 'Characteristic Superiority: Increases damage dealt to enemies with characteristics other than [Ragnarok] by 1000%
+          and decreases damage taken from them by 1000%.\n(Includes enemies without a characteristic)'
+        - 'Ignore Evasion: Ignores Evasion when attacking.'
+        - 'Suppress Damage Taken: The hero''s damage taken from skills during the enemy turn does not exceed 25% of Max HP.'
+        habilidades:
+        - 'Applies 1 Seed of Life effect to self for 2 turn(s) and inflicts Charge damage equal to 250% of Attack on one enemy.\n\n*Seed
+          of Life: When attacked during the enemy''s turn, 1 instance is removed and HP is restored by 300000.\n*Charge: Ignores
+          Defense.'
+        - 'Applies 2 Seed of Life effects to self for 2 turn(s) and inflicts Charge damage equal to 350% of Attack on one
+          enemy.\n\n*Seed of Life: When attacked during the enemy''s turn, 1 instance is removed and HP is restored by 300000.\n*Charge:
+          Ignores Defense.'
+        - 'Inflicts damage equal to 200% of Attack on all enemies. Infects for 1 turn(s).\n\n*Infect: Restricts Recovery-related
+          stats.'
+        - 'Inflicts damage equal to 300% of Attack on all enemies. Infects for 2 turn(s).\n\n*Infect: Restricts Recovery-related
+          stats.'
+        - 'Inflicts damage equal to 350% of Attack and applies 2 Torrent effects on all enemies.\n\n*Torrent: Additional damage
+          equal to 10% of Max HP when using skills.'
+        - 'Inflicts damage equal to 350% of Attack on all enemies, removes all Torrent effects from enemies hit, then Freezes
+          enemies that had the Torrent effect removed for 1 turn. Inflicts damage equal to 20% of remaining HP when the effect
+          is removed due to a skill, Unique, Commandment, or elapsed turns.\n\n*Freeze: Incapacitates target. Effect is removed
+          when target is attacked.'
+    2:
+      aleatorias: []
+      enemigos:
+      - nombre: Eikthyrnir
+        atributo: verde
+        pasivas:
+        - 'Purgatory Energy: Uses "Water Loop" every 2 turn(s).'
+        - 'Ominous Aura: Uses "Hazy Crush" every odd-numbered turn.'
+        - 'Skill Use Increase: Increases the number of skill uses by 2.'
+        - 'Elk of Life: If the enemy attacks multiple times using the same attribute, the Damage Taken Decrease of the attribute
+          that is weak against the enemy''s attribute is removed.'
+        - 'Debuff Immunity: Becomes immune to all Debuff effects, as well as Coerce, Expel, Darkness, and Seed of the End.'
+        - 'Counter and Reflect Damage Decrease: Decreases the hero''s damage taken from Counterattacks and Reflect by 1000%.'
+        - 'Attribute Superiority: Decreases the hero''s damage taken from Light and Darkness heroes by 1000%.'
+        - 'Characteristic Superiority: Increases damage dealt to enemies with characteristics other than [Ragnarok] by 1000%
+          and decreases damage taken from them by 1000%.\n(Includes enemies without a characteristic)'
+        - 'Ignore Evasion: Ignores Evasion when attacking.'
+        - 'Suppress Damage Taken: The hero''s damage taken from skills during the enemy turn does not exceed 20% of Max HP.'
+        habilidades:
+        - 'Inflicts Flood damage equal to 300% of Attack on one enemy.\n\n*Flood: 0.8% additional damage for every percent
+          of remaining HP on self.'
+        - 'Inflicts Flood damage equal to 400% of Attack on one enemy.\n\n*Flood: 0.8% additional damage for every percent
+          of remaining HP on self.'
+        - 'Inflicts damage equal to 200% of Attack and applies 1 Torrent effect on all enemies for 2 turn(s).\n\n*Torrent:
+          Additional damage equal to 5% of Max HP when using skills.\n(Can be stacked)'
+        - 'Inflicts damage equal to 300% of Attack and applies 2 Torrent effects on all enemies for 2 turn(s).\n\n*Torrent:
+          Additional damage equal to 5% of Max HP when using skills.\n(Can be stacked)'
+        - 'Inflicts Surge damage equal to 500% of Attack on one enemy.\n\n*Surge: +30% damage dealt per Torrent on target.'
+        - 'Inflicts damage equal to 350% of Attack on all enemies. Infects for 2 turn(s).\n\n*Infect: Restricts Recovery-related
+          stats.'
+    3:
+      aleatorias:
+      - Increases the hero's Crit Chance by 10% for every orb filled in the hero's Ultimate Move Gauge.
+      - Increases the hero's Crit Damage by 20% for every orb filled in the hero's Ultimate Move Gauge.
+      enemigos:
+      - nombre: Eikthyrnir
+        atributo: verde
+        pasivas:
+        - 'Purgatory Energy: Uses "Fierce Rush" every odd-numbered turn.'
+        - 'Ominous Aura: Uses "Bubble Bomb" every 2 turn(s).'
+        - 'Skill Use Increase: Increases the number of skill uses by 2.'
+        - 'Elk of Life: Grants all enemies Eikthyrnir''s Protection when attacked a certain number of times using the same
+          attribute. Enemies with Eikthyrnir''s Protection do not take damage from "Fierce Rush".'
+        - 'Debuff Immunity: Becomes immune to all Debuff effects, as well as Coerce, Expel, Darkness, and Seed of the End.'
+        - 'Counter and Reflect Damage Decrease: Decreases the hero''s damage taken from Counterattacks and Reflect by 1000%.'
+        - 'Attribute Superiority: Decreases the hero''s damage taken from Light and Darkness heroes by 1000%.'
+        - 'Characteristic Superiority: Increases damage dealt to enemies with characteristics other than [Ragnarok] by 1000%
+          and decreases damage taken from them by 1000%.\n(Includes enemies without a characteristic)'
+        - 'Ignore Evasion: Ignores Evasion when attacking.'
+        - 'Suppress Damage Taken: The hero''s damage taken from skills during the enemy turn does not exceed 25% of Max HP.'
+        habilidades:
+        - 'Inflicts Surge damage equal to 250% of Attack on one enemy.\n\n*Surge: +30% damage dealt per Torrent on target.'
+        - 'Inflicts Surge damage equal to 350% of Attack on one enemy.\n\n*Surge: +30% damage dealt per Torrent on target.'
+        - 'Inflicts damage equal to 200% of Attack and applies 1 Torrent effect on all enemies for 2 turn(s).\n\n*Torrent:
+          Additional damage equal to 5% of Max HP when using skills.\n(Can be stacked)'
+        - 'Inflicts damage equal to 300% of Attack and applies 2 Torrent effects on all enemies for 2 turn(s).\n\n*Torrent:
+          Additional damage equal to 5% of Max HP when using skills.\n(Can be stacked)'
+        - Inflicts damage equal to 20000% of Attack on one enemy.\n\n(Results in a miss when attacking enemies with Eikthyrnir's
+          Protection)
+        - 'Applies Oxidize on all enemies for 2 turn(s).\n\n*Oxidize: Decreases skill ranks and inflicts damage equal to 10%
+          of Max HP for every skill that had its rank decreased at the end of the enemy''s turn.'
+    4:
+      aleatorias: []
+      enemigos:
+      - nombre: Eikthyrnir
+        atributo: verde
+        pasivas:
+        - 'Purgatory Energy: Uses "Refresh" every 2 turn(s).'
+        - 'Ominous Aura: Uses "Defensive Horn" every 3 turn(s).'
+        - 'Skill Use Increase: Increases the number of skill uses by 2.'
+        - 'Elk of Life: Removes 1 Immortality effect from self and becomes inflicted with 1 Corrosion effect, which inflicts
+          damage equal to 10% of remaining HP for 2 turns, when attacked a certain number of times by the enemy in a certain
+          sequence of attributes. (Can be stacked)'
+        - 'Debuff Immunity: Becomes immune to all Debuff effects, as well as Coerce, Expel, Darkness, and Seed of the End.'
+        - 'Evolved Stance: Increases the hero''s Attack-related stats by 30% for 2 turns when using a Stance Skill.'
+        - 'Counter and Reflect Damage Decrease: Decreases the hero''s damage taken from Counterattacks and Reflect by 1000%.'
+        - 'Attribute Superiority: Decreases the hero''s damage taken from Light and Darkness heroes by 1000%.'
+        - 'Characteristic Superiority: Increases damage dealt to enemies with characteristics other than [Ragnarok] by 1000%
+          and decreases damage taken from them by 1000%.\n(Includes enemies without a characteristic)'
+        - 'Ignore Evasion: Ignores Evasion when attacking.'
+        - 'Suppress Damage Taken: The hero''s damage taken from skills during the enemy turn does not exceed 20% of Max HP.'
+        habilidades:
+        - 'Applies 1 Seed of Life effect to self for 2 turn(s) and inflicts Charge damage equal to 250% of Attack on one enemy.\n\n*Seed
+          of Life: When attacked during the enemy''s turn, 1 instance is removed and HP is restored by 300000.\n*Charge: Ignores
+          Defense.'
+        - 'Applies 2 Seed of Life effects to self for 2 turn(s) and inflicts Charge damage equal to 350% of Attack on one
+          enemy.\n\n*Seed of Life: When attacked during the enemy''s turn, 1 instance is removed and HP is restored by 300000.\n*Charge:
+          Ignores Defense.'
+        - 'Inflicts Pierce damage equal to 200% of Attack on all enemies.\n\n*Pierce: 3x Pierce Rate Increase.'
+        - 'Inflicts Pierce damage equal to 300% of Attack on all enemies.\n\n*Pierce: 3x Pierce Rate Increase.'
+        - Removes all Seed of Life effects from self and increases all stats by 5% for each one removed, then increases basic
+          stats by 30% for 2 turn(s).
+        - Assumes a Stance for 2 turn(s) and inflicts damage equal to 1500% of Attack via counter when attacked.\n\n(Results
+          in a miss when attacking enemies with barriers)
+perros_f1:
+  nombre: Twilight Temple Floor 1
+  id_7dshub: 1007
+  fases:
+    1:
+      aleatorias: []
+      enemigos:
+      - nombre: Hati
+        atributo: oscuro
+        pasivas:
+        - 'Purgatory Energy: Uses "Defensive Aggression" every 2 turn(s).'
+        - 'Ominous Aura: Uses "Mass Howling" every 3 turn(s).'
+        - 'Immortality: The hero''s HP does not drop below 1.'
+        - 'Incapacitation Immunity: Immune to Freeze, Petrify, Stun, and Blackout.'
+        - 'Darkness Immunity: The hero becomes immune to Darkness.'
+        - 'Crit Chance Increase: Increases allies'' Crit Chance by 10% for every orb filled in the hero''s Ultimate Move Gauge.'
+        habilidades:
+        - Decreases allies' damage taken by 3% for 2 turn(s).\n(Can be stacked)
+        - Decreases allies' damage taken by 5% for 2 turn(s).\n(Can be stacked)
+        - Decreases allies' damage taken by 10% for 2 turn(s).\n(Can be stacked)
+        - Assumes a Stance for 2 turn(s) which reduces the final damage taken by 35% when an ally is attacked. The hero takes
+          50% of the reduced damage.
+        - Decreases all enemies' Attack-related stats by 20% for 2 turn(s).
+      - nombre: Skoll
+        atributo: claro
+        pasivas:
+        - 'Purgatory Energy: Uses "Solar Blessing" every 2 turn(s).'
+        - 'Ominous Aura: Uses "Flare Ball" every 3 turn(s).'
+        - 'Skill Use Increase: Increases the number of skill uses by 2.'
+        - 'Debuff Immunity: The hero becomes immune to all Debuff effects.'
+        - 'HP-related Stats Decrease: Decreases the enemy''s Regeneration Rate, Recovery Rate, and Lifesteal by 40%.'
+        - 'Suppress Damage Taken: The hero''s damage taken from skills during the enemy turn does not exceed 30% of Max HP.'
+        habilidades:
+        - 'Inflicts Co-destruction damage equal to 200% of Attack on one enemy.\n\n*Co-destruction: 20% increased damage per
+          Debuff on the target.'
+        - 'Inflicts Co-destruction damage equal to 320% of Attack on one enemy.\n\n*Co-destruction: 20% increased damage per
+          Debuff on the target.'
+        - 'Inflicts Blaze damage equal to 160% of Attack on all enemies.\n\n*Blaze: +25% damage dealt per Ignite effect on
+          target.'
+        - 'Inflicts Blaze damage equal to 240% of Attack on all enemies.\n\n*Blaze: +25% damage dealt per Ignite effect on
+          target.'
+        - Increases own Defense-related stats by 50% for 2 turn(s).
+        - 'Inflicts damage equal to 380% of Attack on one enemy and Lifesteals 200% of the damage.\n\n*Lifesteal: Heals for
+          a portion of the damage dealt.'
+    2:
+      aleatorias: []
+      enemigos:
+      - nombre: Hati
+        atributo: oscuro
+        pasivas:
+        - 'Purgatory Energy: Uses "Shadow Blackhole" every 2 turn(s).'
+        - 'Ominous Aura: Uses "Shadow Herd" every 3 turn(s).'
+        - 'Skill Use Increase: Increases the number of skill uses by 2.'
+        - 'Debuff Immunity: The hero becomes immune to all Debuff effects.'
+        - 'Darkness Immunity: The hero becomes immune to Darkness.'
+        - 'HP-related Stats Decrease: Decreases the enemy''s Regeneration Rate, Recovery Rate, and Lifesteal by 40%.'
+        - 'Suppress Damage Taken: The hero''s damage taken from skills during the enemy turn does not exceed 30% of Max HP.'
+        habilidades:
+        - Inflicts damage equal to 310% of Attack on one enemy.
+        - 'Inflicts damage equal to 420% of Attack on one enemy and Freezes them for 1 turn(s).\n\n*Freeze: Incapacitates
+          target. Effect is removed when target is attacked.'
+        - 'Inflicts damage equal to 200% of Attack on all enemies. Infects for 1 turn(s).\n\n*Infect: Restricts Recovery-related
+          stats.'
+        - 'Inflicts damage equal to 280% of Attack on all enemies. Infects for 2 turn(s).\n\n*Infect: Restricts Recovery-related
+          stats.'
+        - Decreases the Attack-related stats of all enemies by 30% and disables Buff Skills for 2 turn(s).
+        - 'Inflicts Resonance damage equal to 300% of Attack on one enemy.\n\n*Resonance: +15% damage dealt for every Buff,
+          Debuff, and Stance on the target.'
+      - nombre: Skoll
+        atributo: claro
+        pasivas:
+        - 'Purgatory Energy: Uses "Short Temper" every 3 turn(s).'
+        - 'Ominous Aura: Uses "Defensive Aggression" every 2 turn(s).'
+        - 'Immortality: The hero''s HP does not drop below 1.'
+        - 'Incapacitation Immunity: Immune to Freeze, Petrify, Stun, and Blackout.'
+        - 'Defense Increase: Increases allies'' Defense by 30% for every orb filled in the hero''s Ultimate Move Gauge.'
+        habilidades:
+        - Decreases Defense-related stats of all enemies by 10% for 1 turn(s).
+        - Decreases Defense-related stats of all enemies by 15% for 2 turn(s).
+        - Decreases Defense-related stats of all enemies by 30% for 2 turn(s).
+        - Fills allies' Ultimate Move Gauges by 3 orb(s) every turn for 3 turn(s).
+        - Assumes a Stance for 2 turn(s) which reduces the final damage taken by 35% when an ally is attacked. The hero takes
+          50% of the reduced damage.
+    3:
+      aleatorias:
+      - Increases the hero's Crit Damage by 10% for each orb removed from the hero's Ultimate Move Gauge.\n(Limit 10% time(s),
+        excludes depletion from Ultimate Move use)
+      - Decreases all enemies' Crit Resistance and Crit Defense by 25%.
+      - When an enemy takes Critical Strike damage from the hero's attack, an effect is applied on that enemy which decreases
+        Defense-related stats by 40% for 2 turns.
+      enemigos:
+      - nombre: Hati
+        atributo: oscuro
+        pasivas:
+        - 'Purgatory Energy: Uses "Shadow Blackhole" every 3 turn(s).'
+        - 'Ominous Aura: Uses "Wolf Claw" every 2 turn(s).'
+        - 'Skill Use Increase: Increases the number of skill uses by 1.'
+        - 'Debuff Immunity: The hero becomes immune to all Debuff effects.'
+        - 'Darkness Immunity: The hero becomes immune to Darkness.'
+        - 'HP-related Stats Decrease: Decreases the enemy''s Regeneration Rate, Recovery Rate, and Lifesteal by 40%.'
+        habilidades:
+        - 'Inflicts Co-destruction damage equal to 190% of Attack on all enemies.\n\n*Co-destruction: 20% increased damage
+          per Debuff on the target.'
+        - 'Inflicts Co-destruction damage equal to 280% of Attack on all enemies.\n\n*Co-destruction: 20% increased damage
+          per Debuff on the target.'
+        - Cancels Buffs and Stances on one enemy and inflicts damage equal to 260% of Attack.
+        - Cancels Buffs and Stances on one enemy and inflicts damage equal to 400% of Attack.
+        - 'Extorts 20% Attack and Defense from all enemies for 2 turn(s).\n\n*Extort: Decreases the target''s stats and increases
+          own stats by the same amount.'
+        - 'Inflicts damage equal to 250% of Attack and applies Poison and Bleed effects for 2 turn(s) on all enemies.\n\n*Bleed:
+          Additional damage equal to 90% of damage dealt at the end of every turn.\n*Poison: Additional damage equal to 60%
+          of damage dealt at the end of every turn.'
+      - nombre: Skoll
+        atributo: claro
+        pasivas:
+        - 'Purgatory Energy: Uses "Solar Blessing" every 2 turn(s).'
+        - 'Ominous Aura: Uses "Wolf Claw" every 3 turn(s).'
+        - 'Skill Use Increase: Increases the number of skill uses by 1.'
+        - 'Debuff Immunity: The hero becomes immune to all Debuff effects.'
+        - 'HP-related Stats Decrease: Decreases the enemy''s Regeneration Rate, Recovery Rate, and Lifesteal by 40%.'
+        habilidades:
+        - 'Inflicts Blaze damage equal to 190% of Attack on all enemies.\n\n*Blaze: +25% damage dealt per Ignite effect on
+          target.'
+        - 'Inflicts Blaze damage equal to 280% of Attack on all enemies.\n\n*Blaze: +25% damage dealt per Ignite effect on
+          target.'
+        - Inflicts damage equal to 260% of Attack on one enemy and depletes 4 Ultimate Move Gauge orb(s).
+        - Inflicts damage equal to 400% of Attack on one enemy and depletes 4 Ultimate Move Gauge orb(s).
+        - 'Taunts enemies for 2 turn(s), applying 2 Ignite effects on all enemies for 3 turns when attacked.\n\n*Taunt: Directs
+          all attacks to self.\n*Ignite: Damage taken by targets +10% (Can be stacked).'
+        - 'Inflicts damage equal to 250% of Attack on all enemies and Releases 100%.\n\n*Release: Deals additional damage
+          using remaining damage in Shock, Poison, and Bleed Debuffs.'
+perros_f2:
+  nombre: Twilight Temple Floor 2
+  id_7dshub: 1008
+  fases:
+    1:
+      aleatorias: []
+      enemigos:
+      - nombre: Hati
+        atributo: oscuro
+        pasivas:
+        - 'Purgatory Energy: Uses "Defensive Aggression" every 2 turn(s).'
+        - 'Ominous Aura: Uses "Mass Howling" every 3 turn(s).'
+        - 'Immortality: The hero''s HP does not drop below 1.'
+        - 'Incapacitation Immunity: Immune to Freeze, Petrify, Stun, and Blackout.'
+        - 'Darkness Immunity: The hero becomes immune to Darkness.'
+        - 'Crit Chance Increase: Increases allies'' Crit Chance by 10% for every orb filled in the hero''s Ultimate Move Gauge.'
+        habilidades:
+        - Decreases allies' damage taken by 3% for 2 turn(s).\n(Can be stacked)
+        - Decreases allies' damage taken by 5% for 2 turn(s).\n(Can be stacked)
+        - Decreases allies' damage taken by 10% for 2 turn(s).\n(Can be stacked)
+        - Assumes a Stance for 2 turn(s) which reduces the final damage taken by 60% when an ally is attacked. The hero takes
+          50% of the reduced damage.
+        - Decreases all enemies' Attack-related stats by 20% for 2 turn(s).
+      - nombre: Skoll
+        atributo: claro
+        pasivas:
+        - 'Purgatory Energy: Uses "Solar Blessing" every 2 turn(s).'
+        - 'Ominous Aura: Uses "Flare Ball" every 3 turn(s).'
+        - 'Skill Use Increase: Increases the number of skill uses by 2.'
+        - 'Debuff Immunity: The hero becomes immune to all Debuff effects.'
+        - 'HP-related Stats Decrease: Decreases the enemy''s Regeneration Rate, Recovery Rate, and Lifesteal by 40%.'
+        - 'Suppress Damage Taken: The hero''s damage taken from skills during the enemy turn does not exceed 30% of Max HP.'
+        - 'Basic Stats Increase: Increases the hero''s basic stats by 100% when an enemy uses a Rank Up Skill during the enemy''s
+          turn.\n(Limit 10 times)'
+        - 'HP Recovery: The hero recovers 3% of Max HP per Buff on the hero at the start of the turn.'
+        - 'Attack Increase: Increases allies'' Attack by 5% for every Buff applied to the hero.'
+        habilidades:
+        - 'Inflicts Co-destruction damage equal to 200% of Attack on one enemy.\n\n*Co-destruction: 20% increased damage per
+          Debuff on the target.'
+        - 'Inflicts Co-destruction damage equal to 320% of Attack on one enemy.\n\n*Co-destruction: 20% increased damage per
+          Debuff on the target.'
+        - 'Inflicts Blaze damage equal to 140% of Attack on all enemies.\n\n*Blaze: +25% damage dealt per Ignite effect on
+          target.'
+        - 'Inflicts Blaze damage equal to 220% of Attack on all enemies.\n\n*Blaze: +25% damage dealt per Ignite effect on
+          target.'
+        - Increases own Defense-related stats by 50% for 2 turn(s).
+        - 'Inflicts damage equal to 350% of Attack on one enemy and Lifesteals 200% of the damage.\n\n*Lifesteal: Heals for
+          a portion of the damage dealt.'
+    2:
+      aleatorias: []
+      enemigos:
+      - nombre: Hati
+        atributo: oscuro
+        pasivas:
+        - 'Purgatory Energy: Uses "Shadow Blackhole" every 2 turn(s).'
+        - 'Ominous Aura: Uses "Shadow Herd" every 3 turn(s).'
+        - 'Skill Use Increase: Increases the number of skill uses by 2.'
+        - 'Debuff Immunity: The hero becomes immune to all Debuff effects.'
+        - 'Darkness Immunity: The hero becomes immune to Darkness.'
+        - 'HP-related Stats Decrease: Decreases the enemy''s Regeneration Rate, Recovery Rate, and Lifesteal by 40%.'
+        - 'Suppress Damage Taken: The hero''s damage taken from skills during the enemy turn does not exceed 30% of Max HP.'
+        - 'Basic Stats Increase: Increases the hero''s basic stats by 100% when an enemy uses a Rank Up Skill during the enemy''s
+          turn.\n(Limit 10 times)'
+        - 'Basic Stat Increase: Increases basic stats by 2% for each Debuff on enemies.\n(No limit)'
+        - 'HP Increase: Increases the hero''s Max HP by 3% for every Debuff applied on enemies.'
+        habilidades:
+        - Inflicts damage equal to 200% of Attack on one enemy.
+        - 'Inflicts damage equal to 300% of Attack on one enemy and Freezes them for 1 turn(s). Frozen enemies take 30% additional
+          damage.\n*Freeze: Incapacitates target. Effect is removed when target is attacked.'
+        - 'Inflicts damage equal to 210% of Attack on all enemies. Infects for 1 turn(s).\n\n*Infect: Restricts Recovery-related
+          stats.'
+        - 'Inflicts damage equal to 260% of Attack on all enemies. Infects for 2 turn(s).\n\n*Infect: Restricts Recovery-related
+          stats.'
+        - Decreases the Attack-related stats of all enemies by 30% and disables Buff Skills for 2 turn(s).
+        - 'Inflicts Resonance damage equal to 300% of Attack on one enemy.\n\n*Resonance: +15% damage dealt for every Buff,
+          Debuff, and Stance on the target.'
+      - nombre: Skoll
+        atributo: claro
+        pasivas:
+        - 'Purgatory Energy: Uses "Short Temper" every 3 turn(s).'
+        - 'Ominous Aura: Uses "Defensive Aggression" every 2 turn(s).'
+        - 'Immortality: The hero''s HP does not drop below 1.'
+        - 'Incapacitation Immunity: Immune to Freeze, Petrify, Stun, and Blackout.'
+        - 'Defense Increase: Increases allies'' Defense by 30% for every orb filled in the hero''s Ultimate Move Gauge.'
+        habilidades:
+        - Decreases Defense-related stats of all enemies by 10% for 1 turn(s).
+        - Decreases Defense-related stats of all enemies by 15% for 2 turn(s).
+        - Decreases Defense-related stats of all enemies by 30% for 2 turn(s).
+        - Fills allies' Ultimate Move Gauges by 3 orb(s) every turn for 3 turn(s).
+        - Assumes a Stance for 2 turn(s) which reduces the final damage taken by 60% when an ally is attacked. The hero takes
+          50% of the reduced damage.
+    3:
+      aleatorias:
+      - Deals 40% additional damage when the hero attacks an enemy with a lower Attack.
+      - Increases the hero's Attack by 5% for every Debuff applied on all enemies.
+      - Increases the hero's damage dealt by 20% when attacking Debuffed enemies.
+      enemigos:
+      - nombre: Hati
+        atributo: oscuro
+        pasivas:
+        - 'Purgatory Energy: Uses "Shadow Blackhole" every 3 turn(s).'
+        - 'Ominous Aura: Uses "Wolf Claw" every 2 turn(s).'
+        - 'Skill Use Increase: Increases the number of skill uses by 1.'
+        - 'Debuff Immunity: The hero becomes immune to all Debuff effects.'
+        - 'Darkness Immunity: The hero becomes immune to Darkness.'
+        - 'Remove Buffs: Removes all Buffs from enemies with Attack Increase at the start of the allies'' turn.'
+        - 'HP-related Stats Decrease: Decreases the enemy''s Regeneration Rate, Recovery Rate, and Lifesteal by 40%.'
+        - 'Suppress Damage Taken: The hero''s damage taken from skills during the enemy turn does not exceed 30% of Max HP.'
+        - 'Basic Stats Increase: Increases the hero''s basic stats by 100% when an enemy uses a Rank Up Skill during the enemy''s
+          turn.\n(Limit 10 times)'
+        habilidades:
+        - 'Inflicts Co-destruction damage equal to 150% of Attack on all enemies.\n\n*Co-destruction: 20% increased damage
+          per Debuff on the target.'
+        - 'Inflicts Co-destruction damage equal to 260% of Attack on all enemies.\n\n*Co-destruction: 20% increased damage
+          per Debuff on the target.'
+        - Cancels Buffs and Stances on one enemy and inflicts damage equal to 220% of Attack.
+        - Cancels Buffs and Stances on one enemy and inflicts damage equal to 400% of Attack.
+        - 'Extorts 20% Attack and Defense from all enemies for 2 turn(s).\n\n*Extort: Decreases the target''s stats and increases
+          own stats by the same amount.'
+        - 'Inflicts damage equal to 180% of Attack and applies Poison and Bleed effects for 2 turn(s) on all enemies.\n\n*Bleed:
+          Additional damage equal to 90% of damage dealt at the end of every turn.\n*Poison: Additional damage equal to 60%
+          of damage dealt at the end of every turn.'
+      - nombre: Skoll
+        atributo: claro
+        pasivas:
+        - 'Purgatory Energy: Uses "Solar Blessing" every 2 turn(s).'
+        - 'Ominous Aura: Uses "Wolf Claw" every 3 turn(s).'
+        - 'Skill Use Increase: Increases the number of skill uses by 1.'
+        - 'Debuff Immunity: The hero becomes immune to all Debuff effects.'
+        - 'Remove Buffs: Removes all Buffs from enemies with Debuff Immunity at the start of the allies'' turn.'
+        - 'HP-related Stats Decrease: Decreases the enemy''s Regeneration Rate, Recovery Rate, and Lifesteal by 40%.'
+        - 'Suppress Damage Taken: The hero''s damage taken from skills during the enemy turn does not exceed 30% of Max HP.'
+        - 'Basic Stats Increase: Increases the hero''s basic stats by 100% when an enemy uses a Rank Up Skill during the enemy''s
+          turn.\n(Limit 10 times)'
+        habilidades:
+        - 'Inflicts Blaze damage equal to 170% of Attack on all enemies.\n\n*Blaze: +25% damage dealt per Ignite effect on
+          target.'
+        - 'Inflicts Blaze damage equal to 280% of Attack on all enemies.\n\n*Blaze: +25% damage dealt per Ignite effect on
+          target.'
+        - Inflicts damage equal to 250% of Attack on one enemy and depletes 4 Ultimate Move Gauge orb(s).
+        - Inflicts damage equal to 400% of Attack on one enemy and depletes 4 Ultimate Move Gauge orb(s).
+        - 'Taunts enemies for 2 turn(s), applying 2 Ignite effects on all enemies for 3 turns when attacked.\n\n*Taunt: Directs
+          all attacks to self.\n*Ignite: Damage taken by targets +10% (Can be stacked).'
+        - 'Inflicts damage equal to 250% of Attack on all enemies and Releases 100%.\n\n*Release: Deals additional damage
+          using remaining damage in Shock, Poison, and Bleed Debuffs.'
+perros_f3:
+  nombre: Twilight Temple Floor 3
+  id_7dshub: 1009
+  fases:
+    1:
+      aleatorias: []
+      enemigos:
+      - nombre: Hati
+        atributo: oscuro
+        pasivas:
+        - 'Purgatory Energy: Uses "Defensive Aggression" every 2 turn(s).'
+        - 'Ominous Aura: Uses "Mass Howling" every 3 turn(s).'
+        - 'Immortality: The hero''s HP does not drop below 1.'
+        - 'Incapacitation Immunity: Immune to Freeze, Petrify, Stun, and Blackout.'
+        - 'Darkness Immunity: The hero becomes immune to Darkness.'
+        - 'Crit Chance Increase: Increases allies'' Crit Chance by 10% for every orb filled in the hero''s Ultimate Move Gauge.'
+        habilidades:
+        - Decreases allies' damage taken by 3% for 2 turn(s).\n(Can be stacked)
+        - Decreases allies' damage taken by 5% for 2 turn(s).\n(Can be stacked)
+        - Decreases allies' damage taken by 10% for 2 turn(s).\n(Can be stacked)
+        - 'Assumes a Stance for 2 turn(s) which Taunts enemies and reduces the final damage taken by 60% when an ally is attacked.
+          The caster takes 50% of the reduced damage.\n*Taunt: Directs all attacks to self.'
+        - Decreases all enemies' Attack-related stats by 20% for 2 turn(s).
+      - nombre: Skoll
+        atributo: claro
+        pasivas:
+        - 'Purgatory Energy: Uses "Solar Blessing" every 2 turn(s).'
+        - 'Ominous Aura: Uses "Flare Ball" every 3 turn(s).'
+        - 'Skill Use Increase: Increases the number of skill uses by 2.'
+        - 'Debuff Immunity: The hero becomes immune to all Debuff effects.'
+        - 'Remove Buffs: Removes all Buffs from enemies with Debuff Immunity at the start of the allies'' turn.'
+        - 'HP-related Stats Decrease: Decreases the enemy''s Regeneration Rate, Recovery Rate, and Lifesteal by 40%.'
+        - 'Suppress Damage Taken: The hero''s damage taken from skills during the enemy turn does not exceed 30% of Max HP.'
+        - 'Basic Stats Increase: Increases the hero''s basic stats by 100% when an enemy uses a Rank Up Skill during the enemy''s
+          turn.\n(Limit 10 times)'
+        habilidades:
+        - 'Inflicts Co-destruction damage equal to 190% of Attack on one enemy.\n\n*Co-destruction: 20% increased damage per
+          Debuff on the target.'
+        - 'Inflicts Co-destruction damage equal to 300% of Attack on one enemy.\n\n*Co-destruction: 20% increased damage per
+          Debuff on the target.'
+        - 'Inflicts Blaze damage equal to 140% of Attack on all enemies.\n\n*Blaze: +25% damage dealt per Ignite effect on
+          target.'
+        - 'Inflicts Blaze damage equal to 220% of Attack on all enemies.\n\n*Blaze: +25% damage dealt per Ignite effect on
+          target.'
+        - Increases own Defense-related stats by 50% for 2 turn(s).
+        - 'Inflicts damage equal to 350% of Attack on one enemy and Lifesteals 200% of the damage.\n\n*Lifesteal: Heals for
+          a portion of the damage dealt.'
+    2:
+      aleatorias: []
+      enemigos:
+      - nombre: Hati
+        atributo: oscuro
+        pasivas:
+        - 'Purgatory Energy: Uses "Shadow Blackhole" every 2 turn(s).'
+        - 'Ominous Aura: Uses "Shadow Herd" every 3 turn(s).'
+        - 'Skill Use Increase: Increases the number of skill uses by 2.'
+        - 'Debuff Immunity: The hero becomes immune to all Debuff effects.'
+        - 'Darkness Immunity: The hero becomes immune to Darkness.'
+        - 'Remove Buffs: Removes all Buffs from enemies with Attack Increase at the start of the allies'' turn.'
+        - 'HP-related Stats Decrease: Decreases the enemy''s Regeneration Rate, Recovery Rate, and Lifesteal by 40%.'
+        - 'Suppress Damage Taken: The hero''s damage taken from skills during the enemy turn does not exceed 30% of Max HP.'
+        - 'Basic Stats Increase: Increases the hero''s basic stats by 100% when an enemy uses a Rank Up Skill during the enemy''s
+          turn.\n(Limit 10 times)'
+        habilidades:
+        - Inflicts damage equal to 210% of Attack on one enemy.
+        - 'Inflicts damage equal to 280% of Attack on one enemy and Freezes them for 1 turn(s).\n\n*Freeze: Incapacitates
+          target. Effect is removed when target is attacked.'
+        - 'Inflicts damage equal to 180% of Attack on all enemies. Infects for 1 turn(s).\n\n*Infect: Restricts Recovery-related
+          stats.'
+        - 'Inflicts damage equal to 260% of Attack on all enemies. Infects for 2 turn(s).\n\n*Infect: Restricts Recovery-related
+          stats.'
+        - Decreases the Attack-related stats of all enemies by 30% and disables Buff Skills for 2 turn(s).
+        - 'Inflicts Resonance damage equal to 300% of Attack on one enemy.\n\n*Resonance: +15% damage dealt for every Buff,
+          Debuff, and Stance on the target.'
+      - nombre: Skoll
+        atributo: claro
+        pasivas:
+        - 'Purgatory Energy: Uses "Short Temper" every 3 turn(s).'
+        - 'Ominous Aura: Uses "Defensive Aggression" every 2 turn(s).'
+        - 'Immortality: The hero''s HP does not drop below 1.'
+        - 'Incapacitation Immunity: Immune to Freeze, Petrify, Stun, and Blackout.'
+        - 'Defense Increase: Increases allies'' Defense by 30% for every orb filled in the hero''s Ultimate Move Gauge.'
+        habilidades:
+        - Decreases Defense-related stats of all enemies by 10% for 1 turn(s).
+        - Decreases Defense-related stats of all enemies by 15% for 2 turn(s).
+        - Decreases Defense-related stats of all enemies by 30% for 2 turn(s).
+        - Fills allies' Ultimate Move Gauges by 3 orb(s) every turn for 3 turn(s).
+        - 'Assumes a Stance for 2 turn(s) which Taunts enemies and reduces the final damage taken by 60% when an ally is attacked.
+          The caster takes 50% of the reduced damage.\n*Taunt: Directs all attacks to self.'
+    3:
+      aleatorias:
+      - At the start of the allies' turn, decreases the Attack of the enemy with the highest remaining HP by 30% for 1 turn
+        and applies Taunt.
+      - At the start of the allies' turn, increases enemies' damage taken by 10% for 1 turn excluding the enemy with the highest
+        remaining HP.
+      - Attacking the enemy with the lowest percentage of HP results in a critical strike.\n(Activates even when attacking
+        the last remaining enemy or when there are two enemies with the same HP percentage.)
+      enemigos:
+      - nombre: Hati
+        atributo: oscuro
+        pasivas:
+        - 'Purgatory Energy: Uses "Shadow Blackhole" every 3 turn(s).'
+        - 'Ominous Aura: Uses "Wolf Claw" every 2 turn(s).'
+        - 'Skill Use Increase: Increases the number of skill uses by 1.'
+        - 'Debuff Immunity: The hero becomes immune to all Debuff effects.'
+        - 'Darkness Immunity: The hero becomes immune to Darkness.'
+        - 'Remove Buffs: Removes all Buffs from enemies with Attack Increase at the start of the allies'' turn.'
+        - 'HP-related Stats Decrease: Decreases the enemy''s Regeneration Rate, Recovery Rate, and Lifesteal by 40%.'
+        - 'Suppress Damage Taken: The hero''s damage taken from skills during the enemy turn does not exceed 30% of Max HP.'
+        - 'Basic Stats Increase: Increases the hero''s basic stats by 100% when an enemy uses a Rank Up Skill during the enemy''s
+          turn.\n(Limit 10 times)'
+        habilidades:
+        - 'Inflicts Co-destruction damage equal to 150% of Attack on all enemies.\n\n*Co-destruction: 20% increased damage
+          per Debuff on the target.'
+        - 'Inflicts Co-destruction damage equal to 240% of Attack on all enemies.\n\n*Co-destruction: 20% increased damage
+          per Debuff on the target.'
+        - Cancels Buffs and Stances on one enemy and inflicts damage equal to 220% of Attack.
+        - Cancels Buffs and Stances on one enemy and inflicts damage equal to 350% of Attack.
+        - 'Extorts 20% Attack and Defense from all enemies for 2 turn(s).\n\n*Extort: Decreases the target''s stats and increases
+          own stats by the same amount.'
+        - 'Inflicts damage equal to 180% of Attack and applies Poison and Bleed effects for 2 turn(s) on all enemies.\n\n*Bleed:
+          Additional damage equal to 90% of damage dealt at the end of every turn.\n*Poison: Additional damage equal to 60%
+          of damage dealt at the end of every turn.'
+      - nombre: Skoll
+        atributo: claro
+        pasivas:
+        - 'Purgatory Energy: Uses "Solar Blessing" every 2 turn(s).'
+        - 'Ominous Aura: Uses "Wolf Claw" every 3 turn(s).'
+        - 'Skill Use Increase: Increases the number of skill uses by 1.'
+        - 'Debuff Immunity: The hero becomes immune to all Debuff effects.'
+        - 'Remove Buffs: Removes all Buffs from enemies with Debuff Immunity at the start of the allies'' turn.'
+        - 'HP-related Stats Decrease: Decreases the enemy''s Regeneration Rate, Recovery Rate, and Lifesteal by 40%.'
+        - 'Suppress Damage Taken: The hero''s damage taken from skills during the enemy turn does not exceed 30% of Max HP.'
+        - 'Basic Stats Increase: Increases the hero''s basic stats by 100% when an enemy uses a Rank Up Skill during the enemy''s
+          turn.\n(Limit 10 times)'
+        habilidades:
+        - 'Inflicts Blaze damage equal to 170% of Attack on all enemies.\n\n*Blaze: +25% damage dealt per Ignite effect on
+          target.'
+        - 'Inflicts Blaze damage equal to 260% of Attack on all enemies.\n\n*Blaze: +25% damage dealt per Ignite effect on
+          target.'
+        - Inflicts damage equal to 240% of Attack on one enemy and depletes 4 Ultimate Move Gauge orb(s).
+        - Inflicts damage equal to 380% of Attack on one enemy and depletes 4 Ultimate Move Gauge orb(s).
+        - 'Taunts enemies for 2 turn(s), applying 2 Ignite effects on all enemies for 3 turns when attacked.\n\n*Taunt: Directs
+          all attacks to self.\n*Ignite: Damage taken by targets +10% (Can be stacked).'
+        - 'Inflicts damage equal to 250% of Attack on all enemies and Releases 100%.\n\n*Release: Deals additional damage
+          using remaining damage in Shock, Poison, and Bleed Debuffs.'
+perros_f4:
+  nombre: Transcendent Skoll and Hati
+  id_7dshub: 1103
+  fases:
+    1:
+      aleatorias: []
+      enemigos:
+      - nombre: Hati
+        atributo: oscuro
+        pasivas:
+        - 'Purgatory Energy: Uses "Short Temper" every odd-numbered turn.'
+        - 'Ominous Aura: Uses "Defensive Aggression" every even-numbered turn.'
+        - 'Skill Use Increase: Increases the number of skill uses by 2.'
+        - 'Immortality: The hero''s HP does not drop below 1.'
+        - 'Debuff Immunity: Immune to all Debuffs. No stats will decrease below their initial values. Blocks enemies'' Bloodstain
+          and Insight skill effects, including those of Ultimate Moves.'
+        - 'Grounded Attitude: Uses "Defensive Aggression" at the start of the battle.'
+        - 'Apply Buff: When an enemy removes the boss''s Stance, it applies Moonlight on all enemies for 2 turns, then removes
+          2 Moonwave Debuffs from them.\n\n*Moonlight: Attack-related stats +40%. Immune to Blindness.'
+        - 'Threatening Posture: When taking damage while assuming a Stance, 1 Moonwave is inflicted on all enemies for 3 turns,
+          then their Moonlight Buffs are removed.\n\n*Moonwave: All stats -5%.\nStuns for 2 turns when the effect reaches
+          max stacks.\n(Stacks 5 times)'
+        - 'Attack-related Stats Decrease: Decreases enemies'' Attack-related stats by 40%.'
+        habilidades:
+        - 'Inflicts 1 Moonwave on all enemies for 3 turn(s).\n\n*Moonwave: All stats -5%.\nStuns for 2 turns when the effect
+          reaches max stacks.\n(Stacks 5 times)'
+        - 'Inflicts 2 Moonwave stacks on all enemies for 3 turn(s).\n\n*Moonwave: All stats -5%.\nStuns for 2 turns when the
+          effect reaches max stacks.\n(Stacks 5 times)'
+        - Decreases allies' damage taken by 40% for 3 turn(s).\n(Can be stacked)
+        - 'Assumes a Stance for 2 turn(s) which Taunts enemies and reduces the final damage taken by 60% when an ally is attacked.
+          The caster takes 50% of the reduced damage.\n*Taunt: Directs all attacks to self.'
+      - nombre: Skoll
+        atributo: claro
+        pasivas:
+        - 'Purgatory Energy: Uses "Solar Blessing" every odd-numbered turn.'
+        - 'Ominous Aura: Uses "Flare Ball" every even-numbered turn.'
+        - 'Debuff Immunity: Immune to all Debuffs. No stats will decrease below their initial values. Blocks enemies'' Bloodstain
+          and Insight skill effects, including those of Ultimate Moves.'
+        - 'The Wolf That Seeks the Sun: Decreases damage taken from enemies without the Moonlight Buff by 100%. When the boss
+          uses the Ultimate Move, the target''s Moonlight Buff is removed.\n\n*Moonlight: Attack-related stats +40%. Immune
+          to Blindness.'
+        - 'Apply Debuff: Inflicts Blindness on all enemies for 2 turns at the end of the allies'' turn.\n\n*Blindness: Attack
+          Skills other than Ultimate Moves will miss. (Including counters)'
+        - 'Damage Dealt Increase: Increases the boss''s damage dealt by 100% when attacking an enemy affected by Blindness.\n\n*Blindness:
+          Attack Skills other than Ultimate Moves will miss. (Including counters)'
+        - 'Crit Chance/Crit Damage Increase: Increases the boss''s Crit Chance and Crit Damage by 10% for each Moonwave on
+          the enemy.\n(Limit 20 time(s))\n\n*Moonwave: All stats -5%.\nStuns for 2 turns when the effect reaches max stacks.\n(Stacks
+          5 times)'
+        - 'Counter and Reflect Damage Decrease: Decreases the hero''s damage taken from Counterattacks and Reflect by 500%.'
+        - 'Suppress Damage Taken: The hero''s damage taken from skills during the enemy turn does not exceed 30% of Max HP.'
+        - 'Basic Stats Increase: Increases the hero''s basic stats by 100% when an enemy uses a Rank Up Skill during the enemy''s
+          turn.\n(Limit 10 times)'
+        habilidades:
+        - 'Inflicts Co-destruction damage equal to 190% of Attack on one enemy.\n\n*Co-destruction: 20% increased damage per
+          Debuff on the target.'
+        - 'Inflicts Co-destruction damage equal to 300% of Attack on one enemy.\n\n*Co-destruction: 20% increased damage per
+          Debuff on the target.'
+        - 'Inflicts Blaze damage equal to 140% of Attack on all enemies.\n\n*Blaze: +25% damage dealt per Ignite effect on
+          target.'
+        - 'Inflicts Blaze damage equal to 220% of Attack on all enemies.\n\n*Blaze: +25% damage dealt per Ignite effect on
+          target.'
+        - Increases own Defense-related stats by 50% for 2 turn(s).
+        - 'Inflicts damage equal to 350% of Attack on one enemy and Lifesteals 200% of the damage.\n\n*Lifesteal: Heals for
+          a portion of the damage dealt.'
+    2:
+      aleatorias:
+      - Increases the hero's Attack by 5% for every Debuff applied on all enemies.
+      - Increases the hero's Crit Chance by 10% for every orb filled in the hero's Ultimate Move Gauge.
+      enemigos:
+      - nombre: Hati
+        atributo: oscuro
+        pasivas:
+        - 'Purgatory Energy: Uses "Shadow Black Hole" every odd-numbered turn.'
+        - 'Ominous Aura: Uses "Shadow Herd" every even-numbered turn.'
+        - 'Debuff Immunity: Immune to all Debuffs. No stats will decrease below their initial values. Blocks enemies'' Bloodstain
+          and Insight skill effects, including those of Ultimate Moves.'
+        - 'The Wolf that Seeks the Moon: Decreases damage taken from enemies without the Sunlight Buff by 100%. When the boss
+          uses their Ultimate Move, the target''s Sunlight Buff is removed.\n\n*Sunlight: Attack-related stats +40%. Immune
+          to Freeze.'
+        - 'Apply Debuff: Freezes all enemies for 2 turns at the end of the allies'' turn.\n\n*Freeze: Incapacitates target.
+          Effect is removed when target is attacked.'
+        - 'Damage Dealt Increase: Increases the boss''s damage dealt by 200% when attacking a Frozen enemy.\n\n*Freeze: Incapacitates
+          target. Effect is removed when target is attacked.'
+        - 'Crit Chance/Crit Damage Increase: Increases the boss''s Crit Chance and Crit Damage by 10% for each Sunwave on
+          the enemy.\n(Limit 20 time(s))\n\n*Sunwave: All stats -5%.\n1,000,000 fixed damage when the effect reaches max stacks.\n(Stacks
+          5 times)'
+        - 'Counter and Reflect Damage Decrease: Decreases the hero''s damage taken from Counterattacks and Reflect by 500%.'
+        - 'Suppress Damage Taken: The hero''s damage taken from skills during the enemy turn does not exceed 30% of Max HP.'
+        - 'Basic Stats Increase: Increases the hero''s basic stats by 100% when an enemy uses a Rank Up Skill during the enemy''s
+          turn.\n(Limit 10 times)'
+        habilidades:
+        - Inflicts damage equal to 210% of Attack on one enemy.
+        - 'Inflicts damage equal to 280% of Attack on one enemy and Freezes them for 1 turn(s).\n\n*Freeze: Incapacitates
+          target. Effect is removed when target is attacked.'
+        - 'Inflicts damage equal to 180% of Attack on all enemies. Infects for 1 turn(s).\n\n*Infect: Restricts Recovery-related
+          stats.'
+        - 'Inflicts damage equal to 260% of Attack on all enemies. Infects for 2 turn(s).\n\n*Infect: Restricts Recovery-related
+          stats.'
+        - Decreases the Attack-related stats of all enemies by 30% and disables Buff Skills for 2 turn(s).
+        - 'Inflicts Resonance damage equal to 300% of Attack on one enemy.\n\n*Resonance: +15% damage dealt for every Buff,
+          Debuff, and Stance on the target.'
+      - nombre: Skoll
+        atributo: claro
+        pasivas:
+        - 'Purgatory Energy: Uses "Short Temper" every odd-numbered turn.'
+        - 'Ominous Aura: Uses "Defensive Aggression" every even-numbered turn.'
+        - 'Skill Use Increase: Increases the number of skill uses by 2.'
+        - 'Immortality: The hero''s HP does not drop below 1.'
+        - 'Debuff Immunity: Immune to all Debuffs. No stats will decrease below their initial values. Blocks enemies'' Bloodstain
+          and Insight skill effects, including those of Ultimate Moves.'
+        - 'Grounded Attitude: Uses "Defensive Aggression" at the start of the battle.'
+        - 'Apply Buff: When an enemy removes the boss''s Stance, it applies Sunlight on all enemies for 2 turns, then removes
+          2 Sunwave Debuffs from them.\n\n*Sunlight: Attack-related stats +40%. Immune to Freeze.'
+        - 'Threatening Posture: When taking damage while assuming a Stance, 1 Sunwave is inflicted on all enemies for 3 turns,
+          then their Sunlight Buffs are removed.\n\n*Sunwave: All stats -5%.\n1,000,000 fixed damage when the effect reaches
+          max stacks.\n(Stacks 5 times)'
+        - 'Attack-related Stats Decrease: Decreases enemies'' Attack-related stats by 40%.'
+        habilidades:
+        - 'Inflicts 1 Sunwave on all enemies for 3 turn(s).\n\n*Sunwave: All stats -5%.\n1,000,000 fixed damage when the effect
+          reaches max stacks.\n(Stacks 5 times)'
+        - 'Inflicts 2 Sunwave stacks on all enemies for 3 turn(s).\n\n*Sunwave: All stats -5%.\n1,000,000 fixed damage when
+          the effect reaches max stacks.\n(Stacks 5 times)'
+        - Fills allies' Ultimate Move Gauges by 3 orb(s) every turn for 3 turn(s).
+        - 'Assumes a Stance for 2 turn(s) which Taunts enemies and reduces the final damage taken by 60% when an ally is attacked.
+          The caster takes 50% of the reduced damage.\n*Taunt: Directs all attacks to self.'
+    3:
+      aleatorias:
+      - Increases Crit Chance/Crit Damage as the hero's remaining HP decreases.\n(1% of max HP lost increases the stats by
+        0.2%)
+      - Increases HP-related stats by 2% at the start of the allies' turn if the hero takes damage.\n(Limit 10% time(s))
+      enemigos:
+      - nombre: Hati
+        atributo: oscuro
+        pasivas:
+        - 'Purgatory Energy: Uses "Shadow Black Hole" every odd-numbered turn.'
+        - 'Ominous Aura: Uses "Wolf Claw" every even-numbered turn.'
+        - 'Skill Use Increase: Increases the number of skill uses by 1.'
+        - 'Debuff Immunity: Immune to all Debuffs. No stats will decrease below their initial values. Blocks enemies'' Bloodstain
+          and Insight skill effects, including those of Ultimate Moves.'
+        - 'The Wolf that Seeks the Moon: If an enemy has both the Sunlight and Moonlight Buffs, all enemies gain the Light
+          of Dawn Buff, and Damage Suppression is removed from the boss.\n\n*Light of Dawn: All stats +40%. Immune to Sunwave
+          and Moonwave Debuffs.'
+        - 'Apply Debuff: When taking damage from a skill during the enemy''s turn, the attacker is inflicted with 1 Moonwave
+          for 3 turns.\n\n*Moonwave: All stats -5%.\nStuns for 2 turns when the effect reaches max stacks.\n(Stacks 5 times)'
+        - 'Crit Chance/Crit Damage Increase: Increases the boss''s Crit Chance and Crit Damage by 10% for each Sunwave on
+          the enemy.\n(Limit 20 time(s))\n\n*Sunwave: All stats -5%.\n1,000,000 fixed damage when the effect reaches max stacks.\n(Stacks
+          5 times)'
+        - 'Counter and Reflect Damage Decrease: Decreases the hero''s damage taken from Counterattacks and Reflect by 500%.'
+        - 'Damage Taken Decrease: If damage taken exceeds 20% of Max HP, final damage taken decreases by 50%.'
+        - 'Suppress Damage Taken: The hero''s damage taken from skills during the enemy turn does not exceed 30% of Max HP.'
+        - 'Basic Stats Increase: Increases the hero''s basic stats by 100% when an enemy uses a Rank Up Skill during the enemy''s
+          turn.\n(Limit 10 times)'
+        habilidades:
+        - 'Inflicts Co-destruction damage equal to 150% of Attack on all enemies.\n\n*Co-destruction: 20% increased damage
+          per Debuff on the target.'
+        - 'Inflicts Co-destruction damage equal to 240% of Attack on all enemies.\n\n*Co-destruction: 20% increased damage
+          per Debuff on the target.'
+        - Cancels Buffs and Stances on one enemy and inflicts damage equal to 220% of Attack.
+        - Cancels Buffs and Stances on one enemy and inflicts damage equal to 350% of Attack.
+        - 'Extorts 20% Attack and Defense from all enemies for 2 turn(s).\n\n*Extort: Decreases the target''s stats and increases
+          own stats by the same amount.'
+        - 'Inflicts damage equal to 180% of Attack and applies Poison and Bleed effects for 2 turn(s) on all enemies.\n\n*Bleed:
+          Additional damage equal to 90% of damage dealt at the end of every turn.\n*Poison: Additional damage equal to 60%
+          of damage dealt at the end of every turn.'
+      - nombre: Skoll
+        atributo: claro
+        pasivas:
+        - 'Purgatory Energy: Uses "Solar Blessing" every odd-numbered turn.'
+        - 'Ominous Aura: Uses "Wolf Claw" every even-numbered turn.'
+        - 'Skill Use Increase: Increases the number of skill uses by 1.'
+        - 'Debuff Immunity: Immune to all Debuffs. No stats will decrease below their initial values. Blocks enemies'' Bloodstain
+          and Insight skill effects, including those of Ultimate Moves.'
+        - 'The Wolf That Seeks the Sun: If an enemy has both the Sunlight and Moonlight Buffs, all enemies gain the Light
+          of Dawn Buff, and Damage Suppression is removed from the boss.\n\n*Light of Dawn: All stats +40%. Immune to Sunwave
+          and Moonwave Debuffs.'
+        - 'Apply Debuff: When taking damage from a skill during the enemy''s turn, the attacker is inflicted with 1 Sunwave
+          for 3 turns.\n\n*Sunwave: All stats -5%.\n1,000,000 fixed damage when the effect reaches max stacks.\n(Stacks 5
+          times)'
+        - 'Crit Chance/Crit Damage Increase: Increases the boss''s Crit Chance and Crit Damage by 10% for each Moonwave on
+          the enemy.\n(Limit 20 time(s))\n\n*Moonwave: All stats -5%.\nStuns for 2 turns when the effect reaches max stacks.\n(Stacks
+          5 times)'
+        - 'Counter and Reflect Damage Decrease: Decreases the hero''s damage taken from Counterattacks and Reflect by 500%.'
+        - 'Damage Taken Decrease: If damage taken exceeds 20% of Max HP, final damage taken decreases by 50%.'
+        - 'Suppress Damage Taken: The hero''s damage taken from skills during the enemy turn does not exceed 30% of Max HP.'
+        - 'Basic Stats Increase: Increases the hero''s basic stats by 100% when an enemy uses a Rank Up Skill during the enemy''s
+          turn.\n(Limit 10 times)'
+        habilidades:
+        - 'Inflicts Blaze damage equal to 170% of Attack on all enemies.\n\n*Blaze: +25% damage dealt per Ignite effect on
+          target.'
+        - 'Inflicts Blaze damage equal to 260% of Attack on all enemies.\n\n*Blaze: +25% damage dealt per Ignite effect on
+          target.'
+        - Inflicts damage equal to 240% of Attack on one enemy and depletes 4 Ultimate Move Gauge orb(s).
+        - Inflicts damage equal to 380% of Attack on one enemy and depletes 4 Ultimate Move Gauge orb(s).
+        - 'Taunts enemies for 2 turn(s), applying 2 Ignite effects on all enemies for 3 turns when attacked.\n\n*Taunt: Directs
+          all attacks to self.\n*Ignite: Damage taken by targets +10% (Can be stacked).'
+        - 'Inflicts damage equal to 250% of Attack on all enemies and Releases 100%.\n\n*Release: Deals additional damage
+          using remaining damage in Shock, Poison, and Bleed Debuffs.'
+serpiente_f1:
+  nombre: Corpse Farer Naglfar Floor 1
+  id_7dshub: 1010
+  fases:
+    1:
+      aleatorias: []
+      enemigos:
+      - nombre: Creepy Spore
+        atributo: oscuro
+        pasivas:
+        - 'Skill Use Increase: Increases the number of skill uses by 2.'
+        - 'Immunity: Immune to Skill Disable, Stat Decrease, Bleed, Poison, Shock, Stun, Petrify, Freeze, Corrosion, Oxidize,
+          Burn, Skill Effect Block, and Blackout, as well as Coerce, Expel, and Darkness.'
+        - 'Damage Taken Decrease: Decreases damage taken from skills by 1% for every 2% of the hero''s remaining HP.'
+        - 'Ultimate Move Damage Taken Decrease: Decreases the hero''s damage taken from Ultimate Moves by 30%.'
+        - 'HP Increase: Increases the hero''s Max HP by 3% for every Debuff applied on enemies.'
+        - 'HP-related Stats Decrease: Decreases the enemy''s Regeneration Rate, Recovery Rate, and Lifesteal by 40%.'
+        habilidades:
+        - 'Inflicts Weak Point damage equal to 160% of Attack on one enemy.\n\n*Weak Point: 3x damage against Debuffed enemies.'
+        - 'Inflicts Weak Point damage equal to 280% of Attack on one enemy.\n\n*Weak Point: 3x damage against Debuffed enemies.'
+        - 'Removes Buffs and Stances from all enemies, inflicts damage equal to 150% of Attack, then applies Poison and Bleed
+          for 2 turn(s).\n\n*Poison: Additional damage equal to 60% of damage dealt at the end of every turn.\n*Bleed: Additional
+          damage equal to 90% of damage dealt at the end of every turn.'
+        - 'Removes Buffs and Stances from all enemies, inflicts damage equal to 240% of Attack, then applies Poison and Bleed
+          for 2 turn(s).\n\n*Poison: Additional damage equal to 60% of damage dealt at the end of every turn.\n*Bleed: Additional
+          damage equal to 90% of damage dealt at the end of every turn.'
+    2:
+      aleatorias: []
+      enemigos:
+      - nombre: Source of the Corruption
+        atributo: oscuro
+        pasivas:
+        - 'Skill Use Increase: Increases the number of skill uses by 2.'
+        - 'Purgatory Energy: Uses "Hail of Thorns" every 2 turn(s).'
+        - 'Ominous Aura: Uses "Twisted Stinger" every 3 turn(s).'
+        - 'Debuff Immunity: The hero becomes immune to all Debuffs, as well as Coerce, Expel, and Darkness.'
+        - 'Damage Taken Decrease: Decreases damage taken from skills by 1% for every 2% of the hero''s remaining HP.'
+        - 'Ultimate Move Damage Taken Decrease: Decreases the hero''s damage taken from Ultimate Moves by 30%.'
+        - 'Suppress Damage Taken: The hero''s damage taken from skills during the enemy turn does not exceed 35% of Max HP.'
+        - 'HP-related Stats Decrease: Decreases the enemy''s Regeneration Rate, Recovery Rate, and Lifesteal by 40%.'
+        habilidades:
+        - 'Inflicts damage equal to 200% of Attack on one enemy. Extorts 50% Attack and Defense for 1 turn(s).\n\n*Extort:
+          Decreases the target''s stats and increases own stats by the same amount.'
+        - 'Inflicts damage equal to 340% of Attack on one enemy. Extorts 80% Attack and Defense for 1 turn(s).\n\n*Extort:
+          Decreases the target''s stats and increases own stats by the same amount.'
+        - 'Inflicts Pierce damage equal to 200% of Attack on one enemy, then decreases Max HP by 25% for 2 turn(s).\n\n*Pierce:
+          3x Pierce Rate Increase.'
+        - 'Inflicts Pierce damage equal to 340% of Attack on one enemy, then decreases Max HP by 40% for 2 turn(s).\n\n*Pierce:
+          3x Pierce Rate Increase.'
+        - Inflicts damage equal to 300% of Attack on all enemies and blocks all skill effects including those of Ultimate
+          Moves for 1 turn(s).\n(Excludes Stance and Recovery Skills)
+        - Assumes a Stance for 2 turn(s) and inflicts damage equal to 500% of Attack via counter when attacked.
+    3:
+      aleatorias:
+      - Increases the hero's Attack by 4% for every Debuff applied on all enemies.
+      - Increases Defense-related stats by 20% when surviving an Ultimate Move.\n(Limit 1% time(s))
+      - Decreases all enemies' Crit Resistance and Crit Defense by 20%.
+      enemigos:
+      - nombre: Corrupted Nidhoggr
+        atributo: oscuro
+        pasivas:
+        - 'Skill Use Increase: Increases the number of skill uses by 2.'
+        - 'Purgatory Energy: Uses "Massive Bump" every 2 turn(s).'
+        - 'Debuff Immunity: The hero becomes immune to all Debuffs, as well as Coerce, Expel, and Darkness.'
+        - 'Damage Taken Decrease: Decreases damage taken from skills by 1% for every 2% of the hero''s remaining HP.'
+        - 'Ultimate Move Damage Taken Decrease: Decreases the hero''s damage taken from Ultimate Moves by 30%.'
+        - 'Suppress Damage Taken: The hero''s damage taken from skills during the enemy turn does not exceed 35% of Max HP.'
+        - 'HP-related Stats Decrease: Decreases the enemy''s Regeneration Rate, Recovery Rate, and Lifesteal by 40%.'
+        habilidades:
+        - 'Inflicts damage equal to 195% of Attack on one enemy. Makes target(s) Bleed for 2 turn(s).\n\n*Bleed: Additional
+          damage equal to 90% of damage dealt at the end of every turn.'
+        - 'Inflicts damage equal to 325% of Attack on one enemy. Makes target(s) Bleed for 2 turn(s).\n\n*Bleed: Additional
+          damage equal to 90% of damage dealt at the end of every turn.'
+        - 'Inflicts damage equal to 210% of Attack on all enemies. Poisons for 3 turn(s).\n\n*Poison: Additional damage equal
+          to 60% of damage dealt at the end of every turn.'
+        - 'Inflicts damage equal to 350% of Attack on all enemies. Poisons for 3 turn(s).\n\n*Poison: Additional damage equal
+          to 60% of damage dealt at the end of every turn.'
+        - 'Inflicts Ruin damage equal to 300% of Attack on all enemies.\n\n*Ruin: Removes Debuff effects and inflicts +20%
+          damage per Debuff.'
+serpiente_f2:
+  nombre: Corpse Farer Naglfar Floor 2
+  id_7dshub: 1011
+  fases:
+    1:
+      aleatorias: []
+      enemigos:
+      - nombre: Creepy Spore
+        atributo: oscuro
+        pasivas:
+        - 'Skill Use Increase: Increases the number of skill uses by 2.'
+        - 'Purgatory Energy: Uses "Black Absorption" every 2 turn(s).'
+        - 'Ominous Aura: Uses "Defensive Thorns" every 3 turn(s).'
+        - 'Immunity: Immune to Skill Disable, Stat Decrease, Bleed, Poison, Shock, Stun, Petrify, Freeze, Corrosion, Oxidize,
+          Burn, Skill Effect Block, and Blackout, as well as Coerce, Expel, and Darkness.'
+        - 'Damage Taken Decrease: Decreases damage taken from skills by 1% for every 3% of the hero''s remaining HP.'
+        - 'Suppress Damage Taken: The hero''s damage taken from skills during the enemy turn does not exceed 35% of Max HP.'
+        - 'Basic Stats Increase: Increases the hero''s basic stats by 100% when an enemy uses a Rank Up Skill during the enemy''s
+          turn.\n(Limit 10 times)'
+        - 'HP-related Stats Decrease: Decreases the enemy''s Regeneration Rate, Recovery Rate, and Lifesteal by 40%.'
+        habilidades:
+        - 'Inflicts Weak Point damage equal to 150% of Attack on all enemies.\n\n*Weak Point: 3x damage against Debuffed enemies.'
+        - 'Inflicts Weak Point damage equal to 200% of Attack on all enemies.\n\n*Weak Point: 3x damage against Debuffed enemies.'
+        - 'Inflicts damage equal to 170% of Attack on all enemies and inflicts Corrosion damage equal to 10% of the remaining
+          HP.\n\n*Corrosion: Additional damage at the end of every turn. (Can be stacked)'
+        - 'Inflicts damage equal to 200% of Attack on all enemies and applies 2 Corrosion effects equal to 10% of the remaining
+          HP.\n\n*Corrosion: Additional damage at the end of every turn. (Can be stacked)'
+        - 'Applies an effect for 2 turn(s) which restores 20% of damage taken when attacked, then inflicts Spore damage equal
+          to 1% of Max HP on self.\n\n*Spore: Additional damage at the end of every turn. (Can be stacked)'
+        - 'Assumes a Stance for 2 turn(s), inflicting damage equal to 500% of Attack via counter when attacked. If the enemy
+          has 3 or more Corrosion effects, the effects are removed and Stun is applied for 2 turns.\n\n*Stun: Prohibits all
+          actions.'
+    2:
+      aleatorias: []
+      enemigos:
+      - nombre: Source of the Corruption
+        atributo: oscuro
+        pasivas:
+        - 'Skill Use Increase: Increases the number of skill uses by 2.'
+        - 'Purgatory Energy: Uses "Twisted Stinger" every 2 turn(s).'
+        - 'Debuff Immunity: The hero becomes immune to all Debuffs, as well as Coerce, Expel, and Darkness.'
+        - 'Damage Taken Decrease: Decreases damage taken from skills by 1% for every 3% of the hero''s remaining HP.'
+        - 'Suppress Damage Taken: The hero''s damage taken from skills during the enemy turn does not exceed 35% of Max HP.'
+        - 'Basic Stats Increase: Increases the hero''s basic stats by 100% when an enemy uses a Rank Up Skill during the enemy''s
+          turn.\n(Limit 10 times)'
+        - 'HP-related Stats Decrease: Decreases the enemy''s Regeneration Rate, Recovery Rate, and Lifesteal by 40%.'
+        habilidades:
+        - Inflicts damage equal to 200% of Attack on one enemy.\nDecreases Defense-related stats by 30% for 1 turn(s).
+        - Inflicts damage equal to 320% of Attack on one enemy.\nDecreases Defense-related stats by 40% for 2 turn(s).
+        - Inflicts damage equal to 290% of Attack on one enemy, disables Ultimate Moves for 2 turn(s), then depletes 1 Ultimate
+          Move Gauge orb(s) at the end of the enemy's turn.
+        - Inflicts damage equal to 370% of Attack on one enemy, disables Ultimate Moves for 2 turn(s), then depletes 1 Ultimate
+          Move Gauge orb(s) at the end of the enemy's turn.
+        - Assumes a Stance for 2 turn(s) and inflicts damage equal to 500% of Attack via counter when attacked.
+    3:
+      aleatorias:
+      - Increases the hero's HP by 15%.
+      - The hero ignores 40% of enemy Defense when using skills.(Applies before skill activation)
+      - Decreases the damage this hero takes from enemies by 20%.
+      enemigos:
+      - nombre: Corrupted Nidhoggr
+        atributo: oscuro
+        pasivas:
+        - 'Skill Use Increase: Increases the number of skill uses by 2.'
+        - 'Purgatory Energy: Uses "Massive Bump" every 2 turn(s).'
+        - 'Ominous Aura: Uses "Massive Bite" every 3 turn(s).'
+        - 'Debuff Immunity: The hero becomes immune to all Debuffs, as well as Coerce, Expel, and Darkness.'
+        - 'Damage Taken Decrease: Decreases damage taken from skills by 1% for every 3% of the hero''s remaining HP.'
+        - 'Basic Stats Increase: Increases the hero''s basic stats by 100% when an enemy uses a Rank Up Skill during the enemy''s
+          turn.\n(Limit 10 times)'
+        - 'HP-related Stats Decrease: Decreases the enemy''s Regeneration Rate, Recovery Rate, and Lifesteal by 40%.'
+        - 'Suppress Damage Taken: The hero''s damage taken from skills during the enemy turn does not exceed 35% of Max HP.'
+        habilidades:
+        - Removes Buffs from one enemy and inflicts damage equal to 300% of Attack.
+        - Cancels Buffs and Stances on one enemy and inflicts damage equal to 400% of Attack.
+        - 'Inflicts damage equal to 150% of Attack on all enemies and Lifesteals 30% of the damage.\n\n*Lifesteal: Heals for
+          a portion of the damage dealt.'
+        - 'Inflicts damage equal to 250% of Attack on all enemies and Lifesteals 30% of the damage.\n\n*Lifesteal: Heals for
+          a portion of the damage dealt.'
+        - 'Inflicts Detonate damage equal to 180% of Attack on all enemies.\n\n*Detonate: 20% additional damage per orb in
+          the target''s Ultimate Move Gauge.'
+        - Inflicts damage equal to 300% of Attack on all enemies, decreases skill ranks, then depletes the Ultimate Move Gauge
+          by the number of skills that had ranks decreased.
+serpiente_f3:
+  nombre: Corpse Farer Naglfar Floor 3
+  id_7dshub: 1012
+  fases:
+    1:
+      aleatorias: []
+      enemigos:
+      - nombre: Creepy Spore
+        atributo: oscuro
+        pasivas:
+        - 'Skill Use Increase: Increases the number of skill uses by 2.'
+        - 'Purgatory Energy: Uses "Black Absorption" every 2 turn(s).'
+        - 'Ominous Aura: Uses "Defensive Thorns" every 3 turn(s).'
+        - 'Debuff Immunity: The hero becomes immune to all Debuffs, as well as Coerce, Expel, and Darkness.'
+        - 'Damage Taken Decrease: Decreases damage taken from skills by 1% for every 3% of the hero''s remaining HP.'
+        - 'Suppress Damage Taken: The hero''s damage taken from skills during the enemy turn does not exceed 35% of Max HP.'
+        - 'Basic Stats Increase: Increases the hero''s basic stats by 100% when an enemy uses a Rank Up Skill during the enemy''s
+          turn.\n(Limit 10 times)'
+        - 'HP-related Stats Decrease: Decreases the enemy''s Regeneration Rate, Recovery Rate, and Lifesteal by 40%.'
+        - 'Threatening Posture: Applies Infect on all enemies for 2 turn(s) when assuming a Stance.'
+        habilidades:
+        - 'Inflicts Co-destruction damage equal to 155% of Attack on all enemies.\n\n*Co-destruction: 20% increased damage
+          per Debuff on the target.'
+        - 'Inflicts Co-destruction damage equal to 220% of Attack on all enemies.\n\n*Co-destruction: 30% increased damage
+          per Debuff on the target.'
+        - 'Inflicts Quell damage equal to 180% of Defense on all enemies.\n\n*Quell: Damage dealt +50% per active Stance on
+          self.'
+        - 'Inflicts Quell damage equal to 250% of Defense on all enemies.\n\n*Quell: Damage dealt +50% per active Stance on
+          self.'
+        - Increases Attack by 60% for 2 turn(s).
+        - Assumes a Stance for 2 turn(s) and inflicts damage equal to 500% of Attack via counter when attacked.
+    2:
+      aleatorias: []
+      enemigos:
+      - nombre: Source of the Corruption
+        atributo: oscuro
+        pasivas:
+        - 'Skill Use Increase: Increases the number of skill uses by 2.'
+        - 'Purgatory Energy: Uses "Twisted Stinger" every 2 turn(s).'
+        - 'Debuff Immunity: The hero becomes immune to all Debuffs, as well as Coerce, Expel, and Darkness.'
+        - 'Damage Taken Decrease: Decreases damage taken from skills by 1% for every 3% of the hero''s remaining HP.'
+        - 'Suppress Damage Taken: The hero''s damage taken from skills during the enemy turn does not exceed 35% of Max HP.'
+        - 'Basic Stats Increase: Increases the hero''s basic stats by 100% when an enemy uses a Rank Up Skill during the enemy''s
+          turn.\n(Limit 10 times)'
+        - 'HP-related Stats Decrease: Decreases the enemy''s Regeneration Rate, Recovery Rate, and Lifesteal by 40%.'
+        habilidades:
+        - 'Inflicts Covert Action damage equal to 200% of Attack on one enemy.\n\n*Covert Action: +50% damage dealt per Darkness
+          on target.'
+        - 'Inflicts Covert Action damage equal to 300% of Attack on one enemy.\n\n*Covert Action: +50% damage dealt per Darkness
+          on target.'
+        - Cancels Buffs and Stances on one enemy and inflicts damage equal to 240% of Attack.
+        - Cancels Buffs and Stances on one enemy and inflicts damage equal to 360% of Attack.
+        - 'Assumes a Stance for 2 turn(s) and inflicts damage equal to 500% of Attack via counter when attacked. Lifesteals
+          100% of the damage.\n\n*Lifesteal: Heals for a portion of the damage dealt.'
+    3:
+      aleatorias:
+      - Increases the hero's Crit Damage by 5% per hero skill use.\n(Limit 10% time(s))
+      - Increases the hero's Attack by 3% at the end of the allies' turn.\n(Limit 5% times)
+      - Fills the hero's Ultimate Move Gauge by 1 orb(s) at the start of the battle.
+      enemigos:
+      - nombre: Corrupted Nidhoggr
+        atributo: oscuro
+        pasivas:
+        - 'Skill Use Increase: Increases the number of skill uses by 2.'
+        - 'Purgatory Energy: Uses "Massive Bite" every 2 turn(s).'
+        - 'Ominous Aura: Uses "Death Throes" every 3 turn(s).'
+        - 'Debuff Immunity: The hero becomes immune to all Debuffs, as well as Coerce, Expel, and Darkness.'
+        - 'Basic Stats Increase: Increases the hero''s basic stats by 100% when an enemy uses a Rank Up Skill during the enemy''s
+          turn.\n(Limit 10 times)'
+        - 'HP-related Stats Decrease: Decreases the enemy''s Regeneration Rate, Recovery Rate, and Lifesteal by 40%.'
+        habilidades:
+        - 'Inflicts damage equal to 195% of Attack on one enemy. Makes target(s) Bleed for 2 turn(s).\n\n*Bleed: Additional
+          damage equal to 90% of damage dealt at the end of every turn.'
+        - 'Inflicts damage equal to 325% of Attack on one enemy. Makes target(s) Bleed for 2 turn(s).\n\n*Bleed: Additional
+          damage equal to 90% of damage dealt at the end of every turn.'
+        - 'Inflicts damage equal to 210% of Attack on all enemies. Poisons for 3 turn(s).\n\n*Poison: Additional damage equal
+          to 60% of damage dealt at the end of every turn.'
+        - 'Inflicts damage equal to 350% of Attack on all enemies. Poisons for 3 turn(s).\n\n*Poison: Additional damage equal
+          to 60% of damage dealt at the end of every turn.'
+        - Inflicts damage equal to 300% of Attack on all enemies, decreases skill ranks, then depletes the Ultimate Move Gauge
+          by the number of skills that had ranks decreased.
+        - 'Assumes a Stance that decreases damage taken by 20% for 2 turn(s), Reflecting 100% of damage taken.\n*Reflect:
+          Returns a portion of damage taken back to the attacker.'
+rata_f1:
+  nombre: Troublemaker's Hideout Floor 1
+  id_7dshub: 1013
+  fases:
+    1:
+      aleatorias: []
+      enemigos:
+      - nombre: Ratatoskr
+        atributo: claro
+        pasivas:
+        - 'Purgatory Energy: Uses "Brilliant Fruit" every 1 turn(s) at Suspicious Wooden Device 3.'
+        - 'Ominous Aura: Uses "Static Shell" every 2 turn(s) at Suspicious Wooden Device 2.'
+        - 'Skill Use Increase: The number of skill uses is fixed to 3.'
+        - 'Basic Stat Increase: Increases the hero''s basic stats by 2% for every Debuff applied on all enemies.\n(Limit 10
+          time(s))'
+        - 'Counter and Reflect Damage Decrease: Decreases the hero''s damage taken from Counterattacks and Reflect by 500%.'
+        - 'Attack Increase: Only 1 Debuff(s) can be applied. Increases Attack by 5% when Debuffed.'
+        - 'Remove Buffs: Removes all Buffs from enemies with Debuff Immunity at the start of the allies'' turn.'
+        - 'HP-related Stats Decrease: Decreases the enemy''s Regeneration Rate, Recovery Rate, and Lifesteal by 40%.'
+        - 'Suppress Damage Taken: The hero''s damage taken from skills during the enemy turn does not exceed 40% of Max HP.'
+        habilidades:
+        - 'Inflicts damage equal to 200% of Attack and applies a Food Poisoning effect for 5 turn(s) on all enemies.\n\n*Food
+          Poisoning: Additional damage equal to 5% of Max HP at the end of every turn.\n(Can be stacked)'
+        - 'Inflicts damage equal to 300% of Attack and applies a Food Poisoning effect for 5 turn(s) on all enemies.\n\n*Food
+          Poisoning: Additional damage equal to 5% of Max HP at the end of every turn.\n(Can be stacked)'
+        - 'Inflicts Spike damage equal to 250% of Attack on one enemy.\n\n*Spike: 2x Crit Damage Increase.'
+        - 'Inflicts Spike damage equal to 350% of Attack on one enemy.\n\n*Spike: 2x Crit Damage Increase.'
+        - Heals the hero's diminished HP by 20% and fills the Ultimate Move Gauge by 2 orb(s).
+        - Assumes a Stance for 2 turn(s) which increases HP-related stats by 30%.
+      - nombre: Suspicious Wooden Device 1
+        atributo: rojo
+        pasivas:
+        - 'HP Increase: Increases the hero''s HP by 100%.'
+        habilidades: []
+      - nombre: Suspicious Wooden Device 2
+        atributo: verde
+        pasivas:
+        - 'Solid Stance: Decreases the hero''s damage taken by 90% when assuming a Stance.'
+        - 'The Beginning of Vengeance: The hero''s Debuffs are removed when using Stance Skills. The hero gains Debuff Immunity
+          for 2 turns.\n(Excluding Ultimate Moves)'
+        - 'Grounded Attitude: The Demonic Beast does not move if it is assuming a Stance by Suspicious Wooden Device 2.'
+        habilidades: []
+      - nombre: Suspicious Wooden Device 3
+        atributo: azul
+        pasivas:
+        - 'Attack Increase: Increases the hero''s Attack by 30%.'
+        habilidades: []
+    2:
+      aleatorias: []
+      enemigos:
+      - nombre: Ratatoskr
+        atributo: claro
+        pasivas:
+        - 'Purgatory Energy: Uses "Brilliant Fruit" every 1 turn(s) at Suspicious Wooden Device 3.'
+        - 'Ominous Aura: Uses "Static Shell" every 2 turn(s) at Suspicious Wooden Device 2.'
+        - 'Skill Use Increase: The number of skill uses is fixed to 3.'
+        - 'Basic Stat Increase: Increases the hero''s basic stats by 2% for every Debuff applied on all enemies.\n(Limit 10
+          time(s))'
+        - 'Counter and Reflect Damage Decrease: Decreases the hero''s damage taken from Counterattacks and Reflect by 500%.'
+        - 'Attack Increase: Only 1 Debuff(s) can be applied. Increases Attack by 5% when Debuffed.'
+        - 'Remove Buffs: Removes all Buffs from enemies with Debuff Immunity at the start of the allies'' turn.'
+        - 'HP-related Stats Decrease: Decreases the enemy''s Regeneration Rate, Recovery Rate, and Lifesteal by 40%.'
+        habilidades:
+        - 'Inflicts damage equal to 200% of Attack and applies a Food Poisoning effect for 5 turn(s) on all enemies.\n\n*Food
+          Poisoning: Additional damage equal to 5% of Max HP at the end of every turn.\n(Can be stacked)'
+        - 'Inflicts damage equal to 300% of Attack and applies a Food Poisoning effect for 5 turn(s) on all enemies.\n\n*Food
+          Poisoning: Additional damage equal to 5% of Max HP at the end of every turn.\n(Can be stacked)'
+        - 'Inflicts Pierce damage equal to 250% of Attack on one enemy.\n\n*Pierce: 3x Pierce Rate Increase.'
+        - 'Inflicts Pierce damage equal to 350% of Attack on one enemy.\n\n*Pierce: 3x Pierce Rate Increase.'
+        - Heals the hero's diminished HP by 20% and fills the Ultimate Move Gauge by 2 orb(s).
+        - Assumes a Stance for 2 turn(s) which increases HP-related stats by 30%.
+      - nombre: Suspicious Wooden Device 1
+        atributo: rojo
+        pasivas:
+        - 'HP Increase: Increases the hero''s HP by 100%.'
+        - 'Suppress Damage Taken: The hero''s damage taken from skills during the enemy turn does not exceed 40% of Max HP.'
+        habilidades: []
+      - nombre: Suspicious Wooden Device 2
+        atributo: verde
+        pasivas:
+        - 'Solid Stance: Decreases the hero''s damage taken by 90% when assuming a Stance.'
+        - 'The Beginning of Vengeance: The hero''s Debuffs are removed when using Stance Skills. The hero gains Debuff Immunity
+          for 2 turns.\n(Excluding Ultimate Moves)'
+        - 'Suppress Damage Taken: The hero''s damage taken from skills during the enemy turn does not exceed 40% of Max HP.'
+        - 'Grounded Attitude: The Demonic Beast does not move if it is assuming a Stance by Suspicious Wooden Device 2.'
+        habilidades: []
+      - nombre: Suspicious Wooden Device 3
+        atributo: azul
+        pasivas:
+        - 'Attack Increase: Increases the hero''s Attack by 30%.'
+        - 'Suppress Damage Taken: The hero''s damage taken from skills during the enemy turn does not exceed 40% of Max HP.'
+        habilidades: []
+    3:
+      aleatorias:
+      - The hero ignores 40% of enemy Defense when using skills.(Applies before skill activation)
+      - Increases the hero's Crit Chance and Crit Damage by 20%.
+      enemigos:
+      - nombre: Ratatoskr
+        atributo: claro
+        pasivas:
+        - 'Purgatory Energy: Uses "Lightning Speed" every 1 turn(s).'
+        - 'Ominous Aura: Uses "Static Shell" every 2 turn(s) at Suspicious Wooden Device 2.'
+        - 'Skill Use Increase: The number of skill uses is fixed to 3.'
+        - 'Basic Stat Increase: Increases the hero''s basic stats by 2% for every Debuff applied on all enemies.\n(Limit 10
+          time(s))'
+        - 'Counter and Reflect Damage Decrease: Decreases the hero''s damage taken from Counterattacks and Reflect by 500%.'
+        - 'Attack Increase: Only 1 Debuff(s) can be applied. Increases Attack by 5% when Debuffed.'
+        - 'Remove Buffs: Removes all Buffs from enemies with Debuff Immunity at the start of the allies'' turn.'
+        - 'HP-related Stats Decrease: Decreases the enemy''s Regeneration Rate, Recovery Rate, and Lifesteal by 40%.'
+        habilidades:
+        - 'Inflicts damage equal to 250% of Attack and applies a Food Poisoning effect for 5 turn(s) on one enemy.\n\n*Food
+          Poisoning: Additional damage equal to 5% of Max HP at the end of every turn.\n(Can be stacked)'
+        - 'Inflicts damage equal to 350% of Attack and applies 2 Food Poisoning effects for 5 turn(s) on one enemy.\n\n*Food
+          Poisoning: Additional damage equal to 5% of Max HP at the end of every turn.\n(Can be stacked)'
+        - 'Inflicts Sever damage equal to 200% of Attack on all enemies.\n\n*Sever: 3x Crit Chance Increase.'
+        - 'Inflicts Sever damage equal to 300% of Attack on all enemies.\n\n*Sever: 3x Crit Chance Increase.'
+        - 'Inflicts Weak Point damage equal to 100% of Attack on all enemies.\n\n*Weak Point: 3x damage against Debuffed enemies.'
+        - Assumes a Stance for 2 turn(s) which increases HP-related stats by 30%.
+      - nombre: Suspicious Wooden Device 1
+        atributo: rojo
+        pasivas:
+        - 'HP Increase: Increases the hero''s HP by 100%.'
+        - 'Suppress Damage Taken: The hero''s damage taken from skills during the enemy turn does not exceed 40% of Max HP.'
+        habilidades: []
+      - nombre: Suspicious Wooden Device 2
+        atributo: verde
+        pasivas:
+        - 'Solid Stance: Decreases the hero''s damage taken by 90% when assuming a Stance.'
+        - 'The Beginning of Vengeance: The hero''s Debuffs are removed when using Stance Skills. The hero gains Debuff Immunity
+          for 2 turns.\n(Excluding Ultimate Moves)'
+        - 'Suppress Damage Taken: The hero''s damage taken from skills during the enemy turn does not exceed 40% of Max HP.'
+        - 'Grounded Attitude: The Demonic Beast does not move if it is assuming a Stance by Suspicious Wooden Device 2.'
+        habilidades: []
+      - nombre: Suspicious Wooden Device 3
+        atributo: azul
+        pasivas:
+        - 'Attack Increase: Increases the hero''s Attack by 30%.'
+        - 'Suppress Damage Taken: The hero''s damage taken from skills during the enemy turn does not exceed 40% of Max HP.'
+        habilidades: []
+rata_f2:
+  nombre: Troublemaker's Hideout Floor 2
+  id_7dshub: 1014
+  fases:
+    1:
+      aleatorias:
+      - Increases the hero's Attack by 10% at the start of the next turn if the hero doesn't take damage.\n(Resets upon taking
+        damage)
+      - Increases the hero's basic stats by 10% when an enemy uses a Rank Up Skill during the enemy's turn.\n(Limit 10 times)
+      enemigos:
+      - nombre: Ratatoskr
+        atributo: claro
+        pasivas:
+        - 'Purgatory Energy: Uses "Lightning Speed" every 2 turn(s).'
+        - 'Ominous Aura: Uses "Static Shell" every 2 turn(s) at Suspicious Wooden Device 2.'
+        - 'Skill Use Increase: The number of skill uses is fixed to 3.'
+        - 'Basic Stat Increase: Increases the hero''s basic stats by 2% for every Debuff applied on all enemies.\n(Limit 10
+          time(s))'
+        - 'Counter and Reflect Damage Decrease: Decreases the hero''s damage taken from Counterattacks and Reflect by 500%.'
+        - 'Attack Increase: Only 1 Debuff(s) can be applied. Increases Attack by 5% when Debuffed.'
+        - 'Remove Buffs: Removes all Buffs from enemies with Debuff Immunity at the start of the allies'' turn.'
+        - 'HP-related Stats Decrease: Decreases the enemy''s Regeneration Rate, Recovery Rate, and Lifesteal by 40%.'
+        - 'Suppress Damage Taken: The hero''s damage taken from skills during the enemy turn does not exceed 33% of Max HP.'
+        - 'World Tree''s Troublemaker: Applies Immortality on self if the Suspicious Wooden Devices 2 and 3 have HP remaining.'
+        habilidades:
+        - 'Inflicts damage equal to 250% of Attack and applies a Food Poisoning effect for 5 turn(s) on one enemy.\n\n*Food
+          Poisoning: Additional damage equal to 5% of Max HP at the end of every turn.\n(Can be stacked)'
+        - 'Inflicts damage equal to 350% of Attack and applies 2 Food Poisoning effects for 5 turn(s) on one enemy.\n\n*Food
+          Poisoning: Additional damage equal to 5% of Max HP at the end of every turn.\n(Can be stacked)'
+        - 'Inflicts damage equal to 200% of Attack and applies a Food Poisoning effect for 5 turn(s) on all enemies.\n\n*Food
+          Poisoning: Additional damage equal to 5% of Max HP at the end of every turn.\n(Can be stacked)'
+        - 'Inflicts damage equal to 300% of Attack and applies a Food Poisoning effect for 5 turn(s) on all enemies.\n\n*Food
+          Poisoning: Additional damage equal to 5% of Max HP at the end of every turn.\n(Can be stacked)'
+        - 'Inflicts Weak Point damage equal to 100% of Attack on all enemies.\n\n*Weak Point: 3x damage against Debuffed enemies.'
+        - Assumes a Stance for 2 turn(s) which increases HP-related stats by 30% and fixes all damage taken to 1 when attacked.
+      - nombre: Suspicious Wooden Device 1
+        atributo: rojo
+        pasivas:
+        - 'HP Increase: Increases the hero''s HP by 100%.'
+        habilidades: []
+      - nombre: Suspicious Wooden Device 2
+        atributo: verde
+        pasivas:
+        - 'Solid Stance: Decreases the hero''s damage taken by 90% when assuming a Stance.'
+        - 'The Beginning of Vengeance: The hero''s Debuffs are removed when using Stance Skills. The hero gains Debuff Immunity
+          for 2 turns.\n(Excluding Ultimate Moves)'
+        - 'Grounded Attitude: The Demonic Beast does not move if it is assuming a Stance by Suspicious Wooden Device 2.'
+        habilidades: []
+      - nombre: Suspicious Wooden Device 3
+        atributo: azul
+        pasivas:
+        - 'Attack Increase: Increases the hero''s Attack by 30%.'
+        habilidades: []
+    2:
+      aleatorias: []
+      enemigos:
+      - nombre: Ratatoskr
+        atributo: claro
+        pasivas:
+        - 'Purgatory Energy: Uses "Brilliant Fruit" every 1 turn(s) at Suspicious Wooden Device 3.'
+        - 'Ominous Aura: Uses "Static Shell" every 2 turn(s) at Suspicious Wooden Device 2.'
+        - 'Skill Use Increase: The number of skill uses is fixed to 3.'
+        - 'Basic Stat Increase: Increases the hero''s basic stats by 2% for every Debuff applied on all enemies.\n(Limit 10
+          time(s))'
+        - 'Counter and Reflect Damage Decrease: Decreases the hero''s damage taken from Counterattacks and Reflect by 500%.'
+        - 'Attack Increase: Only 1 Debuff(s) can be applied. Increases Attack by 5% when Debuffed.'
+        - 'Remove Buffs: Removes all Buffs from enemies with Debuff Immunity at the start of the allies'' turn.'
+        - 'HP-related Stats Decrease: Decreases the enemy''s Regeneration Rate, Recovery Rate, and Lifesteal by 40%.'
+        - 'World Tree''s Troublemaker: Applies Immortality on self if the Suspicious Wooden Devices 2 and 3 have HP remaining.'
+        habilidades:
+        - 'Inflicts damage equal to 250% of Attack and applies a Food Poisoning effect for 5 turn(s) on one enemy.\n\n*Food
+          Poisoning: Additional damage equal to 5% of Max HP at the end of every turn.\n(Can be stacked)'
+        - 'Inflicts damage equal to 350% of Attack and applies 2 Food Poisoning effects for 5 turn(s) on one enemy.\n\n*Food
+          Poisoning: Additional damage equal to 5% of Max HP at the end of every turn.\n(Can be stacked)'
+        - 'Inflicts Weak Point damage equal to 100% of Attack on all enemies.\n\n*Weak Point: 3x damage against Debuffed enemies.'
+        - 'Inflicts Weak Point damage equal to 200% of Attack on all enemies.\n\n*Weak Point: 3x damage against Debuffed enemies.'
+        - Heals the hero's diminished HP by 20% and fills the Ultimate Move Gauge by 2 orb(s).
+        - Assumes a Stance for 2 turn(s) which increases HP-related stats by 30% and fixes all damage taken to 1 when attacked.
+      - nombre: Suspicious Wooden Device 1
+        atributo: rojo
+        pasivas:
+        - 'HP Increase: Increases the hero''s HP by 100%.'
+        - 'Suppress Damage Taken: The hero''s damage taken from skills during the enemy turn does not exceed 33% of Max HP.'
+        habilidades: []
+      - nombre: Suspicious Wooden Device 2
+        atributo: verde
+        pasivas:
+        - 'Solid Stance: Decreases the hero''s damage taken by 90% when assuming a Stance.'
+        - 'The Beginning of Vengeance: The hero''s Debuffs are removed when using Stance Skills. The hero gains Debuff Immunity
+          for 2 turns.\n(Excluding Ultimate Moves)'
+        - 'Suppress Damage Taken: The hero''s damage taken from skills during the enemy turn does not exceed 33% of Max HP.'
+        - 'Grounded Attitude: The Demonic Beast does not move if it is assuming a Stance by Suspicious Wooden Device 2.'
+        habilidades: []
+      - nombre: Suspicious Wooden Device 3
+        atributo: azul
+        pasivas:
+        - 'Attack Increase: Increases the hero''s Attack by 30%.'
+        - 'Suppress Damage Taken: The hero''s damage taken from skills during the enemy turn does not exceed 33% of Max HP.'
+        habilidades: []
+    3:
+      aleatorias:
+      - Increases the hero's Attack by 2% at the end of the allies' turn.\n(Limit 5% times)
+      - Increases the hero's Crit Damage by 10% for each orb removed from the hero's Ultimate Move Gauge.\n(Limit 10% time(s),
+        excludes depletion from Ultimate Move use)
+      enemigos:
+      - nombre: Ratatoskr
+        atributo: claro
+        pasivas:
+        - 'Purgatory Energy: Uses "Brilliant Fruit" every 2 turn(s) at Suspicious Wooden Device 3.'
+        - 'Ominous Aura: Uses "Static Shell" every 2 turn(s) at Suspicious Wooden Device 2.'
+        - 'Skill Use Increase: The number of skill uses is fixed to 3.'
+        - 'Basic Stat Increase: Increases the hero''s basic stats by 2% for every Debuff applied on all enemies.\n(Limit 10
+          time(s))'
+        - 'Counter and Reflect Damage Decrease: Decreases the hero''s damage taken from Counterattacks and Reflect by 500%.'
+        - 'Attack Increase: Only 1 Debuff(s) can be applied. Increases Attack by 5% when Debuffed.'
+        - 'Remove Buffs: Removes all Buffs from enemies with Debuff Immunity at the start of the allies'' turn.'
+        - 'HP-related Stats Decrease: Decreases the enemy''s Regeneration Rate, Recovery Rate, and Lifesteal by 40%.'
+        - 'HP Recovery: Removes the hero''s Debuffs, fully heals their HP, and increases all stats by 5% when the hero survives
+          with 30% HP or less.\n(Limit once)'
+        habilidades:
+        - 'Inflicts damage equal to 200% of Attack and applies a Food Poisoning effect for 5 turn(s) on all enemies.\n\n*Food
+          Poisoning: Additional damage equal to 5% of Max HP at the end of every turn.\n(Can be stacked)'
+        - 'Inflicts damage equal to 300% of Attack and applies a Food Poisoning effect for 5 turn(s) on all enemies.\n\n*Food
+          Poisoning: Additional damage equal to 5% of Max HP at the end of every turn.\n(Can be stacked)'
+        - 'Inflicts Weak Point damage equal to 100% of Attack on all enemies.\n\n*Weak Point: 3x damage against Debuffed enemies.'
+        - 'Inflicts Weak Point damage equal to 200% of Attack on all enemies.\n\n*Weak Point: 3x damage against Debuffed enemies.'
+        - Applies 10 effects to the hero for 2 turns which increases all stats by 10%.
+        - Assumes a Stance for 2 turn(s) which increases HP-related stats by 30% and fixes all damage taken to 1 when attacked.
+      - nombre: Suspicious Wooden Device 1
+        atributo: rojo
+        pasivas:
+        - 'HP Increase: Increases the hero''s HP by 100%.'
+        - 'Suppress Damage Taken: The hero''s damage taken from skills during the enemy turn does not exceed 33% of Max HP.'
+        habilidades: []
+      - nombre: Suspicious Wooden Device 2
+        atributo: verde
+        pasivas:
+        - 'Solid Stance: Decreases the hero''s damage taken by 90% when assuming a Stance.'
+        - 'The Beginning of Vengeance: The hero''s Debuffs are removed when using Stance Skills. The hero gains Debuff Immunity
+          for 2 turns.\n(Excluding Ultimate Moves)'
+        - 'Suppress Damage Taken: The hero''s damage taken from skills during the enemy turn does not exceed 33% of Max HP.'
+        - 'Suspicious Effect: Applies Immortality on the Demonic Beast if this Wooden Device has HP remaining.'
+        - 'Grounded Attitude: The Demonic Beast does not move if it is assuming a Stance by Suspicious Wooden Device 2.'
+        habilidades: []
+      - nombre: Suspicious Wooden Device 3
+        atributo: azul
+        pasivas:
+        - 'Attack-related Stats Increase: Increases allies'' Attack-related stats by 20%.'
+        - 'Suppress Damage Taken: The hero''s damage taken from skills during the enemy turn does not exceed 33% of Max HP.'
+        - 'Suspicious Effect: Increases the Demonic Beast''s HP by 500% if this Wooden Device has HP remaining.'
+        habilidades: []
+rata_f3:
+  nombre: Troublemaker's Hideout Floor 3
+  id_7dshub: 1015
+  fases:
+    1:
+      aleatorias:
+      - Decreases the damage this hero takes from enemies by 10%.
+      - Applies an effect on the hero which increases max HP by 15% at the start of the battle.\n(Applies when entering battle)
+      enemigos:
+      - nombre: Ratatoskr
+        atributo: claro
+        pasivas:
+        - 'Purgatory Energy: Uses "Brilliant Fruit" every 1 turn(s) at Suspicious Wooden Device 3.'
+        - 'Ominous Aura: Uses "Static Shell" every 2 turn(s) at Suspicious Wooden Device 2.'
+        - 'Skill Use Increase: The number of skill uses is fixed to 3.'
+        - 'Basic Stat Increase: Increases the hero''s basic stats by 2% for every Debuff applied on all enemies.\n(Limit 10
+          time(s))'
+        - 'Counter and Reflect Damage Decrease: Decreases the hero''s damage taken from Counterattacks and Reflect by 500%.'
+        - 'Attack Increase: Only 3 Debuff(s) can be applied. Increases Attack by 5% when Debuffed.'
+        - 'Remove Buffs: Removes all Buffs from enemies with Debuff Immunity at the start of the allies'' turn.'
+        - 'HP-related Stats Decrease: Decreases the enemy''s Regeneration Rate, Recovery Rate, and Lifesteal by 40%.'
+        - 'Suppress Damage Taken: The hero''s damage taken from skills during the enemy turn does not exceed 33% of Max HP.'
+        habilidades:
+        - 'Inflicts damage equal to 200% of Attack and applies a Food Poisoning effect for 5 turn(s) on all enemies.\n\n*Food
+          Poisoning: Additional damage equal to 5% of Max HP at the end of every turn.\n(Can be stacked)'
+        - 'Inflicts damage equal to 300% of Attack and applies a Food Poisoning effect for 5 turn(s) on all enemies.\n\n*Food
+          Poisoning: Additional damage equal to 5% of Max HP at the end of every turn.\n(Can be stacked)'
+        - 'Inflicts Pierce damage equal to 250% of Attack on one enemy.\n\n*Pierce: 3x Pierce Rate Increase.'
+        - 'Inflicts Pierce damage equal to 350% of Attack on one enemy.\n\n*Pierce: 3x Pierce Rate Increase.'
+        - Heals the hero's diminished HP by 20% and fills the Ultimate Move Gauge by 2 orb(s).
+        - 'Assumes a Stance for 2 turn(s) which increases HP-related stats by 30% and Reflects 100% of the damage taken.\n\n*Reflect:
+          Returns a portion of damage taken back to the attacker.'
+      - nombre: Suspicious Wooden Device 1
+        atributo: rojo
+        pasivas:
+        - 'Basic Stat Increase: Increases the hero''s basic stats by 20%.'
+        habilidades: []
+      - nombre: Suspicious Wooden Device 2
+        atributo: verde
+        pasivas:
+        - 'Solid Stance: Decreases the hero''s damage taken by 90% when assuming a Stance.'
+        - 'The Beginning of Vengeance: The hero''s Debuffs are removed when using Stance Skills. The hero gains Debuff Immunity
+          for 2 turns.\n(Excluding Ultimate Moves)'
+        - 'Grounded Attitude: The Demonic Beast does not move if it is assuming a Stance by Suspicious Wooden Device 2.'
+        habilidades: []
+      - nombre: Suspicious Wooden Device 3
+        atributo: azul
+        pasivas:
+        - 'HP Increase: Increases the hero''s HP by 100%.'
+        habilidades: []
+    2:
+      aleatorias: []
+      enemigos:
+      - nombre: Ratatoskr
+        atributo: claro
+        pasivas:
+        - 'Purgatory Energy: Uses "Brilliant Fruit" every 1 turn(s) at Suspicious Wooden Device 3.'
+        - 'Ominous Aura: Uses "Static Shell" every 2 turn(s) at Suspicious Wooden Device 2.'
+        - 'Skill Use Increase: The number of skill uses is fixed to 3.'
+        - 'Basic Stat Increase: Increases the hero''s basic stats by 2% for every Debuff applied on all enemies.\n(Limit 10
+          time(s))'
+        - 'Counter and Reflect Damage Decrease: Decreases the hero''s damage taken from Counterattacks and Reflect by 500%.'
+        - 'Attack Increase: Only 3 Debuff(s) can be applied. Increases Attack by 5% when Debuffed.'
+        - 'Remove Buffs: Removes all Buffs from enemies with Debuff Immunity at the start of the allies'' turn.'
+        - 'HP-related Stats Decrease: Decreases the enemy''s Regeneration Rate, Recovery Rate, and Lifesteal by 40%.'
+        - 'Suppress Damage Taken: The hero''s damage taken from skills during the enemy turn does not exceed 10% of Max HP.'
+        habilidades:
+        - 'Inflicts damage equal to 200% of Attack and applies a Food Poisoning effect for 5 turn(s) on all enemies.\n\n*Food
+          Poisoning: Additional damage equal to 5% of Max HP at the end of every turn.\n(Can be stacked)'
+        - 'Inflicts damage equal to 300% of Attack and applies a Food Poisoning effect for 5 turn(s) on all enemies.\n\n*Food
+          Poisoning: Additional damage equal to 5% of Max HP at the end of every turn.\n(Can be stacked)'
+        - 'Inflicts damage equal to 200% of Attack and applies a Food Poisoning effect for 5 turn(s) on all enemies.\n\n*Food
+          Poisoning: Additional damage equal to 5% of Max HP at the end of every turn.\n(Can be stacked)'
+        - 'Inflicts damage equal to 300% of Attack and applies a Food Poisoning effect for 5 turn(s) on all enemies.\n\n*Food
+          Poisoning: Additional damage equal to 5% of Max HP at the end of every turn.\n(Can be stacked)'
+        - Heals the hero's diminished HP by 20% and fills the Ultimate Move Gauge by 2 orb(s).
+        - 'Assumes a Stance for 2 turn(s) which increases HP-related stats by 30% and Reflects 100% of the damage taken.\n\n*Reflect:
+          Returns a portion of damage taken back to the attacker.'
+      - nombre: Suspicious Wooden Device 1
+        atributo: rojo
+        pasivas:
+        - 'Basic Stat Increase: Increases the hero''s basic stats by 20%.'
+        habilidades: []
+      - nombre: Suspicious Wooden Device 2
+        atributo: verde
+        pasivas:
+        - 'Solid Stance: Decreases the hero''s damage taken by 90% when assuming a Stance.'
+        - 'The Beginning of Vengeance: The hero''s Debuffs are removed when using Stance Skills. The hero gains Debuff Immunity
+          for 2 turns.\n(Excluding Ultimate Moves)'
+        - 'Grounded Attitude: The Demonic Beast does not move if it is assuming a Stance by Suspicious Wooden Device 2.'
+        habilidades: []
+      - nombre: Suspicious Wooden Device 3
+        atributo: azul
+        pasivas:
+        - 'All Stats Increase: Increases all stats of the hero by 20%.'
+        habilidades: []
+    3:
+      aleatorias:
+      - Fills the hero's Ultimate Move Gauge by 1 orb(s) at the start of the battle.
+      - Decreases enemies' Ultimate Move Gauges by 1 orb(s) when the hero enters the battle.
+      enemigos:
+      - nombre: Ratatoskr
+        atributo: claro
+        pasivas:
+        - 'Purgatory Energy: Uses "Lightning Speed" every 2 turn(s) at Suspicious Wooden Device 3.'
+        - 'Ominous Aura: Uses "Static Shell" every 2 turn(s) at Suspicious Wooden Device 2.'
+        - 'Skill Use Increase: The number of skill uses is fixed to 3.'
+        - 'Basic Stat Increase: Increases the hero''s basic stats by 2% for every Debuff applied on all enemies.\n(Limit 10
+          time(s))'
+        - 'Counter and Reflect Damage Decrease: Decreases the hero''s damage taken from Counterattacks and Reflect by 500%.'
+        - 'Attack Increase: Only 3 Debuff(s) can be applied. Increases Attack by 5% when Debuffed.'
+        - 'Remove Buffs: Removes all Buffs from enemies with Debuff Immunity at the start of the allies'' turn.'
+        - 'HP-related Stats Decrease: Decreases the enemy''s Regeneration Rate, Recovery Rate, and Lifesteal by 40%.'
+        habilidades:
+        - 'Inflicts Spike damage equal to 250% of Attack on one enemy.\n\n*Spike: 2x Crit Damage Increase.'
+        - 'Inflicts Spike damage equal to 350% of Attack on one enemy.\n\n*Spike: 2x Crit Damage Increase.'
+        - 'Inflicts Sever damage equal to 200% of Attack on all enemies.\n\n*Sever: 3x Crit Chance Increase.'
+        - 'Inflicts Sever damage equal to 300% of Attack on all enemies.\n\n*Sever: 3x Crit Chance Increase.'
+        - 'Inflicts damage equal to 300% of Attack and applies 5 Food Poisoning effects for 5 turn(s) on all enemies.\n\n*Food
+          Poisoning: Additional damage equal to 5% of Max HP at the end of every turn.\n(Can be stacked)'
+        - 'Assumes a Stance for 2 turn(s) which increases HP-related stats by 30% and Reflects 100% of the damage taken.\n\n*Reflect:
+          Returns a portion of damage taken back to the attacker.'
+      - nombre: Suspicious Wooden Device 1
+        atributo: rojo
+        pasivas:
+        - 'Basic Stat Increase: Increases the hero''s basic stats by 20%.'
+        - 'Suppress Damage Taken: The hero''s damage taken from skills during the enemy turn does not exceed 33% of Max HP.'
+        habilidades: []
+      - nombre: Suspicious Wooden Device 2
+        atributo: verde
+        pasivas:
+        - 'Solid Stance: Decreases the hero''s damage taken by 90% when assuming a Stance.'
+        - 'The Beginning of Vengeance: The hero''s Debuffs are removed when using Stance Skills. The hero gains Debuff Immunity
+          for 2 turns.\n(Excluding Ultimate Moves)'
+        - 'Suppress Damage Taken: The hero''s damage taken from skills during the enemy turn does not exceed 33% of Max HP.'
+        - 'Grounded Attitude: The Demonic Beast does not move if it is assuming a Stance by Suspicious Wooden Device 2.'
+        habilidades: []
+      - nombre: Suspicious Wooden Device 3
+        atributo: azul
+        pasivas:
+        - 'All Stats Increase: Increases all stats of the hero by 20%.'
+        - 'Suppress Damage Taken: The hero''s damage taken from skills during the enemy turn does not exceed 33% of Max HP.'
+        habilidades: []
+surtr_f1:
+  nombre: Hall of Genesis Floor 1
+  id_7dshub: 1016
+  fases:
+    1:
+      aleatorias:
+      - Decreases the damage this hero takes from enemies by 20%.
+      - Decreases enemies' Ultimate Move Gauges by 2 orb(s) when the hero enters the battle.
+      - Fills the hero's Ultimate Move Gauge by 2 orb(s) at the start of the battle.
+      enemigos:
+      - nombre: Surtr and the Primordial Flame
+        atributo: rojo
+        pasivas: []
+        habilidades:
+        - 'Inflicts Flood damage equal to 250% of Attack on one enemy.\n\n*Flood: 0.8% additional damage for every percent
+          of remaining HP on self.'
+        - 'Inflicts Flood damage equal to 320% of Attack on one enemy then inflicts Co-destruction damage.\n\n*Flood: 0.8%
+          additional damage for every percent of HP remaining on self.\n*Co-destruction: 40% increased damage per Debuff on
+          the target.'
+        - 'Inflicts damage equal to 210% of Attack on all enemies. Ignites for 3 turn(s).\n\n*Ignite: Damage taken by target(s)
+          +10% (Can be stacked).'
+        - 'Removes Buffs from all enemies and inflicts damage equal to 260% of Attack. Applies 2 Ignite effects for 3 turn(s).\n\n*Ignite:
+          Damage taken by target(s) +10% (Can be stacked).'
+        - Assumes a Stance for 1 turn(s) and inflicts damage equal to 250% of Attack via counter when attacked. If the target
+          is afflicted with Overheat, the counter inflicts 200% additional damage.
+        - 'Inflicts Fire of Providence damage and Muspell Blaze damage equal to 350% of Attack on all enemies.\n\n*Fire of
+          Providence: Additional effect occurs if the enemy''s skill does not match the displayed skill type.\n*Muspell Blaze:
+          Adds 10,000 additional damage to the final damage and inflicts Overheat.'
+    2:
+      aleatorias:
+      - Increases the hero's Attack by 3% for every Debuff applied on all enemies.
+      - Increases the hero's Crit Damage by 5% per hero skill use.\n(Limit 10% time(s))
+      - Increases Defense-related stats by 20% when surviving an Ultimate Move.\n(Limit 1% time(s))
+      enemigos:
+      - nombre: Surtr and the Primordial Flame
+        atributo: rojo
+        pasivas: []
+        habilidades:
+        - 'Inflicts Flood damage equal to 250% of Attack on one enemy.\n\n*Flood: 0.8% additional damage for every percent
+          of remaining HP on self.'
+        - 'Inflicts Flood damage equal to 320% of Attack on one enemy then inflicts Co-destruction damage.\n\n*Flood: 0.8%
+          additional damage for every percent of HP remaining on self.\n*Co-destruction: 40% increased damage per Debuff on
+          the target.'
+        - 'Gains 2 Igniting Attack effects for 3 turns.\n\n*Igniting Attack: Inflicts the Ignite effect on the target when
+          using an Attack Skill other than the Ultimate Move.\n(Stacks up to 9 times)'
+        - 'Gains 2 Igniting Attack effects and a 50% Damage Dealt Increase for 3 turns.\n\n*Igniting Attack: Inflicts the
+          Ignite effect on the target when using an Attack Skill other than the Ultimate Move.\n(Stacks up to 9 times)'
+        - 'Inflicts Retrogression Laevateinn damage and Muspell Blaze damage equal to 200% of Attack on one enemy.\n\n*Retrogression
+          Laevateinn: Additional effect occurs based on the skill type the enemy used.\n*Muspell Blaze: Adds 10000 additional
+          damage to the final damage and inflicts Overheat.'
+        - Assumes a Stance for 1 turn(s) and inflicts damage equal to 250% of Attack on all enemies via counter when attacked.
+          If the target is afflicted with Overheat, the counter inflicts 200% additional damage.
+    3:
+      aleatorias: []
+      enemigos:
+      - nombre: Surtr and the Primordial Flame
+        atributo: rojo
+        pasivas: []
+        habilidades:
+        - 'Inflicts damage equal to 210% of Attack on all enemies. Ignites for 3 turn(s).\n\n*Ignite: Damage taken by target(s)
+          +10% (Can be stacked).'
+        - 'Removes Buffs from all enemies and inflicts damage equal to 260% of Attack. Applies 2 Ignite effects for 3 turn(s).\n\n*Ignite:
+          Damage taken by target(s) +10% (Can be stacked).'
+        - 'Inflicts Blaze damage equal to 210% of Attack on all enemies.\n\n*Blaze: +25% damage dealt per Ignite effect on
+          target.'
+        - 'Inflicts Blaze damage equal to 260% of Attack on all enemies, then decreases their Ultimate Move Gauge by 1 orb(s).\n\n*Blaze:
+          +25% damage dealt per Ignite effect on target.'
+        - Assumes a Stance for 1 turn(s) and inflicts damage equal to 250% of Attack via counter when attacked. If the target
+          is afflicted with Overheat, the counter inflicts 200% additional damage.
+        - 'Inflicts Fire of Providence damage and Muspell Blaze damage equal to 350% of Attack on all enemies.\n\n*Fire of
+          Providence: Additional effect occurs if the enemy''s skill does not match the displayed skill type.\n*Muspell Blaze:
+          Adds 10,000 additional damage to the final damage and inflicts Overheat.'
+surtr_f2:
+  nombre: Hall of Genesis Floor 2
+  id_7dshub: 1017
+  fases:
+    1:
+      aleatorias:
+      - Increases the hero's Crit Damage by 10% for each orb removed from the hero's Ultimate Move Gauge.\n(Limit 10% time(s),
+        excludes depletion from Ultimate Move use)
+      - Increases the hero's Attack by 30% at the start of the next turn if the hero doesn't take damage.\n(Resets upon taking
+        damage)
+      - Increases HP-related stats by 2% at the start of the allies' turn if the hero takes damage.\n(Limit 10% time(s))
+      enemigos:
+      - nombre: Surtr and the Primordial Flame
+        atributo: rojo
+        pasivas: []
+        habilidades:
+        - 'Inflicts damage equal to 210% of Attack on all enemies. Ignites for 3 turn(s).\n\n*Ignite: Damage taken by target(s)
+          +10% (Can be stacked).'
+        - 'Removes Buffs from all enemies and inflicts damage equal to 260% of Attack. Applies 2 Ignite effects for 3 turn(s).\n\n*Ignite:
+          Damage taken by target(s) +10% (Can be stacked).'
+        - Inflicts damage equal to 210% of Attack on all enemies, ignoring Defense and Resistance.
+        - Inflicts damage equal to 260% of Attack on all enemies, ignoring Defense and Resistance.
+        - 'Inflicts Retrogression Laevateinn damage and Muspell Blaze damage equal to 200% of Attack on one enemy.\n\n*Retrogression
+          Laevateinn: Additional effect occurs based on the skill type the enemy used.\n*Muspell Blaze: Adds 10000 additional
+          damage to the final damage and inflicts Overheat.'
+        - 'Assumes a Stance that decreases damage taken by 50% for 2 turn(s), Reflecting 50% of damage taken, then gains a
+          15% Defense-related Stats Increase.\n\n*Reflect: Returns a portion of damage taken back to the attacker.'
+    2:
+      aleatorias:
+      - Decreases all enemies' Max HP by the value of 150% of the hero's Defense.
+      - Decreases all enemies' Crit Resistance and Crit Defense by 30%.
+      - Deals 40% additional damage when the hero attacks an enemy with a lower Attack.
+      enemigos:
+      - nombre: Surtr and the Primordial Flame
+        atributo: rojo
+        pasivas: []
+        habilidades:
+        - 'Inflicts Flood damage equal to 250% of Attack on one enemy, then applies Ignite for 3 turn(s).\n\n*Flood: 0.8%
+          additional damage for every percent of remaining HP on self.\n*Ignite: Damage taken by target(s) +10%\n(Stacks up
+          to 9 times).'
+        - 'Inflicts Flood damage equal to 320% of Attack on one enemy, then applies 2 Ignite effects for 3 turn(s).\n\n*Flood:
+          0.8% additional damage for every percent of remaining HP on self.\n*Ignite: Damage taken by target(s) +10%\n(Stacks
+          to up 9 times).'
+        - 'Inflicts Blaze damage equal to 210% of Attack on all enemies.\n\n*Blaze: +25% damage dealt per Ignite effect on
+          target.'
+        - 'Inflicts Blaze damage equal to 260% of Attack on all enemies.\n\n*Blaze: +25% damage dealt per Ignite effect on
+          target.'
+        - 'Assumes a Stance that decreases damage taken by 50% for 2 turn(s), Reflecting 50% of damage taken, then gains 2
+          instances of a 15% Defense-related Stats Increase.\n\n*Reflect: Returns a portion of damage taken back to the attacker.'
+        - 'Inflicts Fire of Providence damage and Muspell Blaze damage equal to 350% of Attack on all enemies.\n\n*Fire of
+          Providence: Additional effect occurs if the enemy''s skill does not match the displayed skill type.\n*Muspell Blaze:
+          Adds 10,000 additional damage to the final damage and inflicts Overheat.'
+    3:
+      aleatorias: []
+      enemigos:
+      - nombre: Surtr and the Primordial Flame
+        atributo: rojo
+        pasivas: []
+        habilidades:
+        - 'Inflicts Rupture damage equal to 210% of Attack on all enemies.\n\n*Rupture: 2x damage against Buffed enemies.'
+        - 'Inflicts Rupture damage equal to 260% of Attack on all enemies.\n\n*Rupture: 2x damage against Buffed enemies.'
+        - Cancels Stances on all enemies and inflicts damage equal to 210% of Attack.\nInflicts 100% additional damage if
+          the target is afflicted with Overheat.
+        - Cancels Stances on all enemies and inflicts damage equal to 260% of Attack.\nInflicts 100% additional damage if
+          the target is afflicted with Overheat.
+        - 'Inflicts Retrogression Laevateinn damage and Muspell Blaze damage equal to 200% of Attack on one enemy.\n\n*Retrogression
+          Laevateinn: Additional effect occurs based on the skill type the enemy used.\n*Muspell Blaze: Adds 10000 additional
+          damage to the final damage and inflicts Overheat.'
+        - 'Inflicts Fire of Providence damage and Muspell Blaze damage equal to 350% of Attack on all enemies.\n\n*Fire of
+          Providence: Additional effect occurs if the enemy''s skill does not match the displayed skill type.\n*Muspell Blaze:
+          Adds 10,000 additional damage to the final damage and inflicts Overheat.'
+surtr_f3:
+  nombre: Hall of Genesis Floor 3
+  id_7dshub: 1018
+  fases:
+    1:
+      aleatorias:
+      - Applies Buff Disable on all enemies for 2 turns at the start of the battle.
+      - Surtr's damage dealt to enemies afflicted with Overheat increases by 50%.
+      - Increases the hero's Attack by 50% at the start of the next turn if the hero doesn't take damage.\n(Resets upon taking
+        damage)
+      enemigos:
+      - nombre: Surtr and the Primordial Flame
+        atributo: rojo
+        pasivas: []
+        habilidades:
+        - 'Inflicts Flood damage equal to 250% of Attack on one enemy.\n\n*Flood: 0.8% additional damage for every percent
+          of remaining HP on self.'
+        - 'Inflicts Flood damage equal to 320% of Attack on one enemy then inflicts Co-destruction damage.\n\n*Flood: 0.8%
+          additional damage for every percent of HP remaining on self.\n*Co-destruction: 40% increased damage per Debuff on
+          the target.'
+        - Inflicts damage equal to 210% of Attack on all enemies, ignoring Defense and Resistance.
+        - Inflicts damage equal to 260% of Attack on all enemies, ignoring Defense and Resistance.
+        - Assumes a Stance for 1 turn(s) and inflicts damage equal to 250% of Attack on all enemies via counter when attacked.
+          If the target is afflicted with Overheat, the counter inflicts 200% additional damage.
+        - 'Inflicts Fire of Providence damage and Muspell Blaze damage equal to 350% of Attack on all enemies.\n\n*Fire of
+          Providence: Additional effect occurs if the enemy''s skill does not match the displayed skill type.\n*Muspell Blaze:
+          Adds 10,000 additional damage to the final damage and inflicts Overheat.'
+    2:
+      aleatorias:
+      - Increases Crit Chance/Crit Damage as the hero's remaining HP decreases.\n(1% of max HP lost increases the stats by
+        0.2%)
+      - Increases Attack by a value equal to 10% of the hero's Defense at the start of the battle.
+      - Increases the hero's Attack by 5% at the end of the allies' turn.\n(Limit 5% times)
+      enemigos:
+      - nombre: Surtr and the Primordial Flame
+        atributo: rojo
+        pasivas: []
+        habilidades:
+        - 'Inflicts damage equal to 210% of Attack on all enemies. Ignites for 3 turn(s).\n\n*Ignite: Damage taken by target(s)
+          +10% (Can be stacked).'
+        - 'Removes Buffs from all enemies and inflicts damage equal to 260% of Attack. Applies 2 Ignite effects for 3 turn(s).\n\n*Ignite:
+          Damage taken by target(s) +10% (Can be stacked).'
+        - 'Gains an Igniting Attack effect and a 50% Damage Dealt Increase for 3 turns.\n\n*Igniting Attack: Inflicts the
+          Ignite effect on the target when using an Attack Skill other than the Ultimate Move.\n(Stacks up to 9 times)'
+        - 'Gains 2 Igniting Attack effects and a 50% Damage Dealt Increase for 3 turns.\n\n*Igniting Attack: Inflicts the
+          Ignite effect on the target when using an Attack Skill other than the Ultimate Move.\n(Stacks up to 9 times)'
+        - 'Inflicts Retrogression Laevateinn damage and Muspell Blaze damage equal to 200% of Attack on one enemy.\n\n*Retrogression
+          Laevateinn: Additional effect occurs based on the skill type the enemy used.\n*Muspell Blaze: Adds 10000 additional
+          damage to the final damage and inflicts Overheat.'
+        - 'Inflicts Fire of Providence damage and Muspell Blaze damage equal to 320% of Attack on all enemies.\n\n*Fire of
+          Providence: Additional effect occurs if the enemy''s skill does not match the displayed skill type.\n*Muspell Blaze:
+          Adds 10,000 additional damage to the final damage and inflicts Overheat.'
+    3:
+      aleatorias: []
+      enemigos:
+      - nombre: Surtr and the Primordial Flame
+        atributo: rojo
+        pasivas: []
+        habilidades:
+        - Inflicts damage equal to 250% of Defense on all enemies.
+        - Inflicts damage equal to 320% of Defense on all enemies.
+        - 'Assumes a Stance that decreases damage taken by 60% for 2 turn(s), Reflecting 50% of damage taken, then gains a
+          15% Defense-related Stats Increase.\n\n*Reflect: Returns a portion of damage taken back to the attacker.'
+        - 'Assumes a Stance that decreases damage taken by 60% for 2 turn(s), Reflecting 50% of damage taken, then gains 2
+          instances of a 15% Defense-related Stats Increase.\n\n*Reflect: Returns a portion of damage taken back to the attacker.'
+        - 'Inflicts Retrogression Laevateinn damage and Muspell Blaze damage equal to 200% of Attack on one enemy.\n\n*Retrogression
+          Laevateinn: Additional effect occurs based on the skill type the enemy used.\n*Muspell Blaze: Adds 10000 additional
+          damage to the final damage and inflicts Overheat.'
+        - 'Inflicts Fire of Providence damage and Muspell Blaze damage equal to 320% of Attack on all enemies.\n\n*Fire of
+          Providence: Additional effect occurs if the enemy''s skill does not match the displayed skill type.\n*Muspell Blaze:
+          Adds 10,000 additional damage to the final damage and inflicts Overheat.'

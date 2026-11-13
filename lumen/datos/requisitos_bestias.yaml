@@ -1,0 +1,42 @@
+# Lo que pide cada jefe, por piso y fase, sacado de sus fichas de 7dshub (lumen/datos/bestias_7dshub.yaml).
+#
+# Cada requisito dice si es OBLIGATORIO (ni con mucho dano se salta: inmortalidad, contraataques, golpes mortales)
+# o si se SALTA CON DANO (si la fase cae rapido, no llega a importar). Con eso salen los modos de juego:
+#   - cauteloso: cumple todos los requisitos (equipos normales)
+#   - whale: maximo dano y solo lo obligatorio (equipos muy fuertes)
+#   - automatico: empieza en whale y, si una fase no cae en 1 turno, la juega en cauteloso (y lo recuerda)
+#
+# Tipos que entiende el bot: mismo_color, secuencia_colores, limpiar_con_ulti, postura_contraataque.
+
+ciervo_piso4:  # el destino del bot (en bestias_7dshub.yaml es "ciervo_f4")
+  1:
+    - tipo: limpiar_con_ulti
+      obligatorio: false
+      nota: >-
+        Splash Shower (turnos impares) pone 2 de Torrente a todos (10 % de la vida al usar habilidades) y el ciervo se
+        cura con el dano a heroes con Torrente. Icy Pond (cada 2 turnos) lo quita y congela. Usar la ulti tambien lo
+        quita: tener ultis cargadas.
+  2:
+    - tipo: mismo_color
+      veces: 3
+      obligatorio: false
+      nota: Atacar varias veces con el mismo atributo le quita la reduccion de dano de ese atributo.
+  3:
+    - tipo: mismo_color
+      veces: 3
+      turnos: impares
+      obligatorio: true
+      nota: >-
+        Fierce Rush (turnos impares): 20000 % a un heroe. Falla contra la Proteccion de Eikthyrnir, que se gana
+        pegandole varias veces con el mismo atributo. Ademas, mas critico por cada orbe de ulti lleno.
+  4:
+    - tipo: secuencia_colores
+      obligatorio: true
+      nota: >-
+        Pierde 1 inmortalidad (y se pone Corrosion) al recibir golpes en cierto orden de atributos. Los buffs de color
+        de la pantalla dicen cual toca.
+    - tipo: postura_contraataque
+      obligatorio: true
+      nota: >-
+        Defensive Horn (cada 3 turnos): postura 2 turnos que devuelve 1500 % al ser atacado. Quitarle la postura o no
+        atacar.
