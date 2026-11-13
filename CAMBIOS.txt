@@ -29,6 +29,16 @@ Etapas previstas:
 
 CAMBIOS
 -------
+0.37.1-alpha
+  - Botin: solo cuenta lo que esta en la galeria de objetos del usuario (lo pidio el: "que use solo nuestra propia
+    galeria") y nunca crea un objeto con una foto; lo que no esta en la galeria queda pendiente. Si el catalogo ya
+    tiene ese objeto organizado (nombre, union), se usa y se enlaza, sin duplicados.
+  - Botin: las casillas se buscan por su marco en la rejilla. Con el fondo claro del pajaro veia 8 casillas (o 1 de
+    5) y recortaba objetos a medias y el texto "Guaranteed Reward": eran las fotos borrosas nuevas (objeto_51-63).
+    Probado con las 242 fotos guardadas: las 25 de hoy salen con sus nombres. Las fotos se vuelven a leer solas.
+  - Derrotas: se ven como las victorias ("✗ DERROTA #2 en la fase 2, turno 9 (6 min): 6 turnos seguidos sin poder
+    jugar ninguna carta"), para saber en el registro donde y por que se perdio.
+
 0.37.0-alpha — Mecánicas por efectos y botín contra la galería
 - Lector de cartas por rango real de la ficha de 7DSHub, sin atribuir efectos de oro a bronce ni asumir condiciones o reliquias.
 - Pájaro F4: contramedidas por función ante bloqueo, inmortalidad y evasión observados; la fase 2 lee del jefe el requisito de mismo rango y contempla oro.

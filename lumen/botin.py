@@ -37,6 +37,7 @@ LADO = 63
 ZONA_ORO = (85, 540, 175, 572)  # x1, y1, x2, y2: "24,000" a la derecha de la moneda
 UMBRAL_OBJETO = 0.88  # parecido minimo de forma para decir que dos iconos son el mismo objeto
 MARGEN_IDENTIDAD = 0.025  # coincidencias casi empatadas quedan pendientes
+SNAP_REJILLA = 12  # px: un borde detectado a esta distancia de una casilla de la rejilla es esa casilla
 DIF_COLOR_MAX = 18.0  # y diferencia maxima de color medio (cubo azul y cubo gris: misma forma)
 
 CARPETA = RAIZ / "recompensas" / "objetos"
@@ -110,29 +111,27 @@ def _hay_objeto(celda) -> bool:
     return float(v.mean()) > 95 and float(v.std()) > 25
 
 
+MARCO_MIN = 0.45  # casilla con objeto: su marco (reales 0,55-0,90; fondo 0,00-0,25; 242 fotos, 2026-11-13)
+
+
+def marco(pantalla, x: int, y: int) -> float:
+    """Cuanto se ve el marco cuadrado de una casilla: lo minimo de sus 4 lados con borde (0-1)."""
+    y1, x1 = max(0, y - 3), max(0, x - 3)
+    zona = pantalla[y1:y + LADO + 3, x1:x + LADO + 3]
+    if zona.shape[0] < LADO or zona.shape[1] < LADO:
+        return 0.0
+    c = cv2.Canny(cv2.cvtColor(zona, cv2.COLOR_BGR2GRAY), 60, 160) > 0
+    return float(min(c[:7].any(0).mean(), c[-7:].any(0).mean(), c[:, :7].any(1).mean(), c[:, -7:].any(1).mean()))
+
+
 def casillas(pantalla) -> list[tuple[int, int]]:
-    """Esquinas (x, y) de las casillas con objeto, en orden de lectura."""
-    detectadas = _cajas_por_borde(pantalla)
-    if detectadas:
-        encontradas = []
-        for x, y in sorted(detectadas, key=lambda xy: (xy[1], xy[0])):
-            # La rejilla conocida corrige el px de dilatacion, solo si el
-            # borde detectado esta a <= 3 px. Otros desplazamientos se respetan.
-            nx = min(COLUMNAS_X, key=lambda v: abs(v - x))
-            ny = min({v for fila in FILAS_Y.values() for v in fila}, key=lambda v: abs(v - y))
-            x = nx if abs(nx - x) <= 3 else x
-            y = ny if abs(ny - y) <= 3 else y
-            celda = pantalla[y:y+LADO, x:x+LADO]
-            if celda.shape[:2] != (LADO, LADO) or not _hay_objeto(celda):
-                continue
-            if not any(abs(x-a) <= 8 and abs(y-b) <= 8 for a, b in encontradas):
-                encontradas.append((x, y))
-        if encontradas:
-            return sorted(encontradas, key=lambda xy: (xy[1], xy[0]))
-    candidatas = FILAS_Y
+    """Esquinas (x, y) de las casillas con objeto, en orden de lectura.
+
+    Por el marco de cada casilla de la rejilla: con los bordes sueltos veia 1 de 5 (el texto "Guaranteed Reward"
+    tapa el borde de abajo) y, sin bordes, el fondo claro del pajaro pasaba por 8 objetos (2026-11-13)."""
     mejor = []
-    for ys in candidatas.values():
-        encontradas = [(x, y) for y in ys for x in COLUMNAS_X if _hay_objeto(pantalla[y : y + LADO, x : x + LADO])]
+    for ys in FILAS_Y.values():
+        encontradas = [(x, y) for y in ys for x in COLUMNAS_X if marco(pantalla, x, y) >= MARCO_MIN]
         if len(encontradas) > len(mejor):
             mejor = encontradas
     return mejor
@@ -554,49 +553,38 @@ def identificar(img_icono, catalogo: dict) -> str | None:
 
 
 def identificar_verificado(img_icono, catalogo, modo=""):
-    """La galeria y las tablas publicadas mandan; un recorte nuevo no crea un item."""
-    from lumen import premios
-
-    # Las exclusiones y uniones manuales se respetan si su foto coincide con claridad.
-    locales = []
-    for oid in catalogo:
-        valor = _parecido(img_icono, leer_imagen(ruta_icono(oid)))
-        if valor is not None:
-            locales.append((oid, valor))
-    local = _con_margen(locales, UMBRAL_OBJETO)
-    if local and ((catalogo[local] or {}).get("descartado") or
-                  ((catalogo[local] or {}).get("unido_a") and not (catalogo[local] or {}).get("unido_auto"))):
-        return destino(local, catalogo)
+    """SOLO la galeria de objetos del usuario (2026-11-13: "que use solo nuestra propia galeria"). Un objeto que no
+    esta en la galeria no se cuenta (queda pendiente) y nunca se crea un objeto a partir de una foto: su imagen es
+    la de la galeria. Si el catalogo ya tiene ese objeto organizado (nombre, union), se usa ese."""
     galeria = cargar_galeria()
     gid = en_galeria(img_icono, galeria)
-    candidatos = premios.objetos_de(modo) if modo else set()
-    premio = en_premios(img_icono, candidatos) if candidatos else None
-    gid_premio = premios.info(premio).get("galeria") if premio else None
-    if gid and gid_premio and gid != gid_premio:
-        return None  # dos referencias se contradicen: revisar la captura
-    gid = gid or gid_premio
-    if not gid and not premio:
-        return None  # un recorte viejo con nombre no sustituye a una referencia de la base
-    existentes = [o for o in visibles(catalogo) if
-                  (gid and (catalogo[o] or {}).get("galeria") == gid) or
-                  (premio and (catalogo[o] or {}).get("premio") == premio)]
-    oid = local if local in existentes else (sorted(existentes)[0] if existentes else f"galeria_{gid}" if gid else f"premio_{premio}")
+    if not gid:
+        return None
+    enlazados = [o for o in catalogo if (catalogo[o] or {}).get("galeria") == gid]
+    if not enlazados:
+        # Un objeto del catalogo aun sin enlazar que es este de la galeria (misma imagen): se enlaza, sin duplicar
+        ref = _icono_de_ficha(gid)
+        parecidos = []
+        for oid in visibles(catalogo):
+            if (catalogo[oid] or {}).get("galeria"):
+                continue
+            valor = _parecido(ref, leer_imagen(ruta_icono(oid))) if ref is not None else None
+            if valor is not None and valor >= UMBRAL_OBJETO:
+                parecidos.append((oid, valor))
+        if parecidos:
+            oid = max(parecidos, key=lambda p: p[1])[0]
+            catalogo[oid]["galeria"] = gid
+            enlazados = [oid]
+    if enlazados:
+        buenos = [o for o in enlazados if destino(o, catalogo)]
+        return destino(sorted(buenos)[0], catalogo) if buenos else None  # descartado por el usuario: no cuenta
+    oid = f"galeria_{gid}"
     datos = catalogo.setdefault(oid, {})
-    nombre_previo = datos.get("nombre")
-    if gid:
-        datos.update(_datos_galeria(galeria.get(gid) or {}), galeria=gid)
-    if premio:
-        info = premios.info(premio)
-        datos.update(premio=premio)
-        if info.get("nombre"):
-            datos["nombre"] = info["nombre"]
-    nombres_oficiales = {(galeria.get(gid) or {}).get("nombre"), premios.info(premio).get("nombre") if premio else None}
-    if nombre_previo and nombre_previo not in nombres_oficiales:
-        datos["nombre"] = nombre_previo
+    datos.update(_datos_galeria(galeria.get(gid) or {}), galeria=gid)
     ruta = CARPETA / f"{oid}.png"
-    if not ruta.exists():
-        oficial = _icono_de_ficha(gid) if gid else None
-        guardar_imagen(ruta, oficial if oficial is not None else img_icono)
+    oficial = _icono_de_ficha(gid)
+    if not ruta.exists() and oficial is not None:
+        guardar_imagen(ruta, oficial)
     return oid
 
 

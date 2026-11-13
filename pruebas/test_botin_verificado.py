@@ -57,17 +57,23 @@ class BotinVerificado(unittest.TestCase):
         self.assertEqual(catalogo, {})
         self.assertFalse(botin.CARPETA.exists())
 
-    def test_recompensa_desplazada_se_identifica_sin_rejilla_fija(self):
+    def test_recompensa_en_la_rejilla_se_identifica_por_la_galeria(self):
         pantalla = np.zeros((940, 550, 3), np.uint8)
         celda = cv2.resize(
             leer_imagen(botin.ruta_ficha("skoll_and_hati_s_orb")),
             (63, 63),
             interpolation=cv2.INTER_AREA,
         )
-        pantalla[374:437, 102:165] = celda
+        pantalla[405:468, 166:229] = celda
+        cv2.rectangle(pantalla, (166, 405), (228, 467), (255, 255, 255), 2)  # el marco de la casilla
         datos = botin.analizar(pantalla)
         self.assertEqual(datos["objetos"], {"galeria_skoll_and_hati_s_orb": 1})
         self.assertEqual(datos["pendientes"], [])
+
+    def test_foto_real_con_fondo_claro(self):
+        """2026-11-13: con el fondo claro del pajaro veia 8 casillas (o 1 de 5) y creaba fotos borrosas."""
+        pantalla = leer_imagen(Path(__file__).with_name("botin_pajaro4_fondo_claro.png"))
+        self.assertEqual(botin.casillas(pantalla), [(x, 405) for x in botin.COLUMNAS_X])
 
     def test_un_fondo_de_color_plano_no_es_un_icono(self):
         icono = np.full((35, 53, 3), (180, 70, 20), dtype=np.uint8)
@@ -109,15 +115,21 @@ class BotinVerificado(unittest.TestCase):
                 botin.en_galeria(imagen, {"nuevo_local": {}}), "nuevo_local"
             )
 
-    def test_casillas_detectadas_no_se_recortan_en_columnas_fijas(self):
+    def test_un_borde_lejos_de_la_rejilla_no_es_una_casilla(self):
+        """Respetar bordes desplazados recortaba objetos a medias y el texto "Guaranteed Reward" (2026-11-13)."""
         pantalla = np.zeros((960, 554, 3), np.uint8)
         with (
-            mock.patch.object(
-                botin, "_cajas_por_borde", return_value=[(102, 374), (103, 375)]
-            ),
+            mock.patch.object(botin, "_cajas_por_borde", return_value=[(120, 380), (104, 377)]),
             mock.patch.object(botin, "_hay_objeto", return_value=True),
         ):
-            self.assertEqual(botin.casillas(pantalla), [(102, 374)])
+            self.assertEqual(botin.casillas(pantalla), [])
+
+    def test_nunca_crea_un_objeto_con_la_foto(self):
+        """Solo la galeria: lo que no esta en ella queda pendiente, sin anadirse al catalogo."""
+        catalogo = {}
+        ruido = np.random.default_rng(1).integers(0, 255, (35, 53, 3), dtype=np.uint8)
+        self.assertIsNone(botin.identificar_verificado(ruido, catalogo, "pajaro_piso4"))
+        self.assertEqual(catalogo, {})
 
     def test_animacion_local_no_se_oculta_en_la_media_de_la_pantalla(self):
         antes = np.zeros((960, 554, 3), np.uint8)

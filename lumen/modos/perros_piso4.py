@@ -343,6 +343,8 @@ class PerrosPiso4(Modo):
         self.talento_usado = False
         self.talento_inicial_usado = False
         self.turnos_pelea = 0  # turnos jugados en la pelea (para el cooldown del talento)
+        self.turnos_sin_jugar = 0
+        self.cartas_jugadas_turno = None
         self.talento_usado_en = None
         self.usos_talento = 0
         self.inicio_pelea = time.time()
@@ -652,6 +654,12 @@ class PerrosPiso4(Modo):
             self.objetivo_actual = None
             self.log(f"Fase {self.fase}.", "ok")
         self.turno_fase += 1
+        # Turnos seguidos sin jugar ninguna carta (solo moverlas): para explicar la derrota
+        if getattr(self, "cartas_jugadas_turno", None) == 0:
+            self.turnos_sin_jugar = getattr(self, "turnos_sin_jugar", 0) + 1
+        elif getattr(self, "cartas_jugadas_turno", None):
+            self.turnos_sin_jugar = 0
+        self.cartas_jugadas_turno = 0
         self.turno_abierto = True
         self.huecos_turno = huecos
         self.talento_usado = False
@@ -782,6 +790,7 @@ class PerrosPiso4(Modo):
             else:
                 carta = mano[idx]
                 self.log(f"Accion {accion + 1}: juego {carta}")
+                self.cartas_jugadas_turno = (getattr(self, "cartas_jugadas_turno", 0) or 0) + 1
                 entrada.clic(carta.rect, o, espera=0)
                 ultima_carta = carta
             es_ulti = not isinstance(idx, tuple) and mano[idx].tipo == TipoCarta.ULTI
@@ -942,10 +951,20 @@ class PerrosPiso4(Modo):
             else:
                 self.derrotas += 1
                 self.derrotas_por_fase[self.fase or 0] += 1
-                self.log(f"Derrota en la fase {self.fase}.", "error")
+                self.log(self.texto_derrota(), "error")
             self._stats()
             return "elegir_piso"
         return None
+
+    def texto_derrota(self) -> str:
+        """Tan visible como la victoria, con el turno y, si se sabe, por que (2026-11-13: el usuario no encontraba
+        en el registro donde habia perdido)."""
+        minutos = (time.time() - self.inicio_pelea) / 60
+        texto = f"✗ DERROTA #{self.derrotas} en la fase {self.fase or '?'}, turno {self.turno_fase} ({minutos:.1f} min)"
+        sin_jugar = getattr(self, "turnos_sin_jugar", 0)
+        if sin_jugar >= 2:
+            texto += f": {sin_jugar} turnos seguidos sin poder jugar ninguna carta (todas bloqueadas)"
+        return texto
 
     def _volvio_a_pisos(self, p) -> bool:
         """La pelea termino del todo: pantalla de carga de las bestias o ya en la pantalla de pisos.

@@ -192,3 +192,12 @@ class Navegacion(unittest.TestCase):
         m.log = lambda *a, **k: None
         m.clic_si = lambda *a, **k: False
         self.assertEqual(m.ir_a_perros({"piso3_superado_pajaro"}, (0, 0)), "elegir_piso")
+
+
+class Derrota(unittest.TestCase):
+    def test_se_ve_en_el_registro_y_dice_por_que(self):
+        m = MODOS["pajaro_piso4"]({"victorias": 0, "extra": 0, "pociones": True, "max_pociones": 0})
+        m.derrotas, m.fase, m.turno_fase, m.turnos_sin_jugar = 2, 2, 9, 6
+        texto = m.texto_derrota()
+        self.assertIn("DERROTA #2 en la fase 2, turno 9", texto)
+        self.assertIn("6 turnos seguidos sin poder jugar", texto)

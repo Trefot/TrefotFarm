@@ -22,7 +22,7 @@ INDICE = CARPETA / "indice.jsonl"
 _lock = threading.Lock()
 # Version de la lectura del botin: al subirla, las fotos leidas con una anterior se vuelven a leer solas
 # (2: cantidades con los digitos del juego y fotos sin boton OK fuera, 0.3.0; 3: el "3" sobre fondo claro, 0.7.1).
-LECTURA = 5  # galeria verificada, casillas desplazadas y capturas inestables pendientes
+LECTURA = 6  # 6: casillas siempre en la rejilla y primero el catalogo del usuario (2026-11-13)
 
 
 def _analizar(pantalla, primera: bool = False, modo: str = "", estable: bool = True) -> dict:
