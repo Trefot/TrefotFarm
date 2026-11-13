@@ -53,7 +53,8 @@ THONAR_POSTURA = ("thonar_azul.postura",)
 THONAR_OTRA = ("thonar_azul.otra",)
 PROTEGIDAS_FASE2 = ("gawain.area", "odin.area", "freyja_roja.ulti", "thonar_azul.postura")
 TURNOS_MAXIMOS = {1: 2, 2: 1, 3: 1}
-PAUSA_ENTRE_CARTAS = 0.5  # tras colocarse una carta, antes de la siguiente (animacion)
+PAUSA_ENTRE_CARTAS = 0.5  # sin confirmacion o con fusiones: conservar margen de animacion
+PAUSA_CARTA_CONFIRMADA = 0.25  # casilla ya ocupada y sin fusiones: no esperar otros 0.5 s
 HUECOS_QUIETOS = 0.6  # segundos con la misma cantidad de huecos antes de empezar un turno (PC lentos)
 # Primer turno de la pelea con menos de 3 huecos: tienen que llevar asi este tiempo. Los lobos (2026-11-10) empezaban
 # la mitad de las peleas con "1 cartas por jugar" en plena animacion; la postura no entraba y reiniciaba el nivel.
@@ -769,6 +770,7 @@ class PerrosPiso4(Modo):
                 if self.objetivo_actual != antes:
                     self.esperar_corto(0.4)  # que el juego acabe de marcar al perro antes de tocar la carta
             if isinstance(idx, tuple):  # mover una carta sobre otra (gasta el hueco sin atacar)
+                ultima_carta = None  # un arrastre fallido no bloquea la carta del ataque anterior
                 origen, destino = mano[idx[0]], mano[idx[1]]
                 self.log(f"Accion {accion + 1}: muevo {origen} sobre {destino}")
                 entrada.arrastrar(origen.rect, destino.rect, o)
@@ -779,14 +781,18 @@ class PerrosPiso4(Modo):
                 ultima_carta = carta
             es_ulti = not isinstance(idx, tuple) and mano[idx].tipo == TipoCarta.ULTI
             # La ulti tiene una animacion larga: con 1,6 s la rata la dio por "no entra" y la aparto (2026-11-09).
-            if self._esperar_hueco(huecos, 4.0 if es_ulti else 1.6):
+            confirmada = self._esperar_hueco(huecos, 4.0 if es_ulti else 1.6)
+            if confirmada:
                 self.diario.confirmar(pendiente, True)
                 pendiente = None
                 self.log("Carta colocada.", "debug")
             else:
                 self.log("La carta aun no ocupa su hueco; lo vuelvo a comprobar.", "debug")
             fusiones = 0 if isinstance(idx, tuple) else self.estrategia.fusiones_al_jugar(mano, idx)
-            self.esperar_corto(PAUSA_ENTRE_CARTAS + (0.6 if fusiones == 1 else 1.1 if fusiones > 1 else 0))
+            pausa = PAUSA_ENTRE_CARTAS
+            if confirmada and not fusiones and not es_ulti and not isinstance(idx, tuple):
+                pausa = PAUSA_CARTA_CONFIRMADA
+            self.esperar_corto(pausa + (0.6 if fusiones == 1 else 1.1 if fusiones > 1 else 0))
             ultima_accion = accion
             self.ultimo_turno = time.time()  # la foto "sin turno" cuenta desde la ultima carta, no desde el inicio
             # Tambien la ultima carta se comprueba: el turno solo acaba cuando no quedan huecos.

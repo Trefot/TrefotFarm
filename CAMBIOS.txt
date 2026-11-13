@@ -29,6 +29,13 @@ Etapas previstas:
 
 CAMBIOS
 -------
+0.36.5-alpha — Movimientos del ciervo y ritmo de cartas
+- Ciervo F4: los movimientos de la fase 2 eligen otra carta real, incluso con huecos vacios; no se sustituyen por ataques de la IA general.
+- Sin movimiento valido, espera otra lectura sin rendirse; los reintentos no duplican el historial de colores ni bloquean la carta del ataque anterior.
+- Pausa tras una normal confirmada sin fusiones: 0,25 s en lugar de 0,5 s. Ultis, movimientos, fusiones y toques sin confirmar conservan su margen.
+- La memoria separa tambien las versiones de los guiones y el motor de colocacion.
+- Verificado sin el juego; falta contrastar la causa de la derrota en F2 con el equipo y las jugadas reales.
+
 0.36.4-alpha — Actualizaciones visibles
 - Buscar actualizaciones siempre visible en Inicio y Ajustes, con texto y version instalada.
 - Estado de busqueda y errores de conexion visibles; boton para actualizar o reiniciar cuando corresponda.

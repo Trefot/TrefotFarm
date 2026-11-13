@@ -1,7 +1,7 @@
 """Floor 4 del pajaro (Hraesvelgr) y del ciervo (Eikthyrnir), 2026-11-10.
 
 Guiones traducidos de AutoFarming (github.com/PhantomPilots/AutoFarming, licencia MIT):
-``utilities/bird_floor4_fighting_strategies.py`` y ``utilities/deer_floor4_fighting_strategies.py``. AutoFarming
+``scripts/utilities/bird_floor4_fighting_strategies.py`` y ``scripts/utilities/deer_floor4_fighting_strategies.py``. AutoFarming
 reconoce las cartas con imagenes y modelos que ya no sirven con el diseno actual (lumen/cartas.py); aqui cada
 carta se reconoce por su nombre (inteligencia.agrupar_por_dibujo) y lo que hace se lee de su texto (7dshub):
 "Heals" = curacion, "Removes Buffs" = quita buffs, "Amplify"/"Power Strike" = contra la inmortalidad.
@@ -23,7 +23,7 @@ from lumen import personajes as P
 from lumen.cartas import Carta, Rango, TipoCarta
 from lumen.modos import bestias_pisos1a3 as B13
 from lumen.modos.bestias_pisos1a3 import ATRAS, PUNTO_ATRAS, EstrategiaInteligente
-from lumen.modos.perros_piso4 import PerrosPiso4
+from lumen.modos.perros_piso4 import PerrosPiso4, Reiniciar
 
 # ------------------------------------------------------------------ las cartas
 
@@ -167,6 +167,8 @@ class EstrategiaPiso4(EstrategiaInteligente):
 
     def nueva_pelea(self):
         self.jugadas = []
+        self._contexto_jugadas = None
+        self._cartas_por_accion = {}
 
     def pantalla(self):
         return getattr(self.modo, "_ultima_p", None) if self.modo is not None else None
@@ -187,18 +189,36 @@ class EstrategiaPiso4(EstrategiaInteligente):
             inteligencia.agrupar_por_dibujo(mano, self.jugador._identificar)  # nombres de las cartas
         except Exception:
             pass
-        if accion == 0:
-            self.jugadas = []
+        contexto = (fase, turno)
+        if contexto != self._contexto_jugadas:
+            self._cartas_por_accion = {}
+            self._contexto_jugadas = contexto
+        # Solo cuentan las posiciones anteriores. Reintentar no equivale a jugar
+        # otra carta; los movimientos dejan una posicion sin carta, no desplazan colores.
+        self._cartas_por_accion = {a: c for a, c in self._cartas_por_accion.items() if a < accion}
+        self.jugadas = [self._cartas_por_accion[a] for a in sorted(self._cartas_por_accion)]
         try:
             jugada = self.guion(fase or 1, turno, accion, mano)
+        except Reiniciar:
+            raise
         except Exception:
             jugada = None
         jugada = self._valida(jugada, mano)
         if jugada is None:
-            jugada = super().decidir(fase, turno, accion, mano, total)[0]
+            jugada = self._respaldo(fase, turno, accion, mano, total)
         if isinstance(jugada, int) and 0 <= jugada < len(mano):
-            self.jugadas.append(mano[jugada])
+            self._cartas_por_accion[accion] = mano[jugada]
+            self.jugadas = [self._cartas_por_accion[a] for a in sorted(self._cartas_por_accion)]
         return jugada, None, False
+
+    def _respaldo(self, fase, turno, accion, mano, total):
+        return super().decidir(fase, turno, accion, mano, total)[0]
+
+    def carta_en_accion(self, accion):
+        if self._contexto_jugadas is not None:
+            return self._cartas_por_accion.get(accion)
+        # Permite usar el guion aislado con una lista de cartas ya colocadas.
+        return self.jugadas[accion] if 0 <= accion < len(self.jugadas) else None
 
     def por_defecto(self, fase, turno, accion, mano, sin=()):
         """El modo inteligente sin poder jugar las cartas ``sin`` (indices)."""
@@ -458,6 +478,18 @@ class EstrategiaCiervo4(EstrategiaPiso4):
     def _tiene_ulti(self, cartas, cond) -> bool:
         return any(es_ulti(c) and cond(c) for c in cartas)
 
+    def _respaldo(self, fase, turno, accion, mano, total):
+        if fase == 2:
+            return self._mover_para_ulti(mano)
+        return super()._respaldo(fase, turno, accion, mano, total)
+
+    @staticmethod
+    def _movimiento_valido(mano, origen):
+        otros = [i for i, c in enumerate(mano) if i != origen and con_carta(c)]
+        if not otros:
+            raise Reiniciar("Ciervo: no hay dos cartas para mover sin atacar; espero otra lectura")
+        return origen, min(otros, key=lambda i: abs(i - origen))
+
     def _mover_para_ulti(self, mano):
         """Mover una carta del heroe que aun no tiene la ulti (asi se carga)."""
         todas = list(mano) + list(self.jugadas)
@@ -467,8 +499,11 @@ class EstrategiaCiervo4(EstrategiaPiso4):
                     (es_thor, self._por_rango(mano, lambda c: color(c) == "azul"))]
         for cond, cartas in unidades:
             if cartas and not self._tiene_ulti(todas, cond):
-                return (cartas[0], cartas[0] + 1)
-        return (-2, -1)
+                return self._movimiento_valido(mano, cartas[0])
+        cartas = [i for i, c in enumerate(mano) if con_carta(c)]
+        if len(cartas) < 2:
+            raise Reiniciar("Ciervo: no hay dos cartas para mover sin atacar; espero otra lectura")
+        return self._movimiento_valido(mano, cartas[-2])
 
     def _fase2(self, turno, accion, mano):
         grupos = self._grupos(mano, ultis_al_final=True)
@@ -480,7 +515,7 @@ class EstrategiaCiervo4(EstrategiaPiso4):
             if accion == 0:
                 return grupos["rojo"][0]
             if accion <= 2:
-                return (grupos["rojo"][0], grupos["rojo"][0] + 1)
+                return self._movimiento_valido(mano, grupos["rojo"][0])
             return grupos["rojo"][0]
         if accion == 0 or self.color_turno is None:
             n = turno - 2
@@ -532,7 +567,7 @@ class EstrategiaCiervo4(EstrategiaPiso4):
             azules, verdes = azules[::-1], verdes[::-1]
             if turno <= 2:
                 rojas = rojas[::-1]
-            primera = self.jugadas[0] if self.jugadas else None
+            primera = self.carta_en_accion(0)
             if accion == 3 and not (primera is not None and es_hel(primera) and es_ulti(primera)):
                 return self._mover_para_ulti(mano)
         quita = [i for i in verdes if quita_buffs(mano[i])]
@@ -546,7 +581,7 @@ class EstrategiaCiervo4(EstrategiaPiso4):
             for buff, lista in ((juego.buff_azul, azules), (juego.buff_rojo, rojas), (juego.buff_verde, verdes)):
                 if self.ve(buff) and lista:
                     return lista[-1]
-        ultima = self.jugadas[accion - 1] if 0 < accion <= len(self.jugadas) else None
+        ultima = self.carta_en_accion(accion - 1) if accion > 0 else None
         if accion == 1 and ultima is not None and es_hel(ultima) and es_ulti(ultima) and not self.ve(juego.buff_verde):
             ultima = None  # la ulti de Hel no puso el buff verde: se empieza la ruleta otra vez
         if ultima is not None:

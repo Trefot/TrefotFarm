@@ -34,6 +34,8 @@ def firma_conocimiento() -> str:
         "ia/decidir.py",
         "ia/efectos.py",
         "ia/estado.py",
+        "modos/bestias_piso4.py",
+        "modos/perros_piso4.py",
     ):
         huella.update(nombre.encode())
         huella.update((RAIZ / "lumen" / nombre).read_bytes())

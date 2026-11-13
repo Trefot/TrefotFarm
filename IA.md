@@ -122,3 +122,12 @@ acciones sin confirmar, fallos por fase, partidas/h e intervalo orientativo de t
 en el diario; no se certifica como real a partir del archivo. `ia/equipos.py` ordena equipos registrados
 por disponibilidad, compatibilidad y medidas comparables de la version actual; no crea ni ejecuta equipos
 nuevos. Laboratorio incluye estas operaciones con la llave administrativa.
+
+## Correccion de guiones y ritmo (0.36.5-alpha)
+
+- El historial del guion se identifica por fase, turno y posicion de accion: repetir un toque no suma otra carta y mover no desplaza la secuencia de atributos.
+- En ciervo F4 fase 2, si un movimiento no puede ejecutarse, no se reemplaza por un ataque de la IA general. Se usan destinos ocupados y se espera otra lectura si no hay dos cartas.
+- Contraste con AutoFarming: `scripts/utilities/deer_floor4_fighting_strategies.py` en `6c78e5564bc0568ab54fc6b8c96afc7abae8e08b` (MIT). Su fase 2 contempla tres cartas y un movimiento; eso no demuestra por si solo la causa de la derrota reportada.
+- Pausa de 0,25 s solo tras una normal confirmada sin fusiones. Los otros margenes no cambian.
+- La firma de perfiles incluye ambos motores F4 para no mezclar memoria entre versiones del guion.
+- Pendiente: equipo exacto y registro/captura del turno de la derrota real de F2; no se ha validado una victoria en el juego en esta revision.

@@ -57,6 +57,8 @@ class Validacion(unittest.TestCase):
                 "ia/decidir.py",
                 "ia/efectos.py",
                 "ia/estado.py",
+                "modos/bestias_piso4.py",
+                "modos/perros_piso4.py",
             ):
                 ruta = raiz / "lumen" / nombre
                 ruta.parent.mkdir(parents=True, exist_ok=True)
@@ -65,9 +67,12 @@ class Validacion(unittest.TestCase):
                 with mock.patch.object(perfiles, "RAIZ", raiz):
                     perfiles.firma_conocimiento.cache_clear()
                     antes = perfiles.firma_conocimiento()
-                    (raiz / "lumen" / "inteligencia.py").write_text("# motor nuevo")
-                    perfiles.firma_conocimiento.cache_clear()
-                    self.assertNotEqual(antes, perfiles.firma_conocimiento())
+                    for nombre in ("inteligencia.py", "modos/bestias_piso4.py", "modos/perros_piso4.py"):
+                        (raiz / "lumen" / nombre).write_text("# motor nuevo")
+                        perfiles.firma_conocimiento.cache_clear()
+                        despues = perfiles.firma_conocimiento()
+                        self.assertNotEqual(antes, despues)
+                        antes = despues
             finally:
                 perfiles.firma_conocimiento.cache_clear()
 
