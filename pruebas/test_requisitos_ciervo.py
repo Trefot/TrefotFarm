@@ -220,3 +220,17 @@ class Fase4Remate(unittest.TestCase):
         e = ciervo(RQ.CAUTELOSO, ve=(juego.buff_azul,))
         m = mano((THOR + ".skill_1", R.BRONCE), (FREYR + ".ulti", R.ULTI))
         self.assertEqual(e.guion(4, 2, 0, m), 0, "toca azul (buff): la de Thor, no la ulti roja")
+
+
+class ColorDeLaFicha(unittest.TestCase):
+    """2026-11-13: "freyja_roja" (en femenino) se quedaba sin color y el ciervo nunca jugaba sus cartas."""
+
+    def test_freyja_roja_es_roja(self):
+        self.assertEqual(B4.color(mano(("freyja_roja.normal_1", R.BRONCE))[0]), "rojo")
+        self.assertEqual(B4.color(mano((THOR + ".skill_1", R.BRONCE))[0]), "azul")
+
+    def test_juega_sus_cartas_en_el_turno_rojo(self):
+        e = ciervo(RQ.CAUTELOSO)
+        e.decidir(2, 2, 0, mano((FREYR + ".skill_1", R.BRONCE)))  # turno rojo
+        m = mano((THOR + ".skill_1", R.BRONCE), ("freyja_roja.normal_2", R.PLATA), (JORM + ".skill_1", R.BRONCE))
+        self.assertEqual(e.decidir(2, 2, 1, m)[0], 1)

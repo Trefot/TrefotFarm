@@ -41,10 +41,25 @@ def habilidad(c: Carta | None) -> str:
     return _base(c).partition(".")[2]
 
 
+@lru_cache(maxsize=1)
+def _colores() -> dict:
+    try:
+        return {pid: pj.color for pid, pj in P.cargar().items()}
+    except Exception:
+        return {}
+
+
 def color(c: Carta | None) -> str:
-    """rojo, azul o verde (el final del id del heroe)."""
+    """rojo, azul o verde: el de la ficha del heroe. Antes salia del final del id y "freyja_roja" (en femenino) se
+    quedaba sin color: el ciervo nunca jugaba sus cartas (el usuario, 2026-11-13)."""
     h = heroe(c)
-    return next((x for x in ("rojo", "azul", "verde") if h.endswith("_" + x)), "")
+    if not h:
+        return ""
+    ficha = _colores().get(h)
+    if ficha in ("rojo", "azul", "verde"):
+        return ficha
+    final = h.rsplit("_", 1)[-1]
+    return {"rojo": "rojo", "roja": "rojo", "azul": "azul", "verde": "verde"}.get(final, "")
 
 
 def _es(c, *claves) -> bool:

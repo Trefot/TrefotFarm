@@ -29,6 +29,11 @@ Etapas previstas:
 
 CAMBIOS
 -------
+0.38.6-alpha
+  - Ciervo Floor 4: Freyja roja no lanzaba sus cartas (el usuario). El color salia del final del id del heroe y
+    "freyja_roja", en femenino, se quedaba sin color: nunca entraba en el turno rojo. Ahora el color sale de la
+    ficha de cada personaje (Personajes), con el final del id solo de respaldo.
+
 0.38.5-alpha
   - Ciervo Floor 4, fase 4 (el usuario lo pasa asi con Tyr verde, Freyja roja, Thor azul y Freyr rojo): semaforo de
     colores los 3 primeros turnos (fuera inmortalidades) y desde el 4.o a full dano, tambien la ulti de Freyr,
