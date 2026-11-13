@@ -604,11 +604,32 @@ class EstrategiaCiervo4(EstrategiaPiso4):
                 if self.ve(buff):
                     return None if listas[col] else col
             return None
-        ultima = self.carta_en_accion(accion - 1)
+        ultima = self._ultima_jugada(accion)
         if ultima is None or not color(ultima) or (es_hel(ultima) and es_ulti(ultima)):
             return None
         toca = self.SIGUIENTE.get(color(ultima))
         return toca if toca and not listas[toca] else None
+
+    def _ultima_jugada(self, accion):
+        """La ultima carta JUGADA en el turno (un movimiento en medio no cuenta: antes se perdia la cuenta y volvia a
+        jugar otra roja, 2026-11-13)."""
+        for a in range(accion - 1, -1, -1):
+            c = self.carta_en_accion(a)
+            if c is not None:
+                return c
+        return None
+
+    def _inicio_mas_largo(self, rojas, verdes, azules):
+        """Turno 1: el color con el que la ruleta (verde > azul > rojo > verde) sale mas larga con esta mano."""
+        cuantas = {"rojo": len(rojas), "verde": len(verdes), "azul": len(azules)}
+        def largo(col):  # noqa: E306
+            n, quedan = 0, dict(cuantas)
+            while quedan.get(col, 0) > 0 and n < 4:
+                quedan[col] -= 1
+                n += 1
+                col = self.SIGUIENTE[col]
+            return n
+        return max(("rojo", "verde", "azul"), key=lambda k: (largo(k), -("rojo", "verde", "azul").index(k)))
 
     def _falta_color(self, turno, col):
         turnos = self.__dict__.setdefault("_turnos_sin_color", set())
@@ -798,14 +819,14 @@ class EstrategiaCiervo4(EstrategiaPiso4):
         if quita:
             verdes = [quita[0]] + [i for i in verdes if i != quita[0]]
         if accion == 0 and turno == 1:
-            for lista in (rojas, verdes, azules):
-                if lista:
-                    return lista[-1]
+            inicio = {"rojo": rojas, "verde": verdes, "azul": azules}[self._inicio_mas_largo(rojas, verdes, azules)]
+            if inicio:
+                return inicio[-1]
         elif accion == 0:
             for buff, lista in ((juego.buff_azul, azules), (juego.buff_rojo, rojas), (juego.buff_verde, verdes)):
                 if self.ve(buff) and lista:
                     return lista[-1]
-        ultima = self.carta_en_accion(accion - 1) if accion > 0 else None
+        ultima = self._ultima_jugada(accion) if accion > 0 else None
         if accion == 1 and ultima is not None and es_hel(ultima) and es_ulti(ultima) and not self.ve(juego.buff_verde):
             ultima = None  # la ulti de Hel no puso el buff verde: se empieza la ruleta otra vez
         if ultima is not None:

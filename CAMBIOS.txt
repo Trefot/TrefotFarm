@@ -29,6 +29,12 @@ Etapas previstas:
 
 CAMBIOS
 -------
+0.38.7-alpha
+  - Ciervo Floor 4, fase 4 (prueba del usuario): en el turno 1 empezaba por rojo sin tener verdes (lo que sigue al
+    rojo) y la ruleta se cortaba a la primera. Ahora elige el color de inicio que da la cadena mas larga con la mano
+    (sin verdes: azul y luego rojo). Y tras un movimiento ya no pierde la cuenta: la ruleta sigue a la ultima carta
+    jugada (antes volvia a jugar otra roja).
+
 0.38.6-alpha
   - Ciervo Floor 4: Freyja roja no lanzaba sus cartas (el usuario). El color salia del final del id del heroe y
     "freyja_roja", en femenino, se quedaba sin color: nunca entraba en el turno rojo. Ahora el color sale de la

@@ -234,3 +234,19 @@ class ColorDeLaFicha(unittest.TestCase):
         e.decidir(2, 2, 0, mano((FREYR + ".skill_1", R.BRONCE)))  # turno rojo
         m = mano((THOR + ".skill_1", R.BRONCE), ("freyja_roja.normal_2", R.PLATA), (JORM + ".skill_1", R.BRONCE))
         self.assertEqual(e.decidir(2, 2, 1, m)[0], 1)
+
+
+class Fase4Cadena(unittest.TestCase):
+    """2026-11-13: empezaba por rojo sin verdes y, tras mover, volvia a jugar otra roja."""
+
+    def test_turno_1_empieza_por_la_cadena_mas_larga(self):
+        e = ciervo(RQ.CAUTELOSO)
+        m = mano((FREYR + ".skill_1", R.BRONCE), ("freyja_roja.normal_1", R.BRONCE), (THOR + ".skill_1", R.BRONCE))
+        self.assertEqual(e.guion(4, 1, 0, m), 2, "sin verdes: azul y luego rojo (2), no rojo solo (1)")
+
+    def test_tras_un_movimiento_sigue_la_ultima_carta_jugada(self):
+        e = ciervo(RQ.CAUTELOSO)
+        e.decidir(4, 2, 0, mano((FREYR + ".skill_1", R.BRONCE)))  # roja: toca verde
+        m = mano((FREYR + ".skill_2", R.BRONCE), ("freyja_roja.normal_1", R.BRONCE), (THOR + ".skill_1", R.BRONCE))
+        self.assertIsInstance(e.decidir(4, 2, 1, m)[0], tuple, "no hay verde: mueve")
+        self.assertIsInstance(e.decidir(4, 2, 2, m)[0], tuple, "sigue tocando verde: no otra roja")
