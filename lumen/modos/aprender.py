@@ -106,6 +106,13 @@ class IndiceCartas:
                     self.plantillas.append((pj.id, c.id, plantilla, umbral))
         self.mitades = [_mitad(p.imagenes[0]) for _, _, p, _ in self.plantillas]
         self._memoria: list[tuple[np.ndarray, str | None]] = []  # (huella, "heroe.carta") de cartas ya vistas
+        self.equipo: set[str] | None = None  # si se sabe el equipo, solo sus cartas (ver fijar_equipo)
+
+    def fijar_equipo(self, heroes) -> None:
+        """Desde aqui solo se comparan las cartas de estos heroes: las versiones de color de un heroe comparten
+        dibujo (Freyr rojo y azul) y algunas cartas se parecen a las de otro (Freyja verde y roja, 2026-11-13)."""
+        self.equipo = set(heroes) if heroes else None
+        self._memoria = []
 
     def heroe_de(self, carta: cartas.Carta) -> str | None:
         nombre = self.carta_de(carta)
@@ -122,6 +129,8 @@ class IndiceCartas:
         pequena = _mitad(carta.imagen)
         parecidos = []
         for i, ref in enumerate(self.mitades):
+            if self.equipo is not None and self.plantillas[i][0] not in self.equipo:
+                continue
             if ref.shape[0] <= pequena.shape[0] and ref.shape[1] <= pequena.shape[1]:
                 parecidos.append((float(cv2.matchTemplate(pequena, ref, cv2.TM_CCOEFF_NORMED).max()), i))
         mejor, valor_mejor = None, 0.0

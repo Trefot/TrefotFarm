@@ -42,5 +42,5 @@ ciervo_piso4:  # el destino del bot (en bestias_7dshub.yaml es "ciervo_f4")
     - tipo: postura_contraataque
       obligatorio: true
       nota: >-
-        Defensive Horn (cada 3 turnos): postura 2 turnos que devuelve 1500 % al ser atacado. Quitarle la postura o no
-        atacar.
+        Defensive Horn (cada 3 turnos): postura 2 turnos que devuelve 1500 % al ser atacado. Quitarle la postura (o la
+        ulti de Hel); sin nada que la quite, seguir atacando: quedarse quieto solo le da tiempo (el usuario).

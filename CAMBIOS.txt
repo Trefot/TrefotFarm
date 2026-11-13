@@ -29,6 +29,16 @@ Etapas previstas:
 
 CAMBIOS
 -------
+0.38.2-alpha
+  - Colores de los personajes (el usuario: "no esta detectando bien el color"): el reconocedor del equipo de los
+    perros (Odin, Gawain, Freyja roja, Thonar) se aplicaba en todos los modos y la Freyja verde del ciervo salia
+    "freyja_roja", roja. Ahora solo en los perros. Ademas, en el Floor 4 Lumen aprende el equipo durante la pelea
+    y, con los 4 claros, solo compara con sus cartas: las versiones de color de un heroe comparten dibujo (Freyr
+    rojo y azul salian a la vez). El registro dice "Equipo reconocido: ...".
+  - Ciervo Floor 4, contraataque (Defensive Horn): sin nada que le quite la postura ni la ulti de Hel, sigue
+    atacando. Quedarse quieto dos turnos (0.38.0) solo le daba tiempo y el ciervo mataba al equipo igual. El
+    registro dice cuando ve el contraataque y que decide.
+
 0.38.1-alpha
   - Ciervo Floor 4, fase 2 (el usuario perdio asi en Whale): una carta de otro color que la primera del turno
     bloquea todas. Ahora es obligatorio en todos los estilos: todo el turno del mismo color y, si no quedan, mover

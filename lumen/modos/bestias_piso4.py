@@ -194,9 +194,36 @@ class EstrategiaPiso4(EstrategiaInteligente):
         """idx (jugar), (i, j) (mover i sobre j) o None (que decida el modo inteligente)."""
         return None
 
+    MIN_VISTAS_EQUIPO = 24  # cartas reconocidas antes de dar el equipo por sabido
+    PARTE_EQUIPO = 0.8  # los 4 heroes mas vistos tienen que ser al menos este tanto de lo reconocido
+
+    def _aprender_equipo(self, mano):
+        """Cuenta de que heroe es cada carta reconocida; con los 4 claros, el reconocedor solo mira sus cartas."""
+        indice = getattr(self.jugador, "_indice", None)
+        if indice is None or getattr(indice, "equipo", None):
+            return
+        conteo = getattr(self, "_conteo_heroes", None)
+        if conteo is None:
+            conteo = self._conteo_heroes = {}
+        for c in mano:
+            h = heroe(c)
+            if h and "." in _base(c):
+                conteo[h] = conteo.get(h, 0) + 1
+        total = sum(conteo.values())
+        cuatro = sorted(conteo, key=conteo.get, reverse=True)[:4]
+        if total >= self.MIN_VISTAS_EQUIPO and len(cuatro) == 4 and min(conteo[h] for h in cuatro) >= 3                 and sum(conteo[h] for h in cuatro) >= self.PARTE_EQUIPO * total:
+            indice.fijar_equipo(cuatro)
+            if self.modo is not None:
+                try:
+                    self.modo.log("Equipo reconocido: " + ", ".join(cuatro) + ". Desde ahora solo comparo sus cartas.",
+                                  "info")
+                except Exception:
+                    pass
+
     def decidir(self, fase, turno, accion, mano, total=4):
         try:
             inteligencia.agrupar_por_dibujo(mano, self.jugador._identificar)  # nombres de las cartas
+            self._aprender_equipo(mano)
         except Exception:
             pass
         self._total_turno = total
@@ -508,6 +535,16 @@ class EstrategiaCiervo4(EstrategiaPiso4):
             return self._golpe_maximo(mano, guardar_ulti_freyr=True)
         return self._fase4(turno, accion, mano)  # inmortalidad y contraataque: obligatorio siempre
 
+    def _avisar(self, texto: str):
+        """Al registro, una vez por turno (para saber que vio el bot y que decidio)."""
+        clave = (texto, len(self.jugadas))
+        if getattr(self, "_ultimo_aviso", None) != clave and self.modo is not None:
+            self._ultimo_aviso = clave
+            try:
+                self.modo.log(texto, "info")
+            except Exception:
+                pass
+
     def _color_del_turno(self, accion):
         primera = self.carta_en_accion(0) if accion > 0 else None
         return color(primera) if primera is not None and color(primera) else None
@@ -663,14 +700,18 @@ class EstrategiaCiervo4(EstrategiaPiso4):
 
     def _fase4(self, turno, accion, mano):
         if self.ve(juego.contraataque):
-            # Defensive Horn: postura que devuelve 1500 % al atacarle. Quitarle la postura, la ulti de Hel o no atacar.
+            # Defensive Horn: postura que devuelve 1500 % al atacarle. Quitarle la postura o la ulti de Hel; si no hay
+            # nada, se sigue atacando: quedarse quieto (0.38.0) solo le daba tiempo y mataba al equipo igual (el
+            # usuario, 2026-11-13: "podia seguir con los danos de cartas rojas y sus ultis").
             from lumen.ia.resolver import satisface
 
             if quita := indices(mano, lambda c: satisface(efectos_carta(c), "quitar_postura"), orden=lambda c: 0):
+                self._avisar(f"Contraataque del ciervo: le quito la postura con {heroe(mano[quita[-1]])}.")
                 return quita[-1]
             if hel_ulti := self._por_rango(mano, lambda c: es_hel(c) and es_ulti(c)):
+                self._avisar("Contraataque del ciervo: ulti de Hel.")
                 return hel_ulti[-1]
-            return self._mover_para_ulti(mano)  # sin nada que la quite: no atacar (mover carga ultis)
+            self._avisar("Contraataque del ciervo y nada que le quite la postura: sigo atacando.")
         rojas = self._por_rango(mano, lambda c: color(c) == "rojo")
         azules = self._por_rango(mano, lambda c: color(c) == "azul")
         verdes = self._por_rango(mano, lambda c: color(c) == "verde")

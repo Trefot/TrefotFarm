@@ -79,8 +79,8 @@ class Estilos(unittest.TestCase):
         e = ciervo(RQ.WHALE, ve=(juego.contraataque,))
         m = mano((THOR + ".skill_1", R.BRONCE), (MELI + ".ulti", R.ULTI))
         self.assertEqual(e.guion(4, 2, 0, m), 1, "la ulti de Meliodas traidor quita posturas")
-        sin = mano((THOR + ".skill_1", R.BRONCE), (THOR + ".skill_2", R.BRONCE))
-        self.assertIsInstance(e.guion(4, 2, 0, sin), tuple, "sin nada que la quite: mover, no atacar")
+        sin = mano((THOR + ".skill_1", R.BRONCE), (FREYR + ".skill_2", R.BRONCE))
+        self.assertNotIsInstance(e.guion(4, 4, 0, sin), tuple, "sin nada que la quite: no se queda moviendo cartas")
 
     def test_otro_equipo_en_la_fase_1(self):
         e = ciervo(RQ.CAUTELOSO)
@@ -125,3 +125,40 @@ class Fase2MismoColor(unittest.TestCase):
 
     def test_ahora_es_obligatoria(self):
         self.assertFalse(RQ.saltable("ciervo_piso4", 2))
+
+
+class ColoresDelEquipo(unittest.TestCase):
+    """2026-11-13: la Freyja verde salia "freyja_roja" (roja) y Freyr rojo y azul aparecian a la vez."""
+
+    def test_el_reconocedor_de_los_perros_solo_en_los_perros(self):
+        import inspect
+
+        from lumen.modos import perros_piso4 as P4
+
+        fuente = inspect.getsource(P4.PerrosPiso4._jugar_turno)
+        self.assertIn("if self.equipo is EQUIPO", fuente)
+
+    def test_aprende_el_equipo_y_solo_mira_sus_cartas(self):
+        class Indice:
+            equipo = None
+
+            def fijar_equipo(self, heroes):
+                self.equipo = set(heroes)
+
+        e = ciervo(RQ.CAUTELOSO)
+        e.jugador._indice = Indice()
+        m = mano((THOR + ".skill_1", R.BRONCE), (JORM + ".skill_1", R.BRONCE), (FREYR + ".skill_1", R.BRONCE),
+                 (TYR + ".skill_1", R.BRONCE), (THOR + ".skill_2", R.BRONCE), (JORM + ".skill_2", R.BRONCE),
+                 (FREYR + ".skill_2", R.BRONCE), ("sun_god_freyr_azul.skill_1", R.BRONCE))
+        for _ in range(3):
+            e._aprender_equipo(m)
+        self.assertEqual(e.jugador._indice.equipo, {THOR, JORM, FREYR, TYR}, "el Freyr azul (1 de 8) fuera")
+
+    def test_indice_con_equipo_no_mira_a_otros(self):
+        from lumen.modos.aprender import IndiceCartas
+
+        indice = IndiceCartas.__new__(IndiceCartas)
+        indice._memoria = [("x", "y")]
+        indice.fijar_equipo({THOR})
+        self.assertEqual(indice.equipo, {THOR})
+        self.assertEqual(indice._memoria, [], "lo recordado antes se olvida")

@@ -746,7 +746,11 @@ class PerrosPiso4(Modo):
                     self.log("El hueco no se lleno; repito la accion.", "aviso")
             repeticiones = 0
 
-            mano = EQUIPO.etiquetar(C.leer_mano(p))
+            mano = C.leer_mano(p)
+            if self.equipo is EQUIPO:
+                # Solo en los perros con su equipo: en otros modos ponia nombres de este equipo a cartas parecidas
+                # (la Freyja verde del ciervo salia "freyja_roja", roja, 2026-11-13) y el reconocedor no las miraba.
+                mano = EQUIPO.etiquetar(mano)
             for c in mano:
                 if c.imagen is not None and any(_misma_imagen(c.imagen, r) for r in rechazadas):
                     c.tipo = TipoCarta.BLOQUEADA
