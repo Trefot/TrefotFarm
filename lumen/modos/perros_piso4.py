@@ -668,6 +668,8 @@ class PerrosPiso4(Modo):
         if self.rendirse_si_bloqueada and self.fase != 3 and juego.mano_bloqueada.esta(p, 0.6):
             self.log("Mano bloqueada desde el inicio: reinicio.", "aviso")
             return "rendirse"
+        if self._reiniciar_por_bloqueo(p):
+            return "rendirse"
         self.turnos_pelea = getattr(self, "turnos_pelea", 0) + 1
         if self.talento_turno_1 and self._talento_listo() and self._hay_talento(p):
             # Cada vez que se recarga, no solo en el turno 1 (casi todos tienen "Cooldown: 3 turns"; algunos, un limite
@@ -679,6 +681,10 @@ class PerrosPiso4(Modo):
             entrada.clic(juego.COORD["talento"], self.capturar()[1], espera=0.1)
             self.esperar_corto(2.5)  # la animacion del talento
         return self._jugar_turno()
+
+    def _reiniciar_por_bloqueo(self, p) -> bool:
+        """Las bestias con guion propio dicen en que fases una mano entera bloqueada ya es una pelea perdida."""
+        return False
 
     def _talento_listo(self) -> bool:
         usado = getattr(self, "talento_usado_en", None)

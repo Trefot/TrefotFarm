@@ -201,3 +201,37 @@ class Derrota(unittest.TestCase):
         texto = m.texto_derrota()
         self.assertIn("DERROTA #2 en la fase 2, turno 9", texto)
         self.assertIn("6 turnos seguidos sin poder jugar", texto)
+
+
+class ReinicioPorBloqueo(unittest.TestCase):
+    """El usuario, 2026-11-13: con todas las cartas bloqueadas en la fase 2 del pajaro, reiniciar ya."""
+
+    def modo(self, clave):
+        m = MODOS[clave]({"victorias": 0, "extra": 0, "pociones": True, "max_pociones": 0})
+        m.log = lambda *a, **k: None
+        return m
+
+    def leer(self, bloqueadas, libres=0):
+        cartas = mano(*([(SHION + ".skill_1", R.BRONCE)] * (bloqueadas + libres)))
+        for c in cartas[:bloqueadas]:
+            c.tipo = TipoCarta.BLOQUEADA
+        return cartas
+
+    def test_pajaro_fase2_todo_bloqueado_reinicia(self):
+        m = self.modo("pajaro_piso4")
+        m.fase = 2
+        B4.C.leer_mano, original = (lambda p: self.leer(8)), B4.C.leer_mano
+        try:
+            self.assertTrue(m._reiniciar_por_bloqueo(object()))
+            B4.C.leer_mano = lambda p: self.leer(7, libres=1)
+            self.assertFalse(m._reiniciar_por_bloqueo(object()), "con una carta jugable se sigue")
+            m.fase = 3
+            B4.C.leer_mano = lambda p: self.leer(8)
+            self.assertFalse(m._reiniciar_por_bloqueo(object()), "solo en la fase 2")
+        finally:
+            B4.C.leer_mano = original
+
+    def test_el_ciervo_no(self):
+        m = self.modo("ciervo_piso4")
+        m.fase = 2
+        self.assertFalse(m._reiniciar_por_bloqueo(object()))

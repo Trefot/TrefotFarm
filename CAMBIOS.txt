@@ -29,6 +29,11 @@ Etapas previstas:
 
 CAMBIOS
 -------
+0.37.3-alpha
+  - Pajaro Floor 4 (lo pidio el usuario): si en la fase 2 empieza un turno con TODAS las cartas bloqueadas (no se
+    juntaron las 3 de plata y el pajaro las bloqueo), reinicia en vez de pasar 6-9 turnos moviendo cartas hasta
+    perder. Cuenta como reinicio, no como derrota. Con una sola carta jugable sigue peleando.
+
 0.37.2-alpha
   - Lumen arranca mas rapido (medido sin los datos del usuario: de 5,1 a 2,0 s): el lector de YAML en C cuando
     esta instalado, los archivos de personajes se leen una vez (se leian 8), y las paginas Personajes (comprobaba

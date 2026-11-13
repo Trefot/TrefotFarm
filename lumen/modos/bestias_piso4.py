@@ -17,6 +17,7 @@ Equipos (BOTS_README de AutoFarming):
 
 from functools import lru_cache
 
+from lumen import cartas as C
 from lumen import entrada, inteligencia, juego, ocr
 from lumen import personajes as P
 from lumen.cartas import Carta, Rango, TipoCarta
@@ -710,6 +711,24 @@ class Piso4(PerrosPiso4):
         if self.equipo_recomendado:
             self.log(f"Equipo recomendado: {self.equipo_recomendado}. Juego con el que tengas puesto.", "info")
 
+    fases_reinicio_bloqueo: frozenset = frozenset()  # fases donde, con todas las cartas bloqueadas, se reinicia
+
+    def _reiniciar_por_bloqueo(self, p) -> bool:
+        """El usuario (2026-11-13): si en la fase 2 del pajaro salen todas bloqueadas (no se juntaron las 3 de plata),
+        la pelea ya esta perdida; reiniciar ahorra 6-9 turnos moviendo cartas hasta perder."""
+        if self.fase not in self.fases_reinicio_bloqueo:
+            return False
+        try:
+            mano = [c for c in C.leer_mano(p) if c.tipo not in (TipoCarta.SUELO, TipoCarta.NINGUNA)]
+        except Exception:
+            return False
+        if len(mano) >= 4 and all(c.tipo == TipoCarta.BLOQUEADA for c in mano):
+            self.log(f"Fase {self.fase}: todas las cartas bloqueadas (mala suerte con las de plata). "
+                     "Reinicio para no perder tiempo.", "aviso")
+            self.diario.nota("Reinicio: todas las cartas bloqueadas")
+            return True
+        return False
+
     def _detectar_fase(self, p, huecos: int) -> int | None:
         for numero, plantilla in ((4, juego.fase_4), (3, juego.fase_3), (2, juego.fase_2)):
             if plantilla.esta(p, 0.8):
@@ -732,6 +751,7 @@ class PajaroPiso4(Piso4):
     bestia = juego.pajaro
     piso3_superado = juego.piso3_superado_pajaro
     clase_estrategia = EstrategiaPajaro4
+    fases_reinicio_bloqueo = frozenset({2})
 
 
 class CiervoPiso4(Piso4):
