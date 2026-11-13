@@ -29,6 +29,13 @@ Etapas previstas:
 
 CAMBIOS
 -------
+0.38.4-alpha
+  - Ciervo Floor 4, fase 2 (el usuario: con 4 rojas jugaba 2 y movia; con 3 verdes, 2): juega todas las cartas del
+    color del turno que tenga y solo mueve (fusionando) cuando no quedan. Fuera la "doble roja" y el movimiento fijo
+    de la 4.a accion de AutoFarming.
+  - Ciervo Floor 4, fase 4: si no tiene la carta del color que toca (el del buff o el siguiente de la ruleta), no
+    rompe la secuencia jugando otro color: mueve. Sin ese color dos turnos seguidos, reinicia (lo pidio el usuario).
+
 0.38.3-alpha
   - Ciervo Floor 4, fusiones (el usuario: "aunque tenga cartas iguales para combinar, no lo hace"): al mover sin
     atacar (cargar ultis, contraataque, sin cartas del color), primero mueve una carta sobre otra igual del mismo

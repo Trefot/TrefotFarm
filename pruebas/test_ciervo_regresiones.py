@@ -15,28 +15,36 @@ from test_piso4 import mano, estrategia, TYR, JORM, THOR, FREYR
 
 
 class CiervoRegresiones(unittest.TestCase):
-    def test_fase2_cuarto_hueco_mueve_sin_atacar_aunque_haya_vacios(self):
+    def _primera_roja(self, e):
+        """La primera carta del turno fue roja (el turno es rojo)."""
+        e.decidir(2, 2, 0, mano((FREYR + ".skill_1", Rango.BRONCE)))
+
+    def test_fase2_sin_cartas_del_color_mueve_sin_atacar_aunque_haya_vacios(self):
         e = estrategia(B4.EstrategiaCiervo4)
+        self._primera_roja(e)
         m = mano((THOR + ".skill_1", Rango.BRONCE), None,
                  (TYR + ".skill_1", Rango.BRONCE), None)
         with mock.patch.object(e.jugador, "elegir", side_effect=AssertionError("no debe decidir un ataque general")):
             jugada = e.decidir(2, 2, 3, m)[0]
-        self.assertIsInstance(jugada, tuple)
+        self.assertIsInstance(jugada, tuple, "ni azul ni verde: el turno es rojo")
         self.assertNotEqual(*jugada)
         self.assertTrue(all(B4.con_carta(m[i]) for i in jugada))
 
     def test_fase2_sin_dos_cartas_no_sustituye_movimiento_por_ataque(self):
         e = estrategia(B4.EstrategiaCiervo4)
+        self._primera_roja(e)
         m = mano((THOR + ".skill_1", Rango.BRONCE), None)
         with mock.patch.object(e.jugador, "elegir", side_effect=AssertionError("no debe atacar")):
             with self.assertRaises(P4.Reiniciar):
                 e.decidir(2, 2, 3, m)
 
-    def test_doble_roja_mueve_entre_cartas_reales(self):
+    def test_fase2_juega_todas_las_del_color(self):
+        """El usuario, 2026-11-13: con 4 rojas jugaba 2 y movia ("doble roja" y 4.a accion fija de AutoFarming)."""
         e = estrategia(B4.EstrategiaCiervo4)
-        m = mano((FREYR + ".skill_1", Rango.BRONCE), None,
-                 (FREYR + ".skill_2", Rango.BRONCE))
-        self.assertEqual(e.decidir(2, 1, 1, m)[0], (0, 2))
+        self._primera_roja(e)
+        m = mano((FREYR + ".skill_1", Rango.BRONCE), None, (FREYR + ".skill_2", Rango.BRONCE))
+        self.assertIn(e.decidir(2, 2, 1, m)[0], (0, 2))
+        self.assertIn(e.decidir(2, 2, 3, m)[0], (0, 2), "tambien la 4.a, si quedan rojas")
 
     def test_reintentar_no_duplica_cartas_ni_rompe_la_ruleta(self):
         e = estrategia(B4.EstrategiaCiervo4)

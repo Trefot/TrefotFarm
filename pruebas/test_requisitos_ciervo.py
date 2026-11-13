@@ -179,3 +179,29 @@ class Fusiones(unittest.TestCase):
         m = mano((THOR + ".skill_1", R.BRONCE), (JORM + ".skill_1", R.BRONCE), (THOR + ".skill_1", R.BRONCE),
                  (TYR + ".skill_1", R.BRONCE), (JORM + ".skill_2", R.BRONCE))
         self.assertEqual(e.guion(3, 2, 0, m), 1, "la verde de en medio: al jugarla, los dos Thor se fusionan")
+
+
+class Fase4SinColor(unittest.TestCase):
+    """El usuario, 2026-11-13: sin la carta del color que toca rompia la secuencia; dos turnos asi, reiniciar."""
+
+    def test_sin_el_color_que_toca_mueve(self):
+        e = ciervo(RQ.CAUTELOSO)
+        e.decidir(4, 4, 0, mano((JORM + ".skill_1", R.BRONCE)))  # la primera fue verde: toca azul
+        m = mano((FREYR + ".skill_1", R.BRONCE), (FREYR + ".skill_2", R.BRONCE), (JORM + ".skill_2", R.BRONCE))
+        self.assertIsInstance(e.decidir(4, 4, 1, m)[0], tuple, "no hay azul: mover, no romper la ruleta")
+        self.assertIsNone(e.pedir_reinicio)
+
+    def test_dos_turnos_seguidos_pide_reiniciar(self):
+        e = ciervo(RQ.CAUTELOSO, ve=(juego.buff_azul,))
+        m = mano((FREYR + ".skill_1", R.BRONCE), (JORM + ".skill_2", R.BRONCE))
+        e.guion(4, 3, 0, m)
+        self.assertIsNone(e.pedir_reinicio, "un turno sin azul: aun no")
+        e.guion(4, 4, 0, m)
+        self.assertIn("dos turnos seguidos", e.pedir_reinicio)
+
+    def test_el_modo_reinicia_al_empezar_el_turno(self):
+        m = MODOS["ciervo_piso4"]({"victorias": 0, "extra": 0, "pociones": True, "max_pociones": 0})
+        m.log = lambda *a, **k: None
+        m.estrategia.pedir_reinicio = "prueba"
+        self.assertTrue(m._reiniciar_por_bloqueo(object()))
+        self.assertIsNone(m.estrategia.pedir_reinicio)

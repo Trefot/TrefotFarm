@@ -500,6 +500,8 @@ class EstrategiaCiervo4(EstrategiaPiso4):
     def nueva_pelea(self):
         super().nueva_pelea()
         self.color_turno = None
+        self._turnos_sin_color = set()
+        self.pedir_reinicio = None
 
     def _golpe_maximo(self, mano, guardar_ulti_freyr=False):
         """Whale: la ulti (la de mas a la derecha) o la carta que mas dano hace, de mas rango."""
@@ -575,6 +577,31 @@ class EstrategiaCiervo4(EstrategiaPiso4):
             return jugada
         de_color = [i for i, c in enumerate(mano) if jugable(c) and color(c) == col]
         return max(de_color, key=lambda i: (rango(mano[i]), i)) if de_color else self._mover_para_ulti(mano)
+
+    SIGUIENTE = {"verde": "azul", "azul": "rojo", "rojo": "verde"}  # la ruleta de colores de la fase 4
+
+    def _color_que_falta(self, turno, accion, rojas, verdes, azules) -> str | None:
+        listas = {"rojo": rojas, "verde": verdes, "azul": azules}
+        if accion == 0:
+            if turno == 1:
+                return None
+            for buff, col in ((juego.buff_azul, "azul"), (juego.buff_rojo, "rojo"), (juego.buff_verde, "verde")):
+                if self.ve(buff):
+                    return None if listas[col] else col
+            return None
+        ultima = self.carta_en_accion(accion - 1)
+        if ultima is None or not color(ultima) or (es_hel(ultima) and es_ulti(ultima)):
+            return None
+        toca = self.SIGUIENTE.get(color(ultima))
+        return toca if toca and not listas[toca] else None
+
+    def _falta_color(self, turno, col):
+        turnos = self.__dict__.setdefault("_turnos_sin_color", set())
+        if turno not in turnos:
+            self._avisar(f"Fase 4: toca {col} y no tengo: muevo para no romper la secuencia de colores.")
+        turnos.add(turno)
+        if turno - 1 in turnos:
+            self.pedir_reinicio = f"fase 4 sin carta {col} dos turnos seguidos: la secuencia no sale"
 
     def _fase1_general(self, accion, mano):
         """Cualquier equipo: el Torrente se quita usando la ulti; la 4.a accion carga ultis moviendo una carta."""
@@ -672,21 +699,17 @@ class EstrategiaCiervo4(EstrategiaPiso4):
         cura = [i for i in grupos["verde"] if es_jorm(mano[i]) and es_curacion(mano[i])]
         if cura:  # la curacion de Jormungand la primera de las verdes
             grupos["verde"] = [cura[-1]] + [i for i in grupos["verde"] if i != cura[-1]]
-        rojas_total = sum(color(c) == "rojo" for c in list(mano) + list(self.jugadas))
-        if rojas_total > 1 and grupos["rojo"] and turno == 1:  # doble roja
-            if accion == 0:
-                return grupos["rojo"][0]
-            if accion <= 2:
-                return self._movimiento_valido(mano, grupos["rojo"][0])
-            return grupos["rojo"][0]
+        # Todas las cartas del color del turno que haya (el usuario, 2026-11-13: con 4 rojas jugaba 2 y movia; la
+        # "doble roja" y el movimiento fijo de la 4.a accion de AutoFarming se quitan). Solo se mueve sin cartas.
         if accion == 0 or self.color_turno is None:
-            n = turno - 2
-            colores = ["verde", "azul"]
-            colores = colores[-n % 2:] + colores[:-n % 2] + ["rojo"]
-            self.color_turno = next((c for c in colores if len(grupos[c]) >= 3),
-                                    max(("verde", "azul"), key=lambda k: len(grupos[k])))
+            self.color_turno = self._color_del_turno(accion)
+            if self.color_turno is None:
+                n = turno - 2
+                orden = ["verde", "azul"]
+                orden = orden[-n % 2:] + orden[:-n % 2] + ["rojo"]
+                self.color_turno = max(orden, key=lambda k: (len(grupos[k]), -orden.index(k)))
         elegidas = grupos[self.color_turno]
-        if accion <= 2 and elegidas:
+        if elegidas:
             if accion == 2 and self.color_turno == "verde":
                 curas = self._por_rango(mano, lambda c: es_jorm(c) and es_curacion(c))
                 if curas:
@@ -735,6 +758,12 @@ class EstrategiaCiervo4(EstrategiaPiso4):
         rojas = self._por_rango(mano, lambda c: color(c) == "rojo")
         azules = self._por_rango(mano, lambda c: color(c) == "azul")
         verdes = self._por_rango(mano, lambda c: color(c) == "verde")
+        # El color que toca (buff al empezar el turno, o el siguiente de la ruleta). Si no esta en la mano no se rompe
+        # la secuencia: se mueve. Sin ese color dos turnos seguidos, se reinicia (el usuario, 2026-11-13).
+        falta = self._color_que_falta(turno, accion, rojas, verdes, azules)
+        if falta:
+            self._falta_color(turno, falta)
+            return self._mover_para_ulti(mano)
         if turno <= 3:  # las ultis al final
             azules, verdes = azules[::-1], verdes[::-1]
             if turno <= 2:
@@ -852,6 +881,15 @@ class Piso4(PerrosPiso4):
     fases_reinicio_bloqueo: frozenset = frozenset()  # fases donde, con todas las cartas bloqueadas, se reinicia
 
     def _reiniciar_por_bloqueo(self, p) -> bool:
+        motivo = getattr(self.estrategia, "pedir_reinicio", None)
+        if motivo:
+            self.estrategia.pedir_reinicio = None
+            self.log(f"Reinicio: {motivo}.", "aviso")
+            self.diario.nota(f"Reinicio: {motivo}")
+            return True
+        return self._reiniciar_por_fase_bloqueada(p)
+
+    def _reiniciar_por_fase_bloqueada(self, p) -> bool:
         """El usuario (2026-11-13): si en la fase 2 del pajaro salen todas bloqueadas (no se juntaron las 3 de plata),
         la pelea ya esta perdida; reiniciar ahorra 6-9 turnos moviendo cartas hasta perder."""
         if self.fase not in self.fases_reinicio_bloqueo:
