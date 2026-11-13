@@ -19,8 +19,12 @@ ciervo_piso4:  # el destino del bot (en bestias_7dshub.yaml es "ciervo_f4")
   2:
     - tipo: mismo_color
       veces: 3
-      obligatorio: false
-      nota: Atacar varias veces con el mismo atributo le quita la reduccion de dano de ese atributo.
+      todo_el_turno: true
+      obligatorio: true
+      nota: >-
+        Atacar varias veces con el mismo atributo le quita la reduccion de dano de ese atributo (7dshub). Y lo que
+        7dshub no dice (el usuario, 2026-11-13, perdio asi en Whale): si una carta es de otro color que la primera del
+        turno, se bloquean todas. Todo el turno del mismo color; si no quedan, mover cartas.
   3:
     - tipo: mismo_color
       veces: 3

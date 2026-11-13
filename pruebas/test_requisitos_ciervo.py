@@ -37,7 +37,7 @@ def ciervo(estilo, ve=()):
 class Ficha(unittest.TestCase):
     def test_lo_obligatorio_y_lo_saltable(self):
         self.assertTrue(RQ.saltable("ciervo_piso4", 1))
-        self.assertTrue(RQ.saltable("ciervo_piso4", 2))
+        self.assertFalse(RQ.saltable("ciervo_piso4", 2), "otro color en el turno bloquea todas (el usuario)")
         self.assertFalse(RQ.saltable("ciervo_piso4", 3), "Fierce Rush mata")
         self.assertFalse(RQ.saltable("ciervo_piso4", 4), "inmortalidad y contraataque")
         req = RQ.pide("ciervo_piso4", 3, "mismo_color")
@@ -55,16 +55,19 @@ class Ficha(unittest.TestCase):
 class Estilos(unittest.TestCase):
     def test_automatico_empieza_con_todo_y_luego_con_cautela(self):
         e = RQ.Estilo(RQ.AUTOMATICO)
-        self.assertTrue(e.whale("ciervo_piso4", 2, 1))
-        self.assertFalse(e.whale("ciervo_piso4", 2, 2), "no cayo en 1 turno")
-        self.assertFalse(e.whale("ciervo_piso4", 2, 1), "y lo recuerda en la pelea siguiente")
+        self.assertTrue(e.whale("ciervo_piso4", 1, 1))
+        self.assertFalse(e.whale("ciervo_piso4", 1, 2), "no cayo en 1 turno")
+        self.assertFalse(e.whale("ciervo_piso4", 1, 1), "y lo recuerda en la pelea siguiente")
         self.assertFalse(e.whale("ciervo_piso4", 3, 1), "fase con algo obligatorio: con cautela")
 
-    def test_whale_pega_con_todo_en_la_fase_2(self):
+    def test_whale_pega_con_todo_en_la_fase_1(self):
+        m = mano((THOR + ".skill_1", R.BRONCE), (JORM + ".skill_1", R.BRONCE), (FREYR + ".ulti", R.ULTI))
+        self.assertEqual(ciervo(RQ.WHALE).guion(1, 2, 0, m), 2, "la ulti")
+
+    def test_whale_en_la_fase_2_lo_mas_fuerte_de_un_color(self):
         m = mano((THOR + ".skill_1", R.BRONCE), (JORM + ".skill_1", R.BRONCE), (JORM + ".skill_2", R.BRONCE),
                  (TYR + ".skill_1", R.BRONCE), (FREYR + ".ulti", R.ULTI))
-        self.assertEqual(ciervo(RQ.WHALE).guion(2, 2, 0, m), 4, "la ulti, no 3 del mismo color")
-        self.assertNotEqual(ciervo(RQ.CAUTELOSO).guion(2, 2, 0, m), 4)
+        self.assertEqual(ciervo(RQ.WHALE).guion(2, 2, 0, m), 2, "verde (3 cartas), la que mas pega")
 
     def test_fase_3_impar_mismo_color_aunque_sea_whale(self):
         m = mano((JORM + ".skill_1", R.BRONCE), (JORM + ".skill_2", R.BRONCE), (TYR + ".skill_1", R.BRONCE),
@@ -93,3 +96,32 @@ class Estilos(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class Fase2MismoColor(unittest.TestCase):
+    """El usuario, 2026-11-13 (perdio en Whale): en la fase 2, una carta de otro color que la primera bloquea todas."""
+
+    def test_whale_no_cambia_de_color(self):
+        e = ciervo(RQ.WHALE)
+        m = mano((JORM + ".skill_1", R.PLATA), (JORM + ".skill_2", R.PLATA), (FREYR + ".skill_2", R.ORO),
+                 (THOR + ".skill_1", R.BRONCE))
+        e.jugadas = mano((JORM + ".skill_1", R.PLATA))  # la primera fue verde
+        e._contexto_jugadas = None
+        jugada = e.guion(2, 2, 1, m)
+        self.assertIn(jugada, (0, 1), "otra verde, aunque la roja de oro pegue mas")
+
+    def test_sin_mas_de_ese_color_mueve(self):
+        e = ciervo(RQ.WHALE)
+        m = mano((FREYR + ".skill_2", R.ORO), (THOR + ".skill_1", R.BRONCE))
+        e.jugadas = mano((JORM + ".skill_1", R.PLATA))
+        e._contexto_jugadas = None
+        self.assertIsInstance(e.guion(2, 2, 1, m), tuple, "mover, no jugar otro color")
+
+    def test_whale_empieza_por_el_color_con_mas_cartas(self):
+        e = ciervo(RQ.WHALE)
+        m = mano((JORM + ".skill_1", R.BRONCE), (JORM + ".skill_2", R.BRONCE), (TYR + ".skill_1", R.BRONCE),
+                 (FREYR + ".skill_2", R.ORO))
+        self.assertIn(e.guion(2, 1, 0, m), (0, 1, 2), "3 verdes frente a 1 roja")
+
+    def test_ahora_es_obligatoria(self):
+        self.assertFalse(RQ.saltable("ciervo_piso4", 2))

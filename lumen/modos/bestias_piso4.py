@@ -498,13 +498,46 @@ class EstrategiaCiervo4(EstrategiaPiso4):
         if fase == 1:
             return self._golpe_maximo(mano) if whale else self._fase1(turno, accion, mano)
         if fase == 2:
-            return self._golpe_maximo(mano) if whale else self._fase2(turno, accion, mano)
+            # Obligatorio (el usuario): todo el turno del color de la primera carta, o se bloquean todas
+            jugada = self._golpe_de_un_color(mano, accion) if whale else self._fase2(turno, accion, mano)
+            return self._mismo_color_del_turno(jugada, mano, accion)
         if fase == 3:
             # Obligatorio en los turnos impares: si no, Fierce Rush (20000 %) mata a un heroe
             if requisitos.aplica(requisitos.pide(self.destino, 3, "mismo_color"), turno) or not whale:
                 return self._fase3(turno, accion, mano)
             return self._golpe_maximo(mano, guardar_ulti_freyr=True)
         return self._fase4(turno, accion, mano)  # inmortalidad y contraataque: obligatorio siempre
+
+    def _color_del_turno(self, accion):
+        primera = self.carta_en_accion(0) if accion > 0 else None
+        return color(primera) if primera is not None and color(primera) else None
+
+    def _golpe_de_un_color(self, mano, accion):
+        """Whale en la fase 2: maximo dano, pero de un solo color (el de la primera carta; al empezar, el color con
+        mas cartas y, si empatan, el de la carta mas fuerte)."""
+        col = self._color_del_turno(accion)
+        if col is None:
+            grupos = self._grupos(mano)
+            fuerza = lambda k: (len(grupos[k]), max((1000 if es_ulti(mano[i]) else rango(mano[i]) * 100 + dano(mano[i])  # noqa: E731
+                                                     for i in grupos[k]), default=-1))
+            col = max(grupos, key=fuerza)
+            if not grupos[col]:
+                return self._golpe_maximo(mano)
+        de_color = [i for i, c in enumerate(mano) if jugable(c) and color(c) == col]
+        if not de_color:
+            return self._mover_para_ulti(mano)
+        ultis = [i for i in de_color if es_ulti(mano[i])]
+        if ultis:
+            return ultis[-1]
+        return max(de_color, key=lambda i: (rango(mano[i]), dano(mano[i]), i))
+
+    def _mismo_color_del_turno(self, jugada, mano, accion):
+        """Nunca jugar una carta de otro color que la primera del turno (se bloquean todas): una del color o mover."""
+        col = self._color_del_turno(accion)
+        if col is None or not isinstance(jugada, int) or not (0 <= jugada < len(mano)) or color(mano[jugada]) == col:
+            return jugada
+        de_color = [i for i, c in enumerate(mano) if jugable(c) and color(c) == col]
+        return max(de_color, key=lambda i: (rango(mano[i]), i)) if de_color else self._mover_para_ulti(mano)
 
     def _fase1_general(self, accion, mano):
         """Cualquier equipo: el Torrente se quita usando la ulti; la 4.a accion carga ultis moviendo una carta."""

@@ -29,6 +29,11 @@ Etapas previstas:
 
 CAMBIOS
 -------
+0.38.1-alpha
+  - Ciervo Floor 4, fase 2 (el usuario perdio asi en Whale): una carta de otro color que la primera del turno
+    bloquea todas. Ahora es obligatorio en todos los estilos: todo el turno del mismo color y, si no quedan, mover
+    cartas. Whale pega con lo mas fuerte de un solo color (el de mas cartas al empezar el turno).
+
 0.38.0-alpha
   - Fichas de las 6 bestias (21 pisos) de 7dshub en lumen/datos/bestias_7dshub.yaml: pasivas y habilidades del jefe
     por fase. Base para que el bot juegue cualquier bestia con cualquier equipo.
