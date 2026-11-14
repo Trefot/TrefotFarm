@@ -41,6 +41,7 @@ from lumen.rutas import RAIZ
 
 MINUTOS_ENTRE_REVISIONES = 30
 SEGUNDOS_PUBLICAR = 20  # al abrir, despues de buscar actualizaciones (los dos usan git)
+SEGUNDOS_HEROES = 60  # al abrir, despues de publicar (tambien usa git)
 
 MENU = [
     ("inicio", "Inicio"), ("contenidos", "Contenidos"),
@@ -58,6 +59,7 @@ class _Senales(QObject):
     progreso = pyqtSignal(str)
     fin_update = pyqtSignal(bool, str)
     publicado = pyqtSignal(object, str)  # publicar.Resultado, error
+    heroes = pyqtSignal(object, str, bool)  # heroes_nuevos.Resultado, error, manual
 
 
 class VentanaPrincipal(QMainWindow):
@@ -187,6 +189,7 @@ class VentanaPrincipal(QMainWindow):
         self.senales.progreso.connect(self.bloqueo.mensaje)
         self.senales.fin_update.connect(self._fin_update)
         self.senales.publicado.connect(self._fin_publicar)
+        self.senales.heroes.connect(self._fin_heroes)
         self.puente.terminado.connect(self._bot_terminado)
         self.puente.estado.connect(lambda _: self._barra())
 
@@ -201,6 +204,9 @@ class VentanaPrincipal(QMainWindow):
         self.farmear.escribir("LumenFarm listo.", "ok")
         QTimer.singleShot(300, self.buscar_updates)
         QTimer.singleShot(SEGUNDOS_PUBLICAR * 1000, self.publicar)  # lo que no se pudo subir antes
+        # Heroes nuevos de 7dshub: se mira cada hora si toca (un jueves de cada dos), y al abrir tras publicar
+        QTimer.singleShot(SEGUNDOS_HEROES * 1000, self.buscar_heroes)
+        QTimer(self, timeout=self.buscar_heroes, interval=60 * 60 * 1000).start()
         accesos.migrar_viejos()
         if not config.obtener("asistente_visto"):
             QTimer.singleShot(700, self.abrir_asistente)
@@ -336,6 +342,47 @@ class VentanaPrincipal(QMainWindow):
                 self.senales.publicado.emit(None, str(e))
 
         threading.Thread(target=correr, daemon=True).start()
+
+    def buscar_heroes(self, manual: bool = False):
+        """Modo administrador: heroes nuevos de 7dshub a la base de todos (lumen/heroes_nuevos.py). Solo mira la
+        pagina el jueves que toca, o al pulsar "Buscar héroes nuevos" en Ajustes (banners cortos)."""
+        if not config.obtener("modo_admin") or self.publicando or self.actualizando or self.revisando:
+            if manual:
+                QMessageBox.information(self, "Héroes nuevos", "Ahora estoy usando git; prueba en un minuto.")
+            return
+        from lumen import heroes_nuevos, publicar
+        from lumen.rutas import RAIZ
+
+        self.publicando = True
+        if manual:
+            self.paginas["ajustes"].pintar_heroes("Buscando en 7dshub…")
+
+        def correr():
+            try:
+                hecho = heroes_nuevos.revisar(RAIZ, publicar.subir_heroes_7dshub, forzar=manual)
+                self.senales.heroes.emit(hecho, "", manual)
+            except Exception as e:  # sin internet, 7dshub cambio, sin permiso de git...: otro dia
+                self.senales.heroes.emit(None, str(e), manual)
+
+        threading.Thread(target=correr, daemon=True).start()
+
+    def _fin_heroes(self, hecho, error: str, manual: bool):
+        self.publicando = False
+        ajustes = self.paginas["ajustes"]
+        if error:
+            self.farmear.escribir(f"No pude traer los héroes nuevos de 7dshub (lo reintento otro día): {error}", "aviso")
+            ajustes.pintar_heroes(f"Falló: {error}")
+            return
+        if hecho.nuevos:
+            self.farmear.escribir("Héroes nuevos de 7dshub publicados para todos: " + ", ".join(hecho.nuevos)
+                                  + ". Llegan con la próxima actualización.", "ok")
+            ajustes.pintar_heroes("Publicados: " + ", ".join(hecho.nuevos))
+            self.buscar_updates()
+        elif hecho.revisado:
+            if manual:
+                self.farmear.escribir("7dshub no tiene héroes nuevos que falten en Lumen.", "info")
+            ajustes.pintar_heroes("Sin héroes nuevos. " + (f"Vuelve a mirar el {hecho.proxima.strftime('%d/%m')}."
+                                                          if hecho.proxima else ""))
 
     def _fin_publicar(self, hecho, error: str):
         self.publicando = False

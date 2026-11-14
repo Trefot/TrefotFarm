@@ -25,7 +25,8 @@ EQUIPOS_EN_REPO = Path("lumen") / "datos" / "equipos.yaml"
 HEROES_EN_REPO = Path("lumen") / "datos" / "personajes.yaml"
 IMAGENES_EN_REPO = Path("assets") / "personajes"
 COPIA = LOGS / "publicar"
-INTENTOS = 2  # si alguien publico a la vez, se vuelve a bajar la rama y se reintenta
+AUTOR = ("Lumen Farm", "lumenfarm@users.noreply.github.com")  # autor de lo que publica Lumen
+INTENTOS = 2 # si alguien publico a la vez, se vuelve a bajar la rama y se reintenta
 CAMPOS_HEROE = ("clave", "nombre", "color", "raza", "roles", "cartas")
 RETRATOS = (P.CARA_ARTWORK, P.ARTWORK)  # se publican de todos los heroes (y se actualizan si cambian)
 
@@ -174,18 +175,21 @@ def _limpiar() -> None:
         pass
 
 
-def publicar(local: Local) -> Resultado:
-    """Sube a la rama remota lo que falta. Lanza ErrorActualizacion si git falla (sin permiso, sin internet...)."""
+def _subir(preparar_copia, rutas, mensaje, vacio):
+    """Copia aparte de la rama remota -> ``preparar_copia(copia)`` -> commit y push. Lanza ErrorActualizacion si git
+    falla (sin permiso, sin internet...)."""
     for intento in range(INTENTOS):
         _limpiar()
         _git("fetch", "origin", RAMA, timeout=120)
         _git("worktree", "add", "--detach", str(COPIA), f"origin/{RAMA}")
         try:
-            hecho = preparar(COPIA, local)
+            hecho = preparar_copia(COPIA)
             if not hecho:
                 return hecho
-            _git("-C", str(COPIA), "add", "-A", str(EQUIPOS_EN_REPO), str(HEROES_EN_REPO), str(IMAGENES_EN_REPO))
-            _git("-C", str(COPIA), "commit", "-m", f"Publish from Lumen: {hecho.texto()}")
+            _git("-C", str(COPIA), "add", "-A", *map(str, rutas))
+            # Siempre con el nombre neutro del proyecto, nunca el de git de este PC
+            _git("-C", str(COPIA), "-c", f"user.name={AUTOR[0]}", "-c", f"user.email={AUTOR[1]}",
+                 "commit", "-m", mensaje(hecho))
             try:
                 _git("-C", str(COPIA), "push", "origin", f"HEAD:{RAMA}", timeout=300)
             except ErrorActualizacion:
@@ -195,7 +199,20 @@ def publicar(local: Local) -> Resultado:
             return hecho
         finally:
             _limpiar()
-    return Resultado()
+    return vacio
+
+
+def publicar(local: Local) -> Resultado:
+    """Sube a la rama remota lo que falta. Lanza ErrorActualizacion si git falla (sin permiso, sin internet...)."""
+    return _subir(lambda copia: preparar(copia, local), (EQUIPOS_EN_REPO, HEROES_EN_REPO, IMAGENES_EN_REPO),
+                  lambda hecho: f"Publish from Lumen: {hecho.texto()}", Resultado())
+
+
+def subir_heroes_7dshub(preparar_copia) -> list[str]:
+    """Heroes nuevos de 7dshub (lumen/heroes_nuevos.py) a la rama remota. Devuelve sus nombres."""
+    from lumen import heroes_nuevos as H
+
+    return _subir(preparar_copia, H.RUTAS_REPO, lambda nombres: "New heroes from 7dshub: " + ", ".join(nombres), [])
 
 
 def leer_local() -> Local:

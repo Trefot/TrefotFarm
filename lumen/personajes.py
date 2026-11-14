@@ -320,6 +320,29 @@ def marcar_tengo(pid: str, tengo: bool) -> None:
         escribir_texto(USUARIO, yaml.safe_dump(usuario, allow_unicode=True, sort_keys=False))
 
 
+DIAS_NUEVO = 60  # un heroe estrenado hace menos de esto sale en Inicio hasta que el jugador diga si lo tiene
+
+
+def nuevos_sin_responder(hoy=None, dias: int = DIAS_NUEVO) -> list[str]:
+    """Heroes recien llegados de 7dshub (con ``estreno`` en la base) de los que este jugador aun no dijo si los tiene.
+    Al marcar "lo tengo" o "no lo tengo" se guarda en personajes/usuario.yaml y dejan de salir (el usuario,
+    2026-11-13)."""
+    from datetime import date, datetime
+
+    hoy = hoy or date.today()
+    with _lock:
+        base, usuario = _leer_yaml(BASE), _leer_yaml(USUARIO)
+    nuevos = []
+    for pid, datos in base.items():
+        try:
+            estreno = datetime.fromisoformat(str((datos or {}).get("estreno"))[:10]).date()
+        except ValueError:
+            continue
+        if 0 <= (hoy - estreno).days <= dias and "tengo" not in (usuario.get(pid) or {}):
+            nuevos.append((estreno, pid))
+    return [pid for _, pid in sorted(nuevos, reverse=True)]
+
+
 def marcar_varios(pids, tengo: bool) -> None:
     """Marca o desmarca muchos de una vez (botones "Marcar todos" / "Quitar todos"): una sola escritura."""
     with _lock:

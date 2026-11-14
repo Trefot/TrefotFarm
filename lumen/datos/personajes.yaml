@@ -5723,3 +5723,17 @@ eren_jaeger_verde:
       descripcion: "Área (Leave None Alive)"
     ulti:
       descripcion: "Área (With My Own Hands!)"
+highest_ranking_demon_cusack_verde:
+  clave: '[The Prince''s Master] Highest-ranking Demon Cusack'
+  nombre: Highest-ranking Demon Cusack
+  color: verde
+  raza: desconocida
+  roles: []
+  cartas:
+    skill_1:
+      descripcion: Área (Dark Barrage)
+    skill_2:
+      descripcion: Área (Elongated Blade)
+    ulti:
+      descripcion: Un objetivo (Evil Onslaught)
+  estreno: '2026-11-12'

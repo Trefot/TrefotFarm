@@ -12270,3 +12270,56 @@ zeldris_of_piety_rojo:
     cumpleanos: 2/5
     sangre: A
     voz: Yuki Kaji
+highest_ranking_demon_cusack_verde:
+  skill_1:
+    nombre: Dark Barrage
+    rangos:
+    - Inflicts damage equal to [FFAE00]140%[-] of Attack on [FFFFFF]all enemies[-].
+    - '[00D5FF]Removes Buffs[-] from [FFFFFF]all enemies[-] and inflicts damage equal to [FFAE00]140%[-] of Attack.'
+    - '[00D5FF]Cancels Buffs and Stances[-] on [FFFFFF]all enemies[-] and inflicts damage equal to [FFAE00]210%[-] of Attack.'
+  skill_2:
+    nombre: Elongated Blade
+    rangos:
+    - 'Inflicts [00D5FF]Weak Point[-] damage equal to [FFAE00]140%[-] of Attack on [FFFFFF]all enemies[-].
+
+
+      [00D5FF]Weak Point: 3x damage against Debuffed enemies.[-]'
+    - 'Inflicts [00D5FF]Weak Point[-] damage equal to [FFAE00]170%[-] of Attack on [FFFFFF]all enemies[-], then inflicts [00D5FF]All-Target Attack Disable[-] for [FFAE00]1 turn(s)[-].
+
+
+      [00D5FF]Weak Point: 3x damage against Debuffed enemies.[-]'
+    - 'Inflicts [00D5FF]Weak Point[-] damage equal to [FFAE00]230%[-] of Attack on [FFFFFF]all enemies[-], then inflicts [00D5FF]Attack Disable[-] for [FFAE00]1 turn(s)[-].
+
+
+      [00D5FF]Weak Point: 3x damage against Debuffed enemies.[-]'
+  ulti:
+    nombre: Evil Onslaught
+    texto: 'Inflicts [00D5FF]Weak Point[-] damage equal to [FFAE00]578%[-] of Attack on [FFFFFF]one enemy[-].
+
+
+      [00D5FF]Weak Point: 3x damage against Debuffed enemies.[-]'
+  pasiva:
+    nombre: The Master's Teachings
+    texto: 'For [FFAE00]each[-] [00D5FF]Demon ally[-] participating in battle, allies'' basic stats increase by [FFAE00]6%[-] and their Max HP increase by [FFAE00]10%[-].
+
+
+      If the same [00D5FF]Demon ally[-] uses [FFAE00]2 skills[-] in a single turn it grants an effect that increases [00D5FF]Demon allies''[-] [00D5FF]damage dealt[-] by [FFAE00]70%[-] for [FFAE00]2 turn(s)[-]
+      and increases all enemies'' [00D5FF]damage taken[-] by [FFAE00]70%[-] for [FFAE00]2 turn(s)[-].
+
+
+      Each time a [00D5FF]Demon ally[-] uses their skill on the allies'' turn, it increases all stats of [00D5FF]Demon allies[-] by [FFAE00]3%[-], up to [FFAE00]12%[-].
+
+
+      Inflicts [00D5FF]Oxidize II[-] for [FFAE00]2 turn(s)[-] on the enemy turn to [00D5FF]enemies who haven''t used a skill[-].
+
+      [C0C0C0]Oxidize II: At the start of the allies'' turn, after ranking down skills, damage equal to [FFAE00]10%[-] of the target''s remaining HP is dealt for [FFAE00]every[-] skill that was ranked down.[-]
+
+
+      When the hero [00D5FF]enters the battle from the Secondary Slot[-] it grants [00D5FF]Demon allies[-] [FF8000]60/402013%%[-] [00D5FF]Damage Taken Suppression[-] for [FFAE00]2 turn(s)[-].'
+  perfil:
+    edad: 6,000 years old
+    altura: 330cm
+    peso: 270kg
+    cumpleanos: 11/1
+    sangre: A
+    voz: Jouji Nakata

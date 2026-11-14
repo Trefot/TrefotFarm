@@ -338,6 +338,7 @@ dance with the ripper: 'Cancels Stances on one enemy and inflicts Alteration dam
 dancing ray: Removes Debuffs from all allies. Grants Debuff Immunity and increases Defense-related stats by 100% for 4 turns.
 dangerous blocks: 'Inflicts Ablation damage equal to 190% of Attack on one enemy. Ablation: 2x Crit Chance Increase. 2x Crit
   Damage Increase. 3x damage against Debuffed enemies.'
+dark barrage: Inflicts damage equal to 140% of Attack on all enemies.
 dark blade: 'Cancels Stances on one enemy and inflicts Transgression damage equal to 200% of Attack. Transgression: 5x Pierce
   Rate Increase. Ignores 100% of the enemy''s Crit Defense. 2x damage against Debuffed enemies.'
 dark blaster: Inflicts damage equal to 120% of Attack on all enemies, then decreases their Attack-related stats by 10% for
@@ -477,6 +478,8 @@ elegant blow: 'Inflicts Blast damage equal to 264% of Attack on one enemy. Blast
 elegant leopard: 'Inflicts Flood damage equal to 200% of Attack on one enemy. Flood: 0.8% additional damage for every percent
   of remaining HP on self.'
 eliminate spirit: Inflicts damage equal to 120% of Attack on one enemy and depletes 1 Ultimate Move Gauge orb(s).
+elongated blade: 'Inflicts Weak Point damage equal to 140% of Attack on all enemies. Weak Point: 3x damage against Debuffed
+  enemies.'
 emancipation: 'Transforms for 5 turn(s), removing Debuffs from allies and Buffs from enemies, then decreasing enemy Max HP
   by 4% for each Buff removed for 3 turns. Transformation: The battle state changes. Becomes immune to Incapacitation. Fully
   restores HP.'

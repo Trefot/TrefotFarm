@@ -161,6 +161,15 @@ class PaginaAjustes(Pagina):
         self.url_repo.setText(actualizador.url_remota())
         f.addRow("Repositorio", self.url_repo)
         f.addRow("", nota("De aquí se bajan las actualizaciones obligatorias. Solo cámbialo si mueves el repositorio."))
+        # Heroes nuevos de 7dshub: solos un jueves de cada dos; con este boton, en el momento (banners cortos)
+        fila_hub = QHBoxLayout()
+        self.b_heroes = QPushButton(" Buscar héroes nuevos", objectName="chico")
+        self.b_heroes.setIcon(iconos.icono("admin", tema.TEXTO))
+        self.b_heroes.clicked.connect(lambda: self.app.buscar_heroes(manual=True))
+        fila_hub.addWidget(self.b_heroes)
+        self.nota_heroes = nota("")
+        fila_hub.addWidget(self.nota_heroes, 1)
+        f.addRow("Héroes (7dshub)", fila_hub)
         c.addWidget(self.caja_repo)
         self.modo_admin.toggled.connect(lambda _: self._pintar_admin())
         self._pintar_admin()
@@ -182,6 +191,16 @@ class PaginaAjustes(Pagina):
     # ------------------------------------------------------------------ administrador
     def al_mostrar(self):
         self.actualizaciones.refrescar()
+        self.pintar_heroes()
+
+    def pintar_heroes(self, texto: str = ""):
+        """Cuando toca la proxima revision de 7dshub (o lo que acaba de pasar)."""
+        if not texto:
+            from lumen import heroes_nuevos as H
+
+            prox = H.proxima_revision(H.leer_estado())
+            texto = (f"Revisa sola el jueves {prox.strftime('%d/%m')}." if prox else "Revisa sola al abrir Lumen.")
+        self.nota_heroes.setText(texto)
 
     def _pintar_admin(self):
         abierto = modo_admin.desbloqueado()

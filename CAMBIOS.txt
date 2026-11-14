@@ -29,6 +29,16 @@ Etapas previstas:
 
 CAMBIOS
 -------
+0.39.0-alpha
+  - Heroes nuevos solos (el usuario): el Lumen del administrador mira 7dshub.com el jueves de heroe nuevo (uno de
+    cada dos: ultimo estreno + 14 dias) y, si aun no lo subieron, una vez al dia hasta que salga. Trae su ficha,
+    icono y cartas (el bot las reconoce en pelea desde el primer dia) y los publica para todos. Para banners cortos:
+    Ajustes > Administrador > "Buscar heroes nuevos". Si llegan varios en un banner, los trae todos.
+  - Ya llega el primero: [The Prince's Master] Highest-ranking Demon Cusack (verde, salio el 12-11).
+  - Inicio muestra los heroes recien llegados con "Lo tengo" / "No lo tengo": al responder se van del aviso y quedan
+    en tu galeria de Personajes segun tu respuesta.
+  - Lo que publica Lumen desde la app se firma siempre como "Lumen Farm", no con el nombre de git del PC.
+
 0.38.8-alpha
   - Toques perdidos (el usuario: "a veces va demasiado rapido y no las lanza"): desde la 0.36.5 la pausa tras una
     carta confirmada era 0,25 s y el juego, aun animando la anterior, ignoraba el toque. Medido en los logs: del 6 %
