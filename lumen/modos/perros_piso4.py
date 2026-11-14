@@ -299,6 +299,7 @@ class PerrosPiso4(Modo):
     ]
     pausa_entre_pasos = 0.45
     rendirse_si_bloqueada = True  # mano bloqueada al empezar un turno: rendirse y repetir
+    leer_vida_jefe = False  # los lobos son dos jefes: su barra aun no esta medida (lumen/vida_jefe.py)
     jugar_auto = False  # True: se pone el AUTO del juego y no se juegan cartas (bestias Floor 1-3, opcion "AUTO")
     talento_turno_1 = False  # activar el talento del equipo al empezar la pelea (las bestias Floor 1-3, opcion)
 
@@ -667,7 +668,13 @@ class PerrosPiso4(Modo):
         self.huecos_turno = huecos
         self.talento_usado = False
         self._stats()
-        self.log(f"Fase {self.fase}, turno {self.turno_fase}: {huecos} cartas por jugar.")
+        self.vida_jefe = None
+        if self.leer_vida_jefe:
+            from lumen import vida_jefe
+
+            self.vida_jefe = vida_jefe.leer(p)  # para el registro y, despues, para no gastar cartas de mas
+        vida = f" Vida del jefe: {self.vida_jefe.texto()}." if self.vida_jefe else ""
+        self.log(f"Fase {self.fase}, turno {self.turno_fase}: {huecos} cartas por jugar.{vida}")
         if self.rendirse_si_bloqueada and self.fase != 3 and juego.mano_bloqueada.esta(p, 0.6):
             self.log("Mano bloqueada desde el inicio: reinicio.", "aviso")
             return "rendirse"

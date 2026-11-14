@@ -846,6 +846,7 @@ class Piso4(PerrosPiso4):
     MINUTOS_PELEA = 15
     equipo = None  # se juega con el equipo puesto (el guion reconoce las cartas por su nombre)
     rendirse_si_bloqueada = False
+    leer_vida_jefe = True  # pajaro y ciervo: una barra por fase (medida con un video del usuario, 2026-11-13)
     talento_turno_1 = True
     equipo_recomendado = ""
     clase_estrategia = EstrategiaPiso4
