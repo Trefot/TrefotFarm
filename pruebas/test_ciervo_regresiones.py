@@ -50,12 +50,12 @@ class CiervoRegresiones(unittest.TestCase):
         e = estrategia(B4.EstrategiaCiervo4)
         m = mano((THOR + ".skill_1", Rango.BRONCE), (JORM + ".skill_2", Rango.BRONCE),
                  (FREYR + ".skill_1", Rango.BRONCE))
-        self.assertEqual(e.decidir(4, 1, 0, m)[0], 2)
-        self.assertEqual(e.decidir(4, 1, 1, m)[0], 1)
-        self.assertEqual(e.decidir(4, 1, 1, m)[0], 1)
+        self.assertEqual(e.decidir(4, 1, 0, m)[0], 1, "el semaforo empieza por verde")
+        self.assertEqual(e.decidir(4, 1, 1, m)[0], 0)
+        self.assertEqual(e.decidir(4, 1, 1, m)[0], 0)
         self.assertEqual(len(e.jugadas), 2)
-        self.assertEqual(e.decidir(4, 1, 2, m)[0], 0)
-        self.assertEqual([B4.color(c) for c in e.jugadas], ["rojo", "verde", "azul"])
+        self.assertEqual(e.decidir(4, 1, 2, m)[0], 2)
+        self.assertEqual([B4.color(c) for c in e.jugadas], ["verde", "azul", "rojo"])
 
     def test_movimientos_no_desplazan_los_indices_del_historial(self):
         e = estrategia(B4.EstrategiaCiervo4)

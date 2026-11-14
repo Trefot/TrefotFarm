@@ -216,6 +216,20 @@ class Fase4Remate(unittest.TestCase):
         self.assertEqual(e.guion(4, 4, 0, m), 2, "la ulti de Freyr: ya no se guarda")
         self.assertIsNone(e.pedir_reinicio, "fuera del semaforo no cuenta que falte un color")
 
+    def test_cumplido_el_semaforo_la_cuarta_carta_tambien_ataca(self):
+        """El usuario, 2026-11-13: cumplido el semaforo, 4 cartas a full dano ("full es full")."""
+        e = ciervo(RQ.CAUTELOSO)
+        m = mano((THOR + ".skill_1", R.BRONCE), (JORM + ".skill_1", R.PLATA), (FREYR + ".ulti", R.ULTI))
+        self.assertEqual(e.guion(4, 4, 3, m), 2, "la 4.a accion no mueve: la ulti")
+
+    def test_un_turno_sin_color_alarga_el_semaforo(self):
+        e = ciervo(RQ.CAUTELOSO, ve=(juego.buff_azul,))
+        e._turnos_sin_color = {2}  # en el turno 2 falto el color: ese no quito inmortalidad
+        self.assertFalse(e._semaforo_hecho(4))
+        self.assertTrue(e._semaforo_hecho(5))
+        m = mano((THOR + ".skill_1", R.BRONCE), (FREYR + ".ulti", R.ULTI))
+        self.assertEqual(e.guion(4, 4, 0, m), 0, "turno 4 aun es semaforo: toca azul, no la ulti roja")
+
     def test_los_3_primeros_turnos_semaforo(self):
         e = ciervo(RQ.CAUTELOSO, ve=(juego.buff_azul,))
         m = mano((THOR + ".skill_1", R.BRONCE), (FREYR + ".ulti", R.ULTI))
@@ -239,10 +253,16 @@ class ColorDeLaFicha(unittest.TestCase):
 class Fase4Cadena(unittest.TestCase):
     """2026-11-13: empezaba por rojo sin verdes y, tras mover, volvia a jugar otra roja."""
 
-    def test_turno_1_empieza_por_la_cadena_mas_larga(self):
+    def test_turno_1_empieza_por_verde(self):
+        """El usuario, 2026-11-13: el semaforo inicia por verde."""
+        e = ciervo(RQ.CAUTELOSO)
+        m = mano((FREYR + ".skill_1", R.BRONCE), (JORM + ".skill_1", R.BRONCE), (THOR + ".skill_1", R.BRONCE))
+        self.assertEqual(e.guion(4, 1, 0, m), 1)
+
+    def test_turno_1_sin_verdes_mueve(self):
         e = ciervo(RQ.CAUTELOSO)
         m = mano((FREYR + ".skill_1", R.BRONCE), ("freyja_roja.normal_1", R.BRONCE), (THOR + ".skill_1", R.BRONCE))
-        self.assertEqual(e.guion(4, 1, 0, m), 2, "sin verdes: azul y luego rojo (2), no rojo solo (1)")
+        self.assertIsInstance(e.decidir(4, 1, 0, m)[0], tuple, "sin verde no empieza por otro color: mueve")
 
     def test_tras_un_movimiento_sigue_la_ultima_carta_jugada(self):
         e = ciervo(RQ.CAUTELOSO)

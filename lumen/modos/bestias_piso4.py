@@ -594,12 +594,13 @@ class EstrategiaCiervo4(EstrategiaPiso4):
         return max(de_color, key=lambda i: (rango(mano[i]), i)) if de_color else self._mover_para_ulti(mano)
 
     SIGUIENTE = {"verde": "azul", "azul": "rojo", "rojo": "verde"}  # la ruleta de colores de la fase 4
+    PRIMER_COLOR = "verde"  # el semaforo empieza siempre por verde (el usuario, 2026-11-13)
 
     def _color_que_falta(self, turno, accion, rojas, verdes, azules) -> str | None:
         listas = {"rojo": rojas, "verde": verdes, "azul": azules}
         if accion == 0:
-            if turno == 1:
-                return None
+            if turno == 1:  # el semaforo empieza por verde (el usuario, 2026-11-13)
+                return None if verdes else self.PRIMER_COLOR
             for buff, col in ((juego.buff_azul, "azul"), (juego.buff_rojo, "rojo"), (juego.buff_verde, "verde")):
                 if self.ve(buff):
                     return None if listas[col] else col
@@ -618,18 +619,6 @@ class EstrategiaCiervo4(EstrategiaPiso4):
             if c is not None:
                 return c
         return None
-
-    def _inicio_mas_largo(self, rojas, verdes, azules):
-        """Turno 1: el color con el que la ruleta (verde > azul > rojo > verde) sale mas larga con esta mano."""
-        cuantas = {"rojo": len(rojas), "verde": len(verdes), "azul": len(azules)}
-        def largo(col):  # noqa: E306
-            n, quedan = 0, dict(cuantas)
-            while quedan.get(col, 0) > 0 and n < 4:
-                quedan[col] -= 1
-                n += 1
-                col = self.SIGUIENTE[col]
-            return n
-        return max(("rojo", "verde", "azul"), key=lambda k: (largo(k), -("rojo", "verde", "azul").index(k)))
 
     def _falta_color(self, turno, col):
         turnos = self.__dict__.setdefault("_turnos_sin_color", set())
@@ -779,12 +768,18 @@ class EstrategiaCiervo4(EstrategiaPiso4):
 
     TURNOS_SEMAFORO = 3  # fase 4: los turnos de la ruleta de colores; despues, a matar
 
+    def _semaforo_hecho(self, turno) -> bool:
+        """Ya hubo 3 turnos de semaforo completos. Un turno en que falto el color (se movio) no quito inmortalidad:
+        no cuenta."""
+        fallados = sum(1 for t in self.__dict__.get("_turnos_sin_color", ()) if t < turno)
+        return turno - 1 - fallados >= self.TURNOS_SEMAFORO
+
     def _fase4(self, turno, accion, mano):
-        if turno > self.TURNOS_SEMAFORO:
-            # El usuario (2026-11-13), con este mismo equipo: si se siguio el semaforo en los 3 primeros turnos (fuera
-            # inmortalidades), se le mata a full dano y se aguanta el contraataque un turno.
-            if self.ve(juego.contraataque):
-                self._avisar("Fase 4: semáforo hecho; a full daño aunque tenga el contraataque.")
+        if self._semaforo_hecho(turno):
+            # El usuario (2026-11-13), con este mismo equipo: cumplido el semaforo (fuera inmortalidades), se le mata
+            # a full dano con las 4 cartas (sin guardar ultis ni mover: "full es full") y se aguanta el contraataque.
+            if accion == 0:
+                self._avisar("Fase 4: semáforo hecho; 4 cartas a full daño, sin guardar nada.")
             return self._golpe_maximo(mano)
         if self.ve(juego.contraataque):
             # Defensive Horn: postura que devuelve 1500 % al atacarle. Quitarle la postura o la ulti de Hel; si no hay
@@ -808,7 +803,7 @@ class EstrategiaCiervo4(EstrategiaPiso4):
         if falta:
             self._falta_color(turno, falta)
             return self._mover_para_ulti(mano)
-        if turno <= 3:  # las ultis al final
+        if True:  # mientras dure el semaforo (tambien si se alargo por un turno sin color): las ultis al final
             azules, verdes = azules[::-1], verdes[::-1]
             if turno <= 2:
                 rojas = rojas[::-1]
@@ -819,9 +814,8 @@ class EstrategiaCiervo4(EstrategiaPiso4):
         if quita:
             verdes = [quita[0]] + [i for i in verdes if i != quita[0]]
         if accion == 0 and turno == 1:
-            inicio = {"rojo": rojas, "verde": verdes, "azul": azules}[self._inicio_mas_largo(rojas, verdes, azules)]
-            if inicio:
-                return inicio[-1]
+            if verdes:  # el semaforo empieza por verde (sin verdes ya se movio arriba)
+                return verdes[-1]
         elif accion == 0:
             for buff, lista in ((juego.buff_azul, azules), (juego.buff_rojo, rojas), (juego.buff_verde, verdes)):
                 if self.ve(buff) and lista:

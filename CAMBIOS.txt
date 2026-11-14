@@ -29,6 +29,11 @@ Etapas previstas:
 
 CAMBIOS
 -------
+0.39.1-alpha
+  - Ciervo Floor 4, fase 4 (el usuario): el semaforo empieza siempre por verde (sin verde en el turno 1, mueve
+    cartas como cuando falta el color que toca). Cumplido el semaforo (3 turnos completos; un turno en que falto el
+    color no cuenta), las 4 cartas van a full dano: ya no guarda ultis ni mueve en la 4.a accion.
+
 0.39.0-alpha
   - Heroes nuevos solos (el usuario): el Lumen del administrador mira 7dshub.com el jueves de heroe nuevo (uno de
     cada dos: ultimo estreno + 14 dias) y, si aun no lo subieron, una vez al dia hasta que salga. Trae su ficha,
