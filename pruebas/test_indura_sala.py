@@ -86,6 +86,20 @@ class SalaQueNoArranca(unittest.TestCase):
         self.assertEqual(self.m.intentos_salida, 0)
         self.assertNotIn("La partida se deshizo antes de empezar. Vuelvo a buscar.", self.mensajes)
 
+    def test_el_lider_se_fue_pulsa_ok_al_momento(self):
+        """La foto del usuario: el aviso con OK tapa la sala, con "Cancel Preparation" debajo."""
+        self.pantalla = Pantalla("ok", "cancelar", "atras")
+        self.assertIsNone(self.m.preparar(P, (0, 0)))
+        self.assertEqual(self.clics, ["ok"])
+        self.assertTrue(any("líder" in t for t in self.mensajes), self.mensajes)
+        self.reloj += 2
+        self.m.preparar(P, (0, 0))
+        self.assertEqual(sum("líder" in t for t in self.mensajes), 1)  # se dice una vez
+        self.pantalla = Pantalla("menu")
+        self.assertEqual(self.m.preparar(P, (0, 0)), "ir_a_indura")
+        self.assertIn("Fuera de la sala. Vuelvo a buscar partidas.", self.mensajes)
+        self.assertEqual(self.toques, [])
+
     def test_fuera_de_la_sala_en_otra_pantalla_devuelve_la_navegacion(self):
         self.m.preparar(P, (0, 0))  # entra en la sala
         self.reloj += M.ESPERA_SALA + 1

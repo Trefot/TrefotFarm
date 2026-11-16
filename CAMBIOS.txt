@@ -29,6 +29,11 @@ Etapas previstas:
 
 CAMBIOS
 -------
+0.39.4-alpha
+  - Indura (foto del usuario): la sala atascada era el aviso "The party leader has left. Cannot proceed with
+    battle." con su boton OK, que tapa la sala y no se va solo. En la sala nadie lo pulsaba. Ahora se pulsa en
+    cuanto sale, sin esperar los 3 min, y el bot vuelve a buscar partidas.
+
 0.39.3-alpha
   - Indura: tras una derrota el juego a veces deja al grupo en la sala para la revancha. Si los demas se iban, el
     bot esperaba ahi sin fin (sesion del 2026-11-16: 2 derrotas, mas de 5 h perdidas). Ahora, si en 3 min la pelea no

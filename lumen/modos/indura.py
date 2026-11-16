@@ -124,6 +124,7 @@ class DemonioTiempoReal(Modo):
         self.sala_desde: float | None = None  # en la sala de preparacion desde...
         self.salida_en = 0.0
         self.intentos_salida = 0
+        self.avisado_lider = False
         self.t_captura = self.t_captura_anterior = 0.0  # cuando se miraron las dos ultimas pantallas
         # Diario de cada pelea (IA.md, pieza 5) y, jugando "Inteligente", aprender solo (pieza 6), como en las
         # bestias. Un archivo por demonio; cada pelea apunta su nivel y se aprende por separado en cada uno.
@@ -298,6 +299,13 @@ class DemonioTiempoReal(Modo):
     def preparar(self, p, o):
         ahora = time.time()
         self.sala_desde = self.sala_desde or ahora
+        # "The party leader has left. Cannot proceed with battle." [OK] (foto del usuario, 2026-11-16): tapa la sala
+        # y no se va solo. Antes nadie lo pulsaba y el bot se quedo ahi 5 h.
+        if self.clic_si(juego.ok, p, o, espera=1.5):
+            if not self.avisado_lider:
+                self.avisado_lider = True
+                self.log("El líder del grupo se fue y la pelea no puede empezar. Acepto y vuelvo a buscar.", "aviso")
+            return None
         if not AUTO.esta(p, 0.8) and not (juego.menu_batalla.esta(p, 0.6) or TIEMPO_REAL.esta(p, 0.75)):
             if ahora - self.sala_desde > ESPERA_SALA:
                 return self._salir_de_sala(p, o, ahora)
@@ -312,7 +320,7 @@ class DemonioTiempoReal(Modo):
             self._abrir_diario()
             return "pelea"
         if juego.menu_batalla.esta(p, 0.6) or TIEMPO_REAL.esta(p, 0.75):
-            if self.intentos_salida:
+            if self.intentos_salida or self.avisado_lider:
                 self.log("Fuera de la sala. Vuelvo a buscar partidas.", "ok")
             else:
                 self.log("La partida se deshizo antes de empezar. Vuelvo a buscar.", "aviso")
@@ -322,13 +330,12 @@ class DemonioTiempoReal(Modo):
 
     def _fuera_de_sala(self):
         self.sala_desde, self.salida_en, self.intentos_salida = None, 0.0, 0
+        self.avisado_lider = False
 
     def _salir_de_sala(self, p, o, ahora):
         """La sala no arranca (los demas se fueron tras una derrota): quitar el listo, volver atras y confirmar."""
         en_sala = PREPARACION.esta(p, 0.8) or CANCELAR_PREPARACION.esta(p, 0.8)
         if not en_sala and self.intentos_salida:
-            if self.clic_si(juego.ok, p, o, espera=1.5):
-                return None  # "¿Salir de la sala?" tapa los botones: aceptar
             self.log("Fuera de la sala. Vuelvo a buscar partidas.", "ok")
             self._fuera_de_sala()
             return "ir_a_indura"  # la navegacion normal sabe volver desde cualquier menu
