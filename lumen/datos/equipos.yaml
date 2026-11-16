@@ -208,3 +208,7 @@ indura:
       Equipo del administrador para Indura en Chaos (2026-10-27: victoria en 3 min 10 s de pelea). El bot lo
       reconoce y lo juega con "Mis cartas" (la estrategia grabada) y tambien con "Inteligente". Enjin y Shō
       hacen el daño en area; las cartas de Zanka casi no salen en la mano.
+
+  - nombre: Variante Humanos
+    nivel: alternativa
+    personajes: [cleaner_enjin_claro, sh_kusakabe_azul, roxy_of_madness_azul, eastin_of_authority_azul]
