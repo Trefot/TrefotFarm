@@ -43,6 +43,9 @@ ACEPTAR = P("demons/accept.png")
 CANCELAR_BUSQUEDA = P("demons/cancel.png")
 CARGANDO = P("demons/demons_loading_screen.png")
 PREPARACION = P("demons/preparation_incomplete.png")
+CANCELAR_PREPARACION = P("demons/cancel_preparation.png")  # el mismo boton ya pulsado (AutoFarming, MIT)
+ATRAS = P("back.png")  # la flecha de volver, arriba a la izquierda
+PUNTO_ATRAS = (39, 64)
 AUTO = P("demons/auto.jpg")
 DESTRUIDO = P("demons/demons_destroyed.png")
 
@@ -57,6 +60,11 @@ ADELANTO_MAX = 3.0
 # En la maquina virtual cada vuelta del bot (captura + ~10 imagenes) tardaba mas de 2 s: la invitacion se veia
 # tan tarde y con tanta duda que se perdia. Mientras se espera, se mira solo Accept, muy seguido, este rato.
 VIGILANCIA = 2.0
+# Tras una derrota el juego a veces deja al grupo en la sala para la revancha. Si los demas se van, la sala se
+# queda ahi: el 2026-11-16 el bot espero asi 5 h. Lo normal es que la pelea empiece en menos de 1 min.
+ESPERA_SALA = 180.0  # s en la sala sin empezar: me salgo y vuelvo a buscar
+CADA_SALIDA = 10.0  # s entre intentos de salir (dar tiempo a la pantalla)
+INTENTOS_SALIDA = 6  # sin poder salir tras tantos intentos: aviso al movil con la foto
 VECES_HEROE = 5  # cartas de un heroe vistas en la sesion para contarlo en el equipo (como en las bestias)
 
 
@@ -113,6 +121,9 @@ class DemonioTiempoReal(Modo):
         self.avisado_desconocida = False
         self.tocado_en = 0.0
         self.pestana_elegida = False
+        self.sala_desde: float | None = None  # en la sala de preparacion desde...
+        self.salida_en = 0.0
+        self.intentos_salida = 0
         self.t_captura = self.t_captura_anterior = 0.0  # cuando se miraron las dos ultimas pantallas
         # Diario de cada pelea (IA.md, pieza 5) y, jugando "Inteligente", aprender solo (pieza 6), como en las
         # bestias. Un archivo por demonio; cada pelea apunta su nivel y se aprende por separado en cada uno.
@@ -148,6 +159,14 @@ class DemonioTiempoReal(Modo):
 
     # ------------------------------------------------------------- navegacion
     def ir_a_indura(self, p, o):
+        siguiente = self._ir_a_indura(p, o)
+        if siguiente:  # pantalla conocida: el reloj de "sin reconocer" vuelve a cero
+            self.desconocida_desde, self.avisado_desconocida = None, False
+        if siguiente == "preparar":
+            self._fuera_de_sala()  # sala nueva: su reloj empieza ahora
+        return siguiente
+
+    def _ir_a_indura(self, p, o):
         if AUTO.esta(p, 0.8):
             self.log("Ya estaba en una pelea: sigo con ella.", "aviso")
             return "pelea"
@@ -220,6 +239,7 @@ class DemonioTiempoReal(Modo):
         rect = ACEPTAR.buscar(p, 0.7)
         if rect is None:
             if CARGANDO.esta(p, 0.8) or PREPARACION.esta(p, 0.8):
+                self._fuera_de_sala()
                 return "preparar"
             if not CANCELAR_BUSQUEDA.esta(p, 0.8):
                 return "ir_a_indura"  # ya no se esta buscando: volver a pedirlo
@@ -271,12 +291,19 @@ class DemonioTiempoReal(Modo):
                 self.log(f"Invitación perdida (ya llena). Van {self.perdidas}.", "aviso")
                 self._stats()
                 return "ir_a_indura"
+            self._fuera_de_sala()
             return "preparar"
         return None
 
     def preparar(self, p, o):
+        ahora = time.time()
+        self.sala_desde = self.sala_desde or ahora
+        if not AUTO.esta(p, 0.8) and not (juego.menu_batalla.esta(p, 0.6) or TIEMPO_REAL.esta(p, 0.75)):
+            if ahora - self.sala_desde > ESPERA_SALA:
+                return self._salir_de_sala(p, o, ahora)
         self.clic_si(PREPARACION, p, o, umbral=0.8, espera=1.0)
         if AUTO.esta(p, 0.8):
+            self._fuera_de_sala()
             self.auto_puesto = False
             self.estrategia = None
             self.turnos_sin_equipo = 0
@@ -285,8 +312,39 @@ class DemonioTiempoReal(Modo):
             self._abrir_diario()
             return "pelea"
         if juego.menu_batalla.esta(p, 0.6) or TIEMPO_REAL.esta(p, 0.75):
-            self.log("La partida se deshizo antes de empezar. Vuelvo a buscar.", "aviso")
+            if self.intentos_salida:
+                self.log("Fuera de la sala. Vuelvo a buscar partidas.", "ok")
+            else:
+                self.log("La partida se deshizo antes de empezar. Vuelvo a buscar.", "aviso")
+            self._fuera_de_sala()
             return "ir_a_indura"
+        return None
+
+    def _fuera_de_sala(self):
+        self.sala_desde, self.salida_en, self.intentos_salida = None, 0.0, 0
+
+    def _salir_de_sala(self, p, o, ahora):
+        """La sala no arranca (los demas se fueron tras una derrota): quitar el listo, volver atras y confirmar."""
+        en_sala = PREPARACION.esta(p, 0.8) or CANCELAR_PREPARACION.esta(p, 0.8)
+        if not en_sala and self.intentos_salida:
+            if self.clic_si(juego.ok, p, o, espera=1.5):
+                return None  # "¿Salir de la sala?" tapa los botones: aceptar
+            self.log("Fuera de la sala. Vuelvo a buscar partidas.", "ok")
+            self._fuera_de_sala()
+            return "ir_a_indura"  # la navegacion normal sabe volver desde cualquier menu
+        if ahora - self.salida_en < CADA_SALIDA:
+            return None
+        self.salida_en = ahora
+        self.intentos_salida += 1
+        if self.intentos_salida == 1:
+            self.log(f"Llevo {(ahora - self.sala_desde) / 60:.0f} min en la sala y la pelea no empieza "
+                     "(¿se fueron los demás?). Me salgo y vuelvo a buscar.", "aviso")
+        self.clic_si(CANCELAR_PREPARACION, p, o, umbral=0.8, espera=1.0)
+        if not self.clic_si(ATRAS, p, o, umbral=0.75, espera=1.5):
+            entrada.clic(PUNTO_ATRAS, o, espera=1.5)
+        if self.intentos_salida == INTENTOS_SALIDA:
+            self.log("No consigo salir de la sala. Te mando una foto al móvil.", "error")
+            avisos.enviar(f"LumenFarm ({self.nombre}): no consigo salir de la sala de preparación.", p)
         return None
 
     # ------------------------------------------------------------------ diario y aprendizaje

@@ -29,6 +29,14 @@ Etapas previstas:
 
 CAMBIOS
 -------
+0.39.3-alpha
+  - Indura: tras una derrota el juego a veces deja al grupo en la sala para la revancha. Si los demas se iban, el
+    bot esperaba ahi sin fin (sesion del 2026-11-16: 2 derrotas, mas de 5 h perdidas). Ahora, si en 3 min la pelea no
+    empieza, quita el "listo", pulsa la flecha de volver, acepta si pregunta y vuelve a buscar partidas. Si no
+    consigue salir, avisa al movil con la foto.
+  - Indura: el aviso "Llevo 3 min sin reconocer la pantalla" salia de mas justo despues de una pelea: su reloj no
+    volvia a cero al reconocer la sala o la busqueda.
+
 0.39.2-alpha
   - Vida del jefe (pajaro y ciervo Floor 4): medida con un video del usuario. La vida son barras apiladas, una por
     fase (verde, azul, morado, rojo), que se vacian de derecha a izquierda. El registro anota en cada turno cuanto le
