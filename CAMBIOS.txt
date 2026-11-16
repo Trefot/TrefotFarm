@@ -29,6 +29,12 @@ Etapas previstas:
 
 CAMBIOS
 -------
+0.39.6-alpha
+  - Ciervo Floor 4, fase 4 (el usuario): la 4.a accion del semaforo es siempre mover para cargar ultis, pero si ahi
+    no habia carta del color siguiente el turno contaba como fallado. Dos turnos perfectos (verde, azul, rojo y
+    mover) contaron como fallados y el bot reinicio con el ciervo al 37 %. Ahora solo cuenta si falta el color en
+    las 3 cartas que se juegan. Eso tambien hacia que el semaforo durara mas turnos de la cuenta.
+
 0.39.5-alpha
   - Tamano de la ventana: el 2026-11-16, durante una pausa, la ventana del juego quedo en 534x960 en vez de 554x960.
     Todo se lee por posiciones medidas, asi que el pajaro leyo mal las cartas (casi todas "ulti" o "bloqueadas") y

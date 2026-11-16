@@ -199,6 +199,24 @@ class Fase4SinColor(unittest.TestCase):
         e.guion(4, 3, 0, m)
         self.assertIn("dos turnos seguidos", e.pedir_reinicio)
 
+    def test_la_cuarta_accion_sin_el_color_siguiente_no_es_turno_fallado(self):
+        """El usuario, 2026-11-16: turnos 1 y 2 perfectos (Tyr verde, Thor azul, Freyja roja y mover); como en la 4.a
+        accion no habia verde, los dos contaban como fallados y reinicio con el ciervo al 37 %."""
+        e = ciervo(RQ.CAUTELOSO)
+        jugadas = mano((TYR + ".skill_2", R.BRONCE), (THOR + ".skill_1", R.BRONCE), ("freyja_roja.normal_2", R.PLATA))
+        sin_verde = mano((THOR + ".skill_2", R.BRONCE), (FREYR + ".skill_1", R.BRONCE), (THOR + ".ulti", R.ULTI),
+                         (FREYR + ".skill_2", R.ORO))
+        for turno in (1, 2):
+            e.jugadas = list(jugadas)
+            self.assertIsInstance(e.guion(4, turno, 3, sin_verde), tuple, "la 4.a accion mueve, como siempre")
+        self.assertEqual(e.__dict__.get("_turnos_sin_color", set()), set())
+        self.assertIsNone(e.pedir_reinicio)
+        e.jugadas = []
+        e.ve = lambda plantilla, umbral=0.7: plantilla is juego.buff_verde
+        e.guion(4, 3, 0, sin_verde)  # turno 3 sin verde de verdad: un turno fallado, aun no se reinicia
+        self.assertIsNone(e.pedir_reinicio)
+        self.assertTrue(e._semaforo_hecho(5))
+
     def test_el_modo_reinicia_al_empezar_el_turno(self):
         m = MODOS["ciervo_piso4"]({"victorias": 0, "extra": 0, "pociones": True, "max_pociones": 0})
         m.log = lambda *a, **k: None

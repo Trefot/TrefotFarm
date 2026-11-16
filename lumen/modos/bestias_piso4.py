@@ -801,7 +801,11 @@ class EstrategiaCiervo4(EstrategiaPiso4):
         # la secuencia: se mueve. Sin ese color dos turnos seguidos, se reinicia (el usuario, 2026-11-13).
         falta = self._color_que_falta(turno, accion, rojas, verdes, azules)
         if falta:
-            self._falta_color(turno, falta)
+            # La 4.a accion del semaforo es siempre un movimiento (cargar ultis): que no haya el color siguiente ahi
+            # no rompe nada. Contarlo como turno fallado reinicio un turno perfecto (verde, azul, rojo) con el ciervo
+            # al 37 % (el usuario, 2026-11-16).
+            if accion < 3:
+                self._falta_color(turno, falta)
             return self._mover_para_ulti(mano)
         if True:  # mientras dure el semaforo (tambien si se alargo por un turno sin color): las ultis al final
             azules, verdes = azules[::-1], verdes[::-1]
