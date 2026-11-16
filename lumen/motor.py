@@ -173,6 +173,7 @@ class Modo:
                     self.log("Parada segura (actualizacion pendiente).", "aviso")
                     raise TerminarModo()
                 control.estado(self.estado)
+                self._vigilar_tamano()
                 try:
                     pantalla, origen = self.capturar()
                 except ventana.VentanaNoEncontrada as error:
@@ -207,6 +208,35 @@ class Modo:
         tiene; los modos con cualquier equipo lo deducen de las cartas que ven."""
         equipo = getattr(self, "equipo", None)
         return list(equipo.orden) if equipo is not None else None
+
+    # ------------------------------------------------------------- tamano de la ventana
+    CADA_TAMANO_S = 5.0
+    _tamano_revisado = 0.0
+    _tamano_avisado = False
+
+    def _vigilar_tamano(self):
+        """Todo se lee por posiciones medidas en la ventana de 554x960. El 2026-11-16 la ventana quedo en 534x960
+        durante una pausa y el pajaro leyo mal las cartas: 22 reinicios seguidos. Si cambia, se vuelve a dejar bien."""
+        ahora = time.time()
+        if ahora - self._tamano_revisado < self.CADA_TAMANO_S:
+            return
+        self._tamano_revisado = ahora
+        try:
+            tam = ventana.tamano_actual()
+            if tam is None or min(tam) <= 100 or ventana.tamano_correcto(tam):  # cerrada o minimizada: otro aviso
+                self._tamano_avisado = False
+                return
+            objetivo = ventana.tamano_objetivo()
+        except Exception:
+            return
+        if ventana.ajustar_tamano():
+            self.log(f"La ventana del juego cambió de tamaño ({tam[0]}x{tam[1]}): la dejo otra vez en "
+                     f"{objetivo[0]}x{objetivo[1]} para leer bien las cartas.", "aviso")
+            self._tamano_avisado = False
+        elif not self._tamano_avisado:
+            self._tamano_avisado = True
+            self.log(f"La ventana del juego está en {tam[0]}x{tam[1]} y no consigo dejarla en "
+                     f"{objetivo[0]}x{objetivo[1]}: puedo leer mal la pantalla. {ventana.ultimo_error}", "error")
 
     # ------------------------------------------------------------- juego cerrado
     MINUTOS_SIN_JUEGO = 10

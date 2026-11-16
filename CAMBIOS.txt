@@ -29,6 +29,14 @@ Etapas previstas:
 
 CAMBIOS
 -------
+0.39.5-alpha
+  - Tamano de la ventana: el 2026-11-16, durante una pausa, la ventana del juego quedo en 534x960 en vez de 554x960.
+    Todo se lee por posiciones medidas, asi que el pajaro leyo mal las cartas (casi todas "ulti" o "bloqueadas") y
+    reinicio 22 veces seguidas. Ahora el bot mira el tamano cada 5 s y, si cambio, lo vuelve a dejar bien y lo
+    anota en el registro.
+  - Bestias: 10 peleas seguidas sin ganar (reinicios o derrotas) ya no es mala suerte. El bot para, lo dice en el
+    registro y manda la pantalla al movil, en vez de pasarse la noche reiniciando.
+
 0.39.4-alpha
   - Indura (foto del usuario): la sala atascada era el aviso "The party leader has left. Cannot proceed with
     battle." con su boton OK, que tapa la sala y no se va solo. En la sala nadie lo pulsaba. Ahora se pulsa en

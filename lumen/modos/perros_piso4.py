@@ -21,7 +21,7 @@ from collections import defaultdict
 from collections.abc import Sequence
 
 from lumen import cartas as C
-from lumen import botin, entrada, juego
+from lumen import avisos, botin, entrada, juego, ventana
 from lumen.cartas import Carta, Rango, TipoCarta
 from lumen.control import control
 from lumen.ia.diario import Diario
@@ -225,6 +225,9 @@ def _misma_imagen(a, b) -> bool:
     return a.shape == b.shape and float(cv2.absdiff(a, b).mean()) < 12
 
 
+# 2026-11-16: el pajaro reinicio 22 veces seguidas (la ventana cambio de tamano y leia mal las cartas). Tantas
+# peleas seguidas sin ganar ya no es mala suerte (con 60 % de victorias: 1 vez entre 10 000): parar y avisar.
+SIN_GANAR_MAXIMO = 10
 VECES_HEROE = 5  # cartas de un heroe vistas en la sesion para contarlo en el equipo
 
 
@@ -307,6 +310,7 @@ class PerrosPiso4(Modo):
         super().__init__(valores)
         self.estrategia = Estrategia()
         self.victorias = self.derrotas = self.reinicios = self.pociones = self.extras = 0
+        self.seguidas_sin_ganar = 0
         self.heroes_vistos: dict[str, int] = {}  # heroe -> cartas suyas vistas (para saber el equipo)
         self.derrotas_por_fase = defaultdict(int)
         self.equipo_verificado = False
@@ -955,6 +959,7 @@ class PerrosPiso4(Modo):
             self.diario.terminar("victoria", self.fase)
             minutos = (time.time() - self.inicio_pelea) / 60
             self.log(f"¡VICTORIA #{self.victorias}! ({minutos:.1f} min)", "ok")
+            self.seguidas_sin_ganar = 0
             self._stats()
             if self._meta_cumplida():
                 raise TerminarModo()
@@ -975,8 +980,23 @@ class PerrosPiso4(Modo):
                 self.derrotas_por_fase[self.fase or 0] += 1
                 self.log(self.texto_derrota(), "error")
             self._stats()
+            self._sin_ganar(p)
             return "elegir_piso"
         return None
+
+    def _sin_ganar(self, p):
+        self.seguidas_sin_ganar += 1
+        if self.seguidas_sin_ganar < SIN_GANAR_MAXIMO:
+            return
+        self.log(f"{self.seguidas_sin_ganar} peleas seguidas sin ganar (reinicios o derrotas): algo va mal, no es "
+                 "mala suerte. Paro para no gastar la noche y te mando la pantalla al móvil.", "error")
+        try:
+            foto, _ = ventana.capturar()
+        except Exception:
+            foto = p
+        avisos.enviar(f"LumenFarm ({self.nombre}): {self.seguidas_sin_ganar} peleas seguidas sin ganar. "
+                      "Bot detenido: revisa la pantalla.", foto)
+        raise TerminarModo()
 
     def texto_derrota(self) -> str:
         """Tan visible como la victoria, con el turno y, si se sabe, por que (2026-11-13: el usuario no encontraba
