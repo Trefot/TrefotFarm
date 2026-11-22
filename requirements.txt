@@ -6,8 +6,6 @@ pynput
 pywin32
 pyyaml
 requests
-dill
-scikit-learn==1.5.1
 qtawesome
 # Lector de texto de Windows (captura de heroes)
 winrt-runtime

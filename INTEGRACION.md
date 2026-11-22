@@ -8,8 +8,9 @@ otro bot. Todo el código está en `lumen/`; la interfaz (`lumen/gui/`) es opcio
 
 ## 1. Requisitos
 
-- Windows, Python 3.12 (`requirements.txt`). `scikit-learn==1.5.1` es obligatorio: el modelo
-  `assets/modelos/ground_cards_predictor.svc` está guardado con esa versión (con `dill`).
+- Windows, Python 3.12 (`requirements.txt`). Los huecos vacíos de la mano los detecta `lumen/huecos.py`
+  con numpy (`assets/modelos/huecos_lumen.npz`); scikit-learn solo hace falta para reentrenarlo
+  (`python -m lumen.entrenar_huecos`).
 - El juego corre **como administrador**: el proceso del bot también tiene que serlo, si no
   Windows bloquea mover la ventana y los clics (`SetWindowPos` da "Acceso denegado").
 - Ventana del juego en **554x960 contando la barra de título y los bordes** (`ventana.TAMANO_OBJETIVO`).

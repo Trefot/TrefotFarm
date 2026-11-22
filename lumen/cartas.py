@@ -1,23 +1,18 @@
 """Lectura de la mano de cartas: posicion, estado (normal, ulti, bloqueada, hueco), rango y huecos libres.
 
-- Hueco vacio (unidad muerta): modelo entrenado de AutoFarming (assets/modelos), sigue funcionando.
+- Hueco vacio (carta recien jugada o unidad muerta): detector propio (lumen/huecos.py).
 - Bloqueada: la carta se ve oscurecida (poco brillo).
 - Rango: plantillas de bronce/plata/oro; sin rango = ulti.
-El modelo de "tipo de carta" de AutoFarming ya no sirve con el diseno actual de las cartas (dice
-"ulti" para todas), asi que no se usa. Que carta ES (Odin single, Freyja ulti...) lo decide cada
-equipo con sus propias capturas (ver lumen/equipo.py).
+Que carta ES (Odin single, Freyja ulti...) lo decide cada equipo con sus propias capturas (ver lumen/equipo.py).
 """
 
-import threading
 from dataclasses import dataclass, field
 from enum import Enum
 
 import cv2
-import dill
 import numpy as np
 
-from lumen import juego
-from lumen.rutas import MODELOS
+from lumen import huecos, juego
 from lumen.vision import recortar
 
 
@@ -65,48 +60,16 @@ class Carta:
         return f"{self.posicion + 1}:{self.nombre or '?'}({self.tipo.name.lower()},{self.rango.name.lower()})"
 
 
-# ------------------------------------------------------------------- modelos
-_modelos: dict[str, object] = {}
-_lock_modelos = threading.Lock()
-
-
-def _modelo(nombre: str):
-    with _lock_modelos:
-        if nombre not in _modelos:
-            with (MODELOS / nombre).open("rb") as f:
-                _modelos[nombre] = dill.load(f)
-        return _modelos[nombre]
-
-
-def _histogramas(imagen: np.ndarray, bins=(8, 8, 8)) -> np.ndarray:
-    hsv = cv2.cvtColor(imagen, cv2.COLOR_BGR2HSV)
-    hist = cv2.calcHist([hsv], [0, 1, 2], None, bins, [0, 180, 0, 256, 0, 256])
-    cv2.normalize(hist, hist)
-    return hist.flatten()
-
-
-def _rasgos_suelo(imagen: np.ndarray) -> np.ndarray:
-    hist = _histogramas(imagen)
-    hist = np.sqrt(hist / hist.sum())
-    gris = cv2.cvtColor(imagen, cv2.COLOR_BGR2GRAY)
-    gris = cv2.resize(gris, (36, 91), interpolation=cv2.INTER_AREA).astype(np.float32) / 255.0
-    textura = np.array(
-        [gris.std(), np.abs(np.diff(gris, axis=0)).mean(), np.abs(np.diff(gris, axis=1)).mean(), gris.mean()],
-        dtype=np.float32,
-    ) * 10.0
-    return np.concatenate([hist, textura])[np.newaxis, :]
-
-
 def interior(carta: np.ndarray) -> np.ndarray:
-    """La carta sin su marco (mismo recorte que usaron los modelos al entrenarse)."""
+    """La carta sin su marco (para medir si esta oscurecida)."""
     alto, ancho = carta.shape[:2]
     return carta[12 : alto - 20, 8 : ancho - 13]
 
 
 def tipo_de(carta: np.ndarray) -> TipoCarta:
-    dentro = interior(carta)
-    if bool(_modelo("ground_cards_predictor.svc").predict(_rasgos_suelo(dentro)).item()):
+    if huecos.es_hueco(carta):
         return TipoCarta.SUELO
+    dentro = interior(carta)
     if np.percentile(cv2.cvtColor(dentro, cv2.COLOR_BGR2HSV)[..., 2], 90) < CLARO_BLOQUEADA:
         return TipoCarta.BLOQUEADA
     return TipoCarta.NORMAL

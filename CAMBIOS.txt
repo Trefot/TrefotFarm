@@ -29,6 +29,13 @@ Etapas previstas:
 
 CAMBIOS
 -------
+0.40.1-alpha
+  - Huecos vacios de la mano: detector propio (lumen/huecos.py) en lugar del modelo entrenado de AutoFarming (paso 2
+    de quitar AutoFarming). Rasgos propios de color, textura y forma y una SVM entrenada con 4616 casillas de las
+    capturas del usuario (beasts, Indura, Monedas SA y menus; las dudosas revisadas a ojo). En pantallas que no vio:
+    97,9 % igual que el viejo en peleas (lo distinto no eran cartas de la mano) y 3 diferencias en 584 casillas en
+    vivo. Se calcula con numpy desde assets/modelos/huecos_lumen.npz: ya no hacen falta dill ni scikit-learn.
+
 0.40.0-alpha
   - Imagenes propias en lugar de las de AutoFarming (el usuario: "quitar todo lo relacionado con autofarming").
     151 imagenes de Lumen son copia exacta de AutoFarming (lumen/datos/imagenes_autofarming.txt). Mientras se
