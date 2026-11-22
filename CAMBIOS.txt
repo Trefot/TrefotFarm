@@ -29,6 +29,14 @@ Etapas previstas:
 
 CAMBIOS
 -------
+0.39.7-alpha
+  - Monedas SA: el modo no guardaba la foto del botin y la pagina Botin no registraba nada (el usuario,
+    2026-11-22). Ahora saca una foto por vuelta. Con la repeticion automatica la pantalla "Victory" sale limpia
+    solo ~0,5 s (al empezar y al final de la cuenta atras); el resto del tiempo el juego la oscurece y los colores
+    no se parecen a la galeria. La foto se saca en ese momento limpio: cada vuelta da sus Super Awakening Coin.
+  - Oro del botin: en Monedas SA pone "12,000 (+6000)" y se leia 120004469. Ahora se lee solo el primer numero
+    (las 369 fotos de antes se leen igual).
+
 0.39.6-alpha
   - Ciervo Floor 4, fase 4 (el usuario): la 4.a accion del semaforo es siempre mover para cargar ultis, pero si ahi
     no habia carta del color siguiente el turno contaba como fallado. Dos turnos perfectos (verde, azul, rojo y

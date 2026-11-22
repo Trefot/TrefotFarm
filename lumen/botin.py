@@ -298,7 +298,14 @@ def leer_oro(pantalla) -> int | None:
     x1, y1, x2, y2 = ZONA_ORO
     hsv = cv2.cvtColor(pantalla[y1:y2, x1:x2], cv2.COLOR_BGR2HSV)
     brillante = hsv[..., 2] >= 150
-    texto = "".join(_clasificar(m) for *_, m in _componentes(brillante, 10, 22))  # la coma es baja: se ignora
+    comps = _componentes(brillante, 10, 22)  # la coma es baja: se ignora
+    # Solo el primer numero: en Monedas SA pone "12,000 (+6000)" (oro del evento) y el "(" es mas alto que los
+    # digitos (18 px frente a 13-14): ahi se corta. Antes salia 120004469 (2026-11-22).
+    if comps:
+        alto = comps[0][3]
+        cortar = next((i for i, c in enumerate(comps) if abs(c[3] - alto) > 2), len(comps))
+        comps = comps[:cortar]
+    texto = "".join(_clasificar(m) for *_, m in comps)
     return int(texto) if texto.isdigit() else None
 
 

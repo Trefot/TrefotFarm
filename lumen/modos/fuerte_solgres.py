@@ -238,6 +238,7 @@ class MonedasSA(FuerteSolgres):
         self.ultimo_volver = 0.0
         self.pausas, self.reintentado_en = 0, None
         self.cofres = {nombre: 0 for nombre in ORDEN_COFRES}
+        self.foto_hecha = False  # la foto del botin de esta pelea (se vuelve a poder al empezar la siguiente)
         self._nueva_vuelta()
 
     def _nueva_vuelta(self):
@@ -339,6 +340,7 @@ class MonedasSA(FuerteSolgres):
                 return "ir"
         if self._estamina(p, o):
             return None
+        self._foto_botin(p)
         antes = self.vueltas
         self._contar_vuelta(p)
         if self.vueltas != antes:
@@ -374,6 +376,22 @@ class MonedasSA(FuerteSolgres):
         self.log(f"Cofre de {tipo.lower()}: me lo quedo.", "ok")
         self._stats(**{f"cofres_{k.lower()}": v for k, v in self.cofres.items()})
         return None
+
+    def _foto_botin(self, p):
+        """La foto del botin de cada vuelta, para la pagina Botin (antes este modo no guardaba ninguna, 2026-11-22).
+
+        Con la repeticion automatica, la pantalla "Victory" sale limpia solo ~0,5 s: luego el juego la oscurece con
+        "Auto Repeat in progress" y la cuenta atras, y los colores de los objetos ya no se parecen a la galeria
+        (capturas del usuario, 2026-11-22). Por eso la foto se saca en cuanto sale el OK y aun no hay oscurecido.
+        Si se pierde ese momento, esa vuelta queda sin foto: mejor que contar mal."""
+        if juego.pausa.esta(p, 0.7):  # pelea en marcha: la siguiente vuelta podra tener su foto
+            self.foto_hecha = False
+            return
+        if (self.foto_hecha or not juego.ok.esta(p) or juego.derrota.esta(p) or VUELTA_TERMINADA.esta(p)
+                or REPETICION_TERMINADA.esta(p, 0.8)):
+            return
+        self.foto_hecha = True
+        self.guardar_recompensa(p, self.vueltas + 1)
 
     def _repetir(self):
         self.reinicios += 1
