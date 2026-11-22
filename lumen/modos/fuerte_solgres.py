@@ -13,6 +13,7 @@ import time
 import cv2
 
 from lumen import entrada, juego
+from lumen.control import control
 from lumen.motor import Modo, Opcion, TerminarModo
 from lumen.vision import Plantilla
 
@@ -53,6 +54,10 @@ REINTENTAR = P("sa_coin_dungeon/try_again.png")
 # y el boton verde de su confirmacion ("You will not be able to receive the current rewards...")
 CONFIRMAR_REINTENTAR = P("sa_coin_dungeon/try_again_confirmar.png")
 INTENTOS_REINTENTAR = 4  # pausas sin ver "Try Again": se rinde como antes
+# El OK de la pantalla "Victory" (2026-11-22): una sola imagen en vez de las 13 de juego.ok (0,025 s frente a ~0,35 s),
+# porque esa pantalla sale limpia solo ~0,5 s antes de que el juego la oscurezca.
+OK_VICTORIA = P("ok_buttons/salvage_ok.png")
+VIGILANCIA_VICTORIA = 8.0  # s mirando muy seguido al acabar la pelea, hasta ver la pantalla limpia
 MIN_SEGUNDOS_COFRE = 10  # el cofre sale a los 8-9 s: con 7 s el bot casi repite con un cofre de oro (2026-10-29)
 
 DESLIZAR_DESDE, DESLIZAR_HASTA = (276, 800), (275, 650)  # lista de mazmorras de la especial (AutoFarming)
@@ -125,6 +130,7 @@ class FuerteSolgres(Modo):
             return
         self.vuelta_contada_hasta = time.monotonic() + 5.0
         self.vueltas += 1
+        self.contada_tras_pelea = True
         self.log(f"Vuelta #{self.vueltas} terminada.", "ok")
         self._stats()
         meta = int(self.valores["victorias"])
@@ -239,6 +245,8 @@ class MonedasSA(FuerteSolgres):
         self.pausas, self.reintentado_en = 0, None
         self.cofres = {nombre: 0 for nombre in ORDEN_COFRES}
         self.foto_hecha = False  # la foto del botin de esta pelea (se vuelve a poder al empezar la siguiente)
+        self.en_pelea = False  # se vio la pelea en marcha y aun no ha acabado
+        self.contada_tras_pelea = False  # la vuelta de esta pelea ya se conto ("Vuelta #n terminada")
         self._nueva_vuelta()
 
     def _nueva_vuelta(self):
@@ -285,6 +293,10 @@ class MonedasSA(FuerteSolgres):
         if rect is not None:  # la Torre del reloj: se toca su fila
             entrada.clic((CENTRO_X, int(rect[1] + rect[3] / 2)), o, espera=1.0)
             return None
+        if ESPECIAL_FS.esta(p) or juego.menu_batalla.esta(p, 0.6):
+            # Un nivel mas arriba (menu de Fuerte Solgres o Battle): tras una reconexion el 2026-11-22 el bot quedo
+            # aqui y paso 4 min deslizando una pantalla que no se desliza. Que "ir" vuelva a entrar en Special.
+            return "ir"
         if ATRAS.esta(p):  # en la lista de mazmorras sin ver la torre: deslizar
             candado = CANDADO.buscar(p)
             hacia_abajo = MAZMORRA_EVENTO.esta(p)
@@ -382,16 +394,41 @@ class MonedasSA(FuerteSolgres):
 
         Con la repeticion automatica, la pantalla "Victory" sale limpia solo ~0,5 s: luego el juego la oscurece con
         "Auto Repeat in progress" y la cuenta atras, y los colores de los objetos ya no se parecen a la galeria
-        (capturas del usuario, 2026-11-22). Por eso la foto se saca en cuanto sale el OK y aun no hay oscurecido.
-        Si se pierde ese momento, esa vuelta queda sin foto: mejor que contar mal."""
+        (capturas del usuario, 2026-11-22). Vuelve a salir limpia al final de la cuenta atras. Por eso, al acabar
+        la pelea se mira muy seguido unos segundos; y si aun asi se pierde, vale la del final de la cuenta atras.
+        Si se pierden las dos, esa vuelta queda sin foto: mejor que contar mal."""
         if juego.pausa.esta(p, 0.7):  # pelea en marcha: la siguiente vuelta podra tener su foto
-            self.foto_hecha = False
+            self.foto_hecha = self.contada_tras_pelea = False
+            self.en_pelea = True
             return
-        if (self.foto_hecha or not juego.ok.esta(p) or juego.derrota.esta(p) or VUELTA_TERMINADA.esta(p)
-                or REPETICION_TERMINADA.esta(p, 0.8)):
+        if self.foto_hecha:
             return
-        self.foto_hecha = True
-        self.guardar_recompensa(p, self.vueltas + 1)
+        if self.en_pelea:  # la pelea acaba de terminar
+            self.en_pelea = False
+            p = self._esperar_victoria_limpia(p)
+        if p is not None and self._victoria_limpia(p):
+            self.foto_hecha = True
+            self.guardar_recompensa(p, self.vueltas + (0 if self.contada_tras_pelea else 1))
+
+    @staticmethod
+    def _victoria_limpia(p) -> bool:
+        return (OK_VICTORIA.esta(p) and not VUELTA_TERMINADA.esta(p) and not REPETICION_TERMINADA.esta(p, 0.8)
+                and not juego.derrota.esta(p))
+
+    def _esperar_victoria_limpia(self, p):
+        """Hasta VIGILANCIA_VICTORIA s mirando solo lo justo. La captura limpia, o None si ya salio oscurecida."""
+        fin = time.monotonic() + VIGILANCIA_VICTORIA
+        while True:
+            if self._victoria_limpia(p):
+                return p
+            if VUELTA_TERMINADA.esta(p) or juego.pausa.esta(p, 0.7) or time.monotonic() > fin:
+                return None  # oscurecida (queda la del final de la cuenta atras), otra pelea o nada
+            control.revisar()
+            time.sleep(0.03)
+            try:
+                p, _ = self.capturar()
+            except Exception:
+                return None
 
     def _repetir(self):
         self.reinicios += 1

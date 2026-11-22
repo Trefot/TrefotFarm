@@ -446,8 +446,10 @@ class DemoniosYFuerte(ConPantallaSimulada):
     def test_monedas_sa_repite_si_el_cofre_es_peor(self):
         from lumen.modos import fuerte_solgres as F
 
-        for n in ("VIDA_JEFE", "EMPEZAR", "REPETICION_TERMINADA", "VUELTA_TERMINADA", "MAZMORRA_FS", "ATRAS"):
+        for n in ("VIDA_JEFE", "EMPEZAR", "REPETICION_TERMINADA", "VUELTA_TERMINADA", "MAZMORRA_FS", "ATRAS",
+                  "OK_VICTORIA"):
             self._parchear(F, n, PlantillaFalsa(n))
+        self._parchear(F, "VIGILANCIA_VICTORIA", 0.0)  # sin capturas de verdad al acabar la pelea
         for n in ("pausa", "menu_batalla", "derrota"):
             self._parchear(juego, n, PlantillaFalsa(n))
         self._parchear(juego, "pocion_stamina", PlantillaFalsa("pocion"))

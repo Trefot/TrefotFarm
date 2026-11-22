@@ -49,15 +49,33 @@ class FotoDeCadaVuelta(unittest.TestCase):
                               "segundos_cofre": 12})
         self.m.log = lambda *a, **k: None
         self.fotos = []
-        p = mock.patch.object(self.m, "guardar_recompensa", side_effect=lambda pant, v, **k: self.fotos.append(v))
-        p.start()
-        self.addCleanup(p.stop)
+        self.cola = []  # lo que devuelve cada captura de la vigilancia rapida
+        for parche in (mock.patch.object(self.m, "guardar_recompensa",
+                                         side_effect=lambda pant, v, **k: self.fotos.append(v)),
+                       mock.patch.object(self.m, "capturar", side_effect=lambda: (foto(self.cola.pop(0)), (0, 0))),
+                       mock.patch.object(F.time, "sleep")):
+            parche.start()
+            self.addCleanup(parche.stop)
 
-    def test_una_foto_por_vuelta_en_el_momento_limpio(self):
-        for nombre in ("pelea", "victoria_limpia", "victoria_oscura", "victoria_oscura", "victoria_fin_cuenta",
-                       "pelea", "victoria_oscura", "victoria_fin_cuenta", "pelea"):
+    def test_al_acabar_la_pelea_mira_seguido_hasta_la_pantalla_limpia(self):
+        """En la sesion real (0.39.7) el bucle normal tardaba ~0,6 s por vuelta y se perdia la pantalla limpia."""
+        self.m._foto_botin(foto("pelea"))
+        self.cola = ["victoria_limpia"]
+        self.m._foto_botin(foto("victoria_sin_ok"))  # la pelea acaba: aun no sale el OK
+        self.assertEqual(self.fotos, [1])
+        for nombre in ("victoria_oscura", "victoria_fin_cuenta"):
             self.m._foto_botin(foto(nombre))
-        self.assertEqual(self.fotos, [1, 1], "una por vuelta; la segunda, al final de la cuenta atras")
+        self.assertEqual(self.fotos, [1], "una sola por vuelta")
+
+    def test_si_sale_ya_oscurecida_vale_la_del_final_de_la_cuenta_atras(self):
+        self.m._foto_botin(foto("pelea"))
+        self.cola = ["victoria_oscura"]
+        self.m._foto_botin(foto("victoria_sin_ok"))
+        self.assertEqual(self.fotos, [])
+        self.m.vueltas = 3
+        self.m.contada_tras_pelea = True  # "Vuelta #3 terminada" ya salio en lo oscuro
+        self.m._foto_botin(foto("victoria_fin_cuenta"))
+        self.assertEqual(self.fotos, [3], "es la foto de la vuelta 3, no de la 4")
 
     def test_ni_oscurecida_ni_resumen_final(self):
         for nombre in ("victoria_oscura", "repeticion_terminada"):
@@ -67,3 +85,14 @@ class FotoDeCadaVuelta(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class VolverDesdeElMenu(unittest.TestCase):
+    def test_en_el_menu_de_fuerte_solgres_vuelve_a_entrar_en_special(self):
+        """2026-11-22: tras una reconexion quedo en el menu de Fuerte Solgres deslizando 4 min."""
+        m = F.MonedasSA({"victorias": 0, "pociones": True, "max_pociones": 0, "cofre": "Bronce", "segundos_cofre": 12})
+        m.log = lambda *a, **k: None
+        with mock.patch.object(F.entrada, "arrastrar") as arrastrar, mock.patch.object(F.entrada, "clic"), \
+             mock.patch.object(m, "clic_si", return_value=False):
+            self.assertEqual(m.abrir(foto("menu_fuerte_solgres"), (0, 0)), "ir")
+        arrastrar.assert_not_called()

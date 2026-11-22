@@ -29,6 +29,14 @@ Etapas previstas:
 
 CAMBIOS
 -------
+0.39.8-alpha
+  - Monedas SA: tras perder la conexion, el bot quedo en el menu de Fuerte Solgres y paso 4 min deslizando una
+    pantalla que no se desliza (2026-11-22). Ahora, si se ve "Special" o el menu Battle, vuelve a entrar.
+  - Monedas SA, foto del botin: en la prueba real solo salio foto en 2 de 3 vueltas (la pantalla limpia dura ~0,5 s
+    y cada vuelta del bot tardaba ~0,6 s). Ahora mira un solo boton OK (0,025 s en vez de ~0,35 s) y, al acabar
+    la pelea, mira muy seguido unos segundos. La foto de la cuenta atras ya no sale con el numero de la vuelta
+    siguiente.
+
 0.39.7-alpha
   - Monedas SA: el modo no guardaba la foto del botin y la pagina Botin no registraba nada (el usuario,
     2026-11-22). Ahora saca una foto por vuelta. Con la repeticion automatica la pantalla "Victory" sale limpia
