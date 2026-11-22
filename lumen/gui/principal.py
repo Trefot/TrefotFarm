@@ -42,6 +42,7 @@ from lumen.rutas import RAIZ
 MINUTOS_ENTRE_REVISIONES = 30
 SEGUNDOS_PUBLICAR = 20  # al abrir, despues de buscar actualizaciones (los dos usan git)
 SEGUNDOS_HEROES = 60  # al abrir, despues de publicar (tambien usa git)
+SEGUNDOS_PROPIAS = 120  # al abrir, despues de los heroes (tambien usa git)
 
 MENU = [
     ("inicio", "Inicio"), ("contenidos", "Contenidos"),
@@ -60,6 +61,7 @@ class _Senales(QObject):
     fin_update = pyqtSignal(bool, str)
     publicado = pyqtSignal(object, str)  # publicar.Resultado, error
     heroes = pyqtSignal(object, str, bool)  # heroes_nuevos.Resultado, error, manual
+    propias = pyqtSignal(object, str)  # imagenes propias subidas (lista), error
 
 
 class VentanaPrincipal(QMainWindow):
@@ -190,6 +192,7 @@ class VentanaPrincipal(QMainWindow):
         self.senales.fin_update.connect(self._fin_update)
         self.senales.publicado.connect(self._fin_publicar)
         self.senales.heroes.connect(self._fin_heroes)
+        self.senales.propias.connect(self._fin_propias)
         self.puente.terminado.connect(self._bot_terminado)
         self.puente.estado.connect(lambda _: self._barra())
 
@@ -207,6 +210,9 @@ class VentanaPrincipal(QMainWindow):
         # Heroes nuevos de 7dshub: se mira cada hora si toca (un jueves de cada dos), y al abrir tras publicar
         QTimer.singleShot(SEGUNDOS_HEROES * 1000, self.buscar_heroes)
         QTimer(self, timeout=self.buscar_heroes, interval=60 * 60 * 1000).start()
+        # Imagenes propias en vez de las de AutoFarming: el admin las sube al abrir y cada hora, sin farmear
+        QTimer.singleShot(SEGUNDOS_PROPIAS * 1000, self.subir_propias)
+        QTimer(self, timeout=self.subir_propias, interval=60 * 60 * 1000).start()
         accesos.migrar_viejos()
         if not config.obtener("asistente_visto"):
             QTimer.singleShot(700, self.abrir_asistente)
@@ -384,6 +390,37 @@ class VentanaPrincipal(QMainWindow):
             ajustes.pintar_heroes("Sin héroes nuevos. " + (f"Vuelve a mirar el {hecho.proxima.strftime('%d/%m')}."
                                                           if hecho.proxima else ""))
 
+    def subir_propias(self):
+        """Modo administrador: sube las imagenes propias recortadas al farmear (lumen/propias.py). Nunca mientras
+        el bot corre ni pide actualizar: llegan a todos con la siguiente actualizacion normal."""
+        if (not config.obtener("modo_admin") or self.puente.corriendo or self.publicando or self.actualizando
+                or self.revisando):
+            return
+        from lumen import propias, publicar
+
+        if not propias.pendientes():
+            return
+        self.publicando = True
+
+        def correr():
+            try:
+                self.senales.propias.emit(publicar.subir_imagenes_propias(), "")
+            except Exception as e:  # sin internet, sin permiso: se reintenta en una hora
+                self.senales.propias.emit(None, str(e))
+
+        threading.Thread(target=correr, daemon=True).start()
+
+    def _fin_propias(self, hechas, error: str):
+        self.publicando = False
+        from lumen import propias
+
+        if error:
+            self.farmear.escribir(f"No pude subir las imágenes propias (lo reintento en una hora): {error}", "aviso")
+        elif hechas:
+            listas, total = propias.progreso()
+            self.farmear.escribir(f"Subí {len(hechas)} imágenes propias en lugar de las de AutoFarming "
+                                  f"({listas} de {total}).", "ok")
+
     def _fin_publicar(self, hecho, error: str):
         self.publicando = False
         if error:
@@ -419,6 +456,7 @@ class VentanaPrincipal(QMainWindow):
 
     def _bot_terminado(self):
         self._barra()
+        QTimer.singleShot(5000, self.subir_propias)
         if self.update_bloqueante:
             self.bloqueo.refrescar()
 

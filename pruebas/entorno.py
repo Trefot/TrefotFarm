@@ -46,6 +46,10 @@ from lumen.ia import diario  # noqa: E402
 
 diario.CARPETA = TEMPORAL / "diario"  # el diario de peleas de las pruebas no se mezcla con el real
 
+from lumen import propias  # noqa: E402
+
+propias.CARPETA_LOCAL = TEMPORAL / "propias"  # los recortes de las pruebas no van a capturas/ del repositorio
+
 
 def ajustes() -> dict:
     """Los ajustes en memoria (para prepararlos o mirarlos en una prueba)."""

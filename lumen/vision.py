@@ -42,11 +42,23 @@ class Plantilla:
         self.rutas += [IMAGENES / IDIOMA_ES / r for r in rutas if not Path(r).is_absolute()]
         self.nombre = nombre or self.rutas[0].stem
         self._imagenes: list[np.ndarray] | None = None
+        self._de_autofarming: list[Path | None] = []  # por imagen cargada: su ruta si es de AutoFarming
 
     @property
     def imagenes(self) -> list[np.ndarray]:
         if self._imagenes is None:
-            self._imagenes = [img for img in (leer_imagen(r) for r in self.rutas) if img is not None]
+            from lumen import propias
+
+            cargadas, de_af = [], []
+            for ruta in self.rutas:
+                usada = propias.preferida(ruta)  # la propia publicada en vez de la de AutoFarming, si ya la hay
+                img = leer_imagen(usada)
+                if img is None:
+                    continue
+                cargadas.append(img)
+                rel = propias.relativa(usada)
+                de_af.append(usada if rel is not None and rel in propias.de_autofarming() else None)
+            self._imagenes, self._de_autofarming = cargadas, de_af
         return self._imagenes
 
     @property
@@ -58,17 +70,22 @@ class Plantilla:
 
     def confianza(self, pantalla: np.ndarray | None) -> tuple[float, np.ndarray]:
         """Mejor coincidencia entre todas las imagenes: (confianza 0..1, rectangulo x,y,w,h)."""
-        mejor, rect = -1.0, RECT_VACIO
+        mejor, rect, cual = -1.0, RECT_VACIO, -1
         if pantalla is None:
             return mejor, rect
-        for plantilla in self.imagenes:
+        for i, plantilla in enumerate(self.imagenes):
             ph, pw = plantilla.shape[:2]
             if ph > pantalla.shape[0] or pw > pantalla.shape[1]:
                 continue
             resultado = cv2.matchTemplate(pantalla, plantilla, cv2.TM_CCOEFF_NORMED)
             _, valor, _, (x, y) = cv2.minMaxLoc(resultado)
             if valor > mejor:
-                mejor, rect = float(valor), np.array([x, y, pw, ph], dtype=np.int32)
+                mejor, rect, cual = float(valor), np.array([x, y, pw, ph], dtype=np.int32), i
+        if cual >= 0 and self._de_autofarming[cual] is not None:
+            from lumen import propias
+
+            if propias.activo and mejor >= propias.UMBRAL:  # recortar la propia de esta pantalla del juego
+                propias.anotar(self._de_autofarming[cual], pantalla, rect, mejor)
         return mejor, rect
 
     def buscar(self, pantalla: np.ndarray | None, umbral: float = 0.7) -> np.ndarray | None:

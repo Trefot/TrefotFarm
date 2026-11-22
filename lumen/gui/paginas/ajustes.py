@@ -170,6 +170,9 @@ class PaginaAjustes(Pagina):
         self.nota_heroes = nota("")
         fila_hub.addWidget(self.nota_heroes, 1)
         f.addRow("Héroes (7dshub)", fila_hub)
+        # Imagenes propias en vez de las de AutoFarming (lumen/propias.py): se recortan solas al farmear
+        self.nota_propias = nota("")
+        f.addRow("Imágenes propias", self.nota_propias)
         c.addWidget(self.caja_repo)
         self.modo_admin.toggled.connect(lambda _: self._pintar_admin())
         self._pintar_admin()
@@ -192,6 +195,16 @@ class PaginaAjustes(Pagina):
     def al_mostrar(self):
         self.actualizaciones.refrescar()
         self.pintar_heroes()
+        self.pintar_propias()
+
+    def pintar_propias(self):
+        from lumen import propias
+
+        listas, total = propias.progreso()
+        por_subir = len(propias.pendientes())
+        self.nota_propias.setText(f"{listas} de {total} imágenes de AutoFarming ya tienen la suya propia"
+                                  + (f" ({por_subir} por subir)" if por_subir else "")
+                                  + ". Se recortan solas al farmear.")
 
     def pintar_heroes(self, texto: str = ""):
         """Cuando toca la proxima revision de 7dshub (o lo que acaba de pasar)."""

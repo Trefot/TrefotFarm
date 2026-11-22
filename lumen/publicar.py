@@ -215,6 +215,16 @@ def subir_heroes_7dshub(preparar_copia) -> list[str]:
     return _subir(preparar_copia, H.RUTAS_REPO, lambda nombres: "New heroes from 7dshub: " + ", ".join(nombres), [])
 
 
+def subir_imagenes_propias() -> list[str]:
+    """Imagenes propias recortadas en este PC (lumen/propias.py) a la base de todos. Devuelve cuales subio."""
+    from lumen import propias
+
+    if not propias.pendientes():
+        return []
+    return _subir(propias.preparar_copia, ["assets/propias"],
+                  lambda hechas: f"Own images instead of AutoFarming's: {len(hechas)} more", [])
+
+
 def leer_local() -> Local:
     """Lo de este PC: equipos del admin, heroes de usuario.yaml y las claves de la captura de heroes (si quedo una
     de antes: la captura se quito en la 0.20.0, los heroes vienen de 7dshub)."""

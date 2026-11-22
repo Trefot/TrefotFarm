@@ -12,7 +12,7 @@ from dataclasses import dataclass, field
 from typing import Any
 
 import lumen
-from lumen import avisos, config, entrada, historial, informe, juego, recompensas, ventana
+from lumen import avisos, config, entrada, historial, informe, juego, propias, recompensas, ventana
 from lumen.control import Detenido, control
 from lumen.vision import Plantilla
 
@@ -164,6 +164,7 @@ class Modo:
         estados = self.estados()
         try:
             control.ejecutando = True
+            propias.activo = True  # recortar imagenes propias en lugar de las de AutoFarming mientras se farmea
             self._iniciar_vigilante()
             self.log(f"Iniciando {self.nombre}.", "ok")
             self.al_empezar()
@@ -191,6 +192,7 @@ class Modo:
             self.log("Detenido por el usuario.", "aviso")
         finally:
             self._vigilante_activo = False
+            propias.activo = False
             try:
                 self.al_terminar()
                 sesion = {k: v for k, v in self.stats.items() if isinstance(v, (int, float, str))}

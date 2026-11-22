@@ -29,6 +29,15 @@ Etapas previstas:
 
 CAMBIOS
 -------
+0.40.0-alpha
+  - Imagenes propias en lugar de las de AutoFarming (el usuario: "quitar todo lo relacionado con autofarming").
+    151 imagenes de Lumen son copia exacta de AutoFarming (lumen/datos/imagenes_autofarming.txt). Mientras se
+    farmea, cuando una se reconoce con seguridad (0,85 o mas), se recorta ese trozo de la pantalla del juego. Solo
+    se guarda si sale dos veces, a 10 s o mas, igual de forma y de color (asi no se cuela un fotograma de una
+    animacion ni la pantalla oscurecida). El Lumen administrador las sube a la base de todos (assets/propias) cada
+    hora sin farmear, y desde entonces se usa la propia. En Ajustes > Administrador se ve cuantas van. Cuando
+    esten todas se borran las de AutoFarming, su credito y su licencia.
+
 0.39.8-alpha
   - Monedas SA: tras perder la conexion, el bot quedo en el menu de Fuerte Solgres y paso 4 min deslizando una
     pantalla que no se desliza (2026-11-22). Ahora, si se ve "Special" o el menu Battle, vuelve a entrar.
