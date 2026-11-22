@@ -1,18 +1,16 @@
-"""Floor 4 del pajaro (Hraesvelgr) y del ciervo (Eikthyrnir), 2026-11-10.
+"""Floor 4 del pajaro (Hraesvelgr) y del ciervo (Eikthyrnir).
 
-Guiones traducidos de AutoFarming (github.com/PhantomPilots/AutoFarming, licencia MIT):
-``scripts/utilities/bird_floor4_fighting_strategies.py`` y ``scripts/utilities/deer_floor4_fighting_strategies.py``. AutoFarming
-reconoce las cartas con imagenes y modelos que ya no sirven con el diseno actual (lumen/cartas.py); aqui cada
-carta se reconoce por su nombre (inteligencia.agrupar_por_dibujo) y lo que hace se lee de su texto (7dshub):
-"Heals" = curacion, "Removes Buffs" = quita buffs, "Amplify"/"Power Strike" = contra la inmortalidad.
+Reglas propias de Lumen: lo que pide cada fase segun el Enemy Info de 7dshub (lumen/datos/bestias_7dshub.yaml y
+lumen/datos/requisitos_bestias.yaml) y lo que el usuario fue ensenando al probarlas. Cada carta se reconoce por su
+nombre (inteligencia.agrupar_por_dibujo) y lo que hace se lee de su texto (7dshub): "Heals" = curacion,
+"Removes Buffs" = quita buffs, "Amplify"/"Power Strike" = contra la inmortalidad.
 
 Cuando el guion no dice nada (o lo que pide no se puede jugar), juega el modo inteligente de Lumen, que usa lo
 aprendido en cada pelea ("pajaro_f4", "ciervo_f4").
 
-Equipos (BOTS_README de AutoFarming):
-- Pajaro: cualquiera; recomendado Meliodas traidor (o Tyr verde), Thor, Megellda azul y Shion.
-- Ciervo: Thor, Jormungand verde, Freyr y Tyr verde (o Hel verde), todos con equipo de ataque. AutoFarming gana
-  ~60 % con Tyr y ~30 % con Hel.
+Equipos con los que el usuario las pasa:
+- Pajaro: Shion verde, Beru azul, Tyr verde y Thor azul (8 de 8 victorias el 2026-11-16).
+- Ciervo: Tyr verde, Freyja roja, Thor azul y Freyr rojo (2026-11-13).
 """
 
 from functools import lru_cache
@@ -150,7 +148,7 @@ def dano(c) -> float:
 
 
 def es_fuerte(c) -> bool:
-    """Las "hard hitting" de AutoFarming: ultis y golpes grandes."""
+    """Ultis y golpes grandes."""
     return es_ulti(c) or dano(c) >= 190 or contra_inmortalidad(c)
 
 
@@ -187,7 +185,7 @@ class EstrategiaPiso4(EstrategiaInteligente):
     def __init__(self):
         super().__init__(enemigos=1)
         self.modo = None  # el modo, para mirar la pantalla (lo pone Piso4)
-        self.jugadas: list[Carta] = []  # cartas jugadas en este turno (las "picked_cards" de AutoFarming)
+        self.jugadas: list[Carta] = []  # cartas jugadas en este turno
         self.nueva_pelea()
 
     def nueva_pelea(self):
@@ -303,198 +301,200 @@ class EstrategiaPiso4(EstrategiaInteligente):
 
 
 class EstrategiaPajaro4(EstrategiaPiso4):
+    """El pajaro segun lo que pide cada fase (Enemy Info de 7dshub, lumen/datos/requisitos_bestias.yaml):
+
+    1. Bloquea los efectos de las habilidades (menos posturas y curaciones): se cura. Mientras, se preparan cartas
+       de plata para la fase 2 (fusionando las de bronce) y se juega lo que menos sirve despues.
+    2. Con 3 habilidades del mismo rango (plata o mas) en un turno da su Proteccion: con ella se le hace +300 %, sin
+       ella -300 %. Un turno se juntan las 3 del mismo rango y el siguiente se le pega con todo.
+    3. Empieza con 8 inmortalidades que se quitan con ciertos golpes (Amplify, Power Strike): primero esas; sin
+       inmortalidades, a atacar. Las ultis que quitan buffs se guardan para la evasion de la fase 4.
+    4. Se da evasion un turno (inmune a los ataques): se le quitan los buffs; si no se puede, no se gastan golpes.
+    """
+
     destino = "pajaro_piso4"
+    PLATAS_A_GUARDAR = 3  # para la Proteccion de la fase 2
+    PLATAS_DE_SOBRA = 4  # con mas de estas en la mano ya se puede gastar alguna en la fase 1
 
     def nueva_pelea(self):
         super().nueva_pelea()
-        self.escudo = False  # fase 2: con 3 cartas de plata en un turno el siguiente se pega con todo
+        self.proteccion = False  # fase 2: el turno anterior junto 3 del mismo rango; este se pega con todo
 
     def turno_completado(self, fase, turno):
-        """El motor ya observo todas las casillas ocupadas: comprobar el requisito real."""
+        """Al acabar el turno (todas las casillas vistas): se cumplio o no el requisito de la Proteccion."""
         if fase != 2:
             return
         from collections import Counter
+
         from lumen.ia import resolver
+
         cantidad, minimo = resolver.requisito_rango(self.destino, 2) or (3, 2)
-        por_rango = Counter(c.rango for c in self.jugadas if not es_ulti(c) and
-                            c.rango in (Rango.BRONCE, Rango.PLATA, Rango.ORO) and c.rango.value + 1 >= minimo)
-        self.escudo = any(n >= cantidad for n in por_rango.values())
+        rangos = Counter(c.rango for c in self.jugadas if not es_ulti(c) and
+                         c.rango in (Rango.BRONCE, Rango.PLATA, Rango.ORO) and c.rango.value + 1 >= minimo)
+        self.proteccion = any(n >= cantidad for n in rangos.values())
 
-    # --- ayudas
-    def _plata_por_fusion(self, mano):
-        """Mover una carta de bronce sobre su pareja (no contigua) para hacer una de plata."""
-        for i, c in enumerate(mano):
-            for j in range(i + 2, len(mano)):
-                if c.rango == Rango.BRONCE and fusionan(c, mano[j]) and (
-                        j != i + 2 or mano[i + 1].rango == Rango.PLATA):
-                    return (i, j)
+    # --------------------------------------------------------------- ayudas
+    @staticmethod
+    def _juntaria(mano, i) -> bool:
+        """Jugar la carta i deja juntas a sus vecinas iguales (se fusionan solas)."""
+        return 0 < i < len(mano) - 1 and fusionan(mano[i - 1], mano[i + 1])
+
+    def _juntaria_platas(self, mano, i) -> bool:
+        """... y si las vecinas son de plata se van a oro: se pierden dos platas para la fase 2."""
+        return self._juntaria(mano, i) and mano[i - 1].rango == Rango.PLATA
+
+    @staticmethod
+    def _hacer_plata(mano):
+        """Mover una de bronce encima de su pareja (que no este al lado): sale una de plata. La pareja mas cercana."""
+        pares = [(i, j) for i, a in enumerate(mano) for j, b in enumerate(mano)
+                 if j - i >= 2 and a.rango == Rango.BRONCE and fusionan(a, b)]
+        # Con una sola carta en medio, que no sea de bronce (se quedaria entre dos y se podria fusionar con otra)
+        pares = [(i, j) for i, j in pares if j - i > 2 or mano[i + 1].rango != Rango.BRONCE]
+        return min(pares, key=lambda ij: ij[1] - ij[0]) if pares else None
+
+    def _ya_jugada(self, cond) -> bool:
+        return any(cond(c) for c in self.jugadas)
+
+    def _curar_si_hace_falta(self, mano, bloqueado: bool):
+        if bloqueado and not self._ya_jugada(es_curacion):
+            curas = indices(mano, es_curacion)
+            if curas:
+                return curas[0]  # la de menos rango
         return None
 
-    def _carta_que_fusiona(self, mano, sin_platas=True):
-        for i in range(1, len(mano) - 1):
-            if not jugable(mano[i]) or not fusionan(mano[i - 1], mano[i + 1]):
-                continue
-            if sin_platas and (mano[i - 1].rango == Rango.PLATA or mano[i].rango == Rango.PLATA):
-                continue
-            return i
-        return None
+    def _mas_fuertes(self, mano, sin=lambda c: False):
+        """Ultis primero y luego los golpes fuertes, de mas rango; ``sin``: las que se guardan."""
+        ultis = indices(mano, lambda c: es_ulti(c) and not sin(c), orden=lambda c: 0)
+        if ultis:
+            return ultis[-1]
+        fuertes = indices(mano, lambda c: es_fuerte(c) and not es_ulti(c) and not sin(c))
+        return fuertes[-1] if fuertes else None
 
-    def _rompe_platas(self, mano, i) -> bool:
-        """Jugar la carta i juntaria dos de plata (se fusionarian en oro y se perderian para la fase 2)."""
-        return 0 < i < len(mano) - 1 and fusionan(mano[i - 1], mano[i + 1]) and mano[i - 1].rango == Rango.PLATA
-
-    def _limpiar(self, mano, primero_meli=True):
-        """El pajaro bloquea habilidades: area de Meliodas traidor y una curacion."""
-        meli_area = indices(mano, lambda c: es_meli_traidor(c) and habilidad(c) == "skill_2")
-        curas = indices(mano, es_curacion)
-        meli_jugada = any(es_meli_traidor(c) and habilidad(c) == "skill_2" for c in self.jugadas)
-        cura_jugada = any(es_curacion(c) for c in self.jugadas)
-        orden = ((meli_area, meli_jugada), (curas, cura_jugada)) if primero_meli else \
-            ((curas, cura_jugada), (meli_area, meli_jugada))
-        for lista, ya in orden:
-            if lista and not ya:
-                return lista[0]
-        return None
-
+    # --------------------------------------------------------------- guion
     def guion(self, fase, turno, accion, mano):
         if self.jugador.observacion.get("senales"):
             from lumen.ia import resolver
+
             lector = self.jugador._lector or _lector_funcional()
             eleccion = resolver.por_estado(self.destino, fase, mano, self.jugador.observacion, lector)
             if eleccion is not None:
                 self.jugador.razones[mano[eleccion.indice].nombre] = [eleccion.motivo]
                 return eleccion.indice
-        if fase == 1:
-            return self._fase1(turno, accion, mano)
-        if fase == 2:
-            return self._fase2(turno, accion, mano)
-        if fase == 3:
-            return self._fase3(turno, accion, mano)
-        return self._fase4(turno, accion, mano)
+        fases = (self._fase1, self._fase2, self._fase3, self._fase4)
+        return fases[min(max(fase, 1), 4) - 1](turno, accion, mano)
 
     def _fase1(self, turno, accion, mano):
-        platas = [i for i, c in enumerate(mano) if c.rango == Rango.PLATA and con_carta(c)]
-        if self.ve(juego.bloqueo_habilidades):
-            if (i := self._limpiar(mano)) is not None:
-                return i
-        elif len(platas) < 3 and accion <= 1 and (m := self._plata_por_fusion(mano)) is not None:
+        if (i := self._curar_si_hace_falta(mano, self.ve(juego.bloqueo_habilidades))) is not None:
+            return i
+        platas = sum(1 for c in mano if c.rango == Rango.PLATA and con_carta(c))
+        if platas < self.PLATAS_A_GUARDAR and accion <= 1 and (m := self._hacer_plata(mano)) is not None:
             return m
-        for i in range(1, len(mano) - 1):  # una de bronce entre dos iguales de bronce: sale una de plata
-            if jugable(mano[i]) and fusionan(mano[i - 1], mano[i + 1]) and mano[i].rango == Rango.BRONCE \
+        # Jugar una de bronce que deje juntas dos de bronce iguales: sale una de plata sin gastar un movimiento
+        for i in reversed(range(len(mano))):
+            if jugable(mano[i]) and mano[i].rango == Rango.BRONCE and self._juntaria(mano, i) \
                     and mano[i - 1].rango == Rango.BRONCE:
                 return i
-        if ultis := indices(mano, es_ulti, orden=lambda c: 0):
-            return ultis[-1]
-        # Guardar al menos 3 de plata para la fase 2 (se pueden gastar si hay mas de 4)
-        candidatas = [i for i in range(len(mano) - 1, -1, -1) if jugable(mano[i])
-                      and (mano[i].rango != Rango.PLATA or len(platas) > 4) and not es_curacion(mano[i])
-                      and not (es_meli_traidor(mano[i]) and habilidad(mano[i]) == "skill_2")
-                      and not self._rompe_platas(mano, i)]
-        if not candidatas:
+        # Las ultis cargadas pegan aqui (las que quitan buffs se guardan para la fase 4)
+        if (ulti := self._mas_fuertes(mano, sin=lambda c: not es_ulti(c) or quita_buffs(c))) is not None:
+            return ulti
+
+        def gastable(i):
+            c = mano[i]
+            return (jugable(c) and not es_curacion(c) and not self._juntaria_platas(mano, i)
+                    and (c.rango != Rango.PLATA or platas > self.PLATAS_DE_SOBRA))
+
+        candidatas = [i for i in reversed(range(len(mano))) if gastable(i)]
+        if not candidatas:  # todo lo que hay sirve despues: mover sin jugar
             return (-1, -2) if not fusionan(mano[-1], mano[-2]) else (-1, -3)
-        sueltas = [i for i in candidatas
-                   if mano[i].rango != Rango.BRONCE or not any(fusionan(mano[i], mano[j]) for j in range(len(mano)) if j != i)]
-        return (sueltas or candidatas)[0]
+        sin_pareja = [i for i in candidatas if mano[i].rango != Rango.BRONCE
+                      or not any(fusionan(mano[i], mano[j]) for j in range(len(mano)) if j != i)]
+        return (sin_pareja or candidatas)[0]
 
     def _fase2(self, turno, accion, mano):
         from lumen.ia import resolver
-        requisito = resolver.requisito_rango(self.destino, 2) or (3, 2)
-        cantidad, minimo = requisito
-        libres = max(0, getattr(self, "_total_turno", 4) - accion)
-        grupo = resolver.grupo_de_rango(mano, self.jugadas, libres, requisito)
-        objetivo = grupo[0] if grupo else (Rango.ORO if minimo >= 3 else Rango.PLATA)
-        platas = [i for i in indices(mano, lambda c: c.rango == objetivo, orden=lambda c: 0)]
-        platas_jugadas = [c for c in self.jugadas if c.rango == objetivo]
-        bloqueadas = any(c.tipo == TipoCarta.BLOQUEADA for c in mano)
-        curas = indices(mano, es_curacion)
-        if bloqueadas and curas:
-            return curas[-1]
-        jugada = None
-        if self.escudo:  # con escudo: con todo
-            ultis = indices(mano, es_ulti, orden=lambda c: 0)
-            fuertes = sorted(indices(mano, es_fuerte), key=lambda i: rango(mano[i]), reverse=True)
-            jugada = ultis[-1] if ultis else (fuertes[-1] if fuertes else None)
-            if accion == 3:
-                self.escudo = False
-        else:  # sin escudo: 3 de plata en el turno
-            if objetivo == Rango.PLATA and len(platas) + len(platas_jugadas) < cantidad and (m := self._plata_por_fusion(mano)) is not None:
-                return m
-            if min(len(platas), libres) + len(platas_jugadas) >= cantidad and platas and len(platas_jugadas) < cantidad:
-                jugada = platas[-1]
-                if len(platas_jugadas) + 1 == cantidad and accion == getattr(self, "_total_turno", 4) - 1:
-                    self.escudo = True
-        if jugada is not None:
-            return jugada
-        if (i := self._carta_que_fusiona(mano)) is not None:
+
+        if (i := self._curar_si_hace_falta(mano, any(c.tipo == TipoCarta.BLOQUEADA for c in mano))) is not None:
             return i
-        if ultis := indices(mano, es_ulti, orden=lambda c: 0):
-            return ultis[-1]
-        if curas and not any(es_curacion(c) for c in self.jugadas):
+        total = getattr(self, "_total_turno", 4)
+        if self.proteccion:  # este turno se le hace +300 %: lo mas fuerte
+            if (i := self._mas_fuertes(mano)) is not None:
+                if accion == total - 1:
+                    self.proteccion = False
+                return i
+        else:
+            cantidad, minimo = resolver.requisito_rango(self.destino, 2) or (3, 2)
+            quedan = max(0, total - accion)
+            grupo = resolver.grupo_de_rango(mano, self.jugadas, quedan, (cantidad, minimo))
+            objetivo = grupo[0] if grupo else (Rango.ORO if minimo >= 3 else Rango.PLATA)
+            mismas = indices(mano, lambda c: c.rango == objetivo and not es_ulti(c), orden=lambda c: 0)
+            hechas = sum(1 for c in self.jugadas if c.rango == objetivo and not es_ulti(c))
+            if objetivo == Rango.PLATA and len(mismas) + hechas < cantidad and \
+                    (m := self._hacer_plata(mano)) is not None:
+                return m
+            if mismas and hechas < cantidad and min(len(mismas), quedan) + hechas >= cantidad:
+                if hechas + 1 == cantidad and accion == total - 1:
+                    self.proteccion = True
+                return mismas[-1]
+        # Sin Proteccion posible: no gastar las de plata; una que fusione, una ulti, una curacion o una de bronce
+        for i in reversed(range(len(mano))):
+            if jugable(mano[i]) and self._juntaria(mano, i) and mano[i].rango != Rango.PLATA \
+                    and mano[i - 1].rango != Rango.PLATA:
+                return i
+        if (ulti := self._mas_fuertes(mano, sin=lambda c: not es_ulti(c))) is not None:
+            return ulti
+        if not self._ya_jugada(es_curacion) and (curas := indices(mano, es_curacion)):
             return curas[-1]
-        bronces = [i for i in range(len(mano) - 1, -1, -1) if jugable(mano[i]) and mano[i].rango == Rango.BRONCE]
-        if 7 in bronces:
-            return 7
-        for i in bronces:
-            if not self._rompe_platas(mano, i):
+        for i in reversed(range(len(mano))):
+            if jugable(mano[i]) and mano[i].rango == Rango.BRONCE and not self._juntaria_platas(mano, i):
                 return i
         return None
 
     def _fase3(self, turno, accion, mano):
-        self.escudo = False
-        curas = indices(mano, es_curacion)
-        if self.ve(juego.bloqueo_habilidades, 0.6) and (i := self._limpiar(mano, primero_meli=False)) is not None:
+        self.proteccion = False
+        if (i := self._curar_si_hace_falta(mano, self.ve(juego.bloqueo_habilidades, 0.6))) is not None:
             return i
         p = self.pantalla()
         try:
-            inmortales = len(juego.inmortalidad.buscar_todas(p, 0.7)) if p is not None else 0
+            inmortalidades = len(juego.inmortalidad.buscar_todas(p, 0.7)) if p is not None else 0
         except Exception:
-            inmortales = 0
-        quedan = inmortales - sum(contra_inmortalidad(c) for c in self.jugadas)
-        if quedan > 0 and (amp := indices(mano, contra_inmortalidad, orden=lambda c: 0)):
-            return amp[-1]
-        if quedan <= 0 and inmortales >= 0 and (ataque := indices(mano, lambda c: not es_ulti(c) and not es_curacion(c),
-                                                                    orden=lambda c: 0)):
-            return ataque[-1]
-        for i in range(1, len(mano) - 1):
-            if jugable(mano[i]) and fusionan(mano[i - 1], mano[i + 1]) and not self._ulti_meli(mano[i]):
-                return i
-        if curas and not any(es_curacion(c) for c in self.jugadas):
-            return curas[-1]
-        if ultis := indices(mano, lambda c: es_ulti(c) and not self._ulti_meli(c), orden=lambda c: 0):
-            return ultis[-1]
-        libres = [i for i, c in enumerate(mano) if jugable(c)]
-        if len(libres) == 1:
-            return libres[0]
-        resto = [i for i in libres if not self._ulti_meli(mano[i])]
-        return resto[-1] if resto else None
+            inmortalidades = 0
+        quedan = inmortalidades - sum(contra_inmortalidad(c) for c in self.jugadas)
 
-    @staticmethod
-    def _ulti_meli(c) -> bool:
-        return es_meli_traidor(c) and es_ulti(c)
+        def guardar(c):
+            return es_ulti(c) and quita_buffs(c)  # para la evasion de la fase 4
+
+        if quedan > 0:
+            if quitan := indices(mano, contra_inmortalidad, orden=lambda c: 0):
+                return quitan[-1]
+        elif golpes := indices(mano, lambda c: not es_ulti(c) and not es_curacion(c), orden=lambda c: 0):
+            return golpes[-1]
+        for i in reversed(range(len(mano))):
+            if jugable(mano[i]) and self._juntaria(mano, i) and not guardar(mano[i]):
+                return i
+        if not self._ya_jugada(es_curacion) and (curas := indices(mano, es_curacion)):
+            return curas[-1]
+        if (ulti := self._mas_fuertes(mano, sin=lambda c: not es_ulti(c) or guardar(c))) is not None:
+            return ulti
+        jugables = [i for i, c in enumerate(mano) if jugable(c)]
+        resto = [i for i in jugables if not guardar(mano[i])]
+        return (resto or jugables or [None])[-1]
 
     def _fase4(self, turno, accion, mano):
+        def guardar(c):
+            return es_ulti(c) and quita_buffs(c)
+
         if self.ve(juego.evasion, 0.7):
-            # La ulti de Meliodas traidor quita buffs y posturas: la evasion
-            if ulti := indices(mano, lambda c: self._ulti_meli(c) or (es_ulti(c) and quita_buffs(c)), orden=lambda c: 0):
-                return ulti[-1]
-            if not any(self._ulti_meli(c) for c in self.jugadas):
-                for cond in (es_curacion, lambda c: es_meli_traidor(c) and habilidad(c) == "skill_2", es_ulti,
-                             lambda c: not es_fuerte(c)):
+            if quitan := indices(mano, quita_buffs, orden=lambda c: 1 if es_ulti(c) else 0):
+                return quitan[-1]
+            if not self._ya_jugada(quita_buffs):  # inmune a los ataques: no gastar golpes fuertes
+                for cond in (es_curacion, lambda c: not es_fuerte(c) and not es_ulti(c)):
                     if lista := indices(mano, cond, orden=lambda c: 0):
                         return lista[-1]
-        curas = indices(mano, es_curacion)
-        if curas and not any(es_curacion(c) for c in self.jugadas):
+        if not self._ya_jugada(es_curacion) and (curas := indices(mano, es_curacion)):
             return curas[-1]
-        fuertes = indices(mano, lambda c: es_fuerte(c) and not self._ulti_meli(c), orden=lambda c: 0)
-        if fuertes:
-            thor = [i for i in fuertes if es_thor(mano[i])]
-            otras = [i for i in fuertes if i not in thor]
-            if thor and accion == 3:
-                return thor[0]
-            orden = thor[:1] + otras + thor[1:]
-            return orden[-1]
-        sin = [i for i, c in enumerate(mano) if self._ulti_meli(c)]
-        return self.por_defecto(4, turno, accion, mano, sin=sin)
+        if (i := self._mas_fuertes(mano, sin=guardar)) is not None:
+            return i
+        return self.por_defecto(4, turno, accion, mano, sin=[i for i, c in enumerate(mano) if guardar(c)])
 
 
 # ------------------------------------------------------------------ ciervo
@@ -628,40 +628,13 @@ class EstrategiaCiervo4(EstrategiaPiso4):
         if turno - 1 in turnos:
             self.pedir_reinicio = f"fase 4 sin carta {col} dos turnos seguidos: la secuencia no sale"
 
-    def _fase1_general(self, accion, mano):
-        """Cualquier equipo: el Torrente se quita usando la ulti; la 4.a accion carga ultis moviendo una carta."""
+    def _fase1(self, turno, accion, mano):
+        """Splash Shower (turnos impares) pone Torrente: 10 % de la vida al usar habilidades, y el ciervo se cura con
+        ese dano. Usar la ulti lo quita (7dshub). Asi que: lo que mas pega, ultis primero, y la 4.a accion mueve una
+        carta para cargar otra ulti para el turno siguiente."""
         if accion == 3:
             return self._mover_para_ulti(mano)
         return self._golpe_maximo(mano)
-
-    def _fase1(self, turno, accion, mano):
-        thor = self._por_rango(mano, es_thor)
-        tyr_hel = self._por_rango(mano, lambda c: es_tyr(c) or es_hel(c))
-        if not thor and not tyr_hel:  # no es el equipo de AutoFarming: lo que pide la fase, con lo que haya
-            return self._fase1_general(accion, mano)
-        jorm = self._por_rango(mano, es_jorm)
-        freyr = self._por_rango(mano, es_freyr)
-        rojas = self._por_rango(mano, lambda c: color(c) == "rojo")
-        if turno <= 1:  # apertura: Tyr/Hel baja, Jorm (o Freyr/roja), Thor baja, Tyr/Hel alta
-            if accion == 0:
-                return tyr_hel[0] if tyr_hel else None
-            if accion == 1:
-                return (jorm or freyr or rojas or [None])[-1]
-            if accion == 2:
-                return thor[0] if thor else None
-            return tyr_hel[-1] if tyr_hel else None
-        if turno == 2 and thor:
-            return (thor[0], thor[0] + 1) if accion <= 2 else thor[-1]
-        if turno == 3:
-            mover = tyr_hel or jorm
-            if not mover:
-                return None
-            if accion < 2:
-                return (mover[0], mover[0] + 1)
-            if accion == 2:
-                return thor[0] if len(thor) > 1 else (mover[0], mover[0] + 1)
-            return thor[0] if thor else None
-        return None
 
     def _tiene_ulti(self, cartas, cond) -> bool:
         return any(es_ulti(c) and cond(c) for c in cartas)
@@ -724,8 +697,8 @@ class EstrategiaCiervo4(EstrategiaPiso4):
         cura = [i for i in grupos["verde"] if es_jorm(mano[i]) and es_curacion(mano[i])]
         if cura:  # la curacion de Jormungand la primera de las verdes
             grupos["verde"] = [cura[-1]] + [i for i in grupos["verde"] if i != cura[-1]]
-        # Todas las cartas del color del turno que haya (el usuario, 2026-11-13: con 4 rojas jugaba 2 y movia; la
-        # "doble roja" y el movimiento fijo de la 4.a accion de AutoFarming se quitan). Solo se mueve sin cartas.
+        # Todas las cartas del color del turno que haya (el usuario, 2026-11-13: con 4 rojas jugaba 2 y movia).
+        # Solo se mueve sin cartas de ese color.
         if accion == 0 or self.color_turno is None:
             self.color_turno = self._color_del_turno(accion)
             if self.color_turno is None:
@@ -964,9 +937,10 @@ class PajaroPiso4(Piso4):
     subtitulo_juego = "Demonic Beast · Floor 4"
     imagen = "demonic_beasts/hraesvelgr.png"
     duracion = "~4 min por pelea"
-    descripcion = ("Floor 4 del pájaro con el guion de AutoFarming. Recomendado: Meliodas traidor (o Tyr verde), "
-                   "Thor, Megellda azul y Shion. Puede empezar desde la Tavern, el menú Battle o la pantalla de Floors.")
-    equipo_recomendado = "Meliodas traidor (o Tyr verde), Thor, Megellda azul y Shion"
+    descripcion = ("Floor 4 del pájaro: lo que pide cada fase (curar el bloqueo, 3 del mismo rango para la "
+                   "Protección, quitar inmortalidades, quitar la evasión). Recomendado: Shion verde, Beru azul, Tyr "
+                   "verde y Thor azul. Puede empezar desde la Tavern, el menú Battle o la pantalla de Floors.")
+    equipo_recomendado = "Shion verde, Beru azul, Tyr verde y Thor azul"
     bestia = juego.pajaro
     piso3_superado = juego.piso3_superado_pajaro
     clase_estrategia = EstrategiaPajaro4
@@ -980,9 +954,10 @@ class CiervoPiso4(Piso4):
     subtitulo_juego = "Demonic Beast · Floor 4"
     imagen = "deer/Eikthyrnir.png"
     duracion = "~4 min por pelea"
-    descripcion = ("Floor 4 del ciervo con el guion de AutoFarming. Equipo: Thor, Jormungand verde, Freyr y Tyr "
-                   "verde (o Hel verde), con equipo de ataque. Gana ~60 % con Tyr: los reinicios son normales.")
-    equipo_recomendado = "Thor, Jormungand verde, Freyr y Tyr verde (o Hel verde)"
+    descripcion = ("Floor 4 del ciervo: ultis contra el Torrente, todo el turno de un color, el semáforo de "
+                   "colores y luego a full daño. Recomendado: Tyr verde, Freyja roja, Thor azul y Freyr rojo. "
+                   "Los reinicios son normales.")
+    equipo_recomendado = "Tyr verde, Freyja roja, Thor azul y Freyr rojo"
     bestia = juego.ciervo
     piso3_superado = juego.piso3_superado_ciervo
     clase_estrategia = EstrategiaCiervo4

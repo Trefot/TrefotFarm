@@ -6,7 +6,8 @@
 #   - whale: maximo dano y solo lo obligatorio (equipos muy fuertes)
 #   - automatico: empieza en whale y, si una fase no cae en 1 turno, la juega en cauteloso (y lo recuerda)
 #
-# Tipos que entiende el bot: mismo_color, secuencia_colores, limpiar_con_ulti, postura_contraataque.
+# Tipos que entiende el bot: mismo_color, secuencia_colores, limpiar_con_ulti, postura_contraataque (ciervo).
+# Los del pajaro (curar_bloqueo, mismo_rango, quitar_inmortalidad, quitar_evasion) los aplica su estrategia.
 
 ciervo_piso4:  # el destino del bot (en bestias_7dshub.yaml es "ciervo_f4")
   1:
@@ -46,3 +47,28 @@ ciervo_piso4:  # el destino del bot (en bestias_7dshub.yaml es "ciervo_f4")
       nota: >-
         Defensive Horn (cada 3 turnos): postura 2 turnos que devuelve 1500 % al ser atacado. Quitarle la postura (o la
         ulti de Hel); sin nada que la quite, seguir atacando: quedarse quieto solo le da tiempo (el usuario).
+
+pajaro_piso4:  # "pajaro_f4" en bestias_7dshub.yaml. Lo juega EstrategiaPajaro4 (lumen/modos/bestias_piso4.py)
+  1:
+  - tipo: curar_bloqueo
+    obligatorio: true
+    nota: 'Bloquea los efectos de las habilidades, ultis incluidas, menos posturas y curaciones (7dshub): se cura.
+      El area de Meliodas traidor solo limpia con su reliquia. Mientras, se preparan 3 cartas de plata para la fase 2.'
+  2:
+  - tipo: mismo_rango
+    veces: 3
+    rango_minimo: plata
+    obligatorio: true
+    nota: 'Con 3 habilidades del mismo rango (plata o mas) en un turno da la Proteccion de Hraesvelgr: con ella se le
+      hace +300 % de dano, sin ella -300 % (7dshub). Un turno las 3 del mismo rango y el siguiente con todo. Si salen
+      todas bloqueadas, reiniciar (el usuario, 2026-11-13).'
+  3:
+  - tipo: quitar_inmortalidad
+    obligatorio: true
+    nota: 'Empieza con 8 inmortalidades que se quitan con ciertos golpes (Amplify, Power Strike); con 15 se pone +100 %
+      a todo (7dshub). Tambien bloquea habilidades 2 turnos: curar.'
+  4:
+  - tipo: quitar_evasion
+    obligatorio: true
+    nota: 'Se da evasion un turno: inmune a los ataques (7dshub). Quitarle los buffs (la ulti de Meliodas traidor) o
+      no gastar golpes fuertes ese turno. Sus golpes acumulan la Ira de Hraesvelgr en los heroes: acabar rapido.'

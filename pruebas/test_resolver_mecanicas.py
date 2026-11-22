@@ -128,10 +128,10 @@ class ResolverMecanicas(unittest.TestCase):
         e = EstrategiaPajaro4()
         e.jugadas = [carta("a", Rango.ORO), carta("b", Rango.ORO), carta("c", Rango.ORO), carta("d")]
         e.turno_completado(2, 1)
-        self.assertTrue(e.escudo)
+        self.assertTrue(e.proteccion)
         e.jugadas = [carta("a", Rango.PLATA), carta("b", Rango.ORO), carta("c", Rango.ORO)]
         e.turno_completado(2, 2)
-        self.assertFalse(e.escudo, "tres de rangos mezclados no cumplen mismo rango")
+        self.assertFalse(e.proteccion, "tres de rangos mezclados no cumplen mismo rango")
 
     def test_no_presupone_reliquia_equipada_para_limpiar(self):
         l = decidir.LectorCartas(textos={})

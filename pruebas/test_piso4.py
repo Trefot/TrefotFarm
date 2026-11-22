@@ -1,4 +1,4 @@
-"""Floor 4 del pajaro y del ciervo: guiones de AutoFarming traducidos a cartas con nombre (2026-11-10)."""
+"""Floor 4 del pajaro y del ciervo: lo que pide cada fase (7dshub) y las reglas del usuario."""
 
 import unittest
 
@@ -50,10 +50,19 @@ class Textos(unittest.TestCase):
 
 
 class Pajaro(unittest.TestCase):
-    def test_limpia_el_bloqueo_con_el_area_de_meliodas(self):
+    def test_el_bloqueo_se_quita_curando(self):
+        """7dshub: el bloqueo no afecta a posturas ni curaciones. El area de Meliodas solo limpia con su reliquia."""
         e = estrategia(B4.EstrategiaPajaro4, ve=(juego.bloqueo_habilidades,))
-        m = mano((THOR + ".skill_1", R.BRONCE), (MELI + ".skill_2", R.BRONCE), (SHION + ".skill_2", R.BRONCE))
-        self.assertEqual(e.guion(1, 1, 0, m), 1)
+        m = mano((THOR + ".skill_1", R.BRONCE), (MELI + ".skill_2", R.BRONCE), (MEG + ".skill_2", R.BRONCE))
+        self.assertEqual(e.guion(1, 1, 0, m), 2, "la curacion de Megellda")
+        e.jugadas = [m[2]]
+        self.assertNotEqual(e.guion(1, 1, 1, m[:2]), None, "curado ya: sigue con el turno")
+
+    def test_fase3_guarda_la_ulti_que_quita_buffs_para_la_evasion(self):
+        e = estrategia(B4.EstrategiaPajaro4)
+        e.pantalla = lambda: None  # sin inmortalidades a la vista
+        m = mano((MELI + ".ulti", R.ULTI), (THOR + ".skill_1", R.BRONCE))
+        self.assertEqual(e.guion(3, 1, 0, m), 1)
 
     def test_fase1_guarda_las_de_plata(self):
         e = estrategia(B4.EstrategiaPajaro4)
@@ -69,7 +78,7 @@ class Pajaro(unittest.TestCase):
         e.jugadas = [m[0], m[1]]
         m2 = mano(None, None, (MELI + ".skill_1", R.PLATA), (SHION + ".skill_2", R.BRONCE))
         self.assertEqual(e.guion(2, 1, 3, m2), 2)
-        self.assertTrue(e.escudo, "3 de plata en el turno: el siguiente, con escudo")
+        self.assertTrue(e.proteccion, "3 de plata en el turno: el siguiente, con escudo")
         e.jugadas = []
         m3 = mano((SHION + ".skill_2", R.BRONCE), (THOR + ".ulti", R.ULTI), (MEG + ".skill_2", R.BRONCE))
         self.assertEqual(e.guion(2, 2, 0, m3), 1, "con escudo: la ulti")
@@ -97,12 +106,13 @@ class Pajaro(unittest.TestCase):
 
 
 class Ciervo(unittest.TestCase):
-    def test_apertura_de_la_fase_1(self):
+    def test_fase_1_ulti_primero_y_la_cuarta_carga_ultis(self):
+        """7dshub: el Torrente se quita usando la ulti; la 4.a accion mueve una carta para cargar otra."""
         e = estrategia(B4.EstrategiaCiervo4)
-        m = mano((TYR + ".skill_1", R.PLATA), (TYR + ".skill_2", R.BRONCE), (JORM + ".skill_1", R.BRONCE),
-                 (THOR + ".skill_1", R.PLATA), (THOR + ".skill_2", R.BRONCE), (FREYR + ".skill_1", R.BRONCE))
-        self.assertEqual([e.guion(1, 1, a, m) for a in range(4)], [1, 2, 4, 0],
-                         "Tyr baja, Jormungand, Thor bajo, Tyr alta")
+        m = mano((TYR + ".skill_1", R.PLATA), (TYR + ".skill_2", R.BRONCE), (THOR + ".ulti", R.ULTI),
+                 (THOR + ".skill_1", R.PLATA), (FREYR + ".skill_1", R.BRONCE))
+        self.assertEqual(e.guion(1, 1, 0, m), 2, "la ulti de Thor")
+        self.assertIsInstance(e.guion(1, 1, 3, m), tuple, "la 4.a accion mueve")
 
     def test_ruleta_de_colores_de_la_fase_4(self):
         e = estrategia(B4.EstrategiaCiervo4)

@@ -29,6 +29,17 @@ Etapas previstas:
 
 CAMBIOS
 -------
+0.41.0-alpha
+  - Pajaro Floor 4 reescrito con reglas propias (paso 3 de quitar AutoFarming): lo que pide cada fase segun 7dshub.
+    F1: el bloqueo se quita curando (el area de Meliodas traidor solo limpia con su reliquia, asi que ya no se usa
+    para eso) y se preparan 3 de plata. F2: 3 del mismo rango para la Proteccion y el turno siguiente con todo.
+    F3: primero lo que quita inmortalidades; las ultis que quitan buffs se guardan para la evasion. F4: con evasion,
+    quitarle los buffs o no gastar golpes; sin ella, curar una vez y lo mas fuerte. Su ficha esta en
+    requisitos_bestias.yaml, junto a la del ciervo.
+  - Ciervo Floor 4, fase 1: en lugar de la apertura fija de AutoFarming (Tyr, Jormungand, Thor, Tyr), lo que pide
+    la fase: ultis primero (quitan el Torrente) y la 4.a accion mueve una carta para cargar otra ulti.
+  - Equipos recomendados: los del usuario (pajaro: Shion, Beru, Tyr y Thor; ciervo: Tyr, Freyja, Thor y Freyr).
+
 0.40.1-alpha
   - Huecos vacios de la mano: detector propio (lumen/huecos.py) en lugar del modelo entrenado de AutoFarming (paso 2
     de quitar AutoFarming). Rasgos propios de color, textura y forma y una SVM entrenada con 4616 casillas de las
