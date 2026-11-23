@@ -29,6 +29,12 @@ Etapas previstas:
 
 CAMBIOS
 -------
+0.41.5-alpha
+  - Pajaro y ciervo Floor 4: la fase tambien se sabe por el color de la barra del jefe (verde, azul, morado, rojo).
+    El letrero de la fase no siempre se ve y se jugaban 1-2 turnos con las reglas de la anterior: en los 10 pajaros
+    del 2026-11-22 la fase 3 seguia con la barra ya roja, y el ciervo gastaba ultis en la fase 2 con la barra morada.
+    Solo avanza de una en una (un color mal leido no salta fases).
+
 0.41.4-alpha
   - Quitar AutoFarming: se borran 42 de sus imagenes. 36 ya tenian imagen propia (Lumen usa la propia), 1 no se
     usaba (auto_repeat_on) y 5 eran dibujos de cartas de Freyja y Thonar que nunca se llegaban a usar (las fichas

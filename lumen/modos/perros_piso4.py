@@ -626,6 +626,12 @@ class PerrosPiso4(Modo):
         except Exception:
             pass
 
+    FASE_DE_CAPA = {"verde": 1, "azul": 2, "morado": 3, "rojo": 4}  # pajaro y ciervo: una barra de color por fase
+
+    def _fase_por_barra(self) -> int | None:
+        vida = getattr(self, "vida_jefe", None)
+        return self.FASE_DE_CAPA.get(getattr(vida, "capa", None)) if vida is not None else None
+
     def _detectar_fase(self, p, huecos: int) -> int | None:
         if juego.fase_3_perros.esta(p, 0.8):
             return 3
@@ -653,7 +659,18 @@ class PerrosPiso4(Modo):
 
     def _empezar_turno(self, p, huecos: int):
         self.ultimo_turno = time.time()
+        self.vida_jefe = None
+        if self.leer_vida_jefe:
+            from lumen import vida_jefe
+
+            self.vida_jefe = vida_jefe.leer(p)  # para el registro, la fase y no gastar cartas de mas
         detectada = self._detectar_fase(p, huecos)
+        por_barra = self._fase_por_barra()
+        if por_barra and self.fase and por_barra == self.fase + 1 and not (detectada and detectada > self.fase):
+            # El letrero de la fase no siempre se ve: con la barra ya de la fase siguiente se jugaban 1-2 turnos con
+            # lo de la anterior (los 10 pajaros del 2026-11-22: fase 3 con la barra roja; ciervo: fase 2 en morado,
+            # gastando ultis que hacian falta despues). Solo se avanza de una en una: un color mal leido no salta.
+            detectada = por_barra
         if self.fase is None:
             self.fase = detectada or 1
         elif detectada and detectada > self.fase:  # solo hacia delante
@@ -672,11 +689,6 @@ class PerrosPiso4(Modo):
         self.huecos_turno = huecos
         self.talento_usado = False
         self._stats()
-        self.vida_jefe = None
-        if self.leer_vida_jefe:
-            from lumen import vida_jefe
-
-            self.vida_jefe = vida_jefe.leer(p)  # para el registro y, despues, para no gastar cartas de mas
         vida = f" Vida del jefe: {self.vida_jefe.texto()}." if self.vida_jefe else ""
         self.log(f"Fase {self.fase}, turno {self.turno_fase}: {huecos} cartas por jugar.{vida}")
         if self.rendirse_si_bloqueada and self.fase != 3 and juego.mano_bloqueada.esta(p, 0.6):
