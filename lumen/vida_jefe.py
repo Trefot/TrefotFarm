@@ -71,6 +71,12 @@ def leer(p) -> Vida | None:
     if len(inicio) < 6:
         return None
     capa = int(np.bincount(inicio).argmax())
+    # La capa de esta fase tapa a las siguientes desde la izquierda: casi vacia (1-5 px) la mayoria de las primeras
+    # columnas ya es de la fase siguiente, pero en las primeras asoma la de verdad (antes, con el jefe al 2 % de la
+    # fase 3, se leia la capa roja llena y el bot pasaba a la fase 4 un turno antes).
+    de_color = inicio[inicio < len(CAPAS)]  # sin el borde negro de la izquierda
+    if len(de_color) and de_color[0] < capa:  # la primera columna con color es de una fase anterior: esa
+        capa = int(de_color[0])
     if capa == len(CAPAS):
         return Vida(VACIA, 0.0)
     hasta = 0
@@ -79,6 +85,7 @@ def leer(p) -> Vida | None:
             hasta = x + 1
         elif c >= 0 and x - hasta > 3:
             break
-    if (cols == capa).sum() < 0.5 * hasta:
+    desde = int(np.argmax(cols == capa))  # sin el borde negro de la izquierda (con 3 px de capa pesaba demasiado)
+    if (cols == capa).sum() < 0.5 * (hasta - desde):
         return None
     return Vida(list(CAPAS)[capa], hasta / len(cols))

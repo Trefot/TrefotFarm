@@ -200,7 +200,7 @@ class PaginaResumen(Pagina):
     def refrescar(self):
         self.actualizaciones.refrescar()
         self.heroes_nuevos.refrescar()
-        t = historial.totales(historial.hoy(historial.leer()))
+        t = historial.totales(historial.hoy(historial.leer())) if self.cifras else {}
         for clave, cifra in self.cifras.items():
             cifra.setText(
                 formatear_tiempo(t[clave]) if clave == "segundos" else str(t[clave])

@@ -5,7 +5,7 @@ las metas de material que da ese modo, ver lumen/metas.py). La pagina Farmear lo
 al terminar una tarea arranca la siguiente; si se detiene a mano (boton o F10), el plan se para.
 """
 
-from PyQt5.QtCore import QSize, Qt, pyqtSignal
+from PyQt5.QtCore import QSize, pyqtSignal
 from PyQt5.QtWidgets import QComboBox, QFrame, QHBoxLayout, QLabel, QPushButton, QSpinBox, QVBoxLayout
 
 from lumen import config

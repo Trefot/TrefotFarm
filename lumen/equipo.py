@@ -10,7 +10,7 @@ import cv2
 
 from lumen import juego
 from lumen import personajes as P
-from lumen.cartas import Carta, Rango, TipoCarta
+from lumen.cartas import Carta, TipoCarta
 from lumen.vision import Plantilla
 
 # Recorte interior que se guarda al capturar: deja fuera el marco de rango.

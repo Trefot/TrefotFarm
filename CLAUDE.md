@@ -6,8 +6,7 @@ Leer LEEME.txt para la estructura.
 ## Versiones
 
 Reglas completas en CAMBIOS.txt. Resumen:
-- Formato `MAYOR.NOVEDAD.ARREGLO-etapa` (ahora `0.x.y-alpha`). La versión está en `lumen/__init__.py`
-  y, mientras exista, también en `trefot/__init__.py` (tiene que ser la misma).
+- Formato `MAYOR.NOVEDAD.ARREGLO-etapa` (ahora `0.x.y-alpha`). La versión está en `lumen/__init__.py`.
 - Se sube una vez por PR, según lo más grande que traiga: novedad (algo nuevo que se nota) sube el
   segundo número; arreglos, textos, retoques y datos suben el tercero. La 1.0.0 es solo el lanzamiento.
 - En cada PR, añadir arriba de "CAMBIOS" en CAMBIOS.txt la versión nueva con sus cambios en pocas líneas.
@@ -22,33 +21,19 @@ El plan completo esta en `IA.md` (leer, decidir, aprender solo y equipos que el 
 Al terminar una pieza, actualizar su estado alli. En el PC: `py -m lumen.ia.efectos` dice cuanto entiende
 el lector de los textos de cartas capturados y que frases faltan (anadirlas con su prueba real).
 
-## Trabajo a medias
+## Estado (revisión del 2026-11-23, 0.42.2)
 
-- **Floor 4 del ciervo con guion** (0.4.2): el motor `lumen/guiones.py` (EstrategiaGuion, misma forma
-  que la Estrategia de perros_piso4) y el guion `lumen/datos/guiones/ciervo_piso4.yaml` estan hechos y
-  probados con manos simuladas (pruebas/test_guiones.py). Falta el modo: navegar al Floor 4 de
-  Eikthyrnir, detectar sus 4 fases (capturas de F3 y F4), un Equipo con freyja_roja,
-  thor_the_god_of_thunder_azul, sun_god_freyr_rojo (es LR en el juego) y god_of_war_tyr_verde, y las
-  capturas de sus cartas. Los orbes de la ulti se cuentan, no se leen de pantalla.
+- Modos: bestias Floor 1-3 (pájaro, ciervo, perros, serpiente), Floor 4 de pájaro, ciervo y perros, los 5 demonios
+  e Indura, y Fuerte Solgres (oro y monedas SA). El historial detallado de cada versión está en CAMBIOS.txt.
+- Floor 4 de pájaro y ciervo (`lumen/modos/bestias_piso4.py`): reglas propias por fase (0.41.0) y fase también por el
+  color de la barra del jefe (`lumen/vida_jefe.py`, 0.41.5). Pájaro F4 probado: 9 de 9 victorias (2026-11-13).
+- Metas de material, plan del día con "🎯 Meta", prueba rápida, diario de peleas y aprender solo: en el código y con
+  pruebas; el plan de la IA y el estado de cada pieza, en `IA.md`.
+- Pendiente visto en pruebas reales: un objeto del botín del pájaro F4 sin nombre ("Sin nombre (48)").
 
-- **Metas de material** (0.5.0, hecho y sin probar con el juego): `lumen/metas.py` (cuenta el botin por el
-  campo `premio` del catalogo, tras `recompensas.vincular_premios`), `lumen/gui/metas.py` (fila "Metas" de Inicio
-  y Farmear y la franja para editar bajo la fila de Inicio). El usuario NO quiere ventanas nuevas: todo va integrado en Inicio y Farmear.
-- **Probar con el juego**: la prueba rápida (Farmear → Plan) aún no ha pasado entera. En la prueba de
-  la 0.2.1 (Perros Floor 1-3) el bot creía estar en los pisos sin haber entrado a la bestia (contaba
-  "Obtain Floor N First Clear Reward") y no veía el Floor 1 (el OCR lee "Floor I"): arreglado en 0.2.2
-  con capturas reales; con la 0.2.2 ganó Floor 1, 2 y 3 seguidos. 0.2.3: objetivo de los lobos por
-  fase, pantallas sin imagen tras ganar, Indura acepta como AutoFarming y foto del botín. 0.2.4 abre el
-  piso por su círculo: ganó F1-F3 en ~2,5 min. 0.2.5 (sin probar): fase 3 solo áreas/ultis, Reset tras el F3,
-  cartas que no entran = bloqueadas. 0.2.7: cantidades del botín con dígitos reales
-  (assets/digitos_juego.npz: unidades 0, 2, 3, 4, 5 y decena 1). FALTAN 6-9 y decenas 2-9: las casillas
-  que no reconoce se guardan en recompensas/digitos_nuevos para añadirlas. 0.3.0: botín unido a las tablas de premios
-  (premios.yaml lleva `galeria:`; recompensas.vincular_premios). 0.3.1 (sin probar): cartas bloqueadas por el velo
-  oscuro, Restart y volver a abrir el juego (Run Game). 0.4.0: probadas F1-3 de Hraesvelgr, Eikthyrnir
-  (3 de 3, ~2,6 min) y Nidhoggr; 0.4.1 arregla pisos superados y turnos falsos por el talento de Odin.
-  Sin probar: Ratatoskr, 5 demonios (molde en
-  modos/indura.py, pestanas por el icono de AutoFarming) y Fuerte Solgres (modos/fuerte_solgres.py).
-  PENDIENTE: el perro claro (der) nunca se confirma al apuntar.
-  0.2.6 (sin probar): avisos de sesión cerrada (el juego cerró la sesión tras 1 h de Indura y el bot se
-  quedó 6 min sin reconocer nada) y cartas de Indura que no entran. El bot NO escribe la contraseña. El juego no acepta clics de un proceso sin
-  permisos de administrador: las pruebas en vivo las lanza el usuario desde Lumen.
+## Notas para trabajar
+
+- El usuario NO quiere ventanas nuevas: todo va integrado en las páginas que ya existen.
+- Las pruebas en vivo las lanza el usuario desde Lumen: el juego no acepta clics de un proceso sin permisos de
+  administrador. El bot NO escribe la contraseña.
+- Las órdenes del móvil van por ntfy; la app de iPhone no deja escribir mensajes (se usa ntfy.sh en Safari o Atajos).

@@ -9,7 +9,7 @@ from entorno import PlantillaFalsa
 
 from lumen import entrada, inteligencia as I, juego
 from lumen.cartas import Carta, Rango, TipoCarta as T
-from lumen.ia import aprendizaje as A, diario as D
+from lumen.ia import aprendizaje as A
 from lumen.modos import bestias_pisos1a3 as B
 
 ULTI_ALTA = {**A.DEFECTO, "valor_ulti": 5.0}

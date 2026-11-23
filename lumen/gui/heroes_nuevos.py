@@ -6,7 +6,6 @@ from PyQt5.QtGui import QPixmap
 from PyQt5.QtWidgets import QFrame, QHBoxLayout, QLabel, QPushButton, QVBoxLayout, QWidget
 
 from lumen import personajes as P
-from lumen.gui import tema
 
 TAM_ICONO = 64
 

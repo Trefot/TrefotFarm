@@ -82,8 +82,6 @@ class Fichas(unittest.TestCase):
         for clave in ("skill_2", "ulti", "pasiva", "talento", "reliquia"):
             self.assertIn(clave, joker)
         self.assertEqual(P.ficha("no_existe"), {})
-        import entorno
-
         entorno.app_qt()
         from lumen.gui.paginas import personajes as G
 

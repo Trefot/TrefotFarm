@@ -23,7 +23,7 @@ from lumen import botin, cartas, historial, juego, recompensas
 from lumen import personajes as P
 from lumen.control import control
 from lumen.equipo import Equipo, Puesto
-from lumen.motor import Modo, TerminarModo
+from lumen.motor import Modo
 from lumen.rutas import RAIZ
 from lumen.vision import Plantilla, guardar_imagen, recortar
 
