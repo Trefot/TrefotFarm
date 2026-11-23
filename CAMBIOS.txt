@@ -29,6 +29,12 @@ Etapas previstas:
 
 CAMBIOS
 -------
+0.41.1-alpha
+  - Monedas SA: en "Auto Repeat Results" el bot pulsaba el "OK" apagado que se ve debajo del de verdad y se quedo
+    4 min ahi (el usuario, 2026-11-22). Ahora pulsa su OK verde azulado (imagen propia de esa pantalla).
+  - Monedas SA: si el resumen dice "all attempts have been used" (se gastaron los intentos del dia), cierra el
+    resumen y termina en lugar de volver a abrir la torre.
+
 0.41.0-alpha
   - Pajaro Floor 4 reescrito con reglas propias (paso 3 de quitar AutoFarming): lo que pide cada fase segun 7dshub.
     F1: el bloqueo se quita curando (el area de Meliodas traidor solo limpia con su reliquia, asi que ya no se usa

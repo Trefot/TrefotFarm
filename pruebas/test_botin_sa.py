@@ -96,3 +96,31 @@ class VolverDesdeElMenu(unittest.TestCase):
              mock.patch.object(m, "clic_si", return_value=False):
             self.assertEqual(m.abrir(foto("menu_fuerte_solgres"), (0, 0)), "ir")
         arrastrar.assert_not_called()
+
+
+class ResumenDeLaRepeticion(unittest.TestCase):
+    """2026-11-22: "all attempts have been used"; el bot pulsaba el OK apagado de debajo 4 min."""
+
+    def setUp(self):
+        self.m = F.MonedasSA({"victorias": 0, "pociones": True, "max_pociones": 0, "cofre": "Bronce",
+                              "segundos_cofre": 12})
+        self.m.log = lambda *a, **k: None
+        self.clics = []
+        for parche in (mock.patch.object(F.entrada, "clic", side_effect=lambda punto, o, espera=0: self.clics.append(punto)),
+                       mock.patch.object(F.entrada, "clic_rapido", create=True)):
+            parche.start()
+            self.addCleanup(parche.stop)
+
+    def test_pulsa_el_ok_de_verdad_y_termina(self):
+        with mock.patch.object(self.m, "clic_si", wraps=self.m.clic_si) as clic_si:
+            self.assertIsNone(self.m.fin(foto("repeticion_sin_intentos"), (0, 0)))
+        plantilla = clic_si.call_args_list[0].args[0]
+        self.assertIs(plantilla, F.OK_RESULTADOS)
+        self.assertTrue(self.m.sin_intentos)
+        with self.assertRaises(F.TerminarModo):
+            self.m.fin(foto("pelea"), (0, 0))
+
+    def test_sin_estamina_no_es_sin_intentos(self):
+        with mock.patch.object(self.m, "clic_si", return_value=False):
+            self.m.fin(foto("repeticion_terminada"), (0, 0))
+        self.assertFalse(self.m.sin_intentos)

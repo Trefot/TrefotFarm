@@ -57,6 +57,10 @@ INTENTOS_REINTENTAR = 4  # pausas sin ver "Try Again": se rinde como antes
 # El OK de la pantalla "Victory" (2026-11-22): una sola imagen en vez de las 13 de juego.ok (0,025 s frente a ~0,35 s),
 # porque esa pantalla sale limpia solo ~0,5 s antes de que el juego la oscurezca.
 OK_VICTORIA = P("ok_buttons/salvage_ok.png")
+# "Auto Repeat Results" (capturas propias, 2026-11-22): su OK verde azulado. Los OK de siempre preferian el "OK"
+# apagado que se ve debajo, y el bot se quedo 4 min pulsando ahi. Y el texto de cuando se gastan los intentos del dia.
+OK_RESULTADOS = P("sa_coin_dungeon/ok_resultados.png")
+SIN_INTENTOS = P("sa_coin_dungeon/sin_intentos.png")  # "...because all attempts have been used."
 VIGILANCIA_VICTORIA = 8.0  # s mirando muy seguido al acabar la pelea, hasta ver la pantalla limpia
 MIN_SEGUNDOS_COFRE = 10  # el cofre sale a los 8-9 s: con 7 s el bot casi repite con un cofre de oro (2026-10-29)
 
@@ -245,6 +249,7 @@ class MonedasSA(FuerteSolgres):
         self.pausas, self.reintentado_en = 0, None
         self.cofres = {nombre: 0 for nombre in ORDEN_COFRES}
         self.foto_hecha = False  # la foto del botin de esta pelea (se vuelve a poder al empezar la siguiente)
+        self.sin_intentos = False  # el resumen dijo que no quedan intentos hoy
         self.en_pelea = False  # se vio la pelea en marcha y aun no ha acabado
         self.contada_tras_pelea = False  # la vuelta de esta pelea ya se conto ("Vuelta #n terminada")
         self._nueva_vuelta()
@@ -512,6 +517,15 @@ class MonedasSA(FuerteSolgres):
         return None
 
     def fin(self, p, o):
+        if REPETICION_TERMINADA.esta(p, 0.8):
+            if not self.sin_intentos and SIN_INTENTOS.esta(p, 0.85):
+                self.sin_intentos = True
+                self.log("La torre no deja más intentos por hoy: cierro el resumen y termino.", "aviso")
+                self.publicar_stats(motivo_fin="sin_intentos")
+            if self.clic_si(OK_RESULTADOS, p, o, umbral=0.8, espera=1.0):
+                return None
+        elif self.sin_intentos:
+            raise TerminarModo()
         if EMPEZAR.esta(p):
             # Tras el OK del final de la repeticion el juego vuelve a la pantalla del equipo (la del Start): se
             # sigue desde ahi. Antes el bot buscaba la lista de mazmorras y se quedaba pulsando OK (2026-10-29).
