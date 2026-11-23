@@ -106,16 +106,47 @@ def medidas(clave: str) -> dict[frozenset, dict]:
     return historial.por_equipo(historial.leer(limite=1_000_000), clave, equipo.orden if equipo else ())
 
 
+_SUMABLES = ("sesiones", "victorias", "derrotas", "reinicios", "pociones", "segundos")
+
+
+def _sumar(a: dict, b: dict) -> dict:
+    """Las cifras de un equipo guardadas bajo dos nombres (contenido y modo), juntas."""
+    t = {k: a.get(k, 0) + b.get(k, 0) for k in _SUMABLES}
+    peleas = t["victorias"] + t["derrotas"] + t["reinicios"]
+    t["tasa"] = 100 * t["victorias"] / peleas if peleas else 0.0
+    t["por_hora"] = t["victorias"] / (t["segundos"] / 3600) if t["segundos"] > 60 else 0.0
+    return t
+
+
+def medidas_juntas(clave: str, destino: str | None = None) -> dict[frozenset, dict]:
+    """Lo medido en un contenido y en su modo (las sesiones se guardan con el id del modo, la pestana usa el del
+    contenido: "serpiente" frente al modo de la serpiente). Las de cada equipo se suman."""
+    medido = dict(medidas(clave))
+    if destino and destino != clave:
+        for ids, m in medidas(destino).items():
+            medido[ids] = _sumar(medido[ids], m) if ids in medido else m
+    return medido
+
+
 def _peleas(m: dict) -> int:
     return m["victorias"] + m["derrotas"] + m["reinicios"]
 
 
-def minutos_por_victoria(datos: dict, medido: dict[frozenset, dict], minimo: int = MIN_PELEAS) -> tuple[float, str] | None:
-    """Lo rapido que es un equipo: (minutos por victoria, de donde sale). Manda lo que midio el bot en esta
+def minutos_de(m: dict) -> float | None:
+    """Minutos por pelea, lo que muestran las tarjetas (desde la 0.42.0). Sin tiempos guardados (registros
+    viejos), minutos por victoria."""
+    peleas = _peleas(m)
+    if m.get("segundos") and peleas:
+        return m["segundos"] / peleas / 60
+    return 60 / m["por_hora"] if m.get("por_hora", 0) > 0 else None
+
+
+def minutos_por_pelea(datos: dict, medido: dict[frozenset, dict], minimo: int = MIN_PELEAS) -> tuple[float, str] | None:
+    """Lo rapido que es un equipo: (minutos por pelea, de donde sale). Manda lo que midio el bot en esta
     PC (con al menos ``minimo`` peleas); si no, lo medido en las pruebas y publicado en equipos.yaml."""
     m = medido.get(frozenset(datos.get("personajes") or []))
-    if m and _peleas(m) >= minimo and m["por_hora"] > 0:
-        return 60 / m["por_hora"], "tuyo"
+    if m and _peleas(m) >= minimo and minutos_de(m):
+        return minutos_de(m), "tuyo"
     if datos.get("minutos"):
         return float(datos["minutos"]), "pruebas"
     return None
@@ -129,12 +160,12 @@ def mas_rapido(id_destino: str) -> dict | None:
     todos = cargar_equipos()
     clave = clave_de_equipos(id_destino, todos)
     fijo = getattr(MODOS.get(id_destino), "equipo", None) is not None
-    medido = medidas(clave)
+    medido = medidas_juntas(clave, id_destino)
     mejor = None
     for datos in todos.get(clave, []):
         if fijo and not datos.get("bot"):
             continue
-        rapidez = minutos_por_victoria(datos, medido, minimo=1)
+        rapidez = minutos_por_pelea(datos, medido, minimo=1)
         if rapidez and (mejor is None or rapidez[0] < mejor["minutos"]):
             m = medido.get(frozenset(datos.get("personajes") or []))
             mejor = {"datos": datos, "minutos": rapidez[0], "fuente": rapidez[1],
@@ -144,10 +175,10 @@ def mas_rapido(id_destino: str) -> dict | None:
         # Tambien tus equipos medidos que no estan en la lista (en los modos de cualquier equipo el bot sabe con
         # cuales jugaste por sus cartas): el mas rapido se recomienda aunque nadie lo haya publicado.
         conocidos = {frozenset(d.get("personajes") or []) for d in todos.get(clave, [])}
-        for ids, m in medidas(id_destino).items():
-            if ids in conocidos or m["por_hora"] <= 0:
+        for ids, m in medido.items():
+            minutos = minutos_de(m)
+            if ids in conocidos or not minutos:
                 continue
-            minutos = 60 / m["por_hora"]
             if mejor is None or minutos < mejor["minutos"]:
                 por_nombre = [i for i in ids if i.startswith("equipo:")]  # Fuerte Solgres: el nombre del juego
                 datos = {"nombre": "Tu equipo", "personajes": sorted(ids)}
@@ -399,9 +430,7 @@ def equipos_tuyos(clave: str, destino: str | None = None, conocidos=()) -> list[
     """Los equipos con los que jugaste en este contenido (el bot los reconoce por sus cartas y los apunta en
     logs/historial.jsonl), aunque no esten en la lista: (datos, medida). El usuario (2026-11-22): "aqui deberia
     haber otro equipo, el cual es el que se esta usando"."""
-    medido = dict(medidas(clave))
-    if destino and destino != clave:
-        medido.update(medidas(destino))
+    medido = medidas_juntas(clave, destino)
     conocidos = {frozenset(c) for c in conocidos}
     salida = []
     for ids, m in medido.items():
@@ -417,11 +446,11 @@ def equipos_tuyos(clave: str, destino: str | None = None, conocidos=()) -> list[
 def tarjetas_equipos(clave: str, admin: bool = False, al_editar=None, al_borrar=None,
                      compacto: bool = False, destino: str | None = None) -> list["TarjetaEquipo"]:
     """Las tarjetas de los equipos de un contenido, en orden: primero los medidos, del mas rapido al mas
-    lento (ver minutos_por_victoria; el primero lleva "Mas rapido"), y luego el resto como estan en la lista. Viene
+    lento (ver minutos_por_pelea; el primero lleva "Mas rapido"), y luego el resto como estan en la lista. Viene
     abierto el mejor que ya puedes armar (o el primero si no tienes ninguno)."""
     biblioteca = P.cargar()
     todos = cargar_equipos()
-    medido = medidas(clave)
+    medido = medidas_juntas(clave, destino)
     tarjetas = []
     for datos in todos.get(clave, []):
         propio = admin and datos.get("propio")
@@ -430,13 +459,13 @@ def tarjetas_equipos(clave: str, admin: bool = False, al_editar=None, al_borrar=
             medida=medido.get(frozenset(datos.get("personajes") or [])),
             al_editar=(lambda _=False, d=datos: al_editar(d)) if propio and al_editar else None,
             al_borrar=(lambda _=False, d=datos: al_borrar(d)) if propio and al_borrar else None,
-            compacto=compacto, rapidez=minutos_por_victoria(datos, medido),
+            compacto=compacto, rapidez=minutos_por_pelea(datos, medido),
         ))
     conocidos = [d.get("personajes") or [] for d in todos.get(clave, [])]
     for datos, medida in equipos_tuyos(clave, destino, conocidos):
         tarjetas.append(TarjetaEquipo(datos, biblioteca, abierto=False, nombres=todos.get("_nombres") or {},
                                       medida=medida, compacto=compacto,
-                                      rapidez=minutos_por_victoria(datos, {frozenset(datos["personajes"]): medida})))
+                                      rapidez=minutos_por_pelea(datos, {frozenset(datos["personajes"]): medida})))
 
     medidos = sorted((t for t in tarjetas if t.rapidez), key=lambda t: t.rapidez[0])
     tarjetas = medidos + [t for t in tarjetas if not t.rapidez]

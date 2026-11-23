@@ -29,6 +29,20 @@ Etapas previstas:
 
 CAMBIOS
 -------
+0.42.2-alpha
+  - Revision completa del proyecto (2026-11-23). Arreglos:
+  - Floor 4: con el jefe casi muerto (1-5 px de su barra), la barra se leia con el color de la fase siguiente y el bot
+    pasaba de fase un turno antes (en la fase 3, el semaforo de la 4 acababa pronto y no quitaba la Inmortalidad).
+    Ahora manda la primera columna con color: la capa de esta fase tapa a las siguientes desde la izquierda.
+  - Floor 4, remate: solo con la barra de la fase al 5 % o menos (era 10 %: se perdian turnos moviendo) y con la
+    carta que mas dana; ya no elige una curacion o un buff.
+  - Mis equipos: las peleas guardadas con el id del modo y con el del contenido se suman (en pestanas como la de la
+    serpiente no salia el equipo con el que juegas ni sus tiempos). "Mas rapido" ordena por lo que tarda una pelea,
+    lo mismo que se muestra (en Inicio tambien).
+  - Fuerte Solgres: sin intentos y sin ver el OK del resumen, ya no pulsa el OK apagado de detras; termina tras 5.
+  - Resumen: solo lee el historial si la skin muestra las cifras de hoy (con Taberna viva no las muestra).
+  - Limpieza: imports que sobraban; fuera TrefotFarm.pyw y trefot/ (el puente de la version 2.x); CLAUDE.md al dia.
+
 0.42.1-alpha
   - Equipos: ya no se muestran las descripciones (notas) de los equipos ni la flecha para desplegarlas (el
     usuario, 2026-11-22: "no me parecen tan necesarias"). Siguen guardadas para el administrador.

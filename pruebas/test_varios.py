@@ -317,6 +317,30 @@ class EquipoMasRapido(unittest.TestCase):
         r = self.E.mas_rapido("monedas_sa")
         self.assertEqual((r["datos"]["nombre"], r["minutos"], r["peleas"]), ("Farm.Oro", 1.5, 2))
 
+    def test_mas_rapido_es_el_que_menos_tarda_por_pelea(self):
+        """Revision 2026-11-23: se ordenaba por victorias por hora pero se muestra lo que tarda una pelea."""
+        self.medido[frozenset(["a", "b"])] = {"victorias": 10, "derrotas": 0, "reinicios": 0, "segundos": 2400,
+                                             "por_hora": 15.0}  # 4 min por pelea, gana todas
+        self.medido[frozenset(["c", "d"])] = {"victorias": 5, "derrotas": 5, "reinicios": 0, "segundos": 1800,
+                                             "por_hora": 10.0}  # 3 min por pelea, gana la mitad
+        r = self.E.mas_rapido("perros_piso4")
+        self.assertEqual((r["datos"]["nombre"], r["minutos"]), ("Rapido", 3.0))
+
+    def test_las_peleas_del_modo_y_del_contenido_se_suman(self):
+        """Revision 2026-11-23: la pestana usa el id del contenido ("serpiente") y las sesiones el del modo."""
+        ids = frozenset(["a", "b", "c", "d"])
+        por_clave = {"serpiente": {ids: {"sesiones": 1, "victorias": 6, "derrotas": 0, "reinicios": 0, "pociones": 0,
+                                         "segundos": 900, "por_hora": 24.0}},
+                     "serpiente_pisos1a3": {ids: {"sesiones": 1, "victorias": 2, "derrotas": 0, "reinicios": 0,
+                                                  "pociones": 0, "segundos": 300, "por_hora": 24.0}}}
+        with mock.patch.object(self.E, "medidas", lambda clave: por_clave.get(clave, {})):
+            junto = self.E.medidas_juntas("serpiente", "serpiente_pisos1a3")[ids]
+            self.assertEqual((junto["victorias"], junto["segundos"]), (8, 1200))
+            self.assertEqual(self.E.medidas_juntas("serpiente")[ids]["victorias"], 6, "sin destino: solo el contenido")
+            self.base = {"serpiente": [{"nombre": "De la lista", "personajes": sorted(ids)}]}
+            tarjeta = self.E.tarjetas_equipos("serpiente", destino="serpiente_pisos1a3")[0]
+            self.assertEqual(tarjeta.medida["victorias"], 8, "la tarjeta de la lista tambien ve las del modo")
+
     def test_texto(self):
         self.assertEqual(self.E.texto_minutos(2.5), "2,5 min por victoria")
         self.assertEqual(self.E.texto_minutos(3), "3 min por victoria")

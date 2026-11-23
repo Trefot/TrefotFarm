@@ -120,6 +120,17 @@ class ResumenDeLaRepeticion(unittest.TestCase):
         with self.assertRaises(F.TerminarModo):
             self.m.fin(foto("pelea"), (0, 0))
 
+    def test_sin_ver_su_ok_no_pulsa_el_apagado_y_termina(self):
+        """Revision 2026-11-23: si el OK del resumen no se reconocia, caia al OK generico (el apagado de debajo)."""
+        self.m.sin_intentos = True
+        pulsados = []
+        with mock.patch.object(self.m, "clic_si", side_effect=lambda plantilla, *a, **k: pulsados.append(plantilla) or False):
+            for _ in range(F.MAX_OK_FIN - 1):
+                self.assertIsNone(self.m.fin(foto("repeticion_sin_intentos"), (0, 0)))
+            with self.assertRaises(F.TerminarModo):
+                self.m.fin(foto("repeticion_sin_intentos"), (0, 0))
+        self.assertNotIn(F.juego.ok, pulsados)
+
     def test_sin_estamina_no_es_sin_intentos(self):
         with mock.patch.object(self.m, "clic_si", return_value=False):
             self.m.fin(foto("repeticion_terminada"), (0, 0))

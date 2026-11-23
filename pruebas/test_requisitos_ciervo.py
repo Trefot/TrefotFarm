@@ -318,6 +318,38 @@ class Remate(unittest.TestCase):
         self.assertIsInstance(e.decidir(3, 2, 1, m)[0], tuple, "las demas acciones mueven")
         self.assertIsInstance(e.decidir(3, 2, 2, m)[0], tuple)
 
+    def test_remata_con_dano_no_con_una_curacion(self):
+        """Revision 2026-11-23: elegia por rango antes que por dano y podia gastar el turno en una carta sin dano."""
+        from types import SimpleNamespace
+        from unittest import mock
+
+        from lumen.vida_jefe import Vida
+
+        e = ciervo(RQ.CAUTELOSO)
+        e.modo = SimpleNamespace(vida_jefe=Vida("azul", 0.03), log=lambda *a, **k: None)
+        m = mano((TYR + ".skill_2", R.ORO), (TYR + ".skill_1", R.PLATA), (TYR + ".skill_1", R.BRONCE),
+                 (THOR + ".skill_1", R.BRONCE))
+        from lumen.ia.efectos import Efecto
+
+        original = B4.efectos_carta
+        cura = lambda c: [Efecto("curar", 30.0, "aliados")] if (c.nombre or "").endswith("skill_2") else original(c)  # noqa: E731
+        with mock.patch.object(B4, "efectos_carta", cura):
+            self.assertEqual(e.decidir(2, 2, 0, m)[0], 1, "la de plata que dana, no la curacion de oro")
+
+    def test_remata_solo_con_muy_poca_vida(self):
+        """Revision 2026-11-23: al 10 % una carta no basta en Floor 4 y se perdian turnos moviendo."""
+        from types import SimpleNamespace
+
+        from lumen.vida_jefe import Vida
+
+        m = mano((THOR + ".skill_1", R.PLATA), (THOR + ".skill_2", R.PLATA), (TYR + ".skill_1", R.BRONCE))
+        for parte, remata in ((0.08, False), (0.04, True)):
+            with self.subTest(vida=parte):
+                e = ciervo(RQ.CAUTELOSO)
+                e.modo = SimpleNamespace(vida_jefe=Vida("morado", parte), log=lambda *a, **k: None)
+                e.decidir(3, 2, 0, m)
+                self.assertEqual(isinstance(e.decidir(3, 2, 1, m)[0], tuple), remata)
+
     def test_con_vida_juega_normal(self):
         from types import SimpleNamespace
 

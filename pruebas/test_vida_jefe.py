@@ -27,6 +27,20 @@ class LeerVida(unittest.TestCase):
                 self.assertEqual(vida.capa, capa)
                 self.assertAlmostEqual(vida.por_ciento, cuanto, delta=3)
 
+    def test_casi_vacia_lee_la_capa_de_esta_fase(self):
+        """Revision 2026-11-23: con la capa casi vacia (1-5 px) la mayoria de las primeras columnas ya son de la fase
+        siguiente; se leia esa (llena) y el bot pasaba de fase un turno antes. Foto real del rojo al 89 % con los
+        primeros pixeles de la foto real del morado encima."""
+        x1, y1, x2, y2 = V.BARRA
+        for px in (3, 5):
+            with self.subTest(pixeles=px):
+                img = foto("rojo_89").copy()
+                img[y1:y2, x1:x1 + px] = foto("morado_39")[y1:y2, x1:x1 + px]
+                vida = V.leer(img)
+                self.assertEqual(vida.capa, "morado")
+                self.assertLess(vida.por_ciento, 5)
+        self.assertEqual(V.leer(foto("rojo_89")).capa, "rojo", "sin morado: sigue siendo rojo")
+
     def test_al_morir_la_barra_queda_vacia(self):
         self.assertEqual(V.leer(foto("vacia")), V.Vida(V.VACIA, 0.0))
 

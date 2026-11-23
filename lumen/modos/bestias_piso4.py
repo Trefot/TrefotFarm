@@ -147,6 +147,13 @@ def dano(c) -> float:
     return max((e.valor or 0 for e in efectos_carta(c) if e.tipo == "dano"), default=0.0)
 
 
+def sin_dano(c) -> bool:
+    """Se sabe que no hace dano (una curacion, un buff): tiene efectos leidos y ninguno es dano. Sin texto en la base
+    no se sabe (las normales de Freyja): esas si cuentan."""
+    efs = efectos_carta(c)
+    return bool(efs) and not any(e.tipo == "dano" for e in efs)
+
+
 def es_fuerte(c) -> bool:
     """Ultis y golpes grandes."""
     return es_ulti(c) or dano(c) >= 190 or contra_inmortalidad(c)
@@ -535,7 +542,9 @@ class EstrategiaCiervo4(EstrategiaPiso4):
         return {col: self._por_rango(mano, lambda c, col=col: color(c) == col, ultis_al_final)
                 for col in ("verde", "rojo", "azul")}
 
-    REMATE_POR_CIENTO = 10  # fases 1-3: con la barra de la fase por debajo, una carta basta
+    # Fases 1-3: con la barra de la fase por debajo, una carta basta. Era 10, pero en el Floor 4 un 10 % suele ser mas
+    # de lo que quita una carta y se perdian turnos moviendo; el caso real fue el ciervo al 3 % (2026-11-22).
+    REMATE_POR_CIENTO = 5
     CAPA_DE_FASE = {1: "verde", 2: "azul", 3: "morado"}
 
     def _vida_de_la_fase(self, fase) -> int | None:
@@ -551,13 +560,14 @@ class EstrategiaCiervo4(EstrategiaPiso4):
         a la fase 4) y el resto del turno se mueve para cargar ultis."""
         if any(c is not None for c in self.jugadas):
             return self._mover_para_ulti(mano)
-        grupos = {col: [i for i, c in enumerate(mano) if jugable(c) and not es_ulti(c) and color(c) == col]
+        # Sin las que se sabe que no hacen dano: una curacion o un buff no remata (y se movia el resto del turno)
+        grupos = {col: [i for i, c in enumerate(mano) if jugable(c) and not es_ulti(c) and color(c) == col and not sin_dano(c)]
                   for col in ("verde", "rojo", "azul")}
         col = max(grupos, key=lambda k: len(grupos[k]))
         if not grupos[col]:
             return None
         self._avisar(f"Fase {fase}: al jefe le queda poco: una carta ({col}) y guardo las demás para la fase 4.")
-        return max(grupos[col], key=lambda i: (rango(mano[i]), dano(mano[i]), i))
+        return max(grupos[col], key=lambda i: (dano(mano[i]), rango(mano[i]), i))  # la que mas dana
 
     def guion(self, fase, turno, accion, mano):
         from lumen.ia import requisitos

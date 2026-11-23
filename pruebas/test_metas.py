@@ -86,7 +86,7 @@ class Interfaz(Base):
             p.stop()
 
     def test_fila_metas_y_franja_en_inicio(self):
-        ini, f = self.v.paginas["preparar"], self.v.farmear
+        ini = self.v.paginas["preparar"]
         ini.ir_a_destino("perros_piso4")
         self.assertEqual(ini.fila_metas.objetos.count("garra_skoll_hati"), 1, "cada material una sola vez")
         self.assertFalse(ini.b_meta.isEnabled(), "sin metas, el chip Meta no vale")
