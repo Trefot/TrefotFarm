@@ -109,8 +109,12 @@ class Propias(unittest.TestCase):
     def test_preparar_copia_lleva_las_pendientes_al_repositorio(self):
         self._verla_dos_veces()
         with tempfile.TemporaryDirectory() as copia:
+            original = Path(copia) / "assets" / "imagenes" / OK
+            original.parent.mkdir(parents=True)
+            original.write_bytes(b"de AutoFarming")
             self.assertEqual(propias.preparar_copia(Path(copia)), [OK])
             self.assertTrue((Path(copia) / "assets" / "propias" / OK).is_file())
+            self.assertFalse(original.exists(), "con la propia subida, la de AutoFarming se borra")
 
 
 class EnUnTrozo(unittest.TestCase):
@@ -139,6 +143,8 @@ class EnUnTrozo(unittest.TestCase):
     def test_huecos_y_estrellas_se_recortan_de_la_pantalla_entera(self):
         from lumen import cartas
 
+        if not (propias.IMAGENES / "bronze_card.png").is_file():
+            self.skipTest("las estrellas ya tienen imagen propia y la de AutoFarming se borro")
         pantalla = cv2.imread(str(Path(__file__).with_name("rata_f2_tres.png")))
         for _ in range(2):
             cartas.contar_huecos(pantalla)

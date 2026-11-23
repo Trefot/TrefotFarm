@@ -153,5 +153,8 @@ def preparar_copia(copia: Path) -> list[str]:
             continue
         destino.parent.mkdir(parents=True, exist_ok=True)
         shutil.copy2(ruta_local(rel), destino)
+        original = Path(copia) / "assets" / "imagenes" / rel
+        if original.is_file():  # ya tiene la suya: la de AutoFarming se borra (Plantilla usa la propia)
+            original.unlink()
         hechas.append(rel)
     return hechas

@@ -35,6 +35,7 @@ CAMBIOS
     del heroe van antes). Quedan 109 por cambiar. Los iconos de los modos usan tambien la propia.
   - Imagenes propias: tambien se recortan las que se buscan en un trozo de la pantalla (los huecos de la barra del
     turno, las estrellas de bronce, plata y oro de las cartas). Salen en cada pelea y nunca se recortaban.
+  - Al subir imagenes propias, el Lumen del administrador borra a la vez la de AutoFarming que reemplazan.
 
 0.41.3-alpha
   - Ciervo: con la barra de la fase 1, 2 o 3 al 10 % o menos, juega una sola carta (la fuerte del color del que mas
