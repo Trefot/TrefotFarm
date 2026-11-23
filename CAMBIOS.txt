@@ -29,6 +29,10 @@ Etapas previstas:
 
 CAMBIOS
 -------
+0.42.1-alpha
+  - Equipos: ya no se muestran las descripciones (notas) de los equipos ni la flecha para desplegarlas (el
+    usuario, 2026-11-22: "no me parecen tan necesarias"). Siguen guardadas para el administrador.
+
 0.42.0-alpha
   - Mis equipos: sale tambien el equipo con el que juegas ("Tu equipo · Con el que juegas"), aprendido de tus
     peleas (Lumen lo reconoce por las cartas), aunque no este en la lista. Hace falta jugar al menos 3 peleas con el.

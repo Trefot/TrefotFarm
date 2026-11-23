@@ -349,7 +349,9 @@ class TarjetaEquipo(QFrame):
         fila.addStretch()
         capa.addLayout(fila)
 
-        self.detalle = QLabel(datos.get("notas", ""), wordWrap=True, objectName="tenue")
+        # Las notas no se muestran (el usuario, 2026-11-22: "estas descripciones no me parecen tan necesarias");
+        # siguen en equipos.yaml y en el editor del administrador.
+        self.detalle = QLabel("", wordWrap=True, objectName="tenue")
         self.detalle.setContentsMargins(4, 6, 4, 0)
         capa.addWidget(self.detalle)
         self.abierto = abierto
@@ -365,7 +367,8 @@ class TarjetaEquipo(QFrame):
         self._mostrar()
 
     def _mostrar(self):
-        self.detalle.setVisible(self.abierto)
+        self.detalle.setVisible(False)
+        self.flecha.setVisible(False)  # sin notas no hay nada que desplegar
         self.flecha.setIcon(iconos.icono("mdi6.chevron-up" if self.abierto else "mdi6.chevron-down", tema.TEXTO))
         self.flecha.setToolTip("Ocultar detalles" if self.abierto else "Ver como se juega")
 
@@ -406,8 +409,7 @@ def equipos_tuyos(clave: str, destino: str | None = None, conocidos=()) -> list[
             continue  # "equipo:Nombre" (Fuerte Solgres) ya sale con su equipo de la lista
         if _peleas(m) < MIN_PELEAS_TUYO:
             continue
-        datos = {"nombre": "Con el que juegas", "nivel": "tuyo", "personajes": sorted(ids),
-                 "notas": "Lumen lo reconoce por las cartas de tus peleas y mide lo que gana con él."}
+        datos = {"nombre": "Con el que juegas", "nivel": "tuyo", "personajes": sorted(ids)}
         salida.append((datos, m))
     return salida
 
@@ -637,7 +639,7 @@ class PaginaEquipos(Pagina):
         contenido, juega = self.contenidos.get(clave, (None, False))
         if contenido:
             estado = "El bot ya lo farmea" if juega else "El bot todavía no lo farmea"
-            self.subtitulo_modo.setText(f"{contenido.descripcion} · {estado}. Haz clic en un equipo para ver cómo se juega.")
+            self.subtitulo_modo.setText(f"{contenido.descripcion} · {estado}.")
         tarjetas = tarjetas_equipos(clave, admin, self._editar, self._borrar)
         for t in tarjetas:
             self.lista.addWidget(t)
