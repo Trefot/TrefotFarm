@@ -29,6 +29,15 @@ Etapas previstas:
 
 CAMBIOS
 -------
+0.41.2-alpha
+  - Ciervo Floor 4: si en un turno del semaforo faltaba el color que toca, movia una carta y luego jugaba cualquiera
+    (una roja de oro, una azul), rompiendo la secuencia: el ciervo se quedaba al 85 % y acababa en derrota o reinicio
+    (las 2 derrotas y los 3 reinicios de 10 peleas, 2026-11-22). Ahora, mientras no haya jugado carta en el turno,
+    sigue esperando el color del buff: si al mover llega, la juega; si no, sigue moviendo.
+  - Ciervo Floor 4: con el contraataque (Defensive Horn) gastaba hasta 3 cartas de Freyr para quitar la postura,
+    porque se sigue viendo hasta que acaba el turno. Ahora usa una sola y sigue con el semaforo.
+  - Ciervo: la fase 1 nueva (ultis primero, la 4.a accion carga ultis) se probo en vivo: en 1 turno en las 13 peleas.
+
 0.41.1-alpha
   - Monedas SA: en "Auto Repeat Results" el bot pulsaba el "OK" apagado que se ve debajo del de verdad y se quedo
     4 min ahi (el usuario, 2026-11-22). Ahora pulsa su OK verde azulado (imagen propia de esa pantalla).

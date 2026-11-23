@@ -598,15 +598,18 @@ class EstrategiaCiervo4(EstrategiaPiso4):
 
     def _color_que_falta(self, turno, accion, rojas, verdes, azules) -> str | None:
         listas = {"rojo": rojas, "verde": verdes, "azul": azules}
-        if accion == 0:
+        ultima = self._ultima_jugada(accion) if accion > 0 else None
+        # Sin carta jugada aun en el turno (accion 0, o se movio porque faltaba el color): sigue tocando el del buff.
+        # Antes, tras mover, jugaba cualquier carta y rompia la secuencia (2026-11-22: las 2 derrotas y los 3
+        # reinicios de 10 peleas empezaron asi).
+        if ultima is None:
             if turno == 1:  # el semaforo empieza por verde (el usuario, 2026-11-13)
                 return None if verdes else self.PRIMER_COLOR
             for buff, col in ((juego.buff_azul, "azul"), (juego.buff_rojo, "rojo"), (juego.buff_verde, "verde")):
                 if self.ve(buff):
                     return None if listas[col] else col
             return None
-        ultima = self._ultima_jugada(accion)
-        if ultima is None or not color(ultima) or (es_hel(ultima) and es_ulti(ultima)):
+        if not color(ultima) or (es_hel(ultima) and es_ulti(ultima)):
             return None
         toca = self.SIGUIENTE.get(color(ultima))
         return toca if toca and not listas[toca] else None
@@ -754,13 +757,19 @@ class EstrategiaCiervo4(EstrategiaPiso4):
             if accion == 0:
                 self._avisar("Fase 4: semáforo hecho; 4 cartas a full daño, sin guardar nada.")
             return self._golpe_maximo(mano)
-        if self.ve(juego.contraataque):
+        from lumen.ia.resolver import satisface
+
+        def quita_postura(c):
+            return satisface(efectos_carta(c), "quitar_postura")
+
+        # Una carta que quita la postura basta: el turno se resuelve en orden y las siguientes ya no rebotan. Antes,
+        # como la postura sigue en pantalla hasta que acaba el turno, gastaba 3 cartas de Freyr seguidas (2026-11-22).
+        ya_quitada = any(quita_postura(c) or (es_hel(c) and es_ulti(c)) for c in self.jugadas)
+        if self.ve(juego.contraataque) and not ya_quitada:
             # Defensive Horn: postura que devuelve 1500 % al atacarle. Quitarle la postura o la ulti de Hel; si no hay
             # nada, se sigue atacando: quedarse quieto (0.38.0) solo le daba tiempo y mataba al equipo igual (el
             # usuario, 2026-11-13: "podia seguir con los danos de cartas rojas y sus ultis").
-            from lumen.ia.resolver import satisface
-
-            if quita := indices(mano, lambda c: satisface(efectos_carta(c), "quitar_postura"), orden=lambda c: 0):
+            if quita := indices(mano, quita_postura, orden=lambda c: 0):
                 self._avisar(f"Contraataque del ciervo: le quito la postura con {heroe(mano[quita[-1]])}.")
                 return quita[-1]
             if hel_ulti := self._por_rango(mano, lambda c: es_hel(c) and es_ulti(c)):
@@ -790,10 +799,11 @@ class EstrategiaCiervo4(EstrategiaPiso4):
         quita = [i for i in verdes if quita_buffs(mano[i])]
         if quita:
             verdes = [quita[0]] + [i for i in verdes if i != quita[0]]
-        if accion == 0 and turno == 1:
+        inicio = self._ultima_jugada(accion) is None  # aun no se jugo ninguna carta este turno
+        if inicio and turno == 1:
             if verdes:  # el semaforo empieza por verde (sin verdes ya se movio arriba)
                 return verdes[-1]
-        elif accion == 0:
+        elif inicio:
             for buff, lista in ((juego.buff_azul, azules), (juego.buff_rojo, rojas), (juego.buff_verde, verdes)):
                 if self.ve(buff) and lista:
                     return lista[-1]

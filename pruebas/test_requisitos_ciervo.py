@@ -288,3 +288,26 @@ class Fase4Cadena(unittest.TestCase):
         m = mano((FREYR + ".skill_2", R.BRONCE), ("freyja_roja.normal_1", R.BRONCE), (THOR + ".skill_1", R.BRONCE))
         self.assertIsInstance(e.decidir(4, 2, 1, m)[0], tuple, "no hay verde: mueve")
         self.assertIsInstance(e.decidir(4, 2, 2, m)[0], tuple, "sigue tocando verde: no otra roja")
+
+    def test_tras_mover_por_falta_de_color_sigue_tocando_el_del_buff(self):
+        """2026-11-22, 10 ciervos: turno 2 sin verde, movia y luego jugaba una roja de oro. Las 2 derrotas y los 3
+        reinicios empezaron asi."""
+        e = ciervo(RQ.CAUTELOSO, ve=(juego.buff_verde,))
+        sin_verde = mano((FREYR + ".skill_2", R.ORO), ("freyja_roja.normal_1", R.BRONCE), (THOR + ".skill_1", R.PLATA))
+        self.assertIsInstance(e.decidir(4, 2, 0, sin_verde)[0], tuple, "no hay verde: mueve")
+        self.assertIsInstance(e.decidir(4, 2, 1, sin_verde)[0], tuple, "sigue sin verde: no juega la roja de oro")
+        llego = mano((FREYR + ".skill_2", R.ORO), (TYR + ".skill_1", R.BRONCE), (THOR + ".skill_1", R.PLATA))
+        self.assertEqual(e.decidir(4, 2, 1, llego)[0], 1, "al mover llego una verde: esa")
+        self.assertIsNone(e.pedir_reinicio)
+
+
+class Fase4Postura(unittest.TestCase):
+    def test_una_sola_carta_para_quitar_la_postura(self):
+        """2026-11-22: la postura sigue en pantalla hasta que acaba el turno; gastaba 3 cartas de Freyr seguidas."""
+        e = ciervo(RQ.CAUTELOSO, ve=(juego.contraataque, juego.buff_verde))
+        m = mano((FREYR + ".skill_1", R.ORO), (FREYR + ".skill_1", R.ORO), (TYR + ".skill_1", R.BRONCE),
+                 (THOR + ".skill_1", R.BRONCE))
+        primera = e.decidir(4, 2, 0, m)[0]
+        self.assertEqual(primera, 1, "Freyr quita la postura")
+        resto = mano((FREYR + ".skill_1", R.ORO), (TYR + ".skill_1", R.BRONCE), (THOR + ".skill_1", R.BRONCE))
+        self.assertEqual(e.decidir(4, 2, 1, resto)[0], 1, "ya quitada: sigue el semaforo (tras roja, verde)")
