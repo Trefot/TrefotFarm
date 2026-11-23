@@ -81,12 +81,23 @@ class Plantilla:
             _, valor, _, (x, y) = cv2.minMaxLoc(resultado)
             if valor > mejor:
                 mejor, rect, cual = float(valor), np.array([x, y, pw, ph], dtype=np.int32), i
-        if cual >= 0 and self._de_autofarming[cual] is not None:
-            from lumen import propias
-
-            if propias.activo and mejor >= propias.UMBRAL:  # recortar la propia de esta pantalla del juego
-                propias.anotar(self._de_autofarming[cual], pantalla, rect, mejor)
+        if cual >= 0:
+            self._anotar(cual, pantalla, rect, mejor)
         return mejor, rect
+
+    def _anotar(self, cual: int, pantalla: np.ndarray, rect, valor: float) -> None:
+        """Si la imagen es de AutoFarming y se vio con seguridad, recortar la propia de esta pantalla del juego."""
+        if cual >= len(self._de_autofarming) or self._de_autofarming[cual] is None:
+            return
+        from lumen import propias
+
+        if not propias.activo or valor < propias.UMBRAL:
+            return
+        # Se busca a menudo en un trozo de la pantalla (los huecos de la barra del turno, las estrellas de una carta):
+        # el recorte se toma de la pantalla entera de la que sale ese trozo.
+        completa, dx, dy = de_que_pantalla(pantalla)
+        x, y, w, h = (int(v) for v in rect)
+        propias.anotar(self._de_autofarming[cual], completa, (x + dx, y + dy, w, h), valor)
 
     def buscar(self, pantalla: np.ndarray | None, umbral: float = 0.7) -> np.ndarray | None:
         """Rectangulo de la mejor coincidencia, o None si no supera el umbral."""
@@ -99,13 +110,16 @@ class Plantilla:
     def buscar_todas(self, pantalla: np.ndarray, umbral: float = 0.7) -> list[np.ndarray]:
         """Todas las apariciones (agrupando las que se solapan)."""
         rects = []
-        for plantilla in self.imagenes:
+        for i, plantilla in enumerate(self.imagenes):
             ph, pw = plantilla.shape[:2]
             if ph > pantalla.shape[0] or pw > pantalla.shape[1]:
                 continue
             resultado = cv2.matchTemplate(pantalla, plantilla, cv2.TM_CCOEFF_NORMED)
             ys, xs = np.where(resultado >= umbral)
             rects.extend([int(x), int(y), pw, ph] for x, y in zip(xs, ys))
+            if len(xs):
+                _, valor, _, (x, y) = cv2.minMaxLoc(resultado)
+                self._anotar(i, pantalla, (x, y, pw, ph), float(valor))
         return agrupar(rects)
 
 
@@ -116,6 +130,22 @@ def agrupar(rects: list) -> list[np.ndarray]:
     dobles = [list(r) for r in rects] * 2  # groupRectangles descarta grupos de 1 elemento
     agrupados, _ = cv2.groupRectangles(dobles, groupThreshold=1, eps=0.5)
     return [np.asarray(r) for r in agrupados]
+
+
+def de_que_pantalla(trozo: np.ndarray) -> tuple[np.ndarray, int, int]:
+    """(pantalla entera, x, y) de la que ``trozo`` es un recorte sin copiar (recortar, cortes de numpy). Si no lo es,
+    (trozo, 0, 0)."""
+    raiz = trozo
+    while isinstance(getattr(raiz, "base", None), np.ndarray):
+        raiz = raiz.base
+    if raiz is trozo or raiz.ndim != trozo.ndim or raiz.strides != trozo.strides:
+        return trozo, 0, 0
+    desplazamiento = trozo.__array_interface__["data"][0] - raiz.__array_interface__["data"][0]
+    dy, resto = divmod(desplazamiento, raiz.strides[0])
+    dx = resto // raiz.strides[1]
+    if not (0 <= dy < raiz.shape[0] and 0 <= dx < raiz.shape[1]):
+        return trozo, 0, 0
+    return raiz, int(dx), int(dy)
 
 
 def recortar(imagen: np.ndarray, region: tuple[int, int, int, int]) -> np.ndarray:

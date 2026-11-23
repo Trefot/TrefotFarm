@@ -4,7 +4,7 @@
 #
 # color: rojo | verde | azul | claro | oscuro
 # roles: ver ROLES en lumen/personajes.py
-# cartas: id -> descripcion. "respaldo" = imagen de AutoFarming que se usa si aun no hay captura propia.
+# cartas: id -> descripcion. "respaldo" = imagen de assets/imagenes que se usa si aun no hay captura propia.
 #         "boton: true" = no es una carta de la mano sino un boton de la pantalla (p. ej. un talento).
 
 odin:
@@ -40,9 +40,9 @@ freyja_roja:
   raza: desconocida
   roles: [dano_single, dano_area, ulti_remate]
   cartas:
-    normal_1: {descripcion: "Un objetivo (Elegant Leopard)", respaldo: snake/freyja_st.png}
-    normal_2: {descripcion: "Area (Fascination Chain)", respaldo: snake/freyja_aoe.png}
-    ulti: {descripcion: "Ulti (Aesthetic Overflow)", respaldo: snake/freyja_ult.png}
+    normal_1: {descripcion: "Un objetivo (Elegant Leopard)"}
+    normal_2: {descripcion: "Area (Fascination Chain)"}
+    ulti: {descripcion: "Ulti (Aesthetic Overflow)"}
 
 thonar_azul:
   clave: "[Battle-Hardened Mercenary] Wanderer Thonar"  # nombre completo en el juego (lo usa la captura de heroes)
@@ -52,8 +52,8 @@ thonar_azul:
   raza: humano
   roles: [quita_postura, dano_single, dano_area]
   cartas:
-    postura: {descripcion: "Quita la postura (Light Barrage, un objetivo)", respaldo: dogs/b_thonar_stance.png}
-    otra: {descripcion: "Area (Heavenly Strike)", respaldo: dogs/b_thonar_gauge.png}
+    postura: {descripcion: "Quita la postura (Light Barrage, un objetivo)"}
+    otra: {descripcion: "Area (Heavenly Strike)"}
     ulti: {descripcion: "Ulti (Realization of Justice, un objetivo)"}
 
 ludociel_lr:

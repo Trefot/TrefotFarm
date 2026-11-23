@@ -29,6 +29,13 @@ Etapas previstas:
 
 CAMBIOS
 -------
+0.41.4-alpha
+  - Quitar AutoFarming: se borran 42 de sus imagenes. 36 ya tenian imagen propia (Lumen usa la propia), 1 no se
+    usaba (auto_repeat_on) y 5 eran dibujos de cartas de Freyja y Thonar que nunca se llegaban a usar (las fichas
+    del heroe van antes). Quedan 109 por cambiar. Los iconos de los modos usan tambien la propia.
+  - Imagenes propias: tambien se recortan las que se buscan en un trozo de la pantalla (los huecos de la barra del
+    turno, las estrellas de bronce, plata y oro de las cartas). Salen en cada pelea y nunca se recortaban.
+
 0.41.3-alpha
   - Ciervo: con la barra de la fase 1, 2 o 3 al 10 % o menos, juega una sola carta (la fuerte del color del que mas
     tiene) y mueve el resto del turno. Con el ciervo al 3 % en la fase 3 gastaba las 3 azules de Thor y en la fase 4

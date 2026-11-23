@@ -11,7 +11,10 @@ from lumen import propias
 from lumen.vision import Plantilla
 
 PANTALLA = Path(__file__).with_name("botin_sa") / "victoria_limpia.png"
-OK = "ok_buttons/salvage_ok.png"  # copia exacta de AutoFarming; en esta pantalla coincide
+OK = "ok_buttons/salvage_ok.png"  # era de AutoFarming; en esta pantalla coincide
+# La de AutoFarming ya se borro (tiene propia): las pruebas ponen una copia en un assets/imagenes de mentira.
+REPO_REAL = propias.CARPETA_REPO
+IMAGENES_REALES = propias.IMAGENES
 
 
 class Propias(unittest.TestCase):
@@ -19,8 +22,14 @@ class Propias(unittest.TestCase):
         tmp = tempfile.TemporaryDirectory()
         self.addCleanup(tmp.cleanup)
         raiz = Path(tmp.name)
-        for nombre, valor in (("CARPETA_LOCAL", raiz / "local"), ("CARPETA_REPO", raiz / "repo")):
-            p = mock.patch.object(propias, nombre, valor)
+        falsa = raiz / "imagenes" / OK
+        falsa.parent.mkdir(parents=True)
+        falsa.write_bytes((REPO_REAL / OK).read_bytes())
+        import lumen.vision as vision
+
+        for modulo, nombre, valor in ((propias, "CARPETA_LOCAL", raiz / "local"), (propias, "CARPETA_REPO", raiz / "repo"),
+                                      (propias, "IMAGENES", raiz / "imagenes"), (vision, "IMAGENES", raiz / "imagenes")):
+            p = mock.patch.object(modulo, nombre, valor)
             p.start()
             self.addCleanup(p.stop)
         for nombre in ("_hechas", "_candidatos"):
@@ -40,12 +49,16 @@ class Propias(unittest.TestCase):
             self.reloj[0] += propias.SEPARACION_S + 1
             Plantilla(OK).esta(self.pantalla if pantalla is None else pantalla)
 
-    def test_la_lista_tiene_las_151_y_existen(self):
+    def test_cada_una_es_de_autofarming_o_tiene_propia(self):
         lista = propias.de_autofarming()
-        self.assertEqual(len(lista), 151)
+        self.assertEqual(len(lista), 145)
         self.assertIn(OK, lista)
-        from lumen.rutas import IMAGENES
-        self.assertEqual([r for r in lista if not (IMAGENES / r).is_file()], [])
+        sin_nada = [r for r in lista if not (IMAGENES_REALES / r).is_file()
+                    and not (REPO_REAL / Path(r).with_suffix(".png")).is_file()]
+        self.assertEqual(sin_nada, [], "borrada sin propia: el bot no la encontraria")
+        ambas = [r for r in lista if (IMAGENES_REALES / r).is_file()
+                 and (REPO_REAL / Path(r).with_suffix(".png")).is_file()]
+        self.assertEqual(ambas, [], "con propia publicada, la de AutoFarming se borra")
 
     def test_una_sola_vista_no_basta(self):
         with mock.patch.object(propias, "activo", True):
@@ -98,6 +111,46 @@ class Propias(unittest.TestCase):
         with tempfile.TemporaryDirectory() as copia:
             self.assertEqual(propias.preparar_copia(Path(copia)), [OK])
             self.assertTrue((Path(copia) / "assets" / "propias" / OK).is_file())
+
+
+class EnUnTrozo(unittest.TestCase):
+    """2026-11-22: los huecos de la barra del turno y las estrellas de las cartas se buscan en un trozo de la pantalla
+    y nunca se recortaban (salen en cada pelea y seguian siendo de AutoFarming)."""
+
+    def setUp(self):
+        tmp = tempfile.TemporaryDirectory()
+        self.addCleanup(tmp.cleanup)
+        raiz = Path(tmp.name)
+        cambios = [mock.patch.object(propias, "CARPETA_LOCAL", raiz / "local"),
+                   mock.patch.object(propias, "CARPETA_REPO", raiz / "repo"),
+                   mock.patch.object(propias, "_hechas", set()), mock.patch.object(propias, "_candidatos", {}),
+                   mock.patch.object(propias, "activo", True)]
+        self.reloj = [100.0]
+        cambios.append(mock.patch("time.monotonic", side_effect=lambda: self.reloj[0]))
+        for c in cambios:
+            c.start()
+            self.addCleanup(c.stop)
+        from lumen import juego
+
+        for plantilla in (juego.espacio_vacio, juego.rango_bronce, juego.rango_plata, juego.rango_oro):
+            plantilla.recargar()
+            self.addCleanup(plantilla.recargar)
+
+    def test_huecos_y_estrellas_se_recortan_de_la_pantalla_entera(self):
+        from lumen import cartas
+
+        pantalla = cv2.imread(str(Path(__file__).with_name("rata_f2_tres.png")))
+        for _ in range(2):
+            cartas.contar_huecos(pantalla)
+            cartas.leer_mano(pantalla)
+            self.reloj[0] += propias.SEPARACION_S + 1
+        guardadas = propias.pendientes()
+        self.assertTrue(any(r.startswith("dogs/empty_slot") for r in guardadas), guardadas)
+        self.assertIn("bronze_card.png", guardadas)
+        for rel in guardadas:  # el recorte es del mismo tamano y se parece a la original
+            recorte, original = cv2.imread(str(propias.ruta_local(rel))), cv2.imread(str(propias.IMAGENES / rel))
+            self.assertEqual(recorte.shape, original.shape, rel)
+            self.assertGreater(cv2.matchTemplate(recorte, original, cv2.TM_CCOEFF_NORMED).max(), propias.UMBRAL, rel)
 
 
 if __name__ == "__main__":

@@ -1,8 +1,8 @@
-# Imagenes de assets/imagenes que son copia exacta de AutoFarming (MIT), medido por contenido el 2026-11-22.
-# Lumen las va cambiando por recortes propios (lumen/propias.py). Cuando todas tengan la suya, se borran
-# junto con el credito y la licencia de AutoFarming.
+# Imagenes de assets/imagenes que eran copia exacta de AutoFarming (MIT), medido por contenido el 2026-11-22.
+# Lumen las va cambiando por recortes propios (lumen/propias.py, en assets/propias). En cuanto una tiene la suya,
+# la de AutoFarming se borra de assets/imagenes; el nombre sigue aqui para que Plantilla use la propia.
+# Cuando todas tengan la suya, se borran el credito y la licencia de AutoFarming.
 auto_repeat_off.png
-auto_repeat_on.png
 back.png
 battle_menu.jpg
 bronze_card.png
@@ -69,8 +69,6 @@ demons/normal.png
 demons/og_demon.png
 demons/preparation_incomplete.png
 demons/red_demon.png
-dogs/b_thonar_gauge.png
-dogs/b_thonar_stance.png
 dogs/empty_slot_1.png
 dogs/empty_slot_10.png
 dogs/empty_slot_11.png
@@ -144,9 +142,6 @@ simultaneous_logins.png
 skill_locked.png
 skip.png
 snake/f3p2_counter.png
-snake/freyja_aoe.png
-snake/freyja_st.png
-snake/freyja_ult.png
 snake/nidhoggr.png
 stamina_pot.png
 stamuse.png

@@ -23,6 +23,7 @@ from lumen import personajes as P
 from lumen.gui import iconos, tema
 from lumen.gui.paginas.personajes import TarjetaPersonaje
 from lumen.modos import MODOS
+from lumen import propias
 from lumen.rutas import IMAGENES
 
 PASOS = ["Bienvenida", "El juego", "Personajes", "Equipo", "Seguridad", "¡Listo!"]
@@ -298,7 +299,7 @@ class Asistente(QDialog):
             capa.setContentsMargins(16, 12, 16, 14)
             cabecera = QHBoxLayout()
             emblema = QLabel()
-            pix = iconos.redondo(IMAGENES / modo.imagen, 46, tema.ACENTO) if modo.imagen else None
+            pix = iconos.redondo(propias.preferida(IMAGENES / modo.imagen), 46, tema.ACENTO) if modo.imagen else None
             if pix:
                 emblema.setPixmap(pix)
             cabecera.addWidget(emblema)

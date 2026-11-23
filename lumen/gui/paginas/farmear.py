@@ -37,6 +37,7 @@ from lumen.gui.comun import Pagina, formatear_tiempo
 from lumen.gui.paginas.equipos import clave_de_equipos, tarjetas_equipos
 from lumen.modos import MODOS
 from lumen.modos.catalogo import CATALOGO, contenido_de, foto_de
+from lumen import propias
 from lumen.rutas import IMAGENES, LOGS
 
 CIFRAS = [("victorias", "Victorias", "trofeo"), ("derrotas", "Derrotas", "derrota"), ("reinicios", "Reinicios", "reinicio"),
@@ -353,7 +354,7 @@ class PaginaFarmear(Pagina):
         self.nombre_modo.setText(cls.titulo_juego or cls.nombre)
         self.sub_modo.setText(" · ".join(x for x in (cls.subtitulo_juego, cls.duracion) if x))
         self.nombre_modo.setToolTip(cls.descripcion)
-        foto = foto_de(cls.id) or (IMAGENES / cls.imagen if cls.imagen else None)  # la del catalogo (assets/modos) o la del modo
+        foto = foto_de(cls.id) or (propias.preferida(IMAGENES / cls.imagen) if cls.imagen else None)  # la del catalogo (assets/modos) o la del modo
         pix = iconos.redondo(foto, 112, tema.ACENTO) if foto else None
         if pix:
             self.emblema.setPixmap(pix)

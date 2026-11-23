@@ -38,7 +38,11 @@ class Contenido:
         propia = CARPETA_FOTOS / f"{self.id}.png"
         if propia.is_file():
             return propia
-        return IMAGENES / self.imagen if self.imagen else None
+        if not self.imagen:
+            return None
+        from lumen import propias
+
+        return propias.preferida(IMAGENES / self.imagen)  # la propia si la de AutoFarming ya se borro
 
 
 # Secciones del Inicio, en este orden: cada una con su propia rueda.

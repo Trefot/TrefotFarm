@@ -97,9 +97,10 @@ def leer_mano(pantalla: np.ndarray, region: str = "mano_4", n: int = 8) -> list[
     col = ancho // n
     cartas = []
     for i in range(n):
-        imagen = mano[:, i * col : (i + 1) * col].copy()
+        vista = mano[:, i * col : (i + 1) * col]
+        imagen = vista.copy()
         tipo = tipo_de(imagen)
-        rango = rango_de(imagen, tipo)
+        rango = rango_de(vista, tipo)  # sin copiar: asi la estrella se puede recortar como imagen propia (propias.py)
         if tipo == TipoCarta.NORMAL and rango == Rango.ULTI:
             tipo = TipoCarta.ULTI
         cartas.append(Carta(posicion=i, rect=(x1 + i * col, y1, col, alto), imagen=imagen, tipo=tipo, rango=rango))

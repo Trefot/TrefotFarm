@@ -13,7 +13,7 @@ import entorno  # noqa: F401  (antes que lumen)
 import cv2
 import numpy as np
 
-from lumen import botin, entrada, estrategias, premios, recompensas, vision
+from lumen import botin, entrada, estrategias, premios, propias, recompensas, vision
 from lumen.cartas import Carta, Rango, TipoCarta as T
 from lumen.control import Detenido, control
 from lumen.rutas import IMAGENES
@@ -242,7 +242,7 @@ class Botin(unittest.TestCase):
 
 class Idiomas(unittest.TestCase):
     def test_busca_la_imagen_en_ingles_y_en_espanol(self):
-        ingles = vision.leer_imagen(IMAGENES / "start.png")
+        ingles = vision.leer_imagen(propias.preferida(IMAGENES / "start.png"))
         espanol = 255 - ingles  # un "boton en espanol" de prueba
         with tempfile.TemporaryDirectory() as carpeta:
             carpeta = Path(carpeta)

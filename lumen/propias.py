@@ -1,7 +1,7 @@
 """Imagenes propias en lugar de las de AutoFarming (el usuario, 2026-11-22: "quitar todo lo relacionado con
 autofarming").
 
-151 imagenes de assets/imagenes son copia exacta de las de AutoFarming (lumen/datos/imagenes_autofarming.txt).
+145 imagenes de assets/imagenes eran copia exacta de las de AutoFarming (lumen/datos/imagenes_autofarming.txt).
 Mientras se farmea, cada vez que una de ellas se reconoce en la pantalla del juego con mucha seguridad, se recorta
 ese mismo trozo de la pantalla y se guarda como imagen propia (capturas/propias/). El Lumen del administrador las
 sube a la base de todos (assets/propias/) y, desde entonces, Plantilla usa la propia en vez de la de AutoFarming.
