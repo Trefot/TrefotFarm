@@ -46,11 +46,13 @@ NIVELES = {
     "recomendado": ("Recomendado", tema.OK),
     "bueno": ("Bueno", "#4f8fe0"),
     "alternativa": ("Alternativa", tema.AVISO),
+    "tuyo": ("Tu equipo", tema.ACENTO),
 }
 
 
 PROPIOS = P.CARPETA / "equipos.yaml"  # equipos que crea el admin (fuera de git hasta publicarlos)
 MIN_PELEAS = 5  # peleas medidas para fiarse de las cifras y ordenar por ellas
+MIN_PELEAS_TUYO = 3  # para mostrar un equipo con el que jugaste (menos: una carta mal reconocida, no tu equipo)
 
 
 def _leer(ruta: Path) -> dict:
@@ -136,7 +138,8 @@ def mas_rapido(id_destino: str) -> dict | None:
         if rapidez and (mejor is None or rapidez[0] < mejor["minutos"]):
             m = medido.get(frozenset(datos.get("personajes") or []))
             mejor = {"datos": datos, "minutos": rapidez[0], "fuente": rapidez[1],
-                     "peleas": _peleas(m) if m and rapidez[1] == "tuyo" else 0}
+                     "peleas": _peleas(m) if m and rapidez[1] == "tuyo" else 0,
+                     "medida": m if m and rapidez[1] == "tuyo" else None}
     if not fijo:
         # Tambien tus equipos medidos que no estan en la lista (en los modos de cualquier equipo el bot sabe con
         # cuales jugaste por sus cartas): el mas rapido se recomienda aunque nadie lo haya publicado.
@@ -154,8 +157,16 @@ def mas_rapido(id_destino: str) -> dict | None:
                     datos = next((d for d in todos.get(clave, []) if _mismo_nombre(d.get("nombre_juego", ""), juego_nombre)
                                   or _mismo_nombre(d.get("nombre", ""), juego_nombre)),
                                  {"nombre": juego_nombre, "personajes": []})
-                mejor = {"datos": datos, "minutos": minutos, "fuente": "tuyo", "peleas": _peleas(m)}
+                mejor = {"datos": datos, "minutos": minutos, "fuente": "tuyo", "peleas": _peleas(m), "medida": m}
     return mejor
+
+
+def texto_por_pelea(medida: dict) -> str:
+    """Lo que tarda una pelea (una run), de media: '5 min 24 s por pelea'."""
+    peleas = _peleas(medida)
+    segundos = round(medida.get("segundos", 0) / peleas) if peleas else 0
+    minutos, resto = divmod(segundos, 60)
+    return (f"{minutos} min {resto} s" if minutos else f"{resto} s") + " por pelea"
 
 
 def texto_minutos(minutos: float) -> str:
@@ -268,11 +279,7 @@ class TarjetaEquipo(QFrame):
         cab.addWidget(nivel, 0, Qt.AlignVCenter)
         titulo = QLabel(datos.get("nombre", ""), objectName="nombre_pj" if compacto else "titulo_tarjeta", wordWrap=compacto)
         cab.addWidget(titulo, 1 if compacto else 0)
-        if datos.get("bot"):
-            bot = QLabel("Bot" if compacto else "  El bot lo juega")
-            bot.setToolTip("El bot sabe jugar este equipo")
-            bot.setStyleSheet(f"color: {tema.ACENTO}; font-weight: 700;")
-            cab.addWidget(bot)
+        # Sin "El bot lo juega": el bot juega con el equipo que le pongan (el usuario, 2026-11-22)
         if datos.get("propio"):
             tuyo = QLabel("  Tuyo · publicándose")
             tuyo.setStyleSheet(f"color: {tema.TENUE}; font-style: italic;")
@@ -304,16 +311,12 @@ class TarjetaEquipo(QFrame):
         cab.addWidget(self.flecha)
         capa.addLayout(cab)
         if medida and medida["victorias"] + medida["derrotas"] + medida["reinicios"]:
-            peleas = medida["victorias"] + medida["derrotas"] + medida["reinicios"]
-            texto = (f"Medido por el bot: <b>{medida['por_hora']:.1f} victorias por hora</b> · "
-                     f"gana el {medida['tasa']:.0f} % · {peleas} pelea{'s' if peleas != 1 else ''}")
-            if peleas < MIN_PELEAS:
-                texto += f" (aún pocas: desde {MIN_PELEAS} cuenta para el orden)"
+            # Solo lo que tarda una pelea (el usuario, 2026-11-22: ni victorias por hora, ni %, ni cuantas peleas)
+            texto = f"Medido por el bot: <b>{texto_por_pelea(medida)}</b>"
             cifras = self.cifras = QLabel(texto, wordWrap=True)
             cifras.setStyleSheet(f"color: {tema.ACENTO};")
-            cifras.setToolTip("Victorias por hora = victorias entre el tiempo total farmeando (incluye "
-                              "menús, cargas y pociones). Junta lo que gana y lo rápido que es. Cuenta las "
-                              "peleas del bot y las que jugaste tú con «Aprender de mí».")
+            cifras.setToolTip("Lo que tarda de media cada pelea, de principio a fin (con menús, cargas y "
+                              "pociones). Cuenta las peleas del bot y las que jugaste tú con «Aprender de mí».")
             capa.addWidget(cifras)
         elif rapidez and rapidez[1] == "pruebas":
             cifras = self.cifras = QLabel(f"Medido en las pruebas: <b>{texto_minutos(rapidez[0])}</b>", wordWrap=True)
@@ -389,8 +392,28 @@ def clave_de_equipos(id_destino: str, equipos: dict | None = None) -> str:
     return contenido.id if contenido and contenido.id in equipos else id_destino
 
 
+def equipos_tuyos(clave: str, destino: str | None = None, conocidos=()) -> list[tuple[dict, dict]]:
+    """Los equipos con los que jugaste en este contenido (el bot los reconoce por sus cartas y los apunta en
+    logs/historial.jsonl), aunque no esten en la lista: (datos, medida). El usuario (2026-11-22): "aqui deberia
+    haber otro equipo, el cual es el que se esta usando"."""
+    medido = dict(medidas(clave))
+    if destino and destino != clave:
+        medido.update(medidas(destino))
+    conocidos = {frozenset(c) for c in conocidos}
+    salida = []
+    for ids, m in medido.items():
+        if ids in conocidos or any(i.startswith("equipo:") for i in ids) or len(ids) < 4:
+            continue  # "equipo:Nombre" (Fuerte Solgres) ya sale con su equipo de la lista
+        if _peleas(m) < MIN_PELEAS_TUYO:
+            continue
+        datos = {"nombre": "Con el que juegas", "nivel": "tuyo", "personajes": sorted(ids),
+                 "notas": "Lumen lo reconoce por las cartas de tus peleas y mide lo que gana con él."}
+        salida.append((datos, m))
+    return salida
+
+
 def tarjetas_equipos(clave: str, admin: bool = False, al_editar=None, al_borrar=None,
-                     compacto: bool = False) -> list["TarjetaEquipo"]:
+                     compacto: bool = False, destino: str | None = None) -> list["TarjetaEquipo"]:
     """Las tarjetas de los equipos de un contenido, en orden: primero los medidos, del mas rapido al mas
     lento (ver minutos_por_victoria; el primero lleva "Mas rapido"), y luego el resto como estan en la lista. Viene
     abierto el mejor que ya puedes armar (o el primero si no tienes ninguno)."""
@@ -407,6 +430,11 @@ def tarjetas_equipos(clave: str, admin: bool = False, al_editar=None, al_borrar=
             al_borrar=(lambda _=False, d=datos: al_borrar(d)) if propio and al_borrar else None,
             compacto=compacto, rapidez=minutos_por_victoria(datos, medido),
         ))
+    conocidos = [d.get("personajes") or [] for d in todos.get(clave, [])]
+    for datos, medida in equipos_tuyos(clave, destino, conocidos):
+        tarjetas.append(TarjetaEquipo(datos, biblioteca, abierto=False, nombres=todos.get("_nombres") or {},
+                                      medida=medida, compacto=compacto,
+                                      rapidez=minutos_por_victoria(datos, {frozenset(datos["personajes"]): medida})))
 
     medidos = sorted((t for t in tarjetas if t.rapidez), key=lambda t: t.rapidez[0])
     tarjetas = medidos + [t for t in tarjetas if not t.rapidez]

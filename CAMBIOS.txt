@@ -29,6 +29,16 @@ Etapas previstas:
 
 CAMBIOS
 -------
+0.42.0-alpha
+  - Mis equipos: sale tambien el equipo con el que juegas ("Tu equipo · Con el que juegas"), aprendido de tus
+    peleas (Lumen lo reconoce por las cartas), aunque no este en la lista. Hace falta jugar al menos 3 peleas con el.
+  - La medida de los equipos ahora es lo que tarda una pelea ("6 min 11 s por pelea"), sin victorias por hora, sin %
+    y sin contar peleas. Tambien en el "Mas rapido" de Inicio.
+  - Equipos: se quita "El bot lo juega" (el bot juega con el equipo que le pongan) y las notas ya no hablan de
+    AutoFarming.
+  - Personajes: boton "Ver ficha" a la vista en cada tarjeta (la "i" de la esquina no se veia sobre el retrato).
+  - Inicio: se quita "El balance de hoy".
+
 0.41.5-alpha
   - Pajaro y ciervo Floor 4: la fase tambien se sabe por el color de la barra del jefe (verde, azul, morado, rojo).
     El letrero de la fase no siempre se ve y se jugaban 1-2 turnos con las reglas de la anterior: en los 10 pajaros

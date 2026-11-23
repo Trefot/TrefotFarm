@@ -20,7 +20,6 @@ from PyQt5.QtWidgets import (
     QMessageBox,
     QPushButton,
     QScrollArea,
-    QToolButton,
     QVBoxLayout,
     QWidget,
 )
@@ -156,7 +155,7 @@ class TarjetaPersonaje(QFrame):
         super().__init__(padre, objectName="tarjeta_pj")
         self.pj = pj
         self.setCursor(Qt.PointingHandCursor)
-        self.setFixedSize(ANCHO_TARJETA, FOTO[1] + 92)  # sitio para nombres largos en 2-3 lineas
+        self.setFixedSize(ANCHO_TARJETA, FOTO[1] + 124)  # nombres largos en 2-3 lineas y el boton "Ver ficha"
         self.usado_en = usado_en
         capa = QVBoxLayout(self)
         capa.setContentsMargins(8, 8, 8, 8)
@@ -168,15 +167,6 @@ class TarjetaPersonaje(QFrame):
         self.pix = None
         self.cargada = False  # la imagen se lee al verse la tarjeta por primera vez (ver paintEvent)
         capa.addWidget(self.foto, 0, Qt.AlignHCenter)
-        # Boton para leer la ficha (el clic en la tarjeta sigue siendo "lo tengo / no lo tengo")
-        self.info = QToolButton(self)
-        self.info.setText("ⓘ")
-        self.info.setToolTip("Ver su ficha: cartas, pasiva, talento, reliquia...")
-        self.info.setCursor(Qt.PointingHandCursor)
-        self.info.setStyleSheet("QToolButton { background: rgba(0,0,0,150); color: white; border-radius: 11px;"
-                                " font-size: 11pt; padding: 0 5px; }")
-        self.info.move(ANCHO_TARJETA - 34, 10)
-        self.info.clicked.connect(self.abrir_ficha)
 
         nombre = QLabel(pj.nombre, alignment=Qt.AlignCenter, wordWrap=True)
         nombre.setObjectName("nombre_pj")
@@ -192,6 +182,15 @@ class TarjetaPersonaje(QFrame):
         capa.addLayout(fila)
         if not pj.tiene_datos:
             capa.addWidget(QLabel("Sin datos aún", objectName="tenue", alignment=Qt.AlignCenter))
+        capa.addStretch()
+        # Boton a la vista para leer la ficha (el usuario, 2026-11-22: la "i" de la esquina no se veia sobre el
+        # retrato). El clic en el resto de la tarjeta sigue siendo "lo tengo / no lo tengo".
+        self.info = QPushButton(" Ver ficha", objectName="chip")
+        self.info.setIcon(iconos.icono("mdi6.card-account-details-outline", tema.ACENTO))
+        self.info.setToolTip("Sus cartas, pasiva, talento, reliquia...")
+        self.info.setCursor(Qt.PointingHandCursor)
+        self.info.clicked.connect(self.abrir_ficha)
+        capa.addWidget(self.info, 0, Qt.AlignHCenter)
         self.poner_tengo(pj.tengo)
 
     def _cargar_foto(self):
@@ -253,7 +252,7 @@ class TarjetaPersonaje(QFrame):
 
 class PaginaPersonajes(Pagina):
     titulo = "Personajes"
-    subtitulo = "Toca los que tienes (a color = lo tienes). ⓘ o clic derecho: su ficha. Más rápido: «Marcar todos»."
+    subtitulo = "Toca los que tienes (a color = lo tienes). «Ver ficha»: sus cartas y habilidades. Más rápido: «Marcar todos»."
 
     def __init__(self, app):
         super().__init__()

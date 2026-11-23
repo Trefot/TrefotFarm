@@ -193,18 +193,8 @@ class PaginaResumen(Pagina):
             c.addWidget(accion("Abrir  →", lambda _, d=destino: app.navegar(d)))
             fila.addWidget(w, 1)
         self.cuerpo.addLayout(fila)
-        self.cuerpo.addWidget(QLabel("El balance de hoy", objectName="titulo_card"))
-        fila = QHBoxLayout()
+        # "El balance de hoy" se quito (el usuario, 2026-11-22: "esto no es necesario")
         self.cifras = {}
-        for clave, titulo in (
-            ("sesiones", "Expediciones"),
-            ("victorias", "Victorias"),
-            ("segundos", "Tiempo de aventura"),
-        ):
-            w, cifra = tarjeta(titulo)
-            self.cifras[clave] = cifra
-            fila.addWidget(w)
-        self.cuerpo.addLayout(fila)
         self.cuerpo.addStretch()
 
     def refrescar(self):
@@ -283,7 +273,8 @@ class PaginaMisEquipos(Pagina):
             item = self.lista.takeAt(0)
             if item.widget():
                 item.widget().deleteLater()
-        tarjetas = tarjetas_equipos(clave_de_equipos(self.selector.currentData()))
+        destino = self.selector.currentData()
+        tarjetas = tarjetas_equipos(clave_de_equipos(destino), destino=destino)
         for w in tarjetas:
             self.lista.addWidget(w)
         if not tarjetas:

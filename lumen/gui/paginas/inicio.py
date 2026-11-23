@@ -529,6 +529,8 @@ class PaginaInicio(Pagina):
         self, rapido: dict, biblioteca: dict, en_gris, texto_minutos
     ) -> QFrame:
         """Rayo, nombre y tiempo, y las 4 caras (en gris las que no tienes). Clic = ver los equipos."""
+        from lumen.gui.paginas.equipos import texto_por_pelea
+
         datos = rapido["datos"]
         tarjeta = QFrame(objectName="seccion")
         tarjeta.setCursor(Qt.PointingHandCursor)
@@ -549,15 +551,12 @@ class PaginaInicio(Pagina):
         titulo = QLabel(f"Más rápido · <b>{datos.get('nombre', '')}</b>")
         titulo.setWordWrap(True)
         textos.addWidget(titulo)
-        fuente = "medido en pruebas"
-        if rapido["fuente"] == "tuyo":
-            peleas = rapido.get("peleas", 0)
-            fuente = f"medido por ti en {peleas} peleas" + (
-                " (aún pocas)" if peleas < 5 else ""
-            )
-        textos.addWidget(
-            QLabel(f"{texto_minutos(rapido['minutos'])} · {fuente}", objectName="tenue")
-        )
+        # Lo que tarda una pelea, sin contar peleas (el usuario, 2026-11-22)
+        if rapido.get("medida"):
+            medido = f"{texto_por_pelea(rapido['medida'])} · medido por ti"
+        else:
+            medido = f"{texto_minutos(rapido['minutos'])} · medido en pruebas"
+        textos.addWidget(QLabel(medido, objectName="tenue"))
         fila.addLayout(textos)
         fila = QHBoxLayout()
         exterior.addLayout(fila)
