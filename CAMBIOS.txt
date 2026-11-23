@@ -29,6 +29,11 @@ Etapas previstas:
 
 CAMBIOS
 -------
+0.41.3-alpha
+  - Ciervo: con la barra de la fase 1, 2 o 3 al 10 % o menos, juega una sola carta (la fuerte del color del que mas
+    tiene) y mueve el resto del turno. Con el ciervo al 3 % en la fase 3 gastaba las 3 azules de Thor y en la fase 4
+    no tenia azul para el semaforo (el usuario, 2026-11-22).
+
 0.41.2-alpha
   - Ciervo Floor 4: si en un turno del semaforo faltaba el color que toca, movia una carta y luego jugaba cualquiera
     (una roja de oro, una azul), rompiendo la secuencia: el ciervo se quedaba al 85 % y acababa en derrota o reinicio

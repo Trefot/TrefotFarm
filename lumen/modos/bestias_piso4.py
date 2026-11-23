@@ -535,9 +535,37 @@ class EstrategiaCiervo4(EstrategiaPiso4):
         return {col: self._por_rango(mano, lambda c, col=col: color(c) == col, ultis_al_final)
                 for col in ("verde", "rojo", "azul")}
 
+    REMATE_POR_CIENTO = 10  # fases 1-3: con la barra de la fase por debajo, una carta basta
+    CAPA_DE_FASE = {1: "verde", 2: "azul", 3: "morado"}
+
+    def _vida_de_la_fase(self, fase) -> int | None:
+        """Lo que le queda a la barra de esta fase (0-100), si se leyo al empezar el turno y es la de esta fase."""
+        vida = getattr(self.modo, "vida_jefe", None) if self.modo is not None else None
+        if vida is None or getattr(vida, "capa", None) != self.CAPA_DE_FASE.get(fase):
+            return None
+        return vida.por_ciento
+
+    def _rematar(self, fase, accion, mano):
+        """El usuario (2026-11-22): con el ciervo al 3 % en la fase 3 gasto las 3 azules y en la fase 4 no tuvo azul
+        para el semaforo. Casi muerto, una sola carta (la fuerte del color del que mas hay, para no dejar sin un color
+        a la fase 4) y el resto del turno se mueve para cargar ultis."""
+        if any(c is not None for c in self.jugadas):
+            return self._mover_para_ulti(mano)
+        grupos = {col: [i for i, c in enumerate(mano) if jugable(c) and not es_ulti(c) and color(c) == col]
+                  for col in ("verde", "rojo", "azul")}
+        col = max(grupos, key=lambda k: len(grupos[k]))
+        if not grupos[col]:
+            return None
+        self._avisar(f"Fase {fase}: al jefe le queda poco: una carta ({col}) y guardo las demás para la fase 4.")
+        return max(grupos[col], key=lambda i: (rango(mano[i]), dano(mano[i]), i))
+
     def guion(self, fase, turno, accion, mano):
         from lumen.ia import requisitos
 
+        vida = self._vida_de_la_fase(fase)
+        if vida is not None and vida <= self.REMATE_POR_CIENTO:
+            if (jugada := self._rematar(fase, accion, mano)) is not None:
+                return jugada
         whale = self.estilo.whale(self.destino, fase, turno)
         if fase == 1:
             return self._golpe_maximo(mano) if whale else self._fase1(turno, accion, mano)

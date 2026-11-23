@@ -301,6 +301,35 @@ class Fase4Cadena(unittest.TestCase):
         self.assertIsNone(e.pedir_reinicio)
 
 
+class Remate(unittest.TestCase):
+    def test_casi_muerto_una_carta_y_mover(self):
+        """El usuario, 2026-11-22: fase 3 al 3 %, gasto las 3 azules (Thor) y en la fase 4 no tuvo azul."""
+        from types import SimpleNamespace
+
+        from lumen.vida_jefe import Vida
+
+        e = ciervo(RQ.CAUTELOSO)
+        e.modo = SimpleNamespace(vida_jefe=Vida("morado", 0.03), log=lambda *a, **k: None)
+        m = mano((THOR + ".skill_1", R.PLATA), (THOR + ".skill_2", R.PLATA), (THOR + ".skill_1", R.BRONCE),
+                 (TYR + ".skill_1", R.BRONCE), ("freyja_roja.normal_1", R.BRONCE), ("freyja_roja.normal_2", R.BRONCE),
+                 (FREYR + ".skill_1", R.PLATA), (TYR + ".ulti", R.ULTI))
+        primera = e.decidir(3, 2, 0, m)[0]
+        self.assertEqual(primera, 6, "una roja (el color del que mas hay), no las azules")
+        self.assertIsInstance(e.decidir(3, 2, 1, m)[0], tuple, "las demas acciones mueven")
+        self.assertIsInstance(e.decidir(3, 2, 2, m)[0], tuple)
+
+    def test_con_vida_juega_normal(self):
+        from types import SimpleNamespace
+
+        from lumen.vida_jefe import Vida
+
+        e = ciervo(RQ.CAUTELOSO)
+        e.modo = SimpleNamespace(vida_jefe=Vida("morado", 0.6), log=lambda *a, **k: None)
+        m = mano((THOR + ".skill_1", R.PLATA), (THOR + ".skill_2", R.PLATA), (TYR + ".skill_1", R.BRONCE))
+        e.decidir(3, 2, 0, m)
+        self.assertNotIsInstance(e.decidir(3, 2, 1, m)[0], tuple, "al 60 % ataca")
+
+
 class Fase4Postura(unittest.TestCase):
     def test_una_sola_carta_para_quitar_la_postura(self):
         """2026-11-22: la postura sigue en pantalla hasta que acaba el turno; gastaba 3 cartas de Freyr seguidas."""
