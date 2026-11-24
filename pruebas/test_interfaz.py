@@ -56,8 +56,10 @@ class Interfaz(unittest.TestCase):
             f = self.v.farmear
             f._ver_vista(0)
             self.eventos()
-            self.assertTrue(f.contenedor_equipos.isHidden())
-            f.ver_equipos()
+            # El usuario (2026-11-24): los equipos al lado del registro tambien en esta ventana
+            self.assertFalse(f.contenedor_equipos.isHidden(), f"ancho de la pagina {f.width()}")
+            self.assertFalse(f.equipos_en_tab)
+            f._ver_vista(4)  # la pestana Equipos sigue funcionando
             self.eventos()
             self.assertIs(f.pila_vista.currentWidget(), f.vista_equipos)
             self.assertFalse(f.contenedor_equipos.isHidden())
@@ -65,7 +67,7 @@ class Interfaz(unittest.TestCase):
             f._ver_vista(0)
             self.eventos()
             self.assertFalse(f.equipos_en_tab)
-            self.assertTrue(f.contenedor_equipos.isHidden())
+            self.assertFalse(f.contenedor_equipos.isHidden(), "vuelven al lado del registro")
         finally:
             self.v.resize(tamano)
             self.v.farmear._ver_vista(0)

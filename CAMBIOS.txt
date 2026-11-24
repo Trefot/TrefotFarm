@@ -29,6 +29,12 @@ Etapas previstas:
 
 CAMBIOS
 -------
+0.43.0-alpha
+  - Farmear: los equipos se ven al lado del registro tambien en ventanas medianas (antes solo desde 1120 px de
+    ancho); se actualizan al terminar cada sesion, con el equipo con el que jugaste (el usuario, 2026-11-24).
+  - Equipos: "Con el que juegas" sale desde la primera pelea, con su tiempo por pelea, y ya ordena por ese tiempo
+    (antes hacian falta 3 peleas para salir y 5 para ordenar).
+
 0.42.9-alpha
   - Pajaro Floor 4: con todas las cartas bloqueadas en la fase 3 tambien reinicia, como en la fase 2 (el usuario,
     2026-11-24: "es mejor reiniciar").

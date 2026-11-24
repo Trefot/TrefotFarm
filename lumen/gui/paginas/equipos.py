@@ -51,8 +51,9 @@ NIVELES = {
 
 
 PROPIOS = P.CARPETA / "equipos.yaml"  # equipos que crea el admin (fuera de git hasta publicarlos)
-MIN_PELEAS = 5  # peleas medidas para fiarse de las cifras y ordenar por ellas
-MIN_PELEAS_TUYO = 3  # para mostrar un equipo con el que jugaste (menos: una carta mal reconocida, no tu equipo)
+# El usuario (2026-11-24): "que los equipos se actualicen con 1 intento dando el tiempo"
+MIN_PELEAS = 1  # peleas medidas para ordenar por lo que tarda cada pelea
+MIN_PELEAS_TUYO = 1  # para mostrar un equipo con el que jugaste
 
 
 def _leer(ruta: Path) -> dict:

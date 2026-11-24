@@ -16,11 +16,13 @@ def medida(v, d=0, r=0, segundos=0):
 
 
 class MisEquipos(unittest.TestCase):
-    def test_sale_el_que_juegas_y_no_los_de_la_lista_ni_los_de_una_pelea(self):
-        medidas = {MIO: medida(10, 2, 3), LISTA: medida(5), frozenset({"x", "y", "z", "w"}): medida(1)}
+    def test_sale_el_que_juegas_desde_una_pelea_y_no_los_de_la_lista(self):
+        """El usuario, 2026-11-24: con 1 intento ya tiene que salir, con su tiempo."""
+        uno = frozenset({"x", "y", "z", "w"})
+        medidas = {MIO: medida(10, 2, 3), LISTA: medida(5), uno: medida(1), frozenset({"q", "r", "s", "t"}): medida(0)}
         with mock.patch.object(E, "medidas", lambda clave: medidas):
             tuyos = E.equipos_tuyos("ciervo_piso4", "ciervo_piso4", [sorted(LISTA)])
-        self.assertEqual([frozenset(d["personajes"]) for d, _ in tuyos], [MIO])
+        self.assertEqual({frozenset(d["personajes"]) for d, _ in tuyos}, {MIO, uno})
         self.assertEqual(tuyos[0][0]["nivel"], "tuyo")
 
     def test_fuerte_solgres_por_nombre_no_se_repite(self):

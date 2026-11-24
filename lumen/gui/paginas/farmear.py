@@ -56,6 +56,8 @@ def tareas_de_prueba() -> list[dict]:
     return [{"modo": d.id, "victorias": 1} for c in CATALOGO for d in c.destinos if d.id in MODOS]
 
 
+ANCHO_EQUIPOS_AL_LADO = 700  # ancho de la pagina desde el que los equipos van al lado del registro (era 1120)
+
 class VentanaInforme(QDialog):
     """El informe de la prueba rapida, con un boton para copiarlo (y pegarlo a quien mantiene el bot)."""
 
@@ -335,7 +337,9 @@ class PaginaFarmear(Pagina):
 
     def _adaptar_equipos(self):
         if hasattr(self, "contenedor_equipos"):
-            self.contenedor_equipos.setVisible(self.equipos_en_tab or self.width() >= 1120)
+            # Al lado del registro tambien en ventanas medianas (el usuario, 2026-11-24: "mas comodo que navegar
+            # por miles de apartados"); solo en una muy estrecha va a su pestana.
+            self.contenedor_equipos.setVisible(self.equipos_en_tab or self.width() >= ANCHO_EQUIPOS_AL_LADO)
 
     def resizeEvent(self, evento):
         super().resizeEvent(evento)
@@ -655,6 +659,7 @@ class PaginaFarmear(Pagina):
         if not self.modo_externo:  # solo las sesiones de farmeo, no las herramientas del admin
             self._mostrar_resumen()
         self._pintar_botin()
+        self._pintar_equipos()  # el equipo con el que se jugo y su tiempo, ya con esta sesion
         self._botones(False)
         self.inicio = None
         self.estado_bot = ""
@@ -917,7 +922,7 @@ class PaginaFarmear(Pagina):
     def ver_equipos(self):
         """Abre Farmear, donde estan los mejores equipos (p. ej. desde el icono Equipo de Inicio)."""
         self.app.navegar("farmear")
-        if self.width() < 1120:
+        if self.width() < ANCHO_EQUIPOS_AL_LADO:
             self._ver_vista(4)
 
     def _pintar_equipos(self):
@@ -925,7 +930,7 @@ class PaginaFarmear(Pagina):
             w = self.lista_equipos.takeAt(0).widget()
             if w:
                 w.setParent(None)
-        tarjetas = tarjetas_equipos(clave_de_equipos(self.modo_cls.id), compacto=True)[:5]
+        tarjetas = tarjetas_equipos(clave_de_equipos(self.modo_cls.id), compacto=True, destino=self.modo_cls.id)[:5]
         if not tarjetas:  # p. ej. Hraesvelgr solo tiene equipos para el Floor 4: tambien sirven en el 1-3
             contenido = contenido_de(self.modo_cls.id)
             for destino in (contenido.destinos if contenido else ()):
