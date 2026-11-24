@@ -29,6 +29,13 @@ Etapas previstas:
 
 CAMBIOS
 -------
+0.42.5-alpha
+  - Bestias Floor 4: con el juego en los pisos de otra bestia, el pajaro creia que eran los suyos y peleaba el ciervo
+    con el guion del pajaro (el usuario, 2026-11-24). Ahora su imagen tiene que ganar a la de las otras bestias, el
+    nombre de arriba tiene que ser el suyo, y el Floor 4 se abre por "Transcendent <su nombre>".
+  - Avisos de los lunes: "Challenge restrictions removed!" se cierra solo (imagen recortada de una captura del
+    usuario). "First Reward" ya se reconocia: ahora espera 3 s como mucho para la foto, no 6.
+
 0.42.4-alpha
   - ProbarSegundoPlano.bat: en 7DS el clic mandado a la ventana no hizo nada (2026-11-24). Ahora prueba dos formas
     mas: diciendole antes a la ventana que esta activa, y un toque con el dedo (Windows lo pone en la pantalla sin

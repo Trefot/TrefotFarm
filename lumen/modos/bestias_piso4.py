@@ -903,10 +903,10 @@ class Piso4(PerrosPiso4):
         if self.clic_si(juego.cancelar, p, o):
             self.log("Habia una pelea a medias; la doy por perdida y empiezo de nuevo.", "aviso")
             return None
-        if self._piso4().esta(p):
+        mia = juego.ORDEN_BESTIAS.index(self.bestia)
+        if self._es_mi_piso4(p):
             self.log(f"En la pantalla de pisos de {self.titulo_juego}.", "ok")
             return "elegir_piso"
-        mia = juego.ORDEN_BESTIAS.index(self.bestia)
         en_pisos = ATRAS.esta(p, 0.75) or any(x.esta(p) for x in self._otros_pisos4())
         if en_pisos:
             cabecera = B13.BestiaPisos1a3._bestia_de_los_pisos(self, p)
@@ -920,6 +920,19 @@ class Piso4(PerrosPiso4):
                 return None
         return super().ir_a_perros(p, o)
 
+    def _es_mi_piso4(self, p) -> bool:
+        """La pantalla de pisos es la de ESTA bestia. El usuario (2026-11-24): pidio el pajaro con el juego en los
+        pisos del ciervo y el bot dijo "En la pantalla de pisos de Hraesvelgr" y peleo el ciervo con el guion del
+        pajaro. Ahora su imagen tiene que ganar a la de las otras bestias y, si se lee, el nombre de arriba
+        tiene que ser el suyo."""
+        mio = self._piso4().confianza(p)[0]
+        if mio < 0.7 or any(x.confianza(p)[0] >= mio for x in self._otros_pisos4()):
+            return False
+        if not hasattr(p, "shape"):  # pantallas simuladas de las pruebas: no hay texto que leer
+            return True
+        cabecera = B13.BestiaPisos1a3._bestia_de_los_pisos(self, p)
+        return cabecera is None or cabecera == juego.ORDEN_BESTIAS.index(self.bestia)
+
     def elegir_piso(self, p, o):
         siguiente = super().elegir_piso(p, o)
         if siguiente is None and not juego.ok.esta(p) and not juego.empezar.esta(p) and not self._piso4().esta(p):
@@ -930,8 +943,11 @@ class Piso4(PerrosPiso4):
         """El Floor 4 es el panel de arriba, "Transcendent <bestia>": se busca por su texto."""
         if not ocr.disponible():
             return False
+        mia = B13.NOMBRES_CARRUSEL[juego.ORDEN_BESTIAS.index(self.bestia)]
+        otras = [n for nombres in B13.NOMBRES_CARRUSEL if nombres is not mia for n in nombres]
         for texto, (x, y, w, h) in ocr.lineas_con_posicion(p):
-            if "transcend" in texto.lower():
+            t = texto.lower()
+            if "transcend" in t and not any(n in t for n in otras):  # "Transcendent Eikthyrnir" no es el pajaro
                 self.log("Abro el Floor 4 (por su nombre).", "debug")
                 entrada.clic((x + w // 2, y + h + 50), o, espera=1.0)
                 return True

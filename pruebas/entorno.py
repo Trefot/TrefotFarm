@@ -68,6 +68,9 @@ class PlantillaFalsa:
     def buscar(self, pantalla, *_):
         return (1, 1, 2, 2) if self.esta(pantalla) else None
 
+    def confianza(self, pantalla):
+        return (1.0 if self.esta(pantalla) else 0.0), (1, 1, 2, 2)
+
 
 _app = None
 

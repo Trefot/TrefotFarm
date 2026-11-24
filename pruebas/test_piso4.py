@@ -197,6 +197,13 @@ class Navegacion(unittest.TestCase):
             B4.B13.BestiaPisos1a3._bestia_de_los_pisos = original
         self.assertIn(B4.ATRAS, clics, "vuelve atras")
 
+    def test_si_tambien_se_ve_la_imagen_de_otra_bestia_no_cree_que_son_sus_pisos(self):
+        """2026-11-24: pidio el pajaro con el juego en los pisos del ciervo y peleo el ciervo con el guion del
+        pajaro."""
+        m = self.modo("pajaro_piso4")
+        self.assertFalse(m._es_mi_piso4({"piso3_superado_pajaro", "piso3_superado_ciervo"}))
+        self.assertTrue(m._es_mi_piso4({"piso3_superado_pajaro"}))
+
     def test_en_sus_pisos_elige_el_piso(self):
         m = self.modo("pajaro_piso4")
         m.log = lambda *a, **k: None

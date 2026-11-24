@@ -265,6 +265,10 @@ def enfriamiento_talento(heroes: set) -> tuple[int, int | None]:
     return 3, None
 PRIMERA_RECOMPENSA = Plantilla("demonic_beasts/first_reward.png")  # titulo "First Reward" (primera vez de la semana)
 PUNTO_CONTINUAR = (275, 800)  # tocar abajo, fuera de las casillas, para pasar la pantalla
+ESPERA_PRIMERA = 3.0  # s como mucho esperando que "First Reward" se quede quieta para la foto (eran 6: parecia atascado)
+# "Challenge restrictions removed!": sale los lunes en los pisos de la bestia (ya se puede ir al Floor 4 sin pasar los
+# pisos 1-3). Recortada de una captura del usuario (2026-11-24); se cierra tocandola.
+RESTRICCIONES_QUITADAS = Plantilla("demonic_beasts/restricciones_quitadas.png")
 AUTO = Plantilla("demons/auto.jpg")  # el boton AUTO de la pelea (el mismo en demonios y bestias)
 AUTO_QUIETO = 4.0  # s con casillas libres sin que se llenen: el AUTO no esta puesto
 
@@ -379,6 +383,18 @@ class PerrosPiso4(Modo):
         )
 
     # ------------------------------------------------------------- navegacion
+    def comprobaciones_globales(self, pantalla, origen) -> bool:
+        if super().comprobaciones_globales(pantalla, origen):
+            return True
+        # Avisos de los lunes en las bestias que el bot no cerraba (el usuario, 2026-11-24)
+        import numpy as np
+
+        if isinstance(pantalla, np.ndarray) and self.clic_si(RESTRICCIONES_QUITADAS, pantalla, origen, umbral=0.8,
+                                                             espera=1.0):
+            self.log("Aviso de la semana («Challenge restrictions removed!»): lo cierro.", "aviso")
+            return True
+        return False
+
     def ir_a_perros(self, p, o):
         if self.clic_si(juego.cancelar, p, o):
             self.log("Habia una pelea a medias; la doy por perdida y empiezo de nuevo.", "aviso")
@@ -942,7 +958,7 @@ class PerrosPiso4(Modo):
             desde = getattr(self, "primera_vista_desde", None) or ahora
             self.primera_vista_desde = desde
             estable = botin.quieta_primera(getattr(self, "previa_primera", None), p)
-            if not estable and ahora - desde < 6:
+            if not estable and ahora - desde < ESPERA_PRIMERA:
                 self.previa_primera = p
                 return None
             self.foto_primera = True
