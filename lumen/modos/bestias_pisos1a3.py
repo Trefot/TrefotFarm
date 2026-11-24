@@ -111,6 +111,9 @@ class BestiaPisos1a3(PerrosPiso4):
     def al_empezar(self):
         if isinstance(self.estrategia, EstrategiaInteligente):
             self.estrategia.jugador.precargar()
+        elif self.jugar_auto:  # en AUTO tambien se reconoce el equipo (por sus cartas): se carga mientras va
+            self._reconocedor = inteligencia.Jugador(1)
+            self._reconocedor.precargar()
 
     def _nueva_pelea(self):
         super()._nueva_pelea()

@@ -229,6 +229,7 @@ def _misma_imagen(a, b) -> bool:
 # peleas seguidas sin ganar ya no es mala suerte (con 60 % de victorias: 1 vez entre 10 000): parar y avisar.
 SIN_GANAR_MAXIMO = 10
 VECES_HEROE = 5  # cartas de un heroe vistas en la sesion para contarlo en el equipo
+MIRAR_MANO_AUTO_S = 8.0  # jugando en AUTO, cada cuanto se mira la mano para saber con que equipo se juega
 
 
 def heroes_con_talento() -> set[str]:
@@ -613,10 +614,29 @@ class PerrosPiso4(Modo):
             return True
         return False
 
+    def _mirar_equipo_auto(self, p):
+        """Jugando en AUTO el bot no leia las cartas y la sesion se guardaba sin equipo: en Mis equipos no salia
+        el tuyo de los Floor 1-3 (el usuario, 2026-11-24). Cada pocos segundos se mira la mano solo para saber de
+        que heroes son; hasta reconocer a los 4."""
+        if self.equipo_de_la_sesion() or time.time() - getattr(self, "_mano_auto_en", 0.0) < MIRAR_MANO_AUTO_S:
+            return
+        self._mano_auto_en = time.time()
+        try:
+            from lumen import inteligencia
+
+            if getattr(self, "_reconocedor", None) is None:
+                self._reconocedor = inteligencia.Jugador(1)
+            mano = C.leer_mano(p)
+            inteligencia.agrupar_por_dibujo(mano, self._reconocedor._identificar)
+            self._anotar_heroes(mano)
+        except Exception:
+            pass
+
     def _pelea_auto(self, p, o):
         """Con el AUTO del juego: no se juegan cartas. AUTO se toca cuando hay casillas libres que nadie llena
         en AUTO_QUIETO s: asi se pone al principio y, si el juego lo dejo puesto de la pelea anterior (o un toque
         lo quito), no se queda apagado. Con AUTO puesto el juego llena las casillas enseguida."""
+        self._mirar_equipo_auto(p)
         huecos = C.contar_huecos(p, 0.75)
         if huecos == 0:
             self.auto_huecos, self.auto_quieto_desde = 0, None

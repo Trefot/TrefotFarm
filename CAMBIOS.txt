@@ -29,6 +29,10 @@ Etapas previstas:
 
 CAMBIOS
 -------
+0.42.8-alpha
+  - Bestias Floor 1-3 en AUTO: ahora tambien se reconoce con que equipo juegas (mira la mano cada 8 s, sin tocar
+    nada), asi sale "Con el que juegas" en Mis equipos con su tiempo por pelea (el usuario, 2026-11-24).
+
 0.42.7-alpha
   - Pajaro Floor 4, fase 3: las dos cartas de Thor (Lightning Strike y Thunderbolt) tambien quitan inmortalidades
     (lo vio el usuario, 2026-11-24). Se juegan primero, como las de Amplify y Power Strike.
