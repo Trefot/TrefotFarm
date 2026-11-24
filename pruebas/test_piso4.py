@@ -110,6 +110,8 @@ class Pajaro(unittest.TestCase):
                  ("god_of_war_tyr_verde.skill_2", R.BRONCE), ("odin.single", R.BRONCE))
         with mock.patch.object(B4.juego.inmortalidad, "buscar_todas", lambda p, u: [1, 2, 3]):
             self.assertIsInstance(e.guion(3, 2, 0, m), tuple, "mueve, no la ulti")
+            thor = mano(("gawain.ulti", R.ULTI), ("thor_the_god_of_thunder_azul.skill_2", R.BRONCE))
+            self.assertEqual(e.guion(3, 2, 0, thor), 1, "Thunderbolt de Thor tambien las quita (el usuario)")
             amplify = mano(("god_of_war_tyr_verde.skill_1", R.PLATA), ("gawain.ulti", R.ULTI))
             self.assertEqual(e.guion(3, 2, 0, amplify), 0, "la de Tyr (Amplify) quita una inmortalidad")
         e.modo = SimpleNamespace(vida_jefe=Vida("morado", 0.60), log=lambda *a, **k: None)

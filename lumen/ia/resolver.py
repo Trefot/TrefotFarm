@@ -12,6 +12,9 @@ class Eleccion:
     motivo: str
 
 
+QUITAN_INMORTALIDAD_EXTRA = ("lightning strike", "thunderbolt")  # pajaro F4 fase 3 (lo vio el usuario)
+
+
 def satisface(efectos, necesidad):
     dano = next((i for i, e in enumerate(efectos) if e.tipo == "dano"), None)
     if necesidad == "limpiar":
@@ -30,8 +33,11 @@ def satisface(efectos, necesidad):
             )
         )
     if necesidad == "amplify_power_strike":
+        # Amplify y Power Strike (de AutoFarming); Lightning Strike y Thunderbolt, las dos de Thor, tambien: el
+        # usuario, 2026-11-24 ("las 2 cartas de Thor quitan inmortalidad, no se por que pero las quitan").
         return dano is not None and any(
-            e.tipo == "dano_extra" and e.detalle in ("amplify", "power strike")
+            (e.tipo == "dano_extra" and e.detalle in ("amplify", "power strike"))
+            or (e.tipo == "palabra_clave" and e.detalle in QUITAN_INMORTALIDAD_EXTRA)
             for e in efectos
         )
     return False

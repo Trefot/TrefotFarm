@@ -65,7 +65,8 @@ pajaro_piso4:  # "pajaro_f4" en bestias_7dshub.yaml. Lo juega EstrategiaPajaro4 
   3:
   - tipo: quitar_inmortalidad
     obligatorio: true
-    nota: 'Empieza con 8 inmortalidades que se quitan con ciertos golpes (Amplify, Power Strike); con 15 se pone +100 %
+    nota: 'Empieza con 8 inmortalidades que se quitan con ciertos golpes (Amplify, Power Strike, y las dos de Thor:
+      Lightning Strike y Thunderbolt, lo vio el usuario el 2026-11-24); con 15 se pone +100 %
       a todo (7dshub). Tambien bloquea habilidades 2 turnos: curar.'
   4:
   - tipo: quitar_evasion

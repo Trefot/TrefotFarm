@@ -29,6 +29,10 @@ Etapas previstas:
 
 CAMBIOS
 -------
+0.42.7-alpha
+  - Pajaro Floor 4, fase 3: las dos cartas de Thor (Lightning Strike y Thunderbolt) tambien quitan inmortalidades
+    (lo vio el usuario, 2026-11-24). Se juegan primero, como las de Amplify y Power Strike.
+
 0.42.6-alpha
   - Pajaro Floor 4, fase 3: "siempre hay que quitar las inmortalidades" (el usuario, 2026-11-24). Con el pajaro al
     15 % o menos y aun con inmortalidades, ya no gasta ultis (no muere con ellas): mueve cartas para que salgan las
