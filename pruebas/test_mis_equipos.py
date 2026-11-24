@@ -25,6 +25,11 @@ class MisEquipos(unittest.TestCase):
         self.assertEqual({frozenset(d["personajes"]) for d, _ in tuyos}, {MIO, uno})
         self.assertEqual(tuyos[0][0]["nivel"], "tuyo")
 
+    def test_sin_ninguna_victoria_no_sale(self):
+        """2026-11-24: la pelea del lio (el ciervo jugado como pajaro, 1 derrota) salia como tu equipo del pajaro."""
+        with mock.patch.object(E, "medidas", lambda clave: {MIO: medida(0, 1)}):
+            self.assertEqual(E.equipos_tuyos("pajaro_piso4"), [])
+
     def test_fuerte_solgres_por_nombre_no_se_repite(self):
         with mock.patch.object(E, "medidas", lambda clave: {frozenset({"equipo:Farm.Oro"}): medida(9)}):
             self.assertEqual(E.equipos_tuyos("monedas_sa"), [])

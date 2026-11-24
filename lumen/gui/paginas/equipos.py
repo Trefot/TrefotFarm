@@ -244,12 +244,12 @@ def _nombre(pid: str, biblioteca: dict, nombres: dict) -> str:
 
 
 def _retrato(pj: P.Personaje | None, nombre: str, tengo: bool, tam=(68, 68), extra: str = "",
-             detalle: str = "", margen: int = 40) -> QWidget:
+             detalle: str = "", margen: int = 40, con_nombre: bool = True) -> QWidget:
     caja = QWidget(objectName="caja_retrato")
     caja.setStyleSheet("QWidget#caja_retrato { background: transparent; }")  # sin el fondo oscuro detras de cada cara
     caja.setFixedWidth(tam[0] + margen)
-    if detalle:
-        caja.setToolTip(detalle)
+    if detalle or not con_nombre:
+        caja.setToolTip(nombre + (f"\n{detalle}" if detalle else "") if not con_nombre else detalle)
     capa = QVBoxLayout(caja)
     capa.setContentsMargins(0, 0, 0, 0)
     capa.setSpacing(2)
@@ -270,7 +270,8 @@ def _retrato(pj: P.Personaje | None, nombre: str, tengo: bool, tam=(68, 68), ext
     texto.setFixedWidth(tam[0] + margen)
     texto.setMinimumHeight(texto.fontMetrics().lineSpacing() * 3 + 4)  # que no se monte sobre la cara
     texto.setStyleSheet(f"color: {tema.TEXTO if tengo else tema.TENUE}; font-size: 8.5pt;")
-    capa.addWidget(texto, 0, Qt.AlignHCenter)
+    if con_nombre:
+        capa.addWidget(texto, 0, Qt.AlignHCenter)
     if extra:
         mas = QLabel(extra, alignment=Qt.AlignCenter)
         mas.setStyleSheet(f"color: {tema.ACENTO}; font-size: 8pt; font-weight: 700;")
@@ -278,7 +279,7 @@ def _retrato(pj: P.Personaje | None, nombre: str, tengo: bool, tam=(68, 68), ext
     capa.addStretch()
     # Alto fijo: con las notas abiertas el layout encogia la tarjeta y el nombre se montaba sobre la cara.
     linea = texto.fontMetrics().lineSpacing()
-    caja.setFixedHeight(tam[1] + linea * 4 + 16)
+    caja.setFixedHeight(tam[1] + (linea * 4 + 16 if con_nombre else (linea + 8 if extra else 6)))
     return caja
 
 
@@ -310,7 +311,8 @@ class TarjetaEquipo(QFrame):
         nivel.setStyleSheet(f"background: {nivel_color}; color: {tema.FONDO}; border-radius: 9px; padding: 2px 10px; font-weight: 700;")
         cab.addWidget(nivel, 0, Qt.AlignVCenter)
         titulo = QLabel(datos.get("nombre", ""), objectName="nombre_pj" if compacto else "titulo_tarjeta", wordWrap=compacto)
-        cab.addWidget(titulo, 1 if compacto else 0)
+        if not compacto:
+            cab.addWidget(titulo, 0)
         # Sin "El bot lo juega": el bot juega con el equipo que le pongan (el usuario, 2026-11-22)
         if datos.get("propio"):
             tuyo = QLabel("  Tuyo · publicándose")
@@ -327,7 +329,8 @@ class TarjetaEquipo(QFrame):
             texto = f"Te falta: {nombres[0]}" if len(nombres) == 1 else f"Te faltan {len(nombres)}"
             estado.setText(f"<span style='color:{tema.AVISO}'>{texto}</span>")
             estado.setToolTip("Te falta:\n" + "\n".join(f"• {n}" for n in nombres))
-        cab.addWidget(estado)
+        if not compacto:
+            cab.addWidget(estado)
         for funcion, icono, ayuda in ((al_editar, "mdi6.pencil", "Editar este equipo"),
                                       (al_borrar, "mdi6.delete-outline", "Borrar este equipo")):
             if funcion:
@@ -342,6 +345,10 @@ class TarjetaEquipo(QFrame):
         self.flecha.clicked.connect(self._alternar)
         cab.addWidget(self.flecha)
         capa.addLayout(cab)
+        if compacto:  # columna estrecha de Farmear: nombre y estado en su linea, si no se salian por la derecha
+            capa.addWidget(titulo)
+            estado.setWordWrap(True)
+            capa.addWidget(estado)
         if medida and medida["victorias"] + medida["derrotas"] + medida["reinicios"]:
             # Solo lo que tarda una pelea (el usuario, 2026-11-22: ni victorias por hora, ni %, ni cuantas peleas)
             texto = f"Medido por el bot: <b>{texto_por_pelea(medida)}</b>"
@@ -375,7 +382,9 @@ class TarjetaEquipo(QFrame):
                 extra = f"+{len(otros)} opción" + ("es" if len(otros) > 1 else "")
                 detalle = "También vale:\n" + "\n".join(f"• {o}" for o in otros)
             if compacto:
-                fila.addWidget(_retrato(pj, nombre, tengo, tam=(54, 54), extra=extra, detalle=detalle, margen=24))
+                # Columna estrecha de Farmear: 4 caras caben en ~220 px; el nombre, al pasar el raton
+                fila.addWidget(_retrato(pj, nombre, tengo, tam=(46, 46), extra=extra, detalle=detalle, margen=4,
+                                        con_nombre=False))
             else:
                 fila.addWidget(_retrato(pj, nombre, tengo, extra=extra, detalle=detalle))
         fila.addStretch()
@@ -437,8 +446,8 @@ def equipos_tuyos(clave: str, destino: str | None = None, conocidos=()) -> list[
     for ids, m in medido.items():
         if ids in conocidos or any(i.startswith("equipo:") for i in ids) or len(ids) < 4:
             continue  # "equipo:Nombre" (Fuerte Solgres) ya sale con su equipo de la lista
-        if _peleas(m) < MIN_PELEAS_TUYO:
-            continue
+        if _peleas(m) < MIN_PELEAS_TUYO or not m.get("victorias"):
+            continue  # sin ninguna victoria no es un equipo para recomendar (y su tiempo no dice nada)
         datos = {"nombre": "Con el que juegas", "nivel": "tuyo", "personajes": sorted(ids)}
         salida.append((datos, m))
     return salida

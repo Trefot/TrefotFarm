@@ -29,6 +29,11 @@ Etapas previstas:
 
 CAMBIOS
 -------
+0.43.1-alpha
+  - Farmear: los equipos de al lado del registro caben en la columna estrecha (caras mas pequenas, el nombre del
+    heroe al pasar el raton, el estado en su linea); los botones Registro/Plan/... quedan solo con su icono cuando
+    falta sitio (se cortaban). Un equipo sin ninguna victoria ya no sale como "Con el que juegas".
+
 0.43.0-alpha
   - Farmear: los equipos se ven al lado del registro tambien en ventanas medianas (antes solo desde 1120 px de
     ancho); se actualizan al terminar cada sesion, con el equipo con el que jugaste (el usuario, 2026-11-24).

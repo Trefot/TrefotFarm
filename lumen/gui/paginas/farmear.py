@@ -57,6 +57,7 @@ def tareas_de_prueba() -> list[dict]:
 
 
 ANCHO_EQUIPOS_AL_LADO = 700  # ancho de la pagina desde el que los equipos van al lado del registro (era 1120)
+ANCHO_BOTONES_CON_TEXTO = 1120  # por debajo, los botones de Registro/Plan/... solo con su icono
 
 class VentanaInforme(QDialog):
     """El informe de la prueba rapida, con un boton para copiarlo (y pegarlo a quien mantiene el bot)."""
@@ -256,11 +257,14 @@ class PaginaFarmear(Pagina):
             lambda: (self.modo_cls.id, self.modo_cls.id in {"indura", "demonio_rojo", "demonio_gris", "howlex", "bellmoth", "demonio_original"}),
             lambda: self.puente.corriendo or self.plan_paso is not None,
         )
+        self._textos_vista = []  # para quitar el texto a los botones en ventanas estrechas (solo el icono)
         for i, (texto, ic, vista) in enumerate((("Registro", "registro", self.registro), ("Plan", "mdi6.format-list-checks", QWidget()),
                                                ("Opciones", "ajustes", panel_opciones),
                                                ("Aprendido", "mdi6.school-outline", self.aprendido),
                                                ("Equipos", "equipos", self.vista_equipos))):
             b = QPushButton(" " + texto, objectName="chip", checkable=True, checked=i == 0)
+            b.setToolTip(texto)
+            self._textos_vista.append(texto)
             b.setIcon(iconos.icono(ic, tema.TENUE, tema.SOBRE_ACENTO))
             b.clicked.connect(lambda _, n=i: self._ver_vista(n))
             self.grupo_vista.addButton(b)
@@ -293,6 +297,7 @@ class PaginaFarmear(Pagina):
         abajo.setSpacing(14)
         abajo.addLayout(izquierda, 4)
         self.contenedor_equipos = QFrame()
+        self.contenedor_equipos.setMinimumWidth(250)  # 4 caras pequenas y el tiempo, sin cortarse
         self.contenedor_equipos.setLayout(derecha)
         abajo.addWidget(self.contenedor_equipos, 5)
         self.cuerpo.addLayout(abajo, 1)
@@ -340,6 +345,11 @@ class PaginaFarmear(Pagina):
             # Al lado del registro tambien en ventanas medianas (el usuario, 2026-11-24: "mas comodo que navegar
             # por miles de apartados"); solo en una muy estrecha va a su pestana.
             self.contenedor_equipos.setVisible(self.equipos_en_tab or self.width() >= ANCHO_EQUIPOS_AL_LADO)
+            # Con los equipos al lado y poco ancho, los botones de abajo se cortaban ("Registr", "Opcione"): solo icono
+            estrecho = self.width() < ANCHO_BOTONES_CON_TEXTO and not self.equipos_en_tab
+            for b, texto in zip(self.grupo_vista.buttons(), getattr(self, "_textos_vista", [])):
+                b.setText("" if estrecho else " " + texto)
+            self.chk_debug.setText("Detalle" if estrecho else "Detalle técnico")
 
     def resizeEvent(self, evento):
         super().resizeEvent(evento)
