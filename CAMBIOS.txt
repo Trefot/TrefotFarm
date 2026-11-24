@@ -29,6 +29,10 @@ Etapas previstas:
 
 CAMBIOS
 -------
+0.42.9-alpha
+  - Pajaro Floor 4: con todas las cartas bloqueadas en la fase 3 tambien reinicia, como en la fase 2 (el usuario,
+    2026-11-24: "es mejor reiniciar").
+
 0.42.8-alpha
   - Bestias Floor 1-3 en AUTO: ahora tambien se reconoce con que equipo juegas (mira la mano cada 8 s, sin tocar
     nada), asi sale "Con el que juegas" en Mis equipos con su tiempo por pelea (el usuario, 2026-11-24).

@@ -266,9 +266,11 @@ class ReinicioPorBloqueo(unittest.TestCase):
             self.assertTrue(m._reiniciar_por_bloqueo(object()))
             B4.C.leer_mano = lambda p: self.leer(7, libres=1)
             self.assertFalse(m._reiniciar_por_bloqueo(object()), "con una carta jugable se sigue")
-            m.fase = 3
+            m.fase = 3  # el usuario, 2026-11-24: en la fase 3 tambien es mejor reiniciar
             B4.C.leer_mano = lambda p: self.leer(8)
-            self.assertFalse(m._reiniciar_por_bloqueo(object()), "solo en la fase 2")
+            self.assertTrue(m._reiniciar_por_bloqueo(object()), "fase 3 tambien")
+            m.fase = 4
+            self.assertFalse(m._reiniciar_por_bloqueo(object()), "en la 4 no")
         finally:
             B4.C.leer_mano = original
 

@@ -998,8 +998,7 @@ class Piso4(PerrosPiso4):
         except Exception:
             return False
         if len(mano) >= 4 and all(c.tipo == TipoCarta.BLOQUEADA for c in mano):
-            self.log(f"Fase {self.fase}: todas las cartas bloqueadas (mala suerte con las de plata). "
-                     "Reinicio para no perder tiempo.", "aviso")
+            self.log(f"Fase {self.fase}: todas las cartas bloqueadas. Reinicio para no perder tiempo.", "aviso")
             self.diario.nota("Reinicio: todas las cartas bloqueadas")
             return True
         return False
@@ -1027,7 +1026,7 @@ class PajaroPiso4(Piso4):
     bestia = juego.pajaro
     piso3_superado = juego.piso3_superado_pajaro
     clase_estrategia = EstrategiaPajaro4
-    fases_reinicio_bloqueo = frozenset({2})
+    fases_reinicio_bloqueo = frozenset({2, 3})  # la 3 tambien: el usuario, 2026-11-24 ("es mejor reiniciar")
 
 
 class CiervoPiso4(Piso4):
