@@ -25,6 +25,11 @@ PW_RENDERFULLCONTENT = 2  # pide tambien lo que dibuja la tarjeta grafica (Direc
 PARECIDA = 25.0  # diferencia media (0-255) por debajo: es la misma imagen (con animaciones del juego)
 CAMBIO = 12.0  # diferencia media por encima tras el clic: la pantalla del juego cambio
 WM_MOUSEMOVE, WM_LBUTTONDOWN, WM_LBUTTONUP, MK_LBUTTON = 0x0200, 0x0201, 0x0202, 0x0001
+WM_ACTIVATE, WM_SETFOCUS, WM_NCACTIVATE, WM_ACTIVATEAPP, WM_SETCURSOR = 0x0006, 0x0007, 0x0086, 0x001C, 0x0020
+WA_ACTIVE, HTCLIENT = 1, 1
+# Toque con el dedo (InjectTouchInput): Windows lo pone en ese punto de la pantalla sin mover el raton
+PT_TOUCH, TOUCH_FEEDBACK_NONE = 2, 3
+POINTER_FLAG_INRANGE, POINTER_FLAG_INCONTACT, POINTER_FLAG_DOWN, POINTER_FLAG_UP = 0x2, 0x4, 0x10000, 0x40000
 
 
 def diferencia(a: np.ndarray | None, b: np.ndarray | None) -> float:
@@ -97,6 +102,66 @@ def clic_mensaje(hwnd: int, x_pantalla: int, y_pantalla: int, enviar: bool = Fal
     return destino
 
 
+def clic_activando(hwnd: int, x_pantalla: int, y_pantalla: int) -> int:
+    """Como clic_mensaje, pero antes le dice a la ventana que esta activa y tiene el foco (Unity a veces ignora el
+    raton de una ventana que cree inactiva) y deja el boton pulsado mas tiempo (lo lee una vez por fotograma)."""
+    import win32api
+    import win32gui
+
+    cx, cy = win32gui.ScreenToClient(hwnd, (x_pantalla, y_pantalla))
+    enviar = win32api.SendMessage
+    enviar(hwnd, WM_ACTIVATEAPP, 1, 0)
+    enviar(hwnd, WM_NCACTIVATE, 1, 0)
+    enviar(hwnd, WM_ACTIVATE, WA_ACTIVE, 0)
+    enviar(hwnd, WM_SETFOCUS, 0, 0)
+    for _ in range(3):
+        enviar(hwnd, WM_SETCURSOR, hwnd, (WM_MOUSEMOVE << 16) | HTCLIENT)
+        enviar(hwnd, WM_MOUSEMOVE, 0, lparam(cx, cy))
+        time.sleep(0.03)
+    enviar(hwnd, WM_LBUTTONDOWN, MK_LBUTTON, lparam(cx, cy))
+    time.sleep(0.2)
+    enviar(hwnd, WM_LBUTTONUP, 0, lparam(cx, cy))
+    return hwnd
+
+
+def _estructuras_toque():
+    from ctypes import wintypes
+
+    class POINTER_INFO(ctypes.Structure):
+        _fields_ = [("pointerType", ctypes.c_uint32), ("pointerId", ctypes.c_uint32), ("frameId", ctypes.c_uint32),
+                    ("pointerFlags", ctypes.c_uint32), ("sourceDevice", wintypes.HANDLE), ("hwndTarget", wintypes.HWND),
+                    ("ptPixelLocation", wintypes.POINT), ("ptHimetricLocation", wintypes.POINT),
+                    ("ptPixelLocationRaw", wintypes.POINT), ("ptHimetricLocationRaw", wintypes.POINT),
+                    ("dwTime", wintypes.DWORD), ("historyCount", ctypes.c_uint32), ("InputData", ctypes.c_int32),
+                    ("dwKeyStates", wintypes.DWORD), ("PerformanceCount", ctypes.c_uint64),
+                    ("ButtonChangeType", ctypes.c_int)]
+
+    class POINTER_TOUCH_INFO(ctypes.Structure):
+        _fields_ = [("pointerInfo", POINTER_INFO), ("touchFlags", ctypes.c_uint32), ("touchMask", ctypes.c_uint32),
+                    ("rcContact", wintypes.RECT), ("rcContactRaw", wintypes.RECT), ("orientation", ctypes.c_uint32),
+                    ("pressure", ctypes.c_uint32)]
+
+    return POINTER_TOUCH_INFO
+
+
+def toque(x_pantalla: int, y_pantalla: int) -> bool:
+    """Un toque con el dedo en ese punto de la pantalla (InjectTouchInput). No mueve el raton, pero va a la ventana
+    que este en ese punto: el juego tiene que verse. True si Windows lo acepto."""
+    user32 = ctypes.windll.user32
+    if not user32.InitializeTouchInjection(1, TOUCH_FEEDBACK_NONE):
+        return False
+    info = _estructuras_toque()()
+    info.pointerInfo.pointerType = PT_TOUCH
+    info.pointerInfo.pointerId = 0
+    info.pointerInfo.ptPixelLocation.x, info.pointerInfo.ptPixelLocation.y = int(x_pantalla), int(y_pantalla)
+    info.pointerInfo.pointerFlags = POINTER_FLAG_DOWN | POINTER_FLAG_INRANGE | POINTER_FLAG_INCONTACT
+    if not user32.InjectTouchInput(1, ctypes.byref(info)):
+        return False
+    time.sleep(0.12)
+    info.pointerInfo.pointerFlags = POINTER_FLAG_UP
+    return bool(user32.InjectTouchInput(1, ctypes.byref(info)))
+
+
 # ------------------------------------------------------------------ la prueba guiada
 def _esperar(texto: str):
     input(f"\n{texto}\n  (pulsa Enter cuando este listo) ")
@@ -147,25 +212,37 @@ def probar_tocar(hwnd) -> list[str]:
         return ["TOCAR: no se hizo (no veo el boton Battle de la Tavern)."]
     x, y, w, h = rect
     xp, yp = origen.a_pantalla(x + w // 2, y + h // 2)
+    import win32gui
+
     lineas = []
-    for nombre, enviar in (("PostMessage", False), ("SendMessage", True)):
+    # 2026-11-24: PostMessage y SendMessage no hicieron nada en 7DS (Unity). Se prueban otras dos formas.
+    formas = (("PostMessage", lambda: clic_mensaje(hwnd, xp, yp)),
+              ("SendMessage", lambda: clic_mensaje(hwnd, xp, yp, enviar=True)),
+              ("SendMessage con la ventana activa", lambda: clic_activando(hwnd, xp, yp)),
+              ("toque con el dedo", lambda: hwnd if toque(xp, yp) else None))
+    for nombre, tocar in formas:
         antes = capturar_ventana(hwnd)
         cursor = _cursor()
-        destino = clic_mensaje(hwnd, xp, yp, enviar=enviar)
+        delante = win32gui.GetForegroundWindow()
+        destino = tocar()
         time.sleep(2.5)
         despues = capturar_ventana(hwnd)
-        _guardar(f"3_tocar_{nombre}", despues)
+        _guardar(f"3_tocar_{nombre.split()[0]}_{len(lineas)}", despues)
+        if destino is None:
+            lineas.append(f"TOCAR con {nombre}: Windows no lo acepto.")
+            continue
         movio = _cursor() != cursor
+        robo = win32gui.GetForegroundWindow() != delante
         d = diferencia(antes, despues)
         cambio = d > CAMBIO
         hija = " (a una ventana hija)" if destino != hwnd else ""
         lineas.append(f"TOCAR con {nombre}{hija}: {'OK, el juego reacciono' if cambio else 'el juego NO reacciono'} "
-                      f"(cambio {d:.1f}){'; OJO: el raton se movio' if movio else ''}.")
+                      f"(cambio {d:.1f}){'; OJO: el raton se movio' if movio else ''}"
+                      f"{'; la ventana del juego paso delante' if robo else ''}.")
         if cambio:
             lineas.append("  (vuelve tu a la Tavern si se abrio el menu Battle)")
             break
-        if nombre == "PostMessage":
-            time.sleep(0.5)
+        time.sleep(0.5)
     return lineas
 
 

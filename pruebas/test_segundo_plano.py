@@ -48,6 +48,26 @@ class Clic(unittest.TestCase):
         api.mouse_event.assert_not_called()
         gui.ScreenToClient.side_effect = None
 
+    def test_clic_activando_dice_que_esta_activa_antes_del_clic(self):
+        gui, api = sys.modules["win32gui"], sys.modules["win32api"]
+        gui.reset_mock()
+        api.reset_mock()
+        gui.ScreenToClient.side_effect = lambda h, p: (p[0] - 100, p[1] - 50)
+        with mock.patch.object(sp.time, "sleep"):
+            sp.clic_activando(1, 300, 400)
+        mensajes = [c.args[1] for c in api.SendMessage.call_args_list]
+        self.assertEqual(mensajes[:4], [sp.WM_ACTIVATEAPP, sp.WM_NCACTIVATE, sp.WM_ACTIVATE, sp.WM_SETFOCUS])
+        self.assertEqual(mensajes[-2:], [sp.WM_LBUTTONDOWN, sp.WM_LBUTTONUP])
+        api.mouse_event.assert_not_called()
+        gui.ScreenToClient.side_effect = None
+
+    def test_estructura_del_toque_como_la_de_windows(self):
+        import ctypes
+
+        toque = sp._estructuras_toque()
+        if ctypes.sizeof(ctypes.c_void_p) == 8:
+            self.assertEqual(ctypes.sizeof(toque), 144)
+
 
 if __name__ == "__main__":
     unittest.main()

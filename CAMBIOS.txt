@@ -29,6 +29,11 @@ Etapas previstas:
 
 CAMBIOS
 -------
+0.42.4-alpha
+  - ProbarSegundoPlano.bat: en 7DS el clic mandado a la ventana no hizo nada (2026-11-24). Ahora prueba dos formas
+    mas: diciendole antes a la ventana que esta activa, y un toque con el dedo (Windows lo pone en la pantalla sin
+    mover el raton). Avisa si el raton se movio o si la ventana del juego paso delante.
+
 0.42.3-alpha
   - ProbarSegundoPlano.bat: prueba si el bot podria ver el juego tapado por otra ventana y tocarlo sin mover el
     raton (para usar el PC mientras farmea). No cambia nada del bot: deja un informe en logs/segundo_plano/.
