@@ -29,6 +29,12 @@ Etapas previstas:
 
 CAMBIOS
 -------
+0.42.6-alpha
+  - Pajaro Floor 4, fase 3: "siempre hay que quitar las inmortalidades" (el usuario, 2026-11-24). Con el pajaro al
+    15 % o menos y aun con inmortalidades, ya no gasta ultis (no muere con ellas): mueve cartas para que salgan las
+    que las quitan (Amplify, Power Strike). Al empezar cada turno de la fase 3 apunta cuantas ve y la vida que le
+    queda, para revisarlo.
+
 0.42.5-alpha
   - Bestias Floor 4: con el juego en los pisos de otra bestia, el pajaro creia que eran los suyos y peleaba el ciervo
     con el guion del pajaro (el usuario, 2026-11-24). Ahora su imagen tiene que ganar a la de las otras bestias, el

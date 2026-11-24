@@ -1,6 +1,7 @@
 """Floor 4 del pajaro y del ciervo: lo que pide cada fase (7dshub) y las reglas del usuario."""
 
 import unittest
+from unittest import mock
 
 import entorno  # noqa: F401  (antes que lumen)
 
@@ -93,6 +94,27 @@ class Pajaro(unittest.TestCase):
             self.assertEqual(e.guion(3, 1, 0, m), 1, "Amplify mientras tenga inmortalidad")
         finally:
             juego.inmortalidad.buscar_todas = original
+
+    def test_fase3_casi_muerto_con_inmortalidades_no_gasta_ultis(self):
+        """2026-11-24: al 10 % y con inmortalidades gastaba las ultis de Gawain y Thor; sin cartas que las quiten,
+        mueve para que salgan."""
+        from types import SimpleNamespace
+
+        from lumen.vida_jefe import Vida
+
+        e = estrategia(B4.EstrategiaPajaro4)
+        e.modo = SimpleNamespace(vida_jefe=Vida("morado", 0.10), log=lambda *a, **k: None)
+        e.ve = lambda *a, **k: False
+        e.pantalla = lambda: "pantalla"
+        m = mano(("gawain.ulti", R.ULTI), ("thor_the_god_of_thunder_azul.ulti", R.ULTI),
+                 ("god_of_war_tyr_verde.skill_2", R.BRONCE), ("odin.single", R.BRONCE))
+        with mock.patch.object(B4.juego.inmortalidad, "buscar_todas", lambda p, u: [1, 2, 3]):
+            self.assertIsInstance(e.guion(3, 2, 0, m), tuple, "mueve, no la ulti")
+            amplify = mano(("god_of_war_tyr_verde.skill_1", R.PLATA), ("gawain.ulti", R.ULTI))
+            self.assertEqual(e.guion(3, 2, 0, amplify), 0, "la de Tyr (Amplify) quita una inmortalidad")
+        e.modo = SimpleNamespace(vida_jefe=Vida("morado", 0.60), log=lambda *a, **k: None)
+        with mock.patch.object(B4.juego.inmortalidad, "buscar_todas", lambda p, u: [1, 2, 3]):
+            self.assertNotIsInstance(e.guion(3, 2, 0, m), tuple, "al 60 % aun se le pega")
 
     def test_fase4_evasion_con_la_ulti_de_meliodas(self):
         e = estrategia(B4.EstrategiaPajaro4, ve=(juego.evasion,))

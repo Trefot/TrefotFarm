@@ -466,6 +466,13 @@ class EstrategiaPajaro4(EstrategiaPiso4):
         except Exception:
             inmortalidades = 0
         quedan = inmortalidades - sum(contra_inmortalidad(c) for c in self.jugadas)
+        vida = self._vida_fase(3)
+        if accion == 0 and self.modo is not None:  # para ver en el registro que vio y por que jugo asi
+            try:
+                self.modo.log(f"Fase 3: veo {inmortalidades} inmortalidad(es)"
+                              + (f"; al pájaro le queda {vida} %" if vida is not None else "") + ".", "info")
+            except Exception:
+                pass
 
         def guardar(c):
             return es_ulti(c) and quita_buffs(c)  # para la evasion de la fase 4
@@ -473,6 +480,11 @@ class EstrategiaPajaro4(EstrategiaPiso4):
         if quedan > 0:
             if quitan := indices(mano, contra_inmortalidad, orden=lambda c: 0):
                 return quitan[-1]
+            if vida is not None and vida <= self.CASI_MUERTO:
+                # El usuario (2026-11-24): "la fase 3 siempre hay que quitar las inmortalidades". Con el pajaro casi
+                # muerto, mas dano no sirve (no muere con inmortalidades) y gastaba las ultis: se mueven cartas
+                # para que salgan las que las quitan, y las ultis se guardan.
+                return (-1, -2) if not fusionan(mano[-1], mano[-2]) else (-1, -3)
         elif golpes := indices(mano, lambda c: not es_ulti(c) and not es_curacion(c), orden=lambda c: 0):
             return golpes[-1]
         for i in reversed(range(len(mano))):
@@ -485,6 +497,13 @@ class EstrategiaPajaro4(EstrategiaPiso4):
         jugables = [i for i, c in enumerate(mano) if jugable(c)]
         resto = [i for i in jugables if not guardar(mano[i])]
         return (resto or jugables or [None])[-1]
+
+    CASI_MUERTO = 15  # % de la barra de la fase 3: por debajo, solo sirve quitar inmortalidades
+
+    def _vida_fase(self, fase) -> int | None:
+        vida = getattr(self.modo, "vida_jefe", None) if self.modo is not None else None
+        capa = {1: "verde", 2: "azul", 3: "morado", 4: "rojo"}.get(fase)
+        return vida.por_ciento if vida is not None and getattr(vida, "capa", None) == capa else None
 
     def _fase4(self, turno, accion, mano):
         def guardar(c):
