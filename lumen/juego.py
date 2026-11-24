@@ -1,7 +1,7 @@
 """Todo lo que el bot sabe del juego: plantillas de pantalla y coordenadas fijas.
 
 Las coordenadas son para la ventana de 554x960 (boton "Ajustar ventana") y son relativas
-a la esquina superior izquierda de la ventana. Las plantillas vienen del proyecto AutoFarming
+a la esquina superior izquierda de la ventana. Parte de las plantillas son de otro proyecto (MIT)
 (licencia MIT) y viven en assets/imagenes.
 """
 
@@ -24,7 +24,7 @@ rendirse = P("forfeit.png")
 mano_bloqueada = P("skill_locked.png")
 carga_taberna = P("tavern_loading_screen.png")
 info_mision = P("dailies/quest_info.png")
-# Sesion del juego (imagenes de AutoFarming, MIT): avisos de conexion, la pantalla de contrasena y la de
+# Sesion del juego (imagenes MIT): avisos de conexion, la pantalla de contrasena y la de
 # servidor. En una prueba de Indura el juego cerro la sesion y el bot se quedo 6 min sin reconocer nada.
 conexion_duplicada = P("duplicate_connection.png", "simultaneous_logins.png", nombre="conexion_duplicada")
 conexion_caducada = P("connection_confirmation_expired.png")
@@ -33,7 +33,7 @@ contrasena = P("password.png")
 # Eso lo hace el jugador, nunca el bot: se para y avisa al movil.
 sync_data = P("sync_data.png")
 servidor_global = P("global_server.png")
-# Boton "Run Game" del lanzador de Netmarble (AutoFarming, MIT): para volver a abrir el juego si se cierra.
+# Boton "Run Game" del lanzador de Netmarble (imagen MIT): para volver a abrir el juego si se cierra.
 abrir_juego = P("run_game.png", "run_game_2.png", nombre="abrir_juego")
 ok = P(
     "ok_buttons/ok_button.jpg",
@@ -72,7 +72,7 @@ extra = P("demonic_beasts/extra.png")
 fase_1 = P("demonic_beasts/phase_1.png")
 fase_2 = P("demonic_beasts/phase_2.png")
 fase_3_perros = P("dogs/phase_3_dogs.png")
-# Floor 4 del pajaro y del ciervo (imagenes de AutoFarming, licencia MIT)
+# Floor 4 del pajaro y del ciervo (imagenes MIT)
 fase_3 = P("demonic_beasts/phase_3.png")
 fase_4 = P("demonic_beasts/phase_4.png")
 piso3_superado_pajaro = P("demonic_beasts/floor_3_cleared_bird.png", "demonic_beasts/floor_3_cleared_2_bird.png",

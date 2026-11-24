@@ -59,7 +59,7 @@ def pulsar() -> None:
 
 
 def clic_rapido(objetivo, origen) -> None:
-    """Clic como el de AutoFarming: mover, la pausa de pyautogui (0.1 s) y pulsacion de 0.01 s.
+    """Clic: mover, la pausa de pyautogui (0.1 s) y pulsacion de 0.01 s.
     Para aceptar invitaciones de tiempo real: con este clic su bot siempre entraba (ver modos/indura)."""
     control.revisar()
     pyautogui.moveTo(*_punto(objetivo, origen))
@@ -88,7 +88,7 @@ def clic(objetivo, origen, espera: float = 0.05, jitter: int = JITTER_PX):
 
 
 def tecla(nombre: str, espera: float = 0.5):
-    """Pulsa una tecla en el juego (p. ej. "esc" para volver atras, como AutoFarming)."""
+    """Pulsa una tecla en el juego (p. ej. "esc" para volver atras)."""
     control.revisar()
     pyautogui.press(nombre)
     control.actividad()

@@ -77,7 +77,7 @@ _lock = threading.RLock()
 class CartaPj:
     id: str
     descripcion: str
-    respaldo: str = ""  # imagen de AutoFarming si no hay captura propia
+    respaldo: str = ""  # imagen antigua si no hay captura propia
     boton: bool = False  # True = boton de pantalla, no carta de la mano
 
 
@@ -161,7 +161,7 @@ class Personaje:
         return self._archivo(f"{carta}{SUFIJO_HUB}.png")
 
     def estado_carta(self, carta: str) -> str:
-        """'propia' (de una pelea) > 'ficha' (de la ficha del heroe) > 'respaldo' (AutoFarming) > 'hub' (7dshub)
+        """'propia' (de una pelea) > 'ficha' (de la ficha del heroe) > 'respaldo' (antigua) > 'hub' (7dshub)
         > 'falta'."""
         if self.tiene_captura(carta):
             return "propia"

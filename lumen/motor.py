@@ -118,7 +118,7 @@ class Modo:
             return True
         if self.clic_si(juego.reiniciar_juego, pantalla, origen, espera=5.0):
             # Sin conexion posible: el juego se reinicia y vuelve a la pantalla de inicio, que se toca abajo
-            # (como AutoFarming). Si despues pide la contrasena, el bot se para.
+            # Si despues pide la contrasena, el bot se para.
             self.log("El juego pide reiniciar: pulso Restart y vuelvo a entrar.", "aviso")
             avisos.enviar("LumenFarm: el juego pidió reiniciar; lo reinicio y vuelvo a entrar.", pantalla)
             self.estado = self.estado_inicial()
@@ -164,7 +164,7 @@ class Modo:
         estados = self.estados()
         try:
             control.ejecutando = True
-            propias.activo = True  # recortar imagenes propias en lugar de las de AutoFarming mientras se farmea
+            propias.activo = True  # recortar imagenes propias en lugar de las ajenas mientras se farmea
             self._iniciar_vigilante()
             self.log(f"Iniciando {self.nombre}.", "ok")
             self.al_empezar()

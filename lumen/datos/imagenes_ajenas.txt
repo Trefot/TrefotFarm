@@ -1,7 +1,7 @@
-# Imagenes de assets/imagenes que eran copia exacta de AutoFarming (MIT), medido por contenido el 2026-11-22.
+# Imagenes de assets/imagenes que eran copia exacta de otro proyecto (MIT), medido por contenido el 2026-11-22.
 # Lumen las va cambiando por recortes propios (lumen/propias.py, en assets/propias). En cuanto una tiene la suya,
-# la de AutoFarming se borra de assets/imagenes; el nombre sigue aqui para que Plantilla use la propia.
-# Cuando todas tengan la suya, se borran el credito y la licencia de AutoFarming.
+# la ajena se borra de assets/imagenes; el nombre sigue aqui para que Plantilla use la propia.
+# Cuando todas tengan la suya, se borra LICENCIA_IMAGENES_MIT.txt.
 auto_repeat_off.png
 back.png
 battle_menu.jpg

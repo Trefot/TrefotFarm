@@ -14,8 +14,7 @@
 # alternativas: personaje -> otros que pueden ocupar su lugar (mejor no usarlo: cada opcion va como
 #   un equipo aparte, asi se ve de un vistazo cual puedes armar)
 #
-# Los equipos que no son de Lumen vienen de AutoFarming (BOTS_README). Cada heroe se identifico
-# comparando las cartas de AutoFarming con las de los 361 heroes capturados (2026-10-27).
+# Cada heroe de los equipos se identifico comparando sus cartas con las de los 361 heroes capturados (2026-10-27).
 
 # Texto del boton cuando la clave es un contenido entero ("" = solo su nombre).
 _pisos:
@@ -23,7 +22,7 @@ _pisos:
   serpiente: ""
 
 # Heroes que salen en algun equipo pero no estan en la base (nadie los ha capturado aun): id -> nombre.
-# Nicknames de AutoFarming ya resueltos: "LR Liz" = Princess Elizabeth roja [New Legend] (sello LR);
+# Apodos ya resueltos: "LR Liz" = Princess Elizabeth roja [New Legend] (sello LR);
 # "Margaret roja" = Covenant of Light Ludociel rojo [Summer Mirage] (Ludociel en el cuerpo de Margaret).
 _nombres: {}
 

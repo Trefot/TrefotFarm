@@ -33,7 +33,7 @@ def satisface(efectos, necesidad):
             )
         )
     if necesidad == "amplify_power_strike":
-        # Amplify y Power Strike (de AutoFarming); Lightning Strike y Thunderbolt, las dos de Thor, tambien: el
+        # Amplify y Power Strike; Lightning Strike y Thunderbolt, las dos de Thor, tambien: el
         # usuario, 2026-11-24 ("las 2 cartas de Thor quitan inmortalidad, no se por que pero las quitan").
         return dano is not None and any(
             (e.tipo == "dano_extra" and e.detalle in ("amplify", "power strike"))

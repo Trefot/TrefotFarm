@@ -39,7 +39,7 @@ class CiervoRegresiones(unittest.TestCase):
                 e.decidir(2, 2, 3, m)
 
     def test_fase2_juega_todas_las_del_color(self):
-        """El usuario, 2026-11-13: con 4 rojas jugaba 2 y movia ("doble roja" y 4.a accion fija de AutoFarming)."""
+        """El usuario, 2026-11-13: con 4 rojas jugaba 2 y movia ("doble roja" y 4.a accion fija del guion antiguo)."""
         e = estrategia(B4.EstrategiaCiervo4)
         self._primera_roja(e)
         m = mano((FREYR + ".skill_1", Rango.BRONCE), None, (FREYR + ".skill_2", Rango.BRONCE))

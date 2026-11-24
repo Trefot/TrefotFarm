@@ -627,7 +627,7 @@ def _bestia(id_base: str, titulo: str, plantilla, imagen: str, piso3=None, enemi
 
 PerrosPisos1a3 = _bestia("perros", "Skoll & Hati", juego.perros, "demonic_beasts/skollandhati.png",
                          juego.piso3_superado, enemigos=2,  # los dos perros
-                         # Como AutoFarming: en la fase 1 el perro claro (derecha), en la 2 y la 3 el oscuro (izquierda).
+                         # En la fase 1 el perro claro (derecha), en la 2 y la 3 el oscuro (izquierda).
                          objetivos={1: "der", 2: "izq"},
                          # Fase 3 (lo explico el usuario): los dos perros tienen que caer a la vez, asi que sin
                          # objetivo y todo areas y ultis.

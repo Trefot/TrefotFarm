@@ -42,7 +42,7 @@ class Contenido:
             return None
         from lumen import propias
 
-        return propias.preferida(IMAGENES / self.imagen)  # la propia si la de AutoFarming ya se borro
+        return propias.preferida(IMAGENES / self.imagen)  # la propia si la antigua ya se borro
 
 
 # Secciones del Inicio, en este orden: cada una con su propia rueda.

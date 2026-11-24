@@ -1,7 +1,7 @@
 """Fuerte Solgres: Oro (mazmorra de oro, 6.o piso) y Monedas SA (Torre del reloj de la mazmorra especial).
 
 Los dos se juegan con la repeticion automatica del juego ("Auto Repeat"): el bot solo llega, la activa,
-pulsa Start y cuenta las vueltas. Flujo de AutoFarming (GoldFarmer y SADungeonFarmer, MIT), con sus
+pulsa Start y cuenta las vueltas. Flujo comprobado en el juego, con sus
 imagenes en assets/imagenes (gold_dungeon/, sa_coin_dungeon/ y otras sueltas).
 
 Monedas SA ademas mira el cofre que deja el jefe: si es peor que el elegido, repite la pelea con "Try Again"
@@ -65,10 +65,10 @@ SIN_INTENTOS = P("sa_coin_dungeon/sin_intentos.png")  # "...because all attempts
 VIGILANCIA_VICTORIA = 8.0  # s mirando muy seguido al acabar la pelea, hasta ver la pantalla limpia
 MIN_SEGUNDOS_COFRE = 10  # el cofre sale a los 8-9 s: con 7 s el bot casi repite con un cofre de oro (2026-10-29)
 
-DESLIZAR_DESDE, DESLIZAR_HASTA = (276, 800), (275, 650)  # lista de mazmorras de la especial (AutoFarming)
+DESLIZAR_DESDE, DESLIZAR_HASTA = (276, 800), (275, 650)  # lista de mazmorras de la especial
 CENTRO_X = juego.COORD["centro"][0]
 EQUIPO_POR_NOMBRE = "equipo:"  # en el historial: el equipo se guarda por su nombre del juego, no por sus heroes
-# Flecha amarilla de volver (arriba a la izquierda), no la tecla ESC (como AutoFarming): en la prueba del
+# Flecha amarilla de volver (arriba a la izquierda), no la tecla ESC: en la prueba del
 # 2026-10-29, al acabarse la repeticion, el bot paso mas de un minuto pulsando ESC sin salir de esa pantalla, y
 # en el menu principal ESC abre "salir del juego".
 VOLVER = (38, 62)
@@ -211,7 +211,7 @@ class Oro(FuerteSolgres):
             raise TerminarModo()
         if RESULTADO.esta(p):
             return "pelea"
-        if MAX_TICKETS.esta(p):  # MAX dos veces y Start del auto-clear (como AutoFarming)
+        if MAX_TICKETS.esta(p):  # MAX dos veces y Start del auto-clear
             self.clic_si(MAX_TICKETS, p, o, espera=0.5)
             self.clic_si(MAX_TICKETS, p, o, espera=0.5)
             if self.clic_si(EMPEZAR_AUTO_CLEAR, p, o, espera=1.0):
@@ -446,7 +446,7 @@ class MonedasSA(FuerteSolgres):
 
     def reintentar(self, p, o):
         """Pausa -> "Try Again": la pelea vuelve a empezar sin salir de la torre (lo enseno el usuario: ya no
-        hace falta rendirse como en AutoFarming). Si "Try Again" no aparece, se rinde como antes."""
+        hace falta rendirse). Si "Try Again" no aparece, se rinde como antes."""
         if VUELTA_TERMINADA.esta(p) or REPETICION_TERMINADA.esta(p, 0.8):
             # La pelea termino sola antes de repetirla: se cobra la vuelta y se sigue
             self.log("La pelea terminó antes de repetirla: sigo farmeando.", "aviso")

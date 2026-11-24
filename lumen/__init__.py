@@ -1,6 +1,6 @@
-"""Lumen Farm: autofarming propio para 7DS Grand Cross."""
+"""Lumen Farm: farmeo automatico para 7DS Grand Cross."""
 
-__version__ = "0.44.1-alpha"
+__version__ = "0.44.2-alpha"
 
 
 def _yaml_rapido():

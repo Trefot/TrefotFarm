@@ -1,6 +1,6 @@
 """Hueco vacio en la mano: la casilla donde no hay carta (se acaba de jugar, o la unidad murio).
 
-Detector propio de Lumen (2026-11-22), en lugar del modelo entrenado de AutoFarming. Se entreno con 3768 casillas
+Detector propio de Lumen (2026-11-22), en lugar del modelo antiguo. Se entreno con 3768 casillas
 de la mano sacadas de las capturas del usuario (peleas de bestias, Indura, Monedas SA, menus), con
 lumen/entrenar_huecos.py. Mira el color, la textura y la forma de la casilla y decide con una maquina de vectores de
 soporte (SVM, nucleo RBF). Medido con pantallas de grupos que no vio al entrenar: 97,9 % igual que el modelo viejo en

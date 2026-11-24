@@ -1,4 +1,4 @@
-"""Imagenes propias en lugar de las de AutoFarming (lumen/propias.py, 2026-11-22)."""
+"""Imagenes propias en lugar de las ajenas (lumen/propias.py, 2026-11-22)."""
 import tempfile
 import unittest
 from pathlib import Path
@@ -11,8 +11,8 @@ from lumen import propias
 from lumen.vision import Plantilla
 
 PANTALLA = Path(__file__).with_name("botin_sa") / "victoria_limpia.png"
-OK = "ok_buttons/salvage_ok.png"  # era de AutoFarming; en esta pantalla coincide
-# La de AutoFarming ya se borro (tiene propia): las pruebas ponen una copia en un assets/imagenes de mentira.
+OK = "ok_buttons/salvage_ok.png"  # era ajenas; en esta pantalla coincide
+# La ajenas ya se borro (tiene propia): las pruebas ponen una copia en un assets/imagenes de mentira.
 REPO_REAL = propias.CARPETA_REPO
 IMAGENES_REALES = propias.IMAGENES
 
@@ -49,8 +49,8 @@ class Propias(unittest.TestCase):
             self.reloj[0] += propias.SEPARACION_S + 1
             Plantilla(OK).esta(self.pantalla if pantalla is None else pantalla)
 
-    def test_cada_una_es_de_autofarming_o_tiene_propia(self):
-        lista = propias.de_autofarming()
+    def test_cada_una_es_ajenas_o_tiene_propia(self):
+        lista = propias.ajenas()
         self.assertEqual(len(lista), 145)
         self.assertIn(OK, lista)
         sin_nada = [r for r in lista if not (IMAGENES_REALES / r).is_file()
@@ -58,7 +58,7 @@ class Propias(unittest.TestCase):
         self.assertEqual(sin_nada, [], "borrada sin propia: el bot no la encontraria")
         ambas = [r for r in lista if (IMAGENES_REALES / r).is_file()
                  and (REPO_REAL / Path(r).with_suffix(".png")).is_file()]
-        self.assertEqual(ambas, [], "con propia publicada, la de AutoFarming se borra")
+        self.assertEqual(ambas, [], "con propia publicada, la ajena se borra")
 
     def test_una_sola_vista_no_basta(self):
         with mock.patch.object(propias, "activo", True):
@@ -83,7 +83,7 @@ class Propias(unittest.TestCase):
             Plantilla(OK).esta(self.pantalla[850:940, 250:500].copy())  # trozo, no pantalla completa
         self.assertFalse(propias.CARPETA_LOCAL.exists())
 
-    def test_publicada_se_usa_en_vez_de_la_de_autofarming(self):
+    def test_publicada_se_usa_en_vez_de_la_ajenas(self):
         self._verla_dos_veces()
         destino = propias.ruta_repo(OK)
         destino.parent.mkdir(parents=True)
@@ -93,7 +93,7 @@ class Propias(unittest.TestCase):
         self.assertGreater(p.confianza(self.pantalla)[0], 0.99, "la propia salio de esta pantalla")
         self.assertEqual(propias.pendientes(), [], "ya publicada: nada que subir")
 
-    def test_las_que_no_son_de_autofarming_no_se_tocan(self):
+    def test_las_que_no_son_ajenas_no_se_tocan(self):
         with mock.patch.object(propias, "activo", True):
             self.assertFalse(propias.anotar(Path(propias.IMAGENES) / "demons/indura_lumen.png", self.pantalla,
                                             (0, 0, 10, 10), 1.0))
@@ -111,15 +111,15 @@ class Propias(unittest.TestCase):
         with tempfile.TemporaryDirectory() as copia:
             original = Path(copia) / "assets" / "imagenes" / OK
             original.parent.mkdir(parents=True)
-            original.write_bytes(b"de AutoFarming")
+            original.write_bytes(b"ajenas")
             self.assertEqual(propias.preparar_copia(Path(copia)), [OK])
             self.assertTrue((Path(copia) / "assets" / "propias" / OK).is_file())
-            self.assertFalse(original.exists(), "con la propia subida, la de AutoFarming se borra")
+            self.assertFalse(original.exists(), "con la propia subida, la ajena se borra")
 
 
 class EnUnTrozo(unittest.TestCase):
     """2026-11-22: los huecos de la barra del turno y las estrellas de las cartas se buscan en un trozo de la pantalla
-    y nunca se recortaban (salen en cada pelea y seguian siendo de AutoFarming)."""
+    y nunca se recortaban (salen en cada pelea y seguian siendo ajenas)."""
 
     def setUp(self):
         tmp = tempfile.TemporaryDirectory()
@@ -144,7 +144,7 @@ class EnUnTrozo(unittest.TestCase):
         from lumen import cartas
 
         if not (propias.IMAGENES / "bronze_card.png").is_file():
-            self.skipTest("las estrellas ya tienen imagen propia y la de AutoFarming se borro")
+            self.skipTest("las estrellas ya tienen imagen propia y la ajena se borro")
         pantalla = cv2.imread(str(Path(__file__).with_name("rata_f2_tres.png")))
         for _ in range(2):
             cartas.contar_huecos(pantalla)

@@ -63,7 +63,7 @@ Si una fase dura más turnos (F1 > 2, F2 > 1, F3 > 1) o falta una carta clave, s
 | Duración del clic | ~120 ms (con 30–70 ms el juego ignora clics de cartas y perros) | `entrada.DURACION_CLIC` |
 | Pausa entre cartas | esperar a que la carta ocupe su hueco + 0,5 s; **comprobar también la última** | `perros_piso4._jugar_turno` |
 | Carta bloqueada | se ve **oscurecida**: brillo medio del interior < 90 (bloqueadas 73–83, normales 96+) | `cartas.BRILLO_BLOQUEADA` |
-| Tipo de carta | el modelo de tipos de AutoFarming ya no sirve (dice "ulti" a todo); ulti = sin estrellas de rango | `cartas.tipo_de` / `rango_de` |
+| Tipo de carta | el modelo de tipos antiguo ya no sirve (dice "ulti" a todo); ulti = sin estrellas de rango | `cartas.tipo_de` / `rango_de` |
 | Carta desde la ficha del héroe | fila "Skills" en (35,600)-(89,698), (95,…), (160,…); reescalar ×1,22 ancho ×1,26 alto; umbral 0,55 | `juego.FICHA_CARTAS`, `personajes.ESCALA_FICHA` |
 | Carta capturada en pelea | interior sin marco (15 % lados, 20 % arriba/abajo); umbral 0,70 | `equipo.recorte_para_plantilla` |
 | Retratos (pantalla del equipo) | caras en x = 72,178,285,391 (+22..+80), y 290–390; umbral 0,6 | `juego.RETRATOS` |
@@ -82,8 +82,8 @@ Las coordenadas son relativas a la esquina superior izquierda de la **ventana** 
 
 ## 6. Créditos y licencia
 
-Las plantillas de `assets/imagenes` y el modelo de `assets/modelos` vienen de
-[AutoFarming](https://github.com/PhantomPilots/AutoFarming) (licencia MIT, ver
-`LICENSE_AutoFarming_original.txt`); hay que conservar ese aviso. El resto del código es de LumenFarm.
+Parte de las plantillas de `assets/imagenes` (las de `lumen/datos/imagenes_ajenas.txt`) son de otro proyecto con
+licencia MIT: hay que conservar `LICENCIA_IMAGENES_MIT.txt` mientras quede alguna. Se van cambiando por propias
+(`lumen/propias.py`). El resto es de LumenFarm.
 
 Usar bots va contra las reglas de Netmarble y puede costar un baneo.

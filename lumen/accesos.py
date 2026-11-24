@@ -59,7 +59,7 @@ def crear() -> list[Path]:
         acceso.Arguments = f'"{SCRIPT}"'
         acceso.WorkingDirectory = str(RAIZ)
         acceso.IconLocation = f"{ICONO},0"
-        acceso.Description = "Autofarming para The Seven Deadly Sins: Grand Cross"
+        acceso.Description = "Lumen Farm para The Seven Deadly Sins: Grand Cross"
         acceso.save()
         hechos.append(ruta)
     return hechos

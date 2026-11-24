@@ -62,7 +62,7 @@ class PantallaCarga(QSplashScreen):
         lema = QFont(tema.FUENTE_TITULOS, 10)
         lema.setLetterSpacing(QFont.AbsoluteSpacing, 3)
         p.setFont(lema)
-        p.drawText(QRectF(208, 128, ANCHO - 225, 24), Qt.AlignLeft | Qt.AlignVCenter, "AUTOFARMING · 7DS")
+        p.drawText(QRectF(208, 128, ANCHO - 225, 24), Qt.AlignLeft | Qt.AlignVCenter, "7DS GRAND CROSS")
         if s.saludo:
             x = 208
             if self.adorno:

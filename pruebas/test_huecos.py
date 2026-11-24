@@ -1,4 +1,4 @@
-"""Detector propio de huecos vacios de la mano (lumen/huecos.py), en lugar del modelo de AutoFarming."""
+"""Detector propio de huecos vacios de la mano (lumen/huecos.py), en lugar del modelo antiguo."""
 import unittest
 from pathlib import Path
 
@@ -24,7 +24,7 @@ class Huecos(unittest.TestCase):
     def test_mano_llena_de_monedas_sa(self):
         self.assertEqual(tipos("botin_sa/pelea.png"), "cccccccc")
 
-    def test_ya_no_hay_modelo_de_autofarming(self):
+    def test_ya_no_hay_modelo_antiguo(self):
         self.assertFalse((huecos.ARCHIVO.parent / "ground_cards_predictor.svc").exists())
         self.assertTrue(huecos.ARCHIVO.is_file())
 

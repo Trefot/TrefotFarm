@@ -215,7 +215,7 @@ class VentanaPrincipal(QMainWindow):
         # Heroes nuevos de 7dshub: se mira cada hora si toca (un jueves de cada dos), y al abrir tras publicar
         QTimer.singleShot(SEGUNDOS_HEROES * 1000, self.buscar_heroes)
         QTimer(self, timeout=self.buscar_heroes, interval=60 * 60 * 1000).start()
-        # Imagenes propias en vez de las de AutoFarming: el admin las sube al abrir y cada hora, sin farmear
+        # Imagenes propias en vez de las ajenas: el admin las sube al abrir y cada hora, sin farmear
         QTimer.singleShot(SEGUNDOS_PROPIAS * 1000, self.subir_propias)
         QTimer(self, timeout=self.subir_propias, interval=60 * 60 * 1000).start()
         accesos.migrar_viejos()
@@ -441,7 +441,7 @@ class VentanaPrincipal(QMainWindow):
             self.farmear.escribir(f"No pude subir las imágenes propias (lo reintento en una hora): {error}", "aviso")
         elif hechas:
             listas, total = propias.progreso()
-            self.farmear.escribir(f"Subí {len(hechas)} imágenes propias en lugar de las de AutoFarming "
+            self.farmear.escribir(f"Subí {len(hechas)} imágenes propias en lugar de las antiguas "
                                   f"({listas} de {total}).", "ok")
 
     def _fin_publicar(self, hecho, error: str):

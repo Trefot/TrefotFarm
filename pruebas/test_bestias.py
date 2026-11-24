@@ -426,7 +426,7 @@ if __name__ == "__main__":
 
 class DemoniosYFuerte(ConPantallaSimulada):
     def test_demonios_eligen_su_pestana(self):
-        """Los 5 demonios de AutoFarming tocan su icono; Indura, su posicion y comprueba que quede elegida."""
+        """Los 5 demonios de siempre tocan su icono; Indura, su posicion y comprueba que quede elegida."""
         from lumen.modos import indura as D
 
         self._parchear(D, "VENTANA_UNION", PlantillaFalsa("union"))

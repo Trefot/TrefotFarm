@@ -42,7 +42,7 @@ class Plantilla:
         self.rutas += [IMAGENES / IDIOMA_ES / r for r in rutas if not Path(r).is_absolute()]
         self.nombre = nombre or self.rutas[0].stem
         self._imagenes: list[np.ndarray] | None = None
-        self._de_autofarming: list[Path | None] = []  # por imagen cargada: su ruta si es de AutoFarming
+        self._ajenas: list[Path | None] = []  # por imagen cargada: su ruta si es ajenas
 
     @property
     def imagenes(self) -> list[np.ndarray]:
@@ -51,14 +51,14 @@ class Plantilla:
 
             cargadas, de_af = [], []
             for ruta in self.rutas:
-                usada = propias.preferida(ruta)  # la propia publicada en vez de la de AutoFarming, si ya la hay
+                usada = propias.preferida(ruta)  # la propia publicada en vez de la ajena, si ya la hay
                 img = leer_imagen(usada)
                 if img is None:
                     continue
                 cargadas.append(img)
                 rel = propias.relativa(usada)
-                de_af.append(usada if rel is not None and rel in propias.de_autofarming() else None)
-            self._imagenes, self._de_autofarming = cargadas, de_af
+                de_af.append(usada if rel is not None and rel in propias.ajenas() else None)
+            self._imagenes, self._ajenas = cargadas, de_af
         return self._imagenes
 
     @property
@@ -86,8 +86,8 @@ class Plantilla:
         return mejor, rect
 
     def _anotar(self, cual: int, pantalla: np.ndarray, rect, valor: float) -> None:
-        """Si la imagen es de AutoFarming y se vio con seguridad, recortar la propia de esta pantalla del juego."""
-        if cual >= len(self._de_autofarming) or self._de_autofarming[cual] is None:
+        """Si la imagen es ajenas y se vio con seguridad, recortar la propia de esta pantalla del juego."""
+        if cual >= len(self._ajenas) or self._ajenas[cual] is None:
             return
         from lumen import propias
 
@@ -97,7 +97,7 @@ class Plantilla:
         # el recorte se toma de la pantalla entera de la que sale ese trozo.
         completa, dx, dy = de_que_pantalla(pantalla)
         x, y, w, h = (int(v) for v in rect)
-        propias.anotar(self._de_autofarming[cual], completa, (x + dx, y + dy, w, h), valor)
+        propias.anotar(self._ajenas[cual], completa, (x + dx, y + dy, w, h), valor)
 
     def buscar(self, pantalla: np.ndarray | None, umbral: float = 0.7) -> np.ndarray | None:
         """Rectangulo de la mejor coincidencia, o None si no supera el umbral."""

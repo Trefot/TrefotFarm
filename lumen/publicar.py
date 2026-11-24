@@ -222,7 +222,7 @@ def subir_imagenes_propias() -> list[str]:
     if not propias.pendientes():
         return []
     return _subir(propias.preparar_copia, ["assets/propias", "assets/imagenes"],
-                  lambda hechas: f"Own images instead of AutoFarming's: {len(hechas)} more", [])
+                  lambda hechas: f"Own images: {len(hechas)} more", [])
 
 
 def leer_local() -> Local:

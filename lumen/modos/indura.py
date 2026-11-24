@@ -1,11 +1,11 @@
 """Demonios en tiempo real (Boss Battle): se une a las partidas que otros jugadores abren. Un molde para
 los 6 (Red, Gray, Howlex, Bellmoth, Original e Indura), como el de los pisos 1-3 de las bestias.
 
-Flujo (el de demonios de AutoFarming, MIT; Indura no esta en esa parte publica, asi que su icono es
+Flujo (el de los demonios; Indura no tenia imagen, asi que su icono es
 una captura propia):
 1. Taberna -> Battle -> Boss Battle -> Real-time: se abre "Real-time Join Request".
 2. Pestana del demonio, el nivel elegido y OK: el juego busca partida. Indura (la 6.a pestana) se toca
-   por su posicion y se comprueba que quede elegida; los otros 5, por su icono (el de AutoFarming).
+   por su posicion y se comprueba que quede elegida; los otros 5, por su icono.
 3. Llega una invitacion: se acepta JUSTO a los 9.3 s de aparecer. Es un fallo del juego: aceptada en
    ese momento entra a la partida sin gastar entradas de tiempo real. Por eso se cuenta desde el primer
    instante en que se ve, se mira la pantalla muy seguido mientras se espera y, llegado el momento, se
@@ -33,7 +33,7 @@ from lumen.motor import Modo, Opcion, TerminarModo
 from lumen.vision import Plantilla
 
 P = Plantilla
-BOSS_BATTLE = P("demons/demons.jpg")  # menu Boss Battle (AutoFarming, MIT)
+BOSS_BATTLE = P("demons/demons.jpg")  # menu Boss Battle (imagen MIT)
 TIEMPO_REAL = P("demons/RT.png")
 VENTANA_UNION = P("demons/union_tiempo_real.png")  # titulo "Real-time Join Request" (captura propia)
 INDURA = P("demons/indura_lumen.png")  # pestana de Indura seleccionada (captura propia)
@@ -43,7 +43,7 @@ ACEPTAR = P("demons/accept.png")
 CANCELAR_BUSQUEDA = P("demons/cancel.png")
 CARGANDO = P("demons/demons_loading_screen.png")
 PREPARACION = P("demons/preparation_incomplete.png")
-CANCELAR_PREPARACION = P("demons/cancel_preparation.png")  # el mismo boton ya pulsado (AutoFarming, MIT)
+CANCELAR_PREPARACION = P("demons/cancel_preparation.png")  # el mismo boton ya pulsado (imagen MIT)
 ATRAS = P("back.png")  # la flecha de volver, arriba a la izquierda
 PUNTO_ATRAS = (39, 64)
 AUTO = P("demons/auto.jpg")
@@ -268,7 +268,7 @@ class DemonioTiempoReal(Modo):
                 if control.en_pausa:
                     self.log("En pausa: dejo pasar esta invitación.", "aviso")
                     return None
-            # Igual que AutoFarming (su bot siempre entraba; el nuestro, pulsando justo a los 9.3 s con el
+            # (otro bot siempre entraba; el nuestro, pulsando justo a los 9.3 s con el
             # raton ya encima, perdia ~la mitad): volver a capturar, buscar Accept y clic rapido. Asi el
             # toque llega hacia los 9.5 s de verla.
             p, o = self.capturar()
@@ -554,13 +554,13 @@ def _demonio(id_: str, nombre: str, imagen: str, *, pestana=None, punto_pestana=
     return type(f"Demonio_{id_}", (DemonioTiempoReal,), {
         "id": id_, "nombre": nombre, "titulo_juego": nombre, "imagen": imagen,
         "descripcion": descripcion or (f"Se une a las partidas de {nombre} que abren otros jugadores y pelea en AUTO "
-                                       "(como AutoFarming). Empieza desde la Taberna o el menú Battle."),
+                                       "Empieza desde la Taberna o el menú Battle."),
         "pestana": pestana, "punto_pestana": punto_pestana, "pestana_elegida_img": pestana_elegida_img,
         "opciones": _opciones(nivel, list(niveles), jugar),
     })
 
 
-# Los 5 demonios de AutoFarming: pelean en AUTO (asi los farmea su bot) y en Hell, su nivel por defecto.
+# Los 5 demonios de siempre: pelean en AUTO y en Hell, su nivel por defecto.
 # Los ids son los del catalogo de Inicio (lumen/modos/catalogo.py) y los de las tablas de premios.
 DemonioRojo = _demonio("demonio_rojo", "Red Demon", "demons/red_demon.png", pestana=P("demons/red_demon.png"))
 DemonioGris = _demonio("demonio_gris", "Gray Demon", "demons/gray_demon.png", pestana=P("demons/gray_demon.png"))

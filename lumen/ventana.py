@@ -157,7 +157,7 @@ def capturar() -> tuple[np.ndarray, tuple[int, int]]:
 
 
 # Tamano de la ventana COMPLETA (con barra de titulo y bordes) para el que estan hechas las
-# plantillas y coordenadas de AutoFarming: da capturas de 550x940. Comprobado con capturas reales.
+# plantillas y coordenadas: da capturas de 550x940. Comprobado con capturas reales.
 TAMANO_OBJETIVO = (554, 960)
 TOLERANCIA_PX = 3
 

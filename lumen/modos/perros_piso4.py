@@ -27,7 +27,7 @@ from lumen.control import control
 from lumen.ia.diario import Diario
 from lumen.equipo import Equipo, Puesto
 from lumen.motor import Modo, Opcion, TerminarModo
-from lumen.rutas import LOGS
+from lumen.rutas import LOGS, RAIZ
 from lumen.vision import Plantilla, guardar_imagen
 
 # ---------------------------------------------------------------------- el equipo
@@ -121,7 +121,7 @@ class Estrategia:
                 return carta.posicion, None, False
         # Una copia de sobra de las que se guardan (la single de Odin para el final, lo de la fase 2), quedandose con la
         # mejor: con 2 singles de Odin y 2 areas de Gawain reiniciaba sin necesidad (2026-11-10). El guion original de
-        # AutoFarming ya usaba la single de Odin de relleno.
+        # La single de Odin sirve de relleno.
         idx = self.sobrante(mano, ("odin.single",) + PROTEGIDAS_FASE2)
         if idx is not None:
             return idx, None, False
@@ -229,6 +229,7 @@ def _misma_imagen(a, b) -> bool:
 # peleas seguidas sin ganar ya no es mala suerte (con 60 % de victorias: 1 vez entre 10 000): parar y avisar.
 SIN_GANAR_MAXIMO = 10
 VECES_HEROE = 5  # cartas de un heroe vistas en la sesion para contarlo en el equipo
+FOTOS_BARRA_MAXIMAS = 60  # jefes sin barra medida: tiras de arriba guardadas solas para medirla despues
 MIRAR_MANO_AUTO_S = 8.0  # jugando en AUTO, cada cuanto se mira la mano para saber con que equipo se juega
 
 
@@ -695,6 +696,20 @@ class PerrosPiso4(Modo):
         vistos = sorted(((n, h) for h, n in self.heroes_vistos.items() if n >= VECES_HEROE), reverse=True)[:4]
         return sorted(h for _, h in vistos) if len(vistos) == 4 else None
 
+    def _foto_barra(self, p):
+        """Guarda la parte de arriba (la barra de vida) de cada turno: asi se mide sin pedir capturas al usuario."""
+        if not hasattr(p, "shape"):
+            return
+        try:
+            carpeta = RAIZ / "capturas" / "vida_jefe" / type(self).__name__.lower()
+            carpeta.mkdir(parents=True, exist_ok=True)
+            if len(list(carpeta.glob("*.png"))) >= FOTOS_BARRA_MAXIMAS:
+                return
+            nombre = f"{time.strftime('%Y%m%d_%H%M%S')}_f{self.fase or 0}t{self.turno_fase + 1}.png"
+            guardar_imagen(carpeta / nombre, p[:160])
+        except Exception:
+            pass  # una foto que no se guarda no para la pelea
+
     def _empezar_turno(self, p, huecos: int):
         self.ultimo_turno = time.time()
         self.vida_jefe = None
@@ -702,6 +717,8 @@ class PerrosPiso4(Modo):
             from lumen import vida_jefe
 
             self.vida_jefe = vida_jefe.leer(p)  # para el registro, la fase y no gastar cartas de mas
+        else:
+            self._foto_barra(p)
         detectada = self._detectar_fase(p, huecos)
         por_barra = self._fase_por_barra()
         if por_barra and self.fase and por_barra == self.fase + 1 and not (detectada and detectada > self.fase):

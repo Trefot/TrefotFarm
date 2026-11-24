@@ -170,7 +170,7 @@ class PaginaAjustes(Pagina):
         self.nota_heroes = nota("")
         fila_hub.addWidget(self.nota_heroes, 1)
         f.addRow("Héroes (7dshub)", fila_hub)
-        # Imagenes propias en vez de las de AutoFarming (lumen/propias.py): se recortan solas al farmear
+        # Imagenes propias en vez de las ajenas (lumen/propias.py): se recortan solas al farmear
         self.nota_propias = nota("")
         f.addRow("Imágenes propias", self.nota_propias)
         c.addWidget(self.caja_repo)
@@ -202,7 +202,7 @@ class PaginaAjustes(Pagina):
 
         listas, total = propias.progreso()
         por_subir = len(propias.pendientes())
-        self.nota_propias.setText(f"{listas} de {total} imágenes de AutoFarming ya tienen la suya propia"
+        self.nota_propias.setText(f"{listas} de {total} imágenes antiguas ya tienen la suya propia"
                                   + (f" ({por_subir} por subir)" if por_subir else "")
                                   + ". Se recortan solas al farmear.")
 

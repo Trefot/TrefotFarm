@@ -1,6 +1,6 @@
 # Lumen Farm
 
-Bot de autofarming para 7DS Grand Cross (Python 3.12, PyQt5, Windows). Textos y nombres en español.
+Bot de farmeo para 7DS Grand Cross (Python 3.12, PyQt5, Windows). Textos y nombres en español.
 Leer LEEME.txt para la estructura.
 
 ## Versiones
