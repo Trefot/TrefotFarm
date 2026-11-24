@@ -29,6 +29,11 @@ Etapas previstas:
 
 CAMBIOS
 -------
+0.44.1-alpha
+  - Bestias Floor 4: en plena pelea (fase 4 del pajaro) el retrato del jefe se parecio a su imagen de los pisos; el
+    bot creyo que habia vuelto a los pisos y se quedo 8 min "eligiendo el Floor 4" con la pelea en marcha
+    (2026-11-24). Con el boton de pausa a la vista sigue en la pelea.
+
 0.44.0-alpha
   - Menu mas corto (el usuario, 2026-11-24): fuera Inicio, Mis equipos y Objetivos; los equipos y las metas ya se
     ven en Sesion en directo. Lumen abre en Contenidos, donde sale tambien el aviso de heroes nuevos.

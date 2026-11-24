@@ -554,7 +554,9 @@ class PerrosPiso4(Modo):
         if self.destruida_desde and time.time() - self.destruida_desde > 5 and time.time() - self.ultimo_boton_texto > 2:
             self.ultimo_boton_texto = time.time()
             self.clic_boton_por_texto(p, o)
-        if self._piso4().esta(p):
+        # Con el boton de pausa a la vista sigue la pelea: el retrato del pajaro de arriba se parecia a su imagen de
+        # los pisos y el bot se quedo 8 min "eligiendo el Floor 4" con la pelea en marcha (2026-11-24).
+        if self._piso4().esta(p) and not juego.pausa.esta(p, 0.8):
             self.log("Volvi a la pantalla de pisos sin ver el final de la pelea.", "aviso")
             return "elegir_piso"
         if time.time() - self.inicio_pelea > self.MINUTOS_PELEA * 60:

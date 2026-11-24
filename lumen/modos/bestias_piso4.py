@@ -953,6 +953,9 @@ class Piso4(PerrosPiso4):
         return cabecera is None or cabecera == juego.ORDEN_BESTIAS.index(self.bestia)
 
     def elegir_piso(self, p, o):
+        if hasattr(p, "shape") and juego.pausa.esta(p, 0.8) and C.contar_huecos(p, 0.75) > 0:
+            self.log("Sigo en la pelea (veo la pausa y las casillas del turno).", "aviso")
+            return "pelea"
         siguiente = super().elegir_piso(p, o)
         if siguiente is None and not juego.ok.esta(p) and not juego.empezar.esta(p) and not self._piso4().esta(p):
             self._tocar_piso4_por_texto(p, o)  # por si su imagen de "Floor 3 Cleared" ya no coincide
