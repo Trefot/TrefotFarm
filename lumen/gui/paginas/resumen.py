@@ -228,10 +228,19 @@ class PaginaContenidos(Pagina):
 
     def __init__(self, app):
         super().__init__()
+        # Es la pagina de inicio (2026-11-24): aqui sale el aviso de heroes nuevos (lo tengo / no lo tengo)
+        self.heroes_nuevos = PanelHeroesNuevos()
+        self.cuerpo.addWidget(self.heroes_nuevos)
         self.catalogo = CatalogoVisual()
         self.catalogo.elegido.connect(lambda destino: self._elegir(app, destino))
         self.cuerpo.addWidget(self.catalogo)
         self.cuerpo.addStretch()
+
+    def refrescar(self):
+        self.heroes_nuevos.refrescar()
+
+    def al_mostrar(self):
+        self.refrescar()
 
     def _elegir(self, app, destino):
         app.paginas["preparar"].ir_a_destino(destino)

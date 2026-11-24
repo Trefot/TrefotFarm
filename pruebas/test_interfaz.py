@@ -76,7 +76,7 @@ class Interfaz(unittest.TestCase):
         entorno.ajustes()["modo_admin"] = False
         self.v.aplicar_modo_admin()
         visibles = [c for c, b in self.v.botones.items() if not b.isHidden()]
-        self.assertEqual(visibles, ["inicio", "contenidos", "farmear", "plan", "personajes", "mis_equipos", "objetivos", "ajustes", "ayuda"])
+        self.assertEqual(visibles, ["contenidos", "farmear", "plan", "personajes", "ajustes", "ayuda"])  # 2026-11-24
 
     def test_laboratorio_requiere_llave_y_sale_al_revocar(self):
         with mock.patch("lumen.admin.activo", return_value=False):
@@ -92,7 +92,7 @@ class Interfaz(unittest.TestCase):
             self.assertIs(self.v.pila.currentWidget(), self.v.paginas["laboratorio"])
         with mock.patch("lumen.admin.activo", return_value=False):
             self.v.aplicar_modo_admin()
-            self.assertIs(self.v.pila.currentWidget(), self.v.paginas["inicio"])
+            self.assertIs(self.v.pila.currentWidget(), self.v.paginas["contenidos"])
             self.assertEqual(self.v.farmear.reproductor.rutas, [])
 
     def test_icono_equipo_lleva_a_farmear(self):

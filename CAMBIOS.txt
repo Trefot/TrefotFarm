@@ -29,6 +29,12 @@ Etapas previstas:
 
 CAMBIOS
 -------
+0.44.0-alpha
+  - Menu mas corto (el usuario, 2026-11-24): fuera Inicio, Mis equipos y Objetivos; los equipos y las metas ya se
+    ven en Sesion en directo. Lumen abre en Contenidos, donde sale tambien el aviso de heroes nuevos.
+  - Actualizar: la version de abajo a la derecha es un boton pequeno. "al dia": clic para buscar; si hay una nueva
+    sale "Actualizar a vX" en naranja y el clic la instala. En Ajustes sigue el panel de siempre.
+
 0.43.1-alpha
   - Farmear: los equipos de al lado del registro caben en la columna estrecha (caras mas pequenas, el nombre del
     heroe al pasar el raton, el estado en su linea); los botones Registro/Plan/... quedan solo con su icono cuando

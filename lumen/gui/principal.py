@@ -14,6 +14,7 @@ from PyQt5.QtWidgets import (
     QLabel,
     QMainWindow,
     QMessageBox,
+    QPushButton,
     QStackedWidget,
     QScrollArea,
     QToolButton,
@@ -44,11 +45,12 @@ SEGUNDOS_PUBLICAR = 20  # al abrir, despues de buscar actualizaciones (los dos u
 SEGUNDOS_HEROES = 60  # al abrir, despues de publicar (tambien usa git)
 SEGUNDOS_PROPIAS = 120  # al abrir, despues de los heroes (tambien usa git)
 
+# El usuario (2026-11-24): fuera Inicio, Mis equipos y Objetivos (los equipos y las metas ya estan en Sesion en
+# directo); Contenidos es la pagina de inicio y la actualizacion va abajo, pequena, junto a la version.
 MENU = [
-    ("inicio", "Inicio"), ("contenidos", "Contenidos"),
+    ("contenidos", "Contenidos"),
     ("farmear", "Sesión en directo"), ("plan", "Plan del día"),
-    ("personajes", "Personajes"), ("mis_equipos", "Mis equipos"),
-    ("objetivos", "Objetivos"), ("ajustes", "Ajustes"), ("ayuda", "Ayuda"),
+    ("personajes", "Personajes"), ("ajustes", "Ajustes"), ("ayuda", "Ayuda"),
     ("equipos", "Editor de equipos"), ("recompensas", "Botín"),
     ("laboratorio", "Laboratorio"),
 ]
@@ -110,7 +112,7 @@ class VentanaPrincipal(QMainWindow):
         self.insignias: dict[str, QLabel] = {}
         self.rotulo_admin = None
         for clave, texto in MENU:
-            seccion = {"inicio": "JUGAR", "personajes": "COLECCIÓN", "ajustes": "APLICACIÓN", "equipos": "ADMINISTRACIÓN"}.get(clave)
+            seccion = {"contenidos": "JUGAR", "personajes": "COLECCIÓN", "ajustes": "APLICACIÓN", "equipos": "ADMINISTRACIÓN"}.get(clave)
             if seccion:
                 rotulo = QLabel(seccion, objectName="eyebrow")
                 capa_lat.addWidget(rotulo)
@@ -177,7 +179,10 @@ class VentanaPrincipal(QMainWindow):
         capa_barra.setContentsMargins(14, 4, 14, 4)
         self.barra_juego = QLabel()
         self.barra_bot = QLabel()
-        self.barra_update = QLabel()
+        self.barra_update = QPushButton(objectName="chico")
+        self.barra_update.setFlat(True)
+        self.barra_update.setCursor(Qt.PointingHandCursor)
+        self.barra_update.clicked.connect(self._clic_version)
         capa_barra.addWidget(self.barra_juego)
         capa_barra.addWidget(QLabel("·"))
         capa_barra.addWidget(self.barra_bot)
@@ -200,7 +205,7 @@ class VentanaPrincipal(QMainWindow):
         QTimer(self, timeout=self.buscar_updates, interval=MINUTOS_ENTRE_REVISIONES * 60 * 1000).start()
         self.puente.escuchar_teclas()
         self.puente.escucha.aplicar_ajustes()
-        self.navegar("inicio")
+        self.navegar("contenidos")
         self.refrescar_insignias()
         self.aplicar_modo_admin()
         self._barra()
@@ -227,7 +232,9 @@ class VentanaPrincipal(QMainWindow):
             self.mostrar_bloqueo()
             return
         pagina = self.paginas[clave]
-        self.botones["contenidos" if clave == "preparar" else clave].setChecked(True)
+        boton = self.botones.get("contenidos" if clave == "preparar" else clave)
+        if boton is not None:  # Inicio, Mis equipos y Objetivos ya no estan en el menu (siguen por dentro)
+            boton.setChecked(True)
         self.pila.setCurrentWidget(pagina)
         pagina.al_mostrar()
         if self.transicion is not None:
@@ -238,9 +245,11 @@ class VentanaPrincipal(QMainWindow):
             self.transicion.start()
 
     def refrescar_insignias(self):
-        self._insignia("inicio", "1" if self.estado_update and self.estado_update.hay_update else "")
+        pass  # el aviso de actualizacion esta en el boton de la version, abajo a la derecha
 
     def _insignia(self, clave: str, texto: str):
+        if clave not in self.insignias:
+            return
         self.insignias[clave].setText(texto)
         self.insignias[clave].setVisible(bool(texto) and (clave not in SOLO_ADMIN or bool(config.obtener("modo_admin"))))
 
@@ -254,7 +263,7 @@ class VentanaPrincipal(QMainWindow):
         if not autorizado:
             self.paginas["laboratorio"].revocar()
         if not autorizado and self.pila.currentWidget() in (self.paginas[c] for c in SOLO_ADMIN):
-            self.navegar("inicio")
+            self.navegar("contenidos")
 
     def ajustes_guardados(self):
         self.aplicar_modo_admin()
@@ -279,15 +288,22 @@ class VentanaPrincipal(QMainWindow):
             self.barra_bot.setText("Bot detenido")
         est = self.estado_update
         version = self.version_cargada
+        aviso = False
         if self.reinicio_pendiente:
-            self.barra_update.setText(
-                f"<span style='color:{tema.AVISO}'>v{actualizador.version_local()} instalada · reinicia para usarla</span>")
+            texto, aviso = f"v{actualizador.version_local()} instalada · reiniciar", True
+            ayuda = "Reinicia Lumen para usar la versión nueva."
         elif est and est.hay_update:
-            self.barra_update.setText(f"<span style='color:{tema.AVISO}'>Actualizacion obligatoria v{est.version_remota}</span>")
+            texto, aviso = f"⟳ Actualizar a v{est.version_remota}", True
+            ayuda = "Hay una versión nueva: clic para instalarla."
         elif est and est.error:
-            self.barra_update.setText(f"v{version} · {est.error}")
+            texto, ayuda = f"v{version} · {est.error}", "Clic para volver a buscar actualizaciones."
         else:
-            self.barra_update.setText(f"v{version} · al día" if est else f"v{version}")
+            texto = f"v{version} · al día" if est else f"v{version}"
+            ayuda = "Clic para buscar actualizaciones."
+        self.barra_update.setText(texto)
+        self.barra_update.setToolTip(ayuda)
+        self.barra_update.setStyleSheet(f"color: {tema.AVISO if aviso else tema.TENUE}; border: none;"
+                                        f"{' font-weight: 700;' if aviso else ''}")
 
     # ------------------------------------------------------------ actualizaciones
     @property
@@ -297,6 +313,13 @@ class VentanaPrincipal(QMainWindow):
             return actualizador.version_local() != self.version_cargada
         except OSError:
             return False
+
+    def _clic_version(self):
+        """La version de abajo a la derecha: instala la actualizacion si la hay; si no, busca."""
+        if self.reinicio_pendiente or (self.estado_update and self.estado_update.hay_update):
+            self.accion_actualizar()
+        else:
+            self.buscar_updates(manual=True)
 
     def accion_actualizar(self):
         """Boton Actualizar de Inicio: reinicia si la version nueva ya esta en disco; si no, actualiza."""
@@ -436,6 +459,7 @@ class VentanaPrincipal(QMainWindow):
         self.refrescar_insignias()
         self._barra()
         self.paginas["inicio"].refrescar()
+        self.paginas["contenidos"].refrescar()
         if estado.hay_update and not self.update_bloqueante:
             self.update_bloqueante = True
             if self.puente.corriendo:
@@ -497,7 +521,7 @@ class VentanaPrincipal(QMainWindow):
             self.crear_acceso(silencioso=True)
         config.guardar({"acceso_ofrecido": True})
         self.paginas["personajes"].al_mostrar()
-        self.navegar("inicio")
+        self.navegar("contenidos")
 
     def ofrecer_acceso(self):
         """Una sola vez, a quien ya tenia el bot antes de que existieran los accesos directos."""
