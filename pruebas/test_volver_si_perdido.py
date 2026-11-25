@@ -53,6 +53,15 @@ class VolverSiPerdido(unittest.TestCase):
             self.assertFalse(m._volver_si_perdido(p, (0, 0)))
         self.assertEqual(clic.call_count, 0)
 
+    def test_oro_con_vueltas_pendientes_vuelve_a_entrar_al_piso_6(self):
+        m = F.Oro({"victorias": 5, "pociones": True, "max_pociones": 0, "tickets": False, "max_tickets": 0})
+        m.log = lambda *a, **k: None
+        m.vueltas = 4
+        with mock.patch("lumen.entrada.clic") as clic:
+            self.assertIsNone(m.pelea(vision.leer_imagen(LISTA), (0, 0)))
+        x, y, w, h = clic.call_args[0][0]
+        self.assertTrue(250 <= y <= 420, (x, y))  # la fila del 6.º piso
+
     def test_oro_al_cerrar_termina_en_la_lista_de_pisos(self):
         m = F.Oro({"victorias": 2, "pociones": True, "max_pociones": 0, "tickets": False, "max_tickets": 0})
         m.log = lambda *a, **k: None

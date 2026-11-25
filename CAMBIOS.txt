@@ -29,6 +29,11 @@ Etapas previstas:
 
 CAMBIOS
 -------
+0.44.17-alpha
+  - Oro: si se acaba la estamina antes de las vueltas pedidas, tras los resultados el juego vuelve a la lista de
+    pisos y el bot se quedaba 8 min esperando el Start (2026-11-24). Ahora vuelve a entrar al 6.º piso y sigue
+    (pocion si estan activadas).
+
 0.44.16-alpha
   - Todos los modos: si al empezar queda abierta la pantalla "RESULT" de los tickets de salto, la cierran. Red Demon
     se quedo 3 min sin reconocerla (2026-11-24).

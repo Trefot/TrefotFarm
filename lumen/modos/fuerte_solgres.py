@@ -252,6 +252,10 @@ class Oro(FuerteSolgres):
         # entre vueltas de la repeticion ese Victory se pasa solo y tocarlo podria cortarla.
         if self.repeticion_acabada and self.clic_si(OK_VICTORIA, p, o, umbral=0.85, espera=1.5):
             return None
+        # Tras los resultados el juego vuelve a la lista de pisos: faltaban vueltas y el bot esperaba el Start (8 min,
+        # 2026-11-24). Se vuelve a entrar al 6.º piso; al pulsar Start sale la pocion.
+        if self.clic_si(PISO_6, p, o, espera=1.0):
+            return None
         if self._estamina(p, o):
             return None
         if self.valores["tickets"] and not self.tickets_acabados and not self._tickets_al_limite():
