@@ -29,6 +29,11 @@ Etapas previstas:
 
 CAMBIOS
 -------
+0.44.13-alpha
+  - Personajes: la Celestial Ellatte verde salia duplicada. Al evolucionar a LR, 7dshub le dio otro id y la busqueda
+    de heroes nuevos la agrego como otra (2026-11-24). Quitada la copia; si un heroe cambia de id en 7dshub, ahora
+    solo se actualiza su id. Las marcas sueltas de heroes que ya no existen no salen como fichas sin nombre.
+
 0.44.12-alpha
   - Ciervo Floor 4, fase 4: si falta el color que toca del semaforo, ese turno va a full daño (las 4 cartas, ultis
     primero), sin mover ni reiniciar (el usuario, 2026-11-24: "si no se podia iba full daño"). Sustituye a la regla

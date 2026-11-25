@@ -274,7 +274,10 @@ def cargar() -> dict[str, Personaje]:
         base = _leer_yaml(BASE)
         usuario = _leer_yaml(USUARIO)
         resultado = {}
-        for pid in list(base) + [p for p in usuario if p not in base]:
+        # Solo los propios de verdad (con nombre): un "tengo" suelto es de un heroe que ya no esta en la base (la
+        # Ellatte verde duplicada al evolucionar a LR, 2026-11-24) y salia como una ficha sin nombre.
+        propios = [p for p in usuario if p not in base and (usuario.get(p) or {}).get("nombre")]
+        for pid in list(base) + propios:
             datos = dict(base.get(pid) or {})
             cambios = usuario.get(pid) or {}
             cartas = {cid: dict(c or {}) for cid, c in (datos.get("cartas") or {}).items()}

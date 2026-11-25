@@ -5737,17 +5737,3 @@ highest_ranking_demon_cusack_verde:
     ulti:
       descripcion: Un objetivo (Evil Onslaught)
   estreno: '2026-11-12'
-celestial_ellatte_verde_2:
-  clave: '[Pure Justice] Celestial Ellatte'
-  nombre: Celestial Ellatte
-  color: verde
-  raza: desconocida
-  roles: []
-  cartas:
-    skill_1:
-      descripcion: Un objetivo (Angel Assault)
-    skill_2:
-      descripcion: Apoyo (Healing Mist)
-    ulti:
-      descripcion: Apoyo (Dancing Ray)
-  estreno: '2023-11-20'

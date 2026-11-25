@@ -107,6 +107,17 @@ class Preparar(unittest.TestCase):
         nuevos = [pid for pid, hid in fuente.items() if hid in (999001, 999002)]
         self.assertEqual({base[p]["estreno"] for p in nuevos}, {"2026-11-12"})
 
+    def test_el_mismo_heroe_con_otro_id_no_se_duplica(self):
+        """2026-11-24: la Ellatte verde evoluciono a LR, 7dshub le dio otro id (345006 -> 345007) y salia duplicada."""
+        antes = yaml.safe_load((self.copia / H.PERSONAJES).read_text(encoding="utf-8"))
+        hechos = H.preparar(self.copia, [heroe(999777, nombre="Celestial Ellatte", titulo="[Pure Justice]", atributo=2)],
+                            JUEVES, bajar_falso)
+        self.assertEqual(len(hechos), 1)
+        despues = yaml.safe_load((self.copia / H.PERSONAJES).read_text(encoding="utf-8"))
+        self.assertEqual(set(despues), set(antes), "no agrega otra ficha")
+        fuente = yaml.safe_load((self.copia / H.FUENTE).read_text(encoding="utf-8"))
+        self.assertEqual(fuente["celestial_ellatte_verde"], 999777)
+
     def test_no_repite_lo_que_otro_pc_ya_publico(self):
         H.preparar(self.copia, [heroe(999001)], JUEVES, bajar_falso)
         self.assertEqual(H.preparar(self.copia, [heroe(999001)], JUEVES, bajar_falso), [])

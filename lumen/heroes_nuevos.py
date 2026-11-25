@@ -207,6 +207,15 @@ def preparar(copia: Path, nuevos: list[dict], hoy: date, bajar=bajar) -> list[st
     habilidades = yaml.safe_load((copia / HABILIDADES).read_text(encoding="utf-8")) or {}
     hechos = []
     for h in faltan(nuevos, fuente, hoy):  # otra vez contra la rama: quiza otro PC ya lo publico
+        clave = f"{nombre(h.get('nickname', ''))} {nombre(h.get('name', ''))}".strip()
+        color = COLOR.get(h.get("attribute"), "rojo")
+        mismo = next((p for p, r in base.items() if (r or {}).get("clave") == clave and (r or {}).get("color") == color), None)
+        if mismo:
+            # El mismo heroe con otro id en 7dshub (la Ellatte verde al evolucionar a LR: 345006 -> 345007) se
+            # agrego como nuevo y salia duplicado (2026-11-24). Solo se cambia su id.
+            fuente[mismo] = h["id"]
+            hechos.append(f"{clave} (nuevo id en 7dshub)")
+            continue
         d = detalle(h["id"], bajar)
         pid = id_lumen(h, set(base) | set(fuente))
         reg = registro(h, d)
