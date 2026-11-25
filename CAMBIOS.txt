@@ -29,6 +29,11 @@ Etapas previstas:
 
 CAMBIOS
 -------
+0.44.12-alpha
+  - Ciervo Floor 4, fase 4: si falta el color que toca del semaforo, ese turno va a full daño (las 4 cartas, ultis
+    primero), sin mover ni reiniciar (el usuario, 2026-11-24: "si no se podia iba full daño"). Sustituye a la regla
+    de la 0.44.11.
+
 0.44.11-alpha
   - Ciervo Floor 4, fase 4: sin el color del semaforo dos turnos seguidos ya no reinicia si al ciervo le queda la
     mitad o menos de la barra roja: va a full daño con las ultis. Reinicio con el ciervo al 30 % y 3 ultis en la

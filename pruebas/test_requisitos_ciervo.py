@@ -182,36 +182,28 @@ class Fusiones(unittest.TestCase):
 
 
 class Fase4SinColor(unittest.TestCase):
-    """El usuario, 2026-11-13: sin la carta del color que toca rompia la secuencia; dos turnos asi, reiniciar."""
+    """El usuario, 2026-11-24: "si no se podia [seguir el semaforo] iba full dano". Antes (2026-11-13) se movia y, dos
+    turnos asi, se reiniciaba; reinicio con el ciervo al 30 % y 3 ultis en la mano."""
 
-    def test_sin_el_color_que_toca_mueve(self):
+    def test_sin_el_color_que_toca_full_dano(self):
         e = ciervo(RQ.CAUTELOSO)
         e.decidir(4, 2, 0, mano((JORM + ".skill_1", R.BRONCE)))  # la primera fue verde: toca azul
-        m = mano((FREYR + ".skill_1", R.BRONCE), (FREYR + ".skill_2", R.BRONCE), (JORM + ".skill_2", R.BRONCE))
-        self.assertIsInstance(e.decidir(4, 2, 1, m)[0], tuple, "no hay azul: mover, no romper la ruleta")
+        m = mano((FREYR + ".skill_1", R.BRONCE), (FREYR + ".ulti", R.ULTI), (JORM + ".skill_2", R.BRONCE))
+        self.assertEqual(e.decidir(4, 2, 1, m)[0], 1, "no hay azul: full dano, la ulti")
         self.assertIsNone(e.pedir_reinicio)
 
-    def test_dos_turnos_seguidos_pide_reiniciar(self):
+    def test_dos_turnos_seguidos_no_reinicia(self):
         e = ciervo(RQ.CAUTELOSO, ve=(juego.buff_azul,))
         m = mano((FREYR + ".skill_1", R.BRONCE), (JORM + ".skill_2", R.BRONCE))
         e.guion(4, 2, 0, m)
-        self.assertIsNone(e.pedir_reinicio, "un turno sin azul: aun no")
         e.guion(4, 3, 0, m)
-        self.assertIn("dos turnos seguidos", e.pedir_reinicio)
-
-    def test_dos_turnos_sin_color_con_poca_vida_va_a_full_dano(self):
-        """El usuario, 2026-11-24: reinicio con el ciervo al 30 % y ultis en la mano ("podia matarlo")."""
-        from types import SimpleNamespace
-        from lumen.vida_jefe import Vida
-
-        e = ciervo(RQ.CAUTELOSO, ve=(juego.buff_azul,))
-        e.modo = SimpleNamespace(vida_jefe=Vida("rojo", 0.30))
-        m = mano((FREYR + ".skill_1", R.BRONCE), (FREYR + ".ulti", R.ULTI), (JORM + ".skill_2", R.BRONCE))
-        e.guion(4, 2, 0, m)
-        jugada = e.guion(4, 3, 0, m)
         self.assertIsNone(e.pedir_reinicio)
-        self.assertTrue(e.a_matar)
-        self.assertNotIsInstance(jugada, tuple, "ataca, no mueve")
+
+    def test_el_resto_del_turno_tambien_full_dano(self):
+        e = ciervo(RQ.CAUTELOSO, ve=(juego.buff_azul,))
+        m = mano((FREYR + ".skill_1", R.BRONCE), (JORM + ".skill_2", R.BRONCE), (FREYR + ".ulti", R.ULTI))
+        e.guion(4, 2, 0, m)
+        self.assertNotIsInstance(e.guion(4, 2, 3, m), tuple, "la 4.a accion tampoco mueve")
 
     def test_la_cuarta_accion_sin_el_color_siguiente_no_es_turno_fallado(self):
         """El usuario, 2026-11-16: turnos 1 y 2 perfectos (Tyr verde, Thor azul, Freyja roja y mover); como en la 4.a
@@ -294,24 +286,13 @@ class Fase4Cadena(unittest.TestCase):
     def test_turno_1_sin_verdes_mueve(self):
         e = ciervo(RQ.CAUTELOSO)
         m = mano((FREYR + ".skill_1", R.BRONCE), ("freyja_roja.normal_1", R.BRONCE), (THOR + ".skill_1", R.BRONCE))
-        self.assertIsInstance(e.decidir(4, 1, 0, m)[0], tuple, "sin verde no empieza por otro color: mueve")
+        self.assertNotIsInstance(e.decidir(4, 1, 0, m)[0], tuple, "sin verde: full dano (el usuario, 2026-11-24)")
 
-    def test_tras_un_movimiento_sigue_la_ultima_carta_jugada(self):
+    def test_sin_verde_tras_una_roja_full_dano(self):
         e = ciervo(RQ.CAUTELOSO)
         e.decidir(4, 2, 0, mano((FREYR + ".skill_1", R.BRONCE)))  # roja: toca verde
         m = mano((FREYR + ".skill_2", R.BRONCE), ("freyja_roja.normal_1", R.BRONCE), (THOR + ".skill_1", R.BRONCE))
-        self.assertIsInstance(e.decidir(4, 2, 1, m)[0], tuple, "no hay verde: mueve")
-        self.assertIsInstance(e.decidir(4, 2, 2, m)[0], tuple, "sigue tocando verde: no otra roja")
-
-    def test_tras_mover_por_falta_de_color_sigue_tocando_el_del_buff(self):
-        """2026-11-22, 10 ciervos: turno 2 sin verde, movia y luego jugaba una roja de oro. Las 2 derrotas y los 3
-        reinicios empezaron asi."""
-        e = ciervo(RQ.CAUTELOSO, ve=(juego.buff_verde,))
-        sin_verde = mano((FREYR + ".skill_2", R.ORO), ("freyja_roja.normal_1", R.BRONCE), (THOR + ".skill_1", R.PLATA))
-        self.assertIsInstance(e.decidir(4, 2, 0, sin_verde)[0], tuple, "no hay verde: mueve")
-        self.assertIsInstance(e.decidir(4, 2, 1, sin_verde)[0], tuple, "sigue sin verde: no juega la roja de oro")
-        llego = mano((FREYR + ".skill_2", R.ORO), (TYR + ".skill_1", R.BRONCE), (THOR + ".skill_1", R.PLATA))
-        self.assertEqual(e.decidir(4, 2, 1, llego)[0], 1, "al mover llego una verde: esa")
+        self.assertNotIsInstance(e.decidir(4, 2, 1, m)[0], tuple, "no hay verde: full dano")
         self.assertIsNone(e.pedir_reinicio)
 
 
