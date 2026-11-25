@@ -29,6 +29,10 @@ Etapas previstas:
 
 CAMBIOS
 -------
+0.44.4-alpha
+  - Oro: tras el OK de "Auto Repeat Results" sale el "Victory" con Again y OK, y el bot se quedaba quieto ahi
+    (2026-11-24). Ahora toca ese OK y sigue al Start (pocion o fin). Entre vueltas no lo toca.
+
 0.44.3-alpha
   - Oro: al quedarse sin estamina el juego muestra "Auto Repeat Results" y el bot se quedaba 7 min mirando
     (2026-11-24). Ahora toca su OK y sigue: usa una pocion si se lo permites o termina.

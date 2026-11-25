@@ -169,6 +169,7 @@ class Oro(FuerteSolgres):
     def __init__(self, valores: dict):
         super().__init__(valores)
         self.tickets = 0
+        self.repeticion_acabada = False  # se vio "Auto Repeat Results": falta pasar el Victory de detras
 
     def estado_inicial(self):
         return "ir"
@@ -198,6 +199,11 @@ class Oro(FuerteSolgres):
         # Tras el OK vuelve al Start; al pulsarlo sale la pocion de estamina y _estamina decide.
         if self.clic_si(OK_RESULTADOS, p, o, espera=1.5):
             self.log("Se acabó la repetición automática (estamina). Sigo desde el Start.")
+            self.repeticion_acabada = True
+            return None
+        # Detras sale el "Victory" con Again y OK, y ahi se quedaba quieto (2026-11-24). Solo tras los resultados:
+        # entre vueltas de la repeticion ese Victory se pasa solo y tocarlo podria cortarla.
+        if self.repeticion_acabada and self.clic_si(OK_VICTORIA, p, o, umbral=0.85, espera=1.5):
             return None
         if self._estamina(p, o):
             return None
@@ -206,7 +212,8 @@ class Oro(FuerteSolgres):
             return "tickets"
         if self.clic_si(REPETIR_APAGADO, p, o):
             return None
-        self.clic_si(EMPEZAR, p, o, espera=1.0)
+        if self.clic_si(EMPEZAR, p, o, espera=1.0):
+            self.repeticion_acabada = False
         return None
 
     def usar_tickets(self, p, o):

@@ -10,6 +10,7 @@ from lumen import vision
 from lumen.modos import fuerte_solgres as F
 
 CAPTURA = Path(__file__).parent / "oro_sin_estamina.png"
+VICTORIA = Path(__file__).parent / "oro_victoria_tras_resultados.png"  # lo que sale despues de ese OK
 
 
 class OroSinEstamina(unittest.TestCase):
@@ -22,6 +23,19 @@ class OroSinEstamina(unittest.TestCase):
         self.assertEqual(clic.call_count, 1)
         x, y, w, h = clic.call_args[0][0]
         self.assertTrue(200 <= x <= 360 and 800 <= y <= 880, (x, y))  # el OK de abajo, no el apagado de detras
+
+        # Despues: el Victory con Again y OK. Toca su OK (no Again: con 4 de estamina no llega a 30)
+        with mock.patch("lumen.entrada.clic") as clic:
+            self.assertIsNone(m.pelea(vision.leer_imagen(VICTORIA), (0, 0)))
+        x, y, w, h = clic.call_args[0][0]
+        self.assertTrue(x >= 300 and y >= 860, (x, y))
+
+    def test_entre_vueltas_no_toca_el_victory(self):
+        m = F.Oro({"victorias": 0, "pociones": False, "max_pociones": 0, "tickets": False, "max_tickets": 0})
+        m.log = lambda *a, **k: None
+        with mock.patch("lumen.entrada.clic") as clic:
+            m.pelea(vision.leer_imagen(VICTORIA), (0, 0))
+        self.assertEqual(clic.call_count, 0, "la repeticion sigue sola: no se corta")
 
 
 if __name__ == "__main__":
