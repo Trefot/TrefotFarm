@@ -60,6 +60,7 @@ OK_VICTORIA = P("ok_buttons/salvage_ok.png")
 # "Auto Repeat Results" (capturas propias, 2026-11-22): su OK verde azulado. Los OK de siempre preferian el "OK"
 # apagado que se ve debajo, y el bot se quedo 4 min pulsando ahi. Y el texto de cuando se gastan los intentos del dia.
 OK_RESULTADOS = P("sa_coin_dungeon/ok_resultados.png")
+CERRAR_POCION = (447, 316)  # la X roja de la ventana de la pocion de estamina (captura real, 2026-11-24)
 MAX_OK_FIN = 5  # sin intentos y sin ver el OK del resumen: tras 5 intentos se termina
 SIN_INTENTOS = P("sa_coin_dungeon/sin_intentos.png")  # "...because all attempts have been used."
 VIGILANCIA_VICTORIA = 8.0  # s mirando muy seguido al acabar la pelea, hasta ver la pantalla limpia
@@ -122,6 +123,8 @@ class FuerteSolgres(Modo):
         limite = int(self.valores["max_pociones"])
         if not self.valores["pociones"] or (limite and self.pociones >= limite):
             self.log("Sin estamina y no puedo usar más pociones. Termino.", "aviso")
+            # Cerrar la ventana de la pocion: abierta, el modo siguiente del plan (Indura) se quedaba bloqueado
+            entrada.clic(CERRAR_POCION, o, espera=1.0)
             self.publicar_stats(motivo_fin="sin_estamina")
             raise TerminarModo()
         if self.clic_si(juego.usar_pocion, p, o, umbral=0.8, espera=1.0):

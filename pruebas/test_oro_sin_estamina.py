@@ -10,6 +10,7 @@ from lumen import vision
 from lumen.modos import fuerte_solgres as F
 
 CAPTURA = Path(__file__).parent / "oro_sin_estamina.png"
+POCION = Path(__file__).parent / "oro_ventana_pocion.png"  # al pulsar Start sin estamina
 VICTORIA = Path(__file__).parent / "oro_victoria_tras_resultados.png"  # lo que sale despues de ese OK
 
 
@@ -36,6 +37,16 @@ class OroSinEstamina(unittest.TestCase):
         with mock.patch("lumen.entrada.clic") as clic:
             m.pelea(vision.leer_imagen(VICTORIA), (0, 0))
         self.assertEqual(clic.call_count, 0, "la repeticion sigue sola: no se corta")
+
+    def test_sin_pociones_cierra_la_ventana_antes_de_terminar(self):
+        from lumen.motor import TerminarModo
+
+        m = F.Oro({"victorias": 0, "pociones": False, "max_pociones": 0, "tickets": False, "max_tickets": 0})
+        m.log = lambda *a, **k: None
+        m.publicar_stats = lambda **k: None
+        with mock.patch("lumen.entrada.clic") as clic, self.assertRaises(TerminarModo):
+            m.pelea(vision.leer_imagen(POCION), (0, 0))
+        self.assertEqual(clic.call_args[0][0], F.CERRAR_POCION)
 
 
 if __name__ == "__main__":

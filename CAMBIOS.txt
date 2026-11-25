@@ -29,6 +29,10 @@ Etapas previstas:
 
 CAMBIOS
 -------
+0.44.5-alpha
+  - Oro y Monedas SA: al terminar sin estamina se dejaba abierta la ventana de la pocion y el siguiente modo del
+    plan (Indura) se quedaba bloqueado (2026-11-24). Ahora la cierra antes de terminar.
+
 0.44.4-alpha
   - Oro: tras el OK de "Auto Repeat Results" sale el "Victory" con Again y OK, y el bot se quedaba quieto ahi
     (2026-11-24). Ahora toca ese OK y sigue al Start (pocion o fin). Entre vueltas no lo toca.
