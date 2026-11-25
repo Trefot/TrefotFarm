@@ -597,6 +597,9 @@ class EstrategiaCiervo4(EstrategiaPiso4):
                 return jugada
         whale = self.estilo.whale(self.destino, fase, turno)
         if fase == 1:
+            # En Automatico la fase 1 siempre con todo: con 4 cartas caia en 1 turno 15 de 15 (2026-11-22); una pelea
+            # que se quedo al 14 % la pasaba a cautela y la siguiente movia la 4.a carta y pegaba menos (2026-11-24).
+            whale = whale or self.estilo.nombre == requisitos.AUTOMATICO
             return self._golpe_maximo(mano) if whale else self._fase1(turno, accion, mano)
         if fase == 2:
             # Obligatorio (el usuario): todo el turno del color de la primera carta, o se bloquean todas
@@ -1045,6 +1048,7 @@ class CiervoPiso4(Piso4):
     equipo_recomendado = "Tyr verde, Freyja roja, Thor azul y Freyr rojo"
     bestia = juego.ciervo
     piso3_superado = juego.piso3_superado_ciervo
+    reiniciar_si_muere = True
     clase_estrategia = EstrategiaCiervo4
     opciones = PerrosPiso4.opciones + [
         Opcion("estilo", "Cómo pelear", "lista", "Cauteloso", opciones=["Cauteloso", "Automático", "Whale"],

@@ -308,6 +308,7 @@ class PerrosPiso4(Modo):
     ]
     pausa_entre_pasos = 0.45
     rendirse_si_bloqueada = True  # mano bloqueada al empezar un turno: rendirse y repetir
+    reiniciar_si_muere = False  # ciervo: con un personaje muerto ya no sale (el usuario, 2026-11-24)
     leer_vida_jefe = False  # los lobos son dos jefes: su barra aun no esta medida (lumen/vida_jefe.py)
     jugar_auto = False  # True: se pone el AUTO del juego y no se juegan cartas (bestias Floor 1-3, opcion "AUTO")
     talento_turno_1 = False  # activar el talento del equipo al empezar la pelea (las bestias Floor 1-3, opcion)
@@ -748,6 +749,10 @@ class PerrosPiso4(Modo):
         self.log(f"Fase {self.fase}, turno {self.turno_fase}: {huecos} cartas por jugar.{vida}")
         if self.rendirse_si_bloqueada and self.fase != 3 and juego.mano_bloqueada.esta(p, 0.6):
             self.log("Mano bloqueada desde el inicio: reinicio.", "aviso")
+            return "rendirse"
+        if self.reiniciar_si_muere and huecos < 4:
+            # Cada personaje vivo da una carta por turno: menos de 4 es que murio alguno (se vio 4 -> 3 -> 2 -> 1)
+            self.log(f"Murió un personaje (solo {huecos} cartas por turno): reinicio.", "aviso")
             return "rendirse"
         if self._reiniciar_por_bloqueo(p):
             return "rendirse"

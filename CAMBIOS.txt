@@ -29,6 +29,11 @@ Etapas previstas:
 
 CAMBIOS
 -------
+0.44.9-alpha
+  - Ciervo Floor 4: en Automatico la fase 1 va siempre con todo (4 cartas). Tras una pelea que no cayo en 1 turno
+    pasaba a cautela y movia la 4.a carta, y pegaba menos (2026-11-24).
+  - Ciervo Floor 4: si muere un personaje (menos de 4 cartas por turno), reinicia (el usuario, 2026-11-24).
+
 0.44.8-alpha
   - Oro: tras parar la repeticion el juego vuelve a la lista de pisos, no al Start, y el bot se quedaba esperando
     (2026-11-24). Ahora termina tambien ahi.
