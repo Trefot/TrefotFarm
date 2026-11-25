@@ -150,7 +150,7 @@ class FuerteSolgres(Modo):
 def _opciones_comunes() -> list[Opcion]:
     return [
         Opcion("victorias", "Vueltas (0 = sin límite)", "entero", 0, maximo=9999),
-        Opcion("pociones", "Usar pociones de stamina", "si_no", False),
+        Opcion("pociones", "Usar pociones de stamina", "si_no", True),
         Opcion("max_pociones", "Máximo de pociones (0 = sin límite)", "entero", 0, maximo=999),
     ]
 

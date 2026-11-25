@@ -29,6 +29,9 @@ Etapas previstas:
 
 CAMBIOS
 -------
+0.44.6-alpha
+  - Oro y Monedas SA: usan pociones de estamina por defecto, como los demas modos (el usuario, 2026-11-24).
+
 0.44.5-alpha
   - Oro y Monedas SA: al terminar sin estamina se dejaba abierta la ventana de la pocion y el siguiente modo del
     plan (Indura) se quedaba bloqueado (2026-11-24). Ahora la cierra antes de terminar.
