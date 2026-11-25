@@ -18,6 +18,10 @@ usar_pocion = P("stamuse.png", nombre="usar_pocion")
 pocion_stamina = P("stamina_pot.png")
 reconectar = P("reconnect.png")
 reiniciar_juego = P("restart.png")
+# "Server request failed. Returning to the title screen." + OK: tras perder la conexion en el ciervo el bot se
+# quedo 8 min delante (2026-11-25). Recorte propio de esa captura; el OK esta en SERVIDOR_FALLO_OK.
+servidor_fallo = P("servidor_fallo.png")
+SERVIDOR_FALLO_OK = (277, 549)
 cerrar = P("close.png")
 atras = P("back.png")  # la flecha amarilla de volver, arriba a la izquierda
 resultado = P("dailies/result.png")  # titulo "RESULT" (tickets de salto): se cierra tocandolo

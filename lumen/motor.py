@@ -123,6 +123,13 @@ class Modo:
             avisos.enviar("LumenFarm: el juego pidió reiniciar; lo reinicio y vuelvo a entrar.", pantalla)
             self.estado = self.estado_inicial()
             return True
+        if juego.servidor_fallo.esta(pantalla, 0.8):
+            # El juego vuelve a la pantalla de titulo: OK, se toca la de inicio (abajo) y el modo empieza de cero.
+            self.log("Falló la conexión con el servidor: pulso OK y vuelvo a entrar desde el título.", "aviso")
+            avisos.enviar("LumenFarm: falló la conexión con el servidor; vuelvo a entrar.", pantalla)
+            entrada.clic(juego.SERVIDOR_FALLO_OK, origen, espera=5.0)
+            self.estado = self.estado_inicial()
+            return True
         if juego.conexion_duplicada.esta(pantalla, 0.8):
             # "Duplicate connection" / "Simultaneous log ins": se entro a la cuenta desde otro sitio.
             self.log("El juego cerró la sesión (la cuenta se abrió en otro sitio). Cierro el aviso.", "aviso")

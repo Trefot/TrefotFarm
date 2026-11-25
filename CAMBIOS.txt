@@ -29,6 +29,10 @@ Etapas previstas:
 
 CAMBIOS
 -------
+0.44.18-alpha (2026-11-25)
+- Si se pierde la conexión y sale "Server request failed. Returning to the title screen.", Lumen pulsa OK,
+  vuelve a entrar desde la pantalla de título y empieza el modo de nuevo (antes se quedaba 8 min quieto).
+
 0.44.17-alpha
   - Oro: si se acaba la estamina antes de las vueltas pedidas, tras los resultados el juego vuelve a la lista de
     pisos y el bot se quedaba 8 min esperando el Start (2026-11-24). Ahora vuelve a entrar al 6.º piso y sigue
