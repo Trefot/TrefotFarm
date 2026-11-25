@@ -176,12 +176,15 @@ class Oro(FuerteSolgres):
     opciones = _opciones_comunes() + [
         Opcion("tickets", "Usar tickets de salto", "si_no", False,
                ayuda="Con «Auto Use Settings» marcado en el juego. Gasta 30 por vez."),
-        Opcion("max_tickets", "Máximo de tickets (0 = sin límite)", "entero", 0, maximo=99999),
+        # Tandas, no tickets: el juego los gasta de 30 en 30 y con "3" el bot terminaba sin hacer nada (2026-11-24)
+        Opcion("max_tickets", "Tandas de 30 tickets (0 = sin límite)", "entero", 0, maximo=999,
+               ayuda="Cada tanda gasta 30 tickets de salto. Por ejemplo, 3 = 90 tickets."),
     ]
 
     def __init__(self, valores: dict):
         super().__init__(valores)
         self.tickets = 0
+        self.tickets_acabados = False  # ya se gastaron las tandas elegidas: se sigue con la estamina
         self.cerrando = False  # llego a sus vueltas: parar la repeticion del juego y salir limpio
         self.cerrando_desde = 0.0
         self.toque_parar_hasta = 0.0
@@ -251,8 +254,7 @@ class Oro(FuerteSolgres):
             return None
         if self._estamina(p, o):
             return None
-        limite = int(self.valores["max_tickets"])
-        if self.valores["tickets"] and not (limite and self.tickets >= limite):
+        if self.valores["tickets"] and not self.tickets_acabados and not self._tickets_al_limite():
             return "tickets"
         if self.clic_si(REPETIR_APAGADO, p, o):
             return None
@@ -260,11 +262,16 @@ class Oro(FuerteSolgres):
             self.repeticion_acabada = False
         return None
 
+    def _tickets_al_limite(self) -> bool:
+        tandas = int(self.valores.get("max_tickets") or 0)
+        return bool(tandas) and self.tickets + 30 > tandas * 30
+
     def usar_tickets(self, p, o):
-        limite = int(self.valores["max_tickets"])
-        if limite and self.tickets + 30 > limite:
-            self.log("La tanda de 30 tickets supera el máximo elegido. Termino sin gastarla.", "aviso")
-            raise TerminarModo()
+        if self._tickets_al_limite():
+            # Antes terminaba el modo; ahora sigue farmeando con la estamina (2026-11-24)
+            self.log(f"Ya gasté las tandas de tickets elegidas ({self.tickets}). Sigo con la estamina.", "ok")
+            self.tickets_acabados = True
+            return "pelea"
         if RESULTADO.esta(p):
             return "pelea"
         if MAX_TICKETS.esta(p):  # MAX dos veces y Start del auto-clear

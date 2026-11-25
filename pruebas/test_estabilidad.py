@@ -23,19 +23,18 @@ class Regresiones(unittest.TestCase):
         control.reiniciar()
         self.addCleanup(control.reiniciar)
 
-    def test_tickets_presupuesto_parcial(self):
-        from lumen.motor import TerminarModo
-
-        modo = fs.Oro({"tickets": True, "max_tickets": 40})
+    def test_tickets_tandas_gastadas_sigue_con_estamina(self):
+        """El ajuste son tandas de 30; al acabarlas sigue farmeando, no termina (2026-11-24)."""
+        modo = fs.Oro({"tickets": True, "max_tickets": 1})
         modo.tickets = 30
         modo.clic_si = mock.Mock()
-        with self.assertRaises(TerminarModo):
-            modo.usar_tickets(None, None)
+        self.assertEqual(modo.usar_tickets(None, None), "pelea")
         modo.clic_si.assert_not_called()
         self.assertEqual(modo.tickets, 30)
+        self.assertTrue(modo.tickets_acabados)
 
     def test_tickets_tanda_exacta_y_sin_limite(self):
-        for limite in (30, 0):
+        for limite in (1, 0):
             with self.subTest(limite=limite):
                 modo = fs.Oro({"tickets": True, "max_tickets": limite})
                 modo.clic_si = mock.Mock(return_value=True)
@@ -141,18 +140,16 @@ class Regresiones(unittest.TestCase):
                     "Se debe reenviar primera=True al analizador",
                 )
 
-    def test_no_superar_maximo_tickets(self):
-        modo = fs.Oro({"tickets": True, "max_tickets": 10})
+    def test_no_superar_las_tandas_elegidas(self):
+        modo = fs.Oro({"tickets": True, "max_tickets": 3})
         modo.clic_si = lambda *a, **k: True
         with (
             mock.patch.object(fs.MAX_TICKETS, "esta", return_value=True),
             mock.patch.object(fs.RESULTADO, "esta", return_value=False),
         ):
-            from lumen.motor import TerminarModo
-
-            with self.assertRaises(TerminarModo):
+            for _ in range(5):
                 modo.usar_tickets(None, None)
-        self.assertLessEqual(modo.tickets, 10)
+        self.assertEqual(modo.tickets, 90, "3 tandas = 90 tickets")
 
     def test_identificar_ultis_del_jugador_generico(self):
         carta = Carta(

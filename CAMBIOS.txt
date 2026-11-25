@@ -29,6 +29,11 @@ Etapas previstas:
 
 CAMBIOS
 -------
+0.44.15-alpha
+  - Oro: el limite de tickets de salto ahora son tandas de 30 ("3" = 90 tickets). Con "Maximo de tickets: 3" el bot
+    terminaba sin hacer nada, porque el juego gasta de 30 en 30 (2026-11-24). Al acabar las tandas elegidas sigue
+    farmeando con la estamina en vez de terminar.
+
 0.44.14-alpha
   - Sesion en directo: los ajustes de cada contenido (tickets, pociones, nivel...) se guardan en cuanto se cambian,
     sin tener que lanzarlo. El plan del dia solo pone la cantidad y usa esos ajustes (el usuario, 2026-11-24).
