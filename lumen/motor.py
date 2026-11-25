@@ -177,6 +177,10 @@ class Modo:
         if self.clic_si(juego.atras, pantalla, origen, umbral=0.8, espera=1.5):
             self.log("No reconozco esta pantalla: vuelvo atrás.", "aviso")
             return True
+        # El "RESULT" de los tickets de salto del oro, abierto: no tiene flecha y Red Demon se quedo 3 min (2026-11-24)
+        if self.clic_si(juego.resultado, pantalla, origen, umbral=0.8, espera=1.5):
+            self.log("Cierro una pantalla de resultados que quedó abierta.", "aviso")
+            return True
         return False
 
     # ------------------------------------------------------------------ bucle principal

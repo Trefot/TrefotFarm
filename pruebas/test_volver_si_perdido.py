@@ -33,6 +33,17 @@ class VolverSiPerdido(unittest.TestCase):
         x, y, w, h = clic.call_args[0][0]
         self.assertTrue(x < 80 and y < 100, (x, y))
 
+    def test_cierra_el_result_de_los_tickets(self):
+        """Red Demon empezo sobre el RESULT de los tickets del oro y se quedo 3 min (2026-11-24)."""
+        p = vision.leer_imagen(Path(__file__).parent / "resultado_tickets.png")
+        m = modo("demonio_rojo")
+        m._inicial_desde = time.time() - 60
+        entrada.ultimo_toque = 0.0
+        with mock.patch("lumen.entrada.clic") as clic:
+            self.assertTrue(m._volver_si_perdido(p, (0, 0)))
+        x, y, w, h = clic.call_args[0][0]
+        self.assertTrue(y < 150, (x, y))
+
     def test_si_el_modo_esta_tocando_no_interviene(self):
         p = vision.leer_imagen(LISTA)
         m = modo("pajaro_piso4")

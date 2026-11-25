@@ -20,6 +20,7 @@ reconectar = P("reconnect.png")
 reiniciar_juego = P("restart.png")
 cerrar = P("close.png")
 atras = P("back.png")  # la flecha amarilla de volver, arriba a la izquierda
+resultado = P("dailies/result.png")  # titulo "RESULT" (tickets de salto): se cierra tocandolo
 pausa = P("pause.png")
 rendirse = P("forfeit.png")
 mano_bloqueada = P("skill_locked.png")

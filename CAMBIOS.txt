@@ -29,6 +29,10 @@ Etapas previstas:
 
 CAMBIOS
 -------
+0.44.16-alpha
+  - Todos los modos: si al empezar queda abierta la pantalla "RESULT" de los tickets de salto, la cierran. Red Demon
+    se quedo 3 min sin reconocerla (2026-11-24).
+
 0.44.15-alpha
   - Oro: el limite de tickets de salto ahora son tandas de 30 ("3" = 90 tickets). Con "Maximo de tickets: 3" el bot
     terminaba sin hacer nada, porque el juego gasta de 30 en 30 (2026-11-24). Al acabar las tandas elegidas sigue
