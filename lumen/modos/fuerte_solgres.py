@@ -61,6 +61,7 @@ OK_VICTORIA = P("ok_buttons/salvage_ok.png")
 # apagado que se ve debajo, y el bot se quedo 4 min pulsando ahi. Y el texto de cuando se gastan los intentos del dia.
 OK_RESULTADOS = P("sa_coin_dungeon/ok_resultados.png")
 CERRAR_POCION = (447, 316)  # la X roja de la ventana de la pocion de estamina (captura real, 2026-11-24)
+MINUTOS_CERRAR = 5  # parando la repeticion al acabar: margen para la pelea en curso
 MAX_OK_FIN = 5  # sin intentos y sin ver el OK del resumen: tras 5 intentos se termina
 SIN_INTENTOS = P("sa_coin_dungeon/sin_intentos.png")  # "...because all attempts have been used."
 VIGILANCIA_VICTORIA = 8.0  # s mirando muy seguido al acabar la pelea, hasta ver la pantalla limpia
@@ -78,6 +79,8 @@ CADA_VOLVER_S = 1.5
 
 class FuerteSolgres(Modo):
     """Lo comun: pociones de stamina, vueltas contadas y la tienda de Essette."""
+
+    parar_repeticion_al_acabar = False  # Oro: True (Monedas SA tiene su propio final)
 
     subtitulo_juego = "Fuerte Solgres"
     duracion = "según la mazmorra"
@@ -144,6 +147,12 @@ class FuerteSolgres(Modo):
         meta = int(self.valores["victorias"])
         if meta and self.vueltas >= meta:
             self.log(f"Llegué a {meta} vueltas.", "ok")
+            if self.parar_repeticion_al_acabar:
+                # La repeticion del juego sigue sola: terminar aqui dejaba al siguiente modo del plan encima de
+                # los resultados (Oro 2 vueltas -> el juego hizo 4 y el pajaro se quedo parado, 2026-11-24)
+                self.cerrando = True
+                self.cerrando_desde = time.monotonic()
+                return
             raise TerminarModo()
 
 
@@ -156,6 +165,7 @@ def _opciones_comunes() -> list[Opcion]:
 
 
 class Oro(FuerteSolgres):
+    parar_repeticion_al_acabar = True
     id = "oro"
     nombre = "Oro"
     titulo_juego = "Gold Dungeon"
@@ -172,6 +182,9 @@ class Oro(FuerteSolgres):
     def __init__(self, valores: dict):
         super().__init__(valores)
         self.tickets = 0
+        self.cerrando = False  # llego a sus vueltas: parar la repeticion del juego y salir limpio
+        self.cerrando_desde = 0.0
+        self.toque_parar_hasta = 0.0
         self.repeticion_acabada = False  # se vio "Auto Repeat Results": falta pasar el Victory de detras
 
     def estado_inicial(self):
@@ -194,8 +207,36 @@ class Oro(FuerteSolgres):
         self.clic_si(juego.menu_batalla, p, o, umbral=0.6, espera=1.0)
         return None
 
+    def _cerrar(self, p, o):
+        """Tras las vueltas pedidas: parar la repeticion automatica y salir de los resultados hasta el Start."""
+        if self.clic_si(OK_RESULTADOS, p, o, espera=1.5):
+            self.repeticion_acabada = True
+            return None
+        if self.repeticion_acabada and self.clic_si(OK_VICTORIA, p, o, umbral=0.85, espera=1.5):
+            return None
+        if juego.pocion_stamina.esta(p):
+            entrada.clic(CERRAR_POCION, o, espera=1.0)
+            return None
+        if EMPEZAR.esta(p):
+            self.log("Repetición parada. Termino.", "ok")
+            raise TerminarModo()
+        ahora = time.monotonic()
+        if VUELTA_TERMINADA.esta(p) and ahora >= self.toque_parar_hasta:
+            # "Auto Repeat in progress. Tap the screen to stop Auto Repeat."
+            self.clic_si(VUELTA_TERMINADA, p, o, espera=1.0)
+            if not self.toque_parar_hasta:
+                self.log("Toco la pantalla para parar la repetición automática.")
+            self.toque_parar_hasta = ahora + 3.0
+            return None
+        if ahora - self.cerrando_desde > MINUTOS_CERRAR * 60:
+            self.log("No pude parar la repetición automática a tiempo. Termino igual.", "aviso")
+            raise TerminarModo()
+        return None
+
     def pelea(self, p, o):
         self._contar_vuelta(p)
+        if self.cerrando:
+            return self._cerrar(p, o)
         if self.clic_si(RESULTADO, p, o) or self.clic_si(juego.info_mision, p, o):  # al volver de los tickets
             return None
         # "Auto Repeat Results" al quedarse sin estamina: sin su OK el bot se quedo 7 min mirando (2026-11-24).

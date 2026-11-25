@@ -48,6 +48,29 @@ class OroSinEstamina(unittest.TestCase):
             m.pelea(vision.leer_imagen(POCION), (0, 0))
         self.assertEqual(clic.call_args[0][0], F.CERRAR_POCION)
 
+    def test_al_llegar_a_las_vueltas_para_la_repeticion_y_sale_limpio(self):
+        """Oro 2 vueltas: el juego siguio hasta 4 y el pajaro empezo encima de los resultados (2026-11-24)."""
+        from entorno import PlantillaFalsa
+        from lumen import juego
+        from lumen.motor import TerminarModo
+
+        falsas = {n: PlantillaFalsa(n) for n in ("VUELTA_TERMINADA", "OK_RESULTADOS", "OK_VICTORIA", "EMPEZAR",
+                                                "RESULTADO", "REPETIR_APAGADO")}
+        m = F.Oro({"victorias": 2, "pociones": True, "max_pociones": 0, "tickets": False, "max_tickets": 0})
+        m.log = lambda *a, **k: None
+        m.publicar_stats = lambda **k: None
+        with mock.patch.multiple(F, **falsas), mock.patch.object(juego, "pocion_stamina", PlantillaFalsa("pocion")),                 mock.patch.object(juego, "info_mision", PlantillaFalsa("info")),                 mock.patch("lumen.entrada.clic") as clic:
+            m.vueltas = 1
+            self.assertIsNone(m.pelea({"VUELTA_TERMINADA"}, (0, 0)), "llega a 2: no termina todavia")
+            self.assertTrue(m.cerrando)
+            self.assertEqual(clic.call_count, 1, "toca la pantalla para parar la repeticion")
+            m.pelea({"OK_RESULTADOS"}, (0, 0))
+            m.pelea({"OK_VICTORIA"}, (0, 0))
+            self.assertEqual(clic.call_count, 3)
+            with self.assertRaises(TerminarModo):
+                m.pelea({"EMPEZAR"}, (0, 0))
+        self.assertEqual(m.vueltas, 2)
+
 
 if __name__ == "__main__":
     unittest.main()
