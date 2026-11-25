@@ -29,6 +29,13 @@ Etapas previstas:
 
 CAMBIOS
 -------
+0.44.8-alpha
+  - Oro: tras parar la repeticion el juego vuelve a la lista de pisos, no al Start, y el bot se quedaba esperando
+    (2026-11-24). Ahora termina tambien ahi.
+  - Todos los modos: si al empezar la pantalla no es de las que conocen (el anterior del plan acabo en otra
+    mazmorra) y en 12 s no tocan nada, vuelven atras con la flecha hasta un menu conocido. El pajaro se quedo 4 min
+    quieto asi.
+
 0.44.7-alpha
   - Oro: al llegar a sus vueltas terminaba, pero la repeticion del juego seguia sola y el siguiente modo del plan
     empezaba encima de los resultados (2026-11-24). Ahora toca la pantalla para parar la repeticion, pasa los

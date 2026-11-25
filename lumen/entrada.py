@@ -19,6 +19,7 @@ pyautogui.PAUSE = 0
 # Pequena variacion aleatoria para no clicar siempre en el mismo pixel exacto.
 JITTER_PX = 2
 DURACION_CLIC = 0.12  # segundos con el boton pulsado
+ultimo_toque = 0.0  # time.time() del ultimo clic o arrastre (motor: ¿el modo esta haciendo algo?)
 
 
 def _punto(objetivo, origen) -> tuple[int, int]:
@@ -71,7 +72,9 @@ def clic_rapido(objetivo, origen) -> None:
 
 
 def clic(objetivo, origen, espera: float = 0.05, jitter: int = JITTER_PX):
+    global ultimo_toque
     control.revisar()
+    ultimo_toque = time.time()
     x, y = _punto(objetivo, origen)
     if jitter:
         x += random.randint(-jitter, jitter)
@@ -96,7 +99,9 @@ def tecla(nombre: str, espera: float = 0.5):
 
 
 def arrastrar(desde, hasta, origen, duracion: float = 0.4):
+    global ultimo_toque
     control.revisar()
+    ultimo_toque = time.time()
     x1, y1 = _punto(desde, origen)
     x2, y2 = _punto(hasta, origen)
     pyautogui.moveTo(x1, y1)

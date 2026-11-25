@@ -217,7 +217,7 @@ class Oro(FuerteSolgres):
         if juego.pocion_stamina.esta(p):
             entrada.clic(CERRAR_POCION, o, espera=1.0)
             return None
-        if EMPEZAR.esta(p):
+        if EMPEZAR.esta(p) or PISO_6.esta(p):  # tras el Victory el juego vuelve a la lista de pisos (2026-11-24)
             self.log("Repetición parada. Termino.", "ok")
             raise TerminarModo()
         ahora = time.monotonic()

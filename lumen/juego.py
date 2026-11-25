@@ -19,6 +19,7 @@ pocion_stamina = P("stamina_pot.png")
 reconectar = P("reconnect.png")
 reiniciar_juego = P("restart.png")
 cerrar = P("close.png")
+atras = P("back.png")  # la flecha amarilla de volver, arriba a la izquierda
 pausa = P("pause.png")
 rendirse = P("forfeit.png")
 mano_bloqueada = P("skill_locked.png")

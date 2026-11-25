@@ -55,7 +55,7 @@ class OroSinEstamina(unittest.TestCase):
         from lumen.motor import TerminarModo
 
         falsas = {n: PlantillaFalsa(n) for n in ("VUELTA_TERMINADA", "OK_RESULTADOS", "OK_VICTORIA", "EMPEZAR",
-                                                "RESULTADO", "REPETIR_APAGADO")}
+                                                "RESULTADO", "REPETIR_APAGADO", "PISO_6")}
         m = F.Oro({"victorias": 2, "pociones": True, "max_pociones": 0, "tickets": False, "max_tickets": 0})
         m.log = lambda *a, **k: None
         m.publicar_stats = lambda **k: None

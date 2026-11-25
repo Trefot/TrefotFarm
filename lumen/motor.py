@@ -159,6 +159,26 @@ class Modo:
         """True si se puede parar sin dejar nada a medias (los modos con peleas lo redefinen)."""
         return True
 
+    # ------------------------------------------------------------------ pantalla desconocida al empezar
+    SEGUNDOS_PERDIDO = 12.0
+
+    def _volver_si_perdido(self, pantalla, origen) -> bool:
+        """En el primer paso del modo, sin tocar nada en SEGUNDOS_PERDIDO: la pantalla no es de las que conoce (el
+        modo anterior del plan acabo en otra mazmorra y el pajaro se quedo 4 min quieto, 2026-11-24). Se vuelve
+        atras con la flecha hasta un menu conocido. True si toco."""
+        ahora = time.time()
+        if self.estado != self.estado_inicial():
+            self._inicial_desde = None
+            return False
+        if getattr(self, "_inicial_desde", None) is None:
+            self._inicial_desde = ahora
+        if ahora - self._inicial_desde < self.SEGUNDOS_PERDIDO or ahora - entrada.ultimo_toque < self.SEGUNDOS_PERDIDO:
+            return False
+        if self.clic_si(juego.atras, pantalla, origen, umbral=0.8, espera=1.5):
+            self.log("No reconozco esta pantalla: vuelvo atrás.", "aviso")
+            return True
+        return False
+
     # ------------------------------------------------------------------ bucle principal
     def ejecutar(self):
         estados = self.estados()
@@ -185,6 +205,8 @@ class Modo:
                     if siguiente and siguiente != self.estado:
                         self.log(f"Estado: {self.estado} -> {siguiente}", "debug")
                         self.estado = siguiente
+                    else:
+                        self._volver_si_perdido(pantalla, origen)
                 control.esperar(self.pausa_entre_pasos)
         except TerminarModo:
             self.log("Modo terminado.", "ok")
