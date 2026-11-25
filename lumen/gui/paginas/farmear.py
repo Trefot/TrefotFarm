@@ -391,6 +391,9 @@ class PaginaFarmear(Pagina):
             campo.setToolTip(op.ayuda)
             self.campos[op.clave] = campo
             self.form.addRow(op.etiqueta, campo)
+            senal = (campo.valueChanged if isinstance(campo, QSpinBox) else campo.toggled if isinstance(campo, QCheckBox)
+                     else campo.currentTextChanged if isinstance(campo, QComboBox) else campo.editingFinished)
+            senal.connect(self._guardar_opciones)
 
         while self.fila_pisos.count():
             w = self.fila_pisos.takeAt(0).widget()
@@ -436,8 +439,25 @@ class PaginaFarmear(Pagina):
                 valores[clave] = campo.text()
         return valores
 
+    def _guardar_opciones(self, *_):
+        """Lo que el jugador cambia se guarda al momento: el plan del dia solo pone la cantidad y usa el resto de
+        ajustes de cada contenido (el usuario, 2026-11-24: tickets, pociones, nivel). Antes solo se guardaba al
+        lanzar ese contenido a mano."""
+        if getattr(self, "_sin_guardar", False) or self.plan_paso is not None or not self.campos:
+            return
+        opciones = dict(config.obtener("opciones_modos") or {})
+        opciones[self.modo_cls.id] = self._valores()
+        config.guardar({"opciones_modos": opciones})
+
     def preparar(self, id_modo: str, valores: dict):
         """Elegir modo y opciones desde fuera (p. ej. el boton Empezar de Inicio)."""
+        self._sin_guardar = True
+        try:
+            self._preparar(id_modo, valores)
+        finally:
+            self._sin_guardar = False
+
+    def _preparar(self, id_modo: str, valores: dict):
         indice = self.combo.findData(id_modo)
         if indice >= 0:
             self.combo.setCurrentIndex(indice)

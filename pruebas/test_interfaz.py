@@ -408,6 +408,26 @@ class Interfaz(unittest.TestCase):
             with self.subTest(texto=texto):
                 self.assertEqual(ordenes.interpretar(texto), orden)
 
+    # El usuario, 2026-11-24: "en plan del dia no hay configuraciones como para usar tickets": los ajustes de cada
+    # contenido se guardan al cambiarlos, y el plan los usa.
+    def test_cambiar_un_ajuste_lo_guarda_sin_lanzar(self):
+        from lumen import config
+
+        f = self.v.farmear
+        f.preparar("oro", {})
+        f.campos["tickets"].setChecked(not f.campos["tickets"].isChecked())
+        guardado = (config.obtener("opciones_modos") or {}).get("oro", {})
+        self.assertEqual(guardado.get("tickets"), f.campos["tickets"].isChecked())
+
+    def test_lo_que_pone_el_plan_no_se_guarda(self):
+        from lumen import config
+
+        f = self.v.farmear
+        f.preparar("oro", {"victorias": 0})
+        f.campos["victorias"].setValue(5)  # el jugador
+        f.preparar("oro", {"victorias": 1})  # el plan / Inicio
+        self.assertEqual((config.obtener("opciones_modos") or {})["oro"]["victorias"], 5)
+
 
 if __name__ == "__main__":
     unittest.main()

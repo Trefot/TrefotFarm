@@ -29,6 +29,10 @@ Etapas previstas:
 
 CAMBIOS
 -------
+0.44.14-alpha
+  - Sesion en directo: los ajustes de cada contenido (tickets, pociones, nivel...) se guardan en cuanto se cambian,
+    sin tener que lanzarlo. El plan del dia solo pone la cantidad y usa esos ajustes (el usuario, 2026-11-24).
+
 0.44.13-alpha
   - Personajes: la Celestial Ellatte verde salia duplicada. Al evolucionar a LR, 7dshub le dio otro id y la busqueda
     de heroes nuevos la agrego como otra (2026-11-24). Quitada la copia; si un heroe cambia de id en 7dshub, ahora
