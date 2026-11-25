@@ -199,6 +199,20 @@ class Fase4SinColor(unittest.TestCase):
         e.guion(4, 3, 0, m)
         self.assertIn("dos turnos seguidos", e.pedir_reinicio)
 
+    def test_dos_turnos_sin_color_con_poca_vida_va_a_full_dano(self):
+        """El usuario, 2026-11-24: reinicio con el ciervo al 30 % y ultis en la mano ("podia matarlo")."""
+        from types import SimpleNamespace
+        from lumen.vida_jefe import Vida
+
+        e = ciervo(RQ.CAUTELOSO, ve=(juego.buff_azul,))
+        e.modo = SimpleNamespace(vida_jefe=Vida("rojo", 0.30))
+        m = mano((FREYR + ".skill_1", R.BRONCE), (FREYR + ".ulti", R.ULTI), (JORM + ".skill_2", R.BRONCE))
+        e.guion(4, 2, 0, m)
+        jugada = e.guion(4, 3, 0, m)
+        self.assertIsNone(e.pedir_reinicio)
+        self.assertTrue(e.a_matar)
+        self.assertNotIsInstance(jugada, tuple, "ataca, no mueve")
+
     def test_la_cuarta_accion_sin_el_color_siguiente_no_es_turno_fallado(self):
         """El usuario, 2026-11-16: turnos 1 y 2 perfectos (Tyr verde, Thor azul, Freyja roja y mover); como en la 4.a
         accion no habia verde, los dos contaban como fallados y reinicio con el ciervo al 37 %."""

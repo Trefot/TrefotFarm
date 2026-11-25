@@ -543,6 +543,7 @@ class EstrategiaCiervo4(EstrategiaPiso4):
         self.color_turno = None
         self._turnos_sin_color = set()
         self.pedir_reinicio = None
+        self.a_matar = False  # fase 4: sin el color otra vez pero con poca vida: a full dano en vez de reiniciar
 
     def _golpe_maximo(self, mano, guardar_ulti_freyr=False):
         """Whale: la ulti (la de mas a la derecha) o la carta que mas dano hace, de mas rango."""
@@ -689,6 +690,12 @@ class EstrategiaCiervo4(EstrategiaPiso4):
             self._avisar(f"Fase 4: toca {col} y no tengo: muevo para no romper la secuencia de colores.")
         turnos.add(turno)
         if turno - 1 in turnos:
+            vida = getattr(self.modo, "vida_jefe", None) if self.modo is not None else None
+            if vida is not None and vida.capa == "rojo" and vida.por_ciento <= self.MATAR_SIN_SEMAFORO:
+                # El usuario (2026-11-24): reinicio con el ciervo al 30 % y 3 ultis en la mano ("podia matarlo")
+                self._avisar(f"Fase 4: sin {col} otra vez, pero le queda {vida.por_ciento} %: voy a full daño.")
+                self.a_matar = True
+                return
             self.pedir_reinicio = f"fase 4 sin carta {col} dos turnos seguidos: la secuencia no sale"
 
     def _golpe_fase1(self, mano):
@@ -825,8 +832,10 @@ class EstrategiaCiervo4(EstrategiaPiso4):
         fallados = sum(1 for t in self.__dict__.get("_turnos_sin_color", ()) if t < turno)
         return turno - 1 - fallados >= self.TURNOS_SEMAFORO
 
+    MATAR_SIN_SEMAFORO = 50  # % de la barra roja: por debajo, sin el color, se va a full dano en vez de reiniciar
+
     def _fase4(self, turno, accion, mano):
-        if self._semaforo_hecho(turno):
+        if self._semaforo_hecho(turno) or self.__dict__.get("a_matar"):
             # El usuario (2026-11-13), con este mismo equipo: cumplido el semaforo (fuera inmortalidades), se le mata
             # a full dano con las 4 cartas (sin guardar ultis ni mover: "full es full") y se aguanta el contraataque.
             if accion == 0:
@@ -863,6 +872,8 @@ class EstrategiaCiervo4(EstrategiaPiso4):
             # al 37 % (el usuario, 2026-11-16).
             if accion < 3:
                 self._falta_color(turno, falta)
+            if self.__dict__.get("a_matar"):
+                return self._golpe_maximo(mano)
             return self._mover_para_ulti(mano)
         if True:  # mientras dure el semaforo (tambien si se alargo por un turno sin color): las ultis al final
             azules, verdes = azules[::-1], verdes[::-1]

@@ -29,6 +29,11 @@ Etapas previstas:
 
 CAMBIOS
 -------
+0.44.11-alpha
+  - Ciervo Floor 4, fase 4: sin el color del semaforo dos turnos seguidos ya no reinicia si al ciervo le queda la
+    mitad o menos de la barra roja: va a full daño con las ultis. Reinicio con el ciervo al 30 % y 3 ultis en la
+    mano (el usuario, 2026-11-24: "podia matarlo").
+
 0.44.10-alpha
   - Ciervo Floor 4, fase 1 con todo: las 2 habilidades de Freyr y las 2 de Thor antes que Tyr (el usuario,
     2026-11-24: "antes lanzaba las 2 de Freyr y las 2 de Thor, ahora lanza una de Tyr y alli ya falta dano").
