@@ -194,6 +194,11 @@ class Oro(FuerteSolgres):
         self._contar_vuelta(p)
         if self.clic_si(RESULTADO, p, o) or self.clic_si(juego.info_mision, p, o):  # al volver de los tickets
             return None
+        # "Auto Repeat Results" al quedarse sin estamina: sin su OK el bot se quedo 7 min mirando (2026-11-24).
+        # Tras el OK vuelve al Start; al pulsarlo sale la pocion de estamina y _estamina decide.
+        if self.clic_si(OK_RESULTADOS, p, o, espera=1.5):
+            self.log("Se acabó la repetición automática (estamina). Sigo desde el Start.")
+            return None
         if self._estamina(p, o):
             return None
         limite = int(self.valores["max_tickets"])

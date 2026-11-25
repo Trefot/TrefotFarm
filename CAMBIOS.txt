@@ -29,6 +29,10 @@ Etapas previstas:
 
 CAMBIOS
 -------
+0.44.3-alpha
+  - Oro: al quedarse sin estamina el juego muestra "Auto Repeat Results" y el bot se quedaba 7 min mirando
+    (2026-11-24). Ahora toca su OK y sigue: usa una pocion si se lo permites o termina.
+
 0.44.2-alpha
   - Fuera la palabra AutoFarming de Lumen (el usuario, 2026-11-24): pantalla de inicio ("7DS GRAND CROSS"), acceso
     directo, Ajustes, textos y notas. La licencia MIT de las imagenes que aun no tienen copia propia se queda como
