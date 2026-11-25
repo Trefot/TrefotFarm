@@ -29,6 +29,10 @@ Etapas previstas:
 
 CAMBIOS
 -------
+0.44.10-alpha
+  - Ciervo Floor 4, fase 1 con todo: las 2 habilidades de Freyr y las 2 de Thor antes que Tyr (el usuario,
+    2026-11-24: "antes lanzaba las 2 de Freyr y las 2 de Thor, ahora lanza una de Tyr y alli ya falta dano").
+
 0.44.9-alpha
   - Ciervo Floor 4: en Automatico la fase 1 va siempre con todo (4 cartas). Tras una pelea que no cayo en 1 turno
     pasaba a cautela y movia la 4.a carta, y pegaba menos (2026-11-24).

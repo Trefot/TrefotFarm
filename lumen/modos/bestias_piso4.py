@@ -600,7 +600,7 @@ class EstrategiaCiervo4(EstrategiaPiso4):
             # En Automatico la fase 1 siempre con todo: con 4 cartas caia en 1 turno 15 de 15 (2026-11-22); una pelea
             # que se quedo al 14 % la pasaba a cautela y la siguiente movia la 4.a carta y pegaba menos (2026-11-24).
             whale = whale or self.estilo.nombre == requisitos.AUTOMATICO
-            return self._golpe_maximo(mano) if whale else self._fase1(turno, accion, mano)
+            return self._golpe_fase1(mano) if whale else self._fase1(turno, accion, mano)
         if fase == 2:
             # Obligatorio (el usuario): todo el turno del color de la primera carta, o se bloquean todas
             jugada = self._golpe_de_un_color(mano, accion) if whale else self._fase2(turno, accion, mano)
@@ -690,6 +690,21 @@ class EstrategiaCiervo4(EstrategiaPiso4):
         turnos.add(turno)
         if turno - 1 in turnos:
             self.pedir_reinicio = f"fase 4 sin carta {col} dos turnos seguidos: la secuencia no sale"
+
+    def _golpe_fase1(self, mano):
+        """Fase 1 con todo. El usuario (2026-11-24): "antes lanzaba las 2 de Freyr y las 2 de Thor, ahora lanza una de
+        Tyr y alli ya falta dano". Con ellas caia en 1 turno 15 de 15 (2026-11-22); Tyr salia por pegar mas en el
+        texto, pero no pasaba. Asi que: ultis, luego cada habilidad de Freyr y de Thor (la de mas rango), y despues
+        lo que mas pegue."""
+        if any(es_ulti(c) for c in mano if jugable(c)):
+            return self._golpe_maximo(mano)
+        hechas = {(heroe(c), habilidad(c)) for c in self.jugadas if c is not None}
+        for es_de in (es_freyr, es_thor):
+            cand = indices(mano, lambda c: es_de(c) and not es_ulti(c) and (heroe(c), habilidad(c)) not in hechas,
+                           orden=lambda c: (rango(c), dano(c)))
+            if cand:
+                return cand[-1]
+        return self._golpe_maximo(mano)
 
     def _fase1(self, turno, accion, mano):
         """Splash Shower (turnos impares) pone Torrente: 10 % de la vida al usar habilidades, y el ciervo se cura con

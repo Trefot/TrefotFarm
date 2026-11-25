@@ -51,3 +51,24 @@ class CiervoMuerto(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class FaseUnoFreyrYThor(unittest.TestCase):
+    """El usuario: "antes lanzaba las 2 de Freyr y las 2 de Thor, ahora lanza una de Tyr y alli ya falta dano"."""
+
+    def test_juega_las_dos_de_freyr_y_las_dos_de_thor_antes_que_tyr(self):
+        from lumen.cartas import Rango
+        from lumen.modos import bestias_piso4 as B4
+        from test_piso4 import FREYR, THOR, TYR, estrategia, mano
+
+        e = estrategia(B4.EstrategiaCiervo4)
+        m = mano((TYR + ".skill_1", Rango.PLATA), (THOR + ".skill_2", Rango.BRONCE), (THOR + ".skill_1", Rango.BRONCE),
+                 (FREYR + ".skill_1", Rango.PLATA), (FREYR + ".skill_2", Rango.PLATA))
+        orden = []
+        for _ in range(4):
+            i = e._golpe_fase1(m)
+            orden.append(B4._base(m[i]))
+            e.jugadas.append(m[i])
+            m = m[:i] + m[i + 1:]
+        self.assertEqual(sorted(orden[:2]), sorted([FREYR + ".skill_1", FREYR + ".skill_2"]))
+        self.assertEqual(sorted(orden[2:]), sorted([THOR + ".skill_1", THOR + ".skill_2"]))
