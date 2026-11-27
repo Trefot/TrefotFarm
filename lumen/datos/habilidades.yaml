@@ -415,6 +415,9 @@ dimension flare: 'Increases allies'' Defense-related stats by 50% for 3 turn(s),
 dismal scatter cut: 'Inflicts Spike damage equal to 84% of Attack on all enemies and makes them Bleed for 2 turn(s). Spike:
   2x Crit Damage Increase. Bleed: Additional damage equal to 90% of damage dealt at the end of every turn.'
 divine execution: Inflicts damage equal to 500% of Attack on all enemies and prevents own HP from falling below 1 for 1 turn(s).
+divine judgment: 'Inflicts Light Source damage on all enemies equal to 400% of Attack. Light Source: 3x Crit Chance Increase,
+  3x Crit Damage Increase Damage dealt to enemies with "Ark" +150% Deals additional damage equal to 50% of the final damage
+  dealt to all enemies participating in battle.'
 divine protection of the master swordsman: 'The hero randomly gains 1 of the following effects other than Unique abilities
   for 1 turn: Damage dealt +50, All stats +25%, 1 Evade, Debuff Immunity, or Immortality. Then, inflicts Sword Slash damage
   equal to 20% of the hero''s Max HP on all enemies. Sword Slash: 2x Crit Chance Increase. Increases damage dealt by 1.3%
@@ -643,6 +646,9 @@ goddess bless: Creates a barrier around all allies equal to 150% of Attack for 1
 goddess holy ark: Inflicts damage equal to 350% of Attack on all enemies and creates a barrier equal to 20% of the damage.
 goddess pattern: 'Recovers HP of all allies equal to 30% of Max HP. Reflects 40% of damage taken over 2 turn(s), then heals
   for half of the damage reflected. Reflect: Returns a portion of damage taken back to the attacker.'
+goddess rush: 'Removes Buffs from one enemy and inflicts Light Source damage on them equal to 200% of Attack. Light Source:
+  3x Crit Chance Increase, 3x Crit Damage Increase Damage dealt to enemies with "Ark" +150% Deals additional damage equal
+  to 50% of the final damage dealt to all enemies participating in battle.'
 godspeed bone cutter: 'Inflicts Sever damage equal to 180% of Attack on one enemy. Sever: 3x Crit Chance Increase.'
 godspeed ten flashes: 'Inflicts damage equal to 455% of Attack on one enemy. Makes target(s) Bleed for 2 turn(s). Bleed: Additional
   damage equal to 90% of damage dealt at the end of every turn.'
@@ -1228,6 +1234,9 @@ shell blast: 'Inflicts Detonate damage equal to 160% of Attack on one enemy. Det
   target''s Ultimate Move Gauge.'
 shield smash: Inflicts damage equal to 240% of Attack on one enemy.
 shield wall: Assumes a Stance which increases HP-related stats by 20% and damage dealt by 30% for 1 turn(s).
+shining downpour: 'Deals Light Wave damage equal to 180% of Attack to all enemies. Light Wave: 5x Pierce Rate Increase Increases
+  the hero''s Attack by +200% before using the skill. Deals additional damage equal to 100% of the hero''s increased Attack.
+  Damage dealt +150%. Using while the hero has "Saint''s Coat" cancels the enemy''s Stance.'
 shining judgment: 'Increases the hero''s Defense-related stats by 30% for 2 turns, then inflicts Flood damage equal to 300%
   of Defense on all enemies. Flood: 0.8% additional damage for every percent of remaining HP on self.'
 shining redemption: Creates a barrier around all allies equal to 150% of Attack for 1 turn(s). Takes damage only from basic

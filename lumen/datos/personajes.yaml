@@ -5737,3 +5737,17 @@ highest_ranking_demon_cusack_verde:
     ulti:
       descripcion: Un objetivo (Evil Onslaught)
   estreno: '2026-11-12'
+bloody_ellie_claro:
+  clave: '[Bound Radiance] Bloody Ellie'
+  nombre: Bloody Ellie
+  color: claro
+  raza: desconocida
+  roles: []
+  cartas:
+    skill_1:
+      descripcion: Área (Goddess Rush)
+    skill_2:
+      descripcion: Área (Shining Downpour)
+    ulti:
+      descripcion: Área (Divine Judgment)
+  estreno: '2026-11-25'
