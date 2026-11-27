@@ -827,7 +827,19 @@ class EstrategiaCiervo4(EstrategiaPiso4):
         fallados = sum(1 for t in self.__dict__.get("_turnos_sin_color", ()) if t < turno)
         return turno - 1 - fallados >= self.TURNOS_SEMAFORO
 
+    def _ultimo_turno_semaforo(self, turno) -> bool:
+        """Este turno completa el semaforo: con sus 3 colores se va la ultima inmortalidad."""
+        if turno in self.__dict__.get("_turnos_sin_color", ()) or self.__dict__.get("turno_full") == turno:
+            return False
+        fallados = sum(1 for t in self.__dict__.get("_turnos_sin_color", ()) if t < turno)
+        return turno - fallados == self.TURNOS_SEMAFORO
+
     def _fase4(self, turno, accion, mano):
+        if accion == 3 and self._ultimo_turno_semaforo(turno):
+            # El usuario (2026-11-27): "despues de quitar inmortalidad seguia lanzando 3 cartas, pero ya se podian
+            # lanzar 4; eso quita 1 turno". En el ultimo turno del semaforo la 4.a accion ya no mueve: full dano.
+            self._avisar("Fase 4: inmortalidades fuera; la 4.ª carta a full daño.")
+            return self._golpe_maximo(mano)
         if self._semaforo_hecho(turno) or self.__dict__.get("turno_full") == turno:
             # El usuario (2026-11-13), con este mismo equipo: cumplido el semaforo (fuera inmortalidades), se le mata
             # a full dano con las 4 cartas (sin guardar ultis ni mover: "full es full") y se aguanta el contraataque.

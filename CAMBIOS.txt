@@ -29,6 +29,10 @@ Etapas previstas:
 
 CAMBIOS
 -------
+0.45.3-alpha (2026-11-27)
+- Ciervo F4: en el ultimo turno del semaforo (ya sin inmortalidades) la 4.a accion es una carta a full dano en vez de
+  mover. Ahorra un turno.
+
 0.45.2-alpha (2026-11-27)
 - La ruleta nueva "SP DUNGEON AD BONUS" (sale tras los tickets) se cierra con la X; antes el bot tocaba el RESULT
   de detras sin parar. Nunca toca el boton del anuncio.

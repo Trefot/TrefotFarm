@@ -1,6 +1,6 @@
 """Lumen Farm: farmeo automatico para 7DS Grand Cross."""
 
-__version__ = "0.45.2-alpha"
+__version__ = "0.45.3-alpha"
 
 
 def _yaml_rapido():

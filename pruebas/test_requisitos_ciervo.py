@@ -246,6 +246,17 @@ class Fase4Remate(unittest.TestCase):
         m = mano((THOR + ".skill_1", R.BRONCE), (JORM + ".skill_1", R.PLATA), (FREYR + ".ulti", R.ULTI))
         self.assertEqual(e.guion(4, 4, 3, m), 2, "la 4.a accion no mueve: la ulti")
 
+    def test_ultimo_turno_del_semaforo_la_cuarta_carta_ataca(self):
+        """El usuario, 2026-11-27: quitadas las inmortalidades (3.er turno de semaforo) seguia moviendo la 4.a."""
+        e = ciervo(RQ.CAUTELOSO)
+        e.jugadas = list(mano((TYR + ".skill_2", R.BRONCE), (THOR + ".skill_1", R.BRONCE), ("freyja_roja.normal_2", R.PLATA)))
+        m = mano((THOR + ".skill_1", R.BRONCE), (JORM + ".skill_1", R.PLATA), (FREYR + ".ulti", R.ULTI))
+        self.assertEqual(e.guion(4, 3, 3, m), 2, "turno 3, 4.a accion: la ulti, no mover")
+        self.assertIsInstance(e.guion(4, 2, 3, m), tuple, "turno 2: aun mueve para cargar ultis")
+        e._turnos_sin_color = {2}
+        self.assertIsInstance(e.guion(4, 3, 3, m), tuple, "con un turno fallado, el ultimo es el 4")
+        self.assertEqual(e.guion(4, 4, 3, m), 2)
+
     def test_un_turno_sin_color_alarga_el_semaforo(self):
         e = ciervo(RQ.CAUTELOSO, ve=(juego.buff_azul,))
         e._turnos_sin_color = {2}  # en el turno 2 falto el color: ese no quito inmortalidad
