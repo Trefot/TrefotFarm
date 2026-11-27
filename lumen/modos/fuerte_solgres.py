@@ -28,13 +28,14 @@ TIENDA_ESSETTE = P("essette_shop.png")  # aviso de la tienda de Essette que tapa
 CARGA_FS = P("fs_loading_screen.png")
 RESULTADO = P("dailies/result.png")
 # Oro
-MAZMORRA_ORO = P("gold_dungeon/gold_dungeon.png")
+# Menu Battle nuevo (actualizacion del 2026-11-27): "Gold Dungeon" y "Special Dungeon" salen ya en la pestana Daily.
+MAZMORRA_ORO = P("gold_dungeon/gold_dungeon.png", "menu_2026/gold_dungeon.png", nombre="mazmorra_oro")
 PISO_6 = P("gold_dungeon/6th_floor.png")
 MAX_TICKETS = P("gold_dungeon/max_clears.png")
 AUTO_CLEAR = P("dailies/auto_clear.png")
 EMPEZAR_AUTO_CLEAR = P("dailies/start_auto_clear.png")
 # Monedas SA
-ESPECIAL_FS = P("dailies/fs_special.png")
+ESPECIAL_FS = P("dailies/fs_special.png", "menu_2026/special_dungeon.png", nombre="especial_fs")
 MAZMORRA_EVENTO = P("dailies/event_dungeon.png")
 MONEDA_SA = P("sa_coin.png")
 TORRE_RELOJ = P("sa_coin_dungeon/clock_tower.png")

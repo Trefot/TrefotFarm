@@ -33,7 +33,8 @@ from lumen.motor import Modo, Opcion, TerminarModo
 from lumen.vision import Plantilla
 
 P = Plantilla
-BOSS_BATTLE = P("demons/demons.jpg")  # menu Boss Battle (imagen MIT)
+# menu Boss Battle (imagen MIT) y, desde la actualizacion del 2026-11-27, "Death Match" en el menu Battle nuevo
+BOSS_BATTLE = P("demons/demons.jpg", "menu_2026/death_match.png", nombre="boss_battle")
 TIEMPO_REAL = P("demons/RT.png")
 VENTANA_UNION = P("demons/union_tiempo_real.png")  # titulo "Real-time Join Request" (captura propia)
 INDURA = P("demons/indura_lumen.png")  # pestana de Indura seleccionada (captura propia)

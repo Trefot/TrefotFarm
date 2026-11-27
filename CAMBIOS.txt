@@ -29,6 +29,10 @@ Etapas previstas:
 
 CAMBIOS
 -------
+0.45.0-alpha (2026-11-27)
+- Menu Battle nuevo de la actualizacion del juego: Lumen reconoce "Gold Dungeon", "Special Dungeon" y
+  "Death Match" (demonios) en la pestana Daily. Las bestias (pestana Weekly) quedan pendientes.
+
 0.44.18-alpha (2026-11-25)
 - Si se pierde la conexión y sale "Server request failed. Returning to the title screen.", Lumen pulsa OK,
   vuelve a entrar desde la pantalla de título y empieza el modo de nuevo (antes se quedaba 8 min quieto).
