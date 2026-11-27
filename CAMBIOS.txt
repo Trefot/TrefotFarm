@@ -29,6 +29,10 @@ Etapas previstas:
 
 CAMBIOS
 -------
+0.47.1-alpha (2026-11-27)
+- Demonios con la ventana nueva de Real-time Join Request: Lumen lee el nombre del nivel (Normal, Hard, Extreme,
+  Hell, Chaos) y desliza la fila hasta encontrarlo. Antes repetia "No veo el nivel Normal de Red Demon".
+
 0.47.0-alpha
   - Indura: "Partidas" tiene ahora 3 modos (solo en Indura; los otros demonios vuelven a buscar como siempre):
     Buscar partidas, Aceptar solicitud (antes "Invitaciones de amigos": acepta y juega normal) y Enviar solicitud.

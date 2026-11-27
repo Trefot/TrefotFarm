@@ -36,7 +36,7 @@ import time
 
 import cv2
 
-from lumen import avisos, botin, cartas, entrada, estrategias, inteligencia, juego, ventana
+from lumen import avisos, botin, cartas, entrada, estrategias, inteligencia, juego, ocr, ventana
 from lumen.control import Detenido, control
 from lumen.ia import aprendizaje, diario
 from lumen.motor import Modo, Opcion, TerminarModo
@@ -50,6 +50,11 @@ VENTANA_UNION = P("demons/union_tiempo_real.png")  # titulo "Real-time Join Requ
 INDURA = P("demons/indura_lumen.png")  # pestana de Indura seleccionada (captura propia)
 NIVELES = {"Normal": P("demons/normal.png"), "Hard": P("demons/hard.png"), "Extreme": P("demons/extreme.png"),
            "Hell": P("demons/hell.png"), "Chaos": P("demons/chaos.png")}
+# Ventana nueva (actualizacion del 2026-11-27): los niveles son cartas en una fila que se desliza y su nombre tiene
+# otra letra. Se leen con OCR en la franja de los nombres; si el que toca no se ve, se desliza hacia el.
+ORDEN_NIVELES = ["Normal", "Hard", "Extreme", "Hell", "Chaos"]
+FRANJA_NIVELES = (590, 670)  # y de los nombres de las cartas
+DESLIZAR_NIVELES = ((450, 500), (130, 500))  # arrastre hacia la izquierda: se ven los niveles mas altos
 ACEPTAR = P("demons/accept.png")
 ACEPTAR_AMIGO = P("demons/aceptar_invitacion.png")  # "Accept Invitation" de un amigo (foto del usuario, 2026-11-27)
 CANCELAR_BUSQUEDA = P("demons/cancel.png")
@@ -266,13 +271,39 @@ class DemonioTiempoReal(Modo):
                     self.pestana_elegida, self.intentos_pestana = True, 0
             return None
         nivel = self.valores["nivel"]
-        if not self.clic_si(NIVELES[nivel], p, o, umbral=0.8, espera=0.8):
-            self.log(f"No veo el nivel {nivel} de {self.nombre}.", "aviso")
+        if not self.clic_si(NIVELES[nivel], p, o, umbral=0.8, espera=0.8) and not self._nivel_por_texto(p, o, nivel):
             return None
         self.clic_si(VENTANA_UNION, p, o, punto=OK_UNION, espera=1.5)  # OK: empieza a buscar
         self.log(f"Buscando partidas de {self.nombre} ({nivel}).", "ok")
         self.buscando_desde = time.time()
         return "buscar"
+
+    def _nivel_por_texto(self, p, o, nivel) -> bool:
+        """Ventana nueva: busca el nombre del nivel con OCR y lo toca; si no se ve, desliza la fila hacia el (antes
+        se quedaba repitiendo "No veo el nivel Normal de Red Demon", 2026-11-27). True si lo toco."""
+        if not ocr.disponible():
+            self.log(f"No veo el nivel {nivel} de {self.nombre}.", "aviso")
+            return False
+        vistos = {}
+        for texto, (x, y, w, h) in ocr.lineas_con_posicion(p):
+            if FRANJA_NIVELES[0] <= y + h // 2 <= FRANJA_NIVELES[1]:
+                for n in ORDEN_NIVELES:
+                    if n.lower() in texto.lower():
+                        vistos[n] = (x + w // 2, y + h // 2)
+        if nivel in vistos:
+            entrada.clic(vistos[nivel], o, espera=0.8)
+            self.deslizes_nivel = 0
+            return True
+        objetivo = ORDEN_NIVELES.index(nivel)
+        self.deslizes_nivel = getattr(self, "deslizes_nivel", 0) + 1
+        if vistos:
+            hacia_altos = max(ORDEN_NIVELES.index(n) for n in vistos) < objetivo
+        else:  # no se lee nada: ir y volver
+            hacia_altos = (self.deslizes_nivel // 4) % 2 == 0
+        desde, hasta = DESLIZAR_NIVELES if hacia_altos else DESLIZAR_NIVELES[::-1]
+        self.log(f"No veo el nivel {nivel} de {self.nombre}: deslizo la fila.", "debug")
+        entrada.arrastrar(desde, hasta, o)
+        return False
 
     def _vigilar_aceptar(self):
         """Mira solo el boton Accept, lo mas seguido posible, durante VIGILANCIA s. Devuelve (rect, origen)."""

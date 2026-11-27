@@ -44,5 +44,48 @@ class MenuBattle2026(unittest.TestCase):
         self.assertFalse(juego.anuncio_ruleta.esta(cv2.imread(str(Path(__file__).with_name("resultado_tickets.png"))), 0.8))
 
 
+
+class NivelesDemonio(unittest.TestCase):
+    """Ventana nueva de Real-time Join Request: "No veo el nivel Normal de Red Demon" sin parar (2026-11-27)."""
+
+    def _modo(self, lineas):
+        from unittest import mock
+        from lumen import entrada, ocr
+        m = I.Indura.__new__(I.Indura)
+        m.nombre, m.log = "Red Demon", lambda *a, **k: None
+        self.clics, self.arrastres = [], []
+        self.parches = [mock.patch.object(ocr, "disponible", lambda: True),
+                        mock.patch.object(ocr, "lineas_con_posicion", lambda p, **k: lineas),
+                        mock.patch.object(entrada, "clic", lambda pt, o, espera=0: self.clics.append(pt)),
+                        mock.patch.object(entrada, "arrastrar", lambda a, b, o, *x, **k: self.arrastres.append((a, b)))]
+        for pa in self.parches:
+            pa.start()
+            self.addCleanup(pa.stop)
+        return m
+
+    def test_toca_el_nivel_que_lee(self):
+        m = self._modo([("Normal", (150, 626, 61, 13)), ("Hard", (358, 626, 41, 14))])
+        self.assertTrue(m._nivel_por_texto(None, (0, 0), "Hard"))
+        self.assertEqual(self.clics, [(378, 633)])
+
+    def test_desliza_hacia_los_niveles_altos(self):
+        m = self._modo([("Normal", (150, 626, 61, 13)), ("Hard", (358, 626, 41, 14))])
+        self.assertFalse(m._nivel_por_texto(None, (0, 0), "Chaos"))
+        self.assertEqual(self.arrastres, [I.DESLIZAR_NIVELES])
+
+    def test_desliza_hacia_los_niveles_bajos(self):
+        m = self._modo([("Hell", (150, 626, 40, 13)), ("Chaos", (358, 626, 50, 14))])
+        self.assertFalse(m._nivel_por_texto(None, (0, 0), "Normal"))
+        self.assertEqual(self.arrastres, [I.DESLIZAR_NIVELES[::-1]])
+
+    def test_la_ocr_lee_la_captura_real(self):
+        from lumen import ocr
+        if not ocr.disponible():
+            self.skipTest("sin OCR")
+        p = cv2.imread(str(Path(__file__).with_name("niveles_demonio_2026.png")))
+        textos = [t for t, (x, y, w, h) in ocr.lineas_con_posicion(p) if I.FRANJA_NIVELES[0] <= y + h // 2 <= I.FRANJA_NIVELES[1]]
+        self.assertIn("Normal", textos)
+
+
 if __name__ == "__main__":
     unittest.main()
