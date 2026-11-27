@@ -29,5 +29,13 @@ class MenuBattle2026(unittest.TestCase):
         self.assertFalse(I.BOSS_BATTLE.esta(otra, 0.75))
 
 
+    def test_bestias_en_la_pestana_weekly(self):
+        semanal = cv2.imread(str(Path(__file__).with_name("menu_weekly_2026.png")))
+        self.assertTrue(juego.pestana_weekly.esta(self.p, 0.85), "en Daily: tocar Weekly")
+        self.assertFalse(juego.pestana_weekly.esta(semanal, 0.85), "ya en Weekly: no tocarla")
+        self.assertTrue(juego.nido_criaturas.esta(semanal))
+        self.assertFalse(juego.nido_criaturas.esta(self.p))
+
+
 if __name__ == "__main__":
     unittest.main()

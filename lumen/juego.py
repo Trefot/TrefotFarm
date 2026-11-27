@@ -59,7 +59,9 @@ ok = P(
 )
 
 # ---------------------------------------------------------- bestias demoniacas
-nido_criaturas = P("demonic_beasts/creature_nest.png")
+# Menu Battle nuevo (actualizacion del 2026-11-27): las bestias estan en la pestana Weekly, casilla "Demonic Beast Battle"
+nido_criaturas = P("demonic_beasts/creature_nest.png", "menu_2026/demonic_beast.png", nombre="nido_criaturas")
+pestana_weekly = P("menu_2026/pestana_weekly.png")  # "Weekly" sin elegir (si ya esta elegida no coincide)
 pantalla_bestias = P("demonic_beasts/demonic_beast_battle.png")
 carga_bestias = P("demonic_beasts/loading_screen.png")
 pajaro = P("demonic_beasts/hraesvelgr.png")

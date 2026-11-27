@@ -70,7 +70,7 @@ class ConPantallaSimulada(unittest.TestCase):
     """Base: imagenes del juego falsas, clics anotados y OCR que devuelve ``self.texto``."""
 
     def setUp(self):
-        for n in ("cancelar", "cerrar", "menu_batalla", "nido_criaturas", "pantalla_bestias", "ok", "empezar",
+        for n in ("cancelar", "cerrar", "menu_batalla", "nido_criaturas", "pestana_weekly", "pantalla_bestias", "ok", "empezar",
                   "carga_bestias", "piso3_superado"):
             self._parchear(juego, n, PlantillaFalsa(n))
         self.orden = [PlantillaFalsa(n) for n in ("pajaro", "ciervo", "perros", "serpiente", "rata")]

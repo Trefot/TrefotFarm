@@ -242,6 +242,8 @@ class BestiaPisos1a3(PerrosPiso4):
             self.log("Cierro un aviso.")  # p. ej. el que sale al abrir la bestia
             return None
         self.clic_si(juego.menu_batalla, p, o, umbral=0.6)
+        if self.clic_si(juego.pestana_weekly, p, o, umbral=0.85, espera=1.0):
+            return None
         self.clic_si(juego.nido_criaturas, p, o)
         if juego.pantalla_bestias.esta(p):
             if not self.bestia.esta(p):

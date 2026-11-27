@@ -403,6 +403,8 @@ class PerrosPiso4(Modo):
             self.log("Habia una pelea a medias; la doy por perdida y empiezo de nuevo.", "aviso")
             return None
         self.clic_si(juego.menu_batalla, p, o, umbral=0.6)
+        if self.clic_si(juego.pestana_weekly, p, o, umbral=0.85, espera=1.0):
+            return None
         self.clic_si(juego.nido_criaturas, p, o)
         if juego.pantalla_bestias.esta(p) and not self.bestia.esta(p):
             self._deslizar_hacia_perros(p, o)
