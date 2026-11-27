@@ -38,7 +38,7 @@ class TerminarModo(Exception):
     """El modo termino su trabajo (p. ej. llego al numero de victorias)."""
 
 
-ESTADOS_LARGOS = {"pelea", "buscar"}  # pasos que pueden durar mucho sin que sea un bucle (pelear, esperar invitaciones)
+ESTADOS_LARGOS = {"pelea", "buscar", "abrir_sala", "sala_propia"}  # pasos que pueden durar mucho sin que sea un bucle (pelear, esperar invitaciones)
 
 
 class Modo:

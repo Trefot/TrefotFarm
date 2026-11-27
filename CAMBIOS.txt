@@ -29,6 +29,13 @@ Etapas previstas:
 
 CAMBIOS
 -------
+0.47.0-alpha
+  - Indura: "Partidas" tiene ahora 3 modos (solo en Indura; los otros demonios vuelven a buscar como siempre):
+    Buscar partidas, Aceptar solicitud (antes "Invitaciones de amigos": acepta y juega normal) y Enviar solicitud.
+  - Enviar solicitud (Lumen en una segunda cuenta): abre la sala de Indura, invita a Favoritos (deja ahi solo tu
+    cuenta principal), espera a que salga "Preparation Complete", empieza, lanza 3 cartas, se rinde y repite
+    cuando el juego deja abrir otra sala.
+
 0.46.0-alpha
   - Demonios e Indura: opcion "Partidas" -> "Invitaciones de amigos". Lumen se queda en la Taberna y, cuando un
     amigo o alguien del gremio te invita a Death Match, pulsa "Accept Invitation" (nunca "View Later" ni la casilla
