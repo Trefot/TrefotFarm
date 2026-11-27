@@ -18,9 +18,15 @@ una captura propia):
    - AUTO: lo juega el juego.
 5. Demonio destruido -> OK. Se cuenta la victoria y se vuelve a buscar.
 
-Invitaciones de amigos (opcion "Partidas"): en vez de buscar, se queda donde este (la Taberna) esperando la
-ventana "X is inviting you to Death Match!" que manda un amigo o alguien del gremio. Pulsa "Accept Invitation"
-(nunca "View Later" ni la casilla de rechazar un dia) y sigue igual desde el paso 4. Al acabar vuelve a esperar.
+Solo en Indura, la opcion "Partidas" tiene dos modos mas (capturas del usuario del 2026-11-27):
+- Aceptar solicitud: en vez de buscar, se queda donde este (la Taberna) esperando la ventana "X is inviting you to
+  Death Match!". Pulsa "Accept Invitation" (nunca "View Later" ni la casilla de rechazar un dia) y juega normal
+  desde el paso 4. Al acabar vuelve a esperar.
+- Enviar solicitud (Lumen en una segunda cuenta que ayuda a la principal): Death Match -> Indura -> el nivel abre
+  una sala propia. Invitar -> pestana Favoritos -> Invite All (en Favoritos se deja solo la cuenta principal).
+  Cuando la otra cuenta sale con "Preparation Complete", pulsa el suyo; en la pelea lanza sus 3 cartas, se rinde
+  (el boton junto a AUTO) y confirma. El juego no deja abrir otra sala hasta que la otra cuenta acaba su pelea:
+  se reintenta cada poco hasta que se abre.
 
 Indura tiene limite diario de peleas (el juego lo dice en la ventana de union): cuando ya no hay
 partidas, el bot se queda esperando invitaciones que no llegan; se para con un tiempo maximo de espera.
@@ -55,7 +61,26 @@ PUNTO_ATRAS = (39, 64)
 AUTO = P("demons/auto.jpg")
 DESTRUIDO = P("demons/demons_destroyed.png")
 
-BUSCAR, AMIGOS = "Buscar partidas", "Invitaciones de amigos"
+BUSCAR, AMIGOS, ENVIAR = "Buscar partidas", "Aceptar solicitud", "Enviar solicitud"
+AMIGOS_ANTES = "Invitaciones de amigos"  # el nombre de la 0.46.0 (puede seguir guardado en la configuracion)
+
+# Enviar solicitud: la sala propia de Indura (menu Death Match de la actualizacion del 2026-11-27)
+S = "indura_sala/"
+DM_INDURA = P(S + "dm_indura.png")  # la tarjeta "Indura of Retribution" del menu Death Match
+NIVELES_INDURA = P(S + "indura_niveles.png")  # titulo "Indura of Retribution Death Match" (elegir nivel)
+NIVEL_SALA = {"Chaos": P(S + "sala_chaos.png"), "Hell": P(S + "sala_hell.png"), "Extreme": P(S + "sala_extreme.png")}
+SALA_INVITAR = P(S + "sala_invitar.png")  # el hexagono verde de invitar (solo en la sala propia)
+SALA_PREPARACION = P(S + "sala_preparacion.png")  # el boton grande "Preparation Complete"
+AMIGO_LISTO = P(S + "amigo_listo.png")  # "Preparation Complete" debajo de la otra cuenta
+INVITAR_VENTANA = P(S + "invitar_cerrar.png")  # la X roja de la ventana de invitar
+INVITAR_TODOS = P(S + "invitar_todos.png")  # "Invite All" en amarillo (gris = nadie a quien invitar)
+RENDIRSE = P(S + "pelea_rendirse.png")  # el boton junto a AUTO
+RENDIRSE_TEXTO = P(S + "rendirse_texto.png")  # "Are you sure you want to forfeit the battle?"
+RENDIRSE_OK = P(S + "rendirse_ok.png")
+PESTANA_FAVORITOS = (68, 373)
+CARTAS_ANTES_DE_SALIR = 3
+CADA_INVITACION = 60.0  # s: si la otra cuenta no entra, se vuelve a invitar
+CADA_REINTENTO = 15.0  # s entre intentos de abrir la sala mientras la otra cuenta acaba su pelea
 
 PESTANA_INDURA = (490, 258)  # la ultima pestana de la ventana de union (medido)
 OK_UNION = (277, 869)
@@ -105,6 +130,9 @@ class DemonioTiempoReal(Modo):
         "buscar": "Esperando una invitación",
         "preparar": "Preparando la pelea",
         "pelea": "Peleando",
+        "abrir_sala": "Abriendo la sala",
+        "sala_propia": "Esperando a la otra cuenta",
+        "pelea_corta": "Lanzando 3 cartas",
     }
     opciones: list[Opcion] = []
     pausa_entre_pasos = 0.05  # buscando invitaciones hay que verlas en cuanto salen (cuenta el tiempo)
@@ -153,9 +181,15 @@ class DemonioTiempoReal(Modo):
 
     @property
     def de_amigos(self) -> bool:
-        return self.valores.get("partidas") == AMIGOS
+        return self.valores.get("partidas") in (AMIGOS, AMIGOS_ANTES)
+
+    @property
+    def enviando(self) -> bool:
+        return self.valores.get("partidas") == ENVIAR
 
     def estado_inicial(self):
+        if self.enviando:
+            return "abrir_sala"
         return "buscar" if self.de_amigos else "ir_a_indura"
 
     def _volver(self) -> str:
@@ -165,10 +199,11 @@ class DemonioTiempoReal(Modo):
     def estados(self):
         return {"ir_a_indura": self.ir_a_indura, "elegir": self.elegir,
                 "buscar": self.esperar_amigo if self.de_amigos else self.buscar,
-                "preparar": self.preparar, "pelea": self.pelea}
+                "preparar": self.preparar, "pelea": self.pelea,
+                "abrir_sala": self.abrir_sala, "sala_propia": self.sala_propia, "pelea_corta": self.pelea_corta}
 
     def en_zona_segura(self) -> bool:
-        return self.estado in ("ir_a_indura", "elegir", "buscar")
+        return self.estado in ("ir_a_indura", "elegir", "buscar", "abrir_sala", "sala_propia")
 
     def _stats(self):
         total = self.victorias + self.derrotas
@@ -335,6 +370,142 @@ class DemonioTiempoReal(Modo):
         if minutos and time.time() - self.buscando_desde > minutos * 60:
             self.log(f"{minutos:.0f} min sin invitaciones de amigos. Termino.", "aviso")
             raise TerminarModo()
+        return None
+
+    # ------------------------------------------------------------- enviar solicitud
+    def abrir_sala(self, p, o):
+        """Death Match -> Indura -> el nivel: la sala propia. Mientras la otra cuenta acaba su pelea el juego no la
+        abre; se reintenta cada CADA_REINTENTO s."""
+        if AUTO.esta(p, 0.8):
+            return "pelea_corta"
+        if self._en_sala_propia(p):
+            self.log("Sala abierta. Invito a la otra cuenta.", "ok")
+            self.invitado_en, self.sala_desde_envio = 0.0, time.time()
+            return "sala_propia"
+        if time.time() - getattr(self, "listo_en", 0.0) < 30.0:
+            return None  # los dos listos: la pelea esta cargando, no tocar nada
+        if self.clic_si(juego.ok, p, o, espera=1.0):  # "no puedes abrir otra pelea todavia" y otros avisos
+            return None
+        ahora = time.time()
+        if NIVELES_INDURA.esta(p, 0.8):
+            nivel = self.valores.get("nivel", "Chaos")
+            if ahora - getattr(self, "reintento_en", 0.0) >= CADA_REINTENTO:
+                self.reintento_en = ahora
+                if not self.clic_si(NIVEL_SALA.get(nivel, NIVEL_SALA["Chaos"]), p, o, umbral=0.75, espera=2.0):
+                    self.log(f"No veo el nivel {nivel} de Indura.", "aviso")
+            return None
+        if self.clic_si(DM_INDURA, p, o, umbral=0.75, espera=1.5):
+            return None
+        conocida = (self.clic_si(juego.menu_batalla, p, o, umbral=0.6, espera=1.0)
+                    | self.clic_si(BOSS_BATTLE, p, o, umbral=0.75, espera=1.0))
+        minutos = float(self.valores["minutos_sin_invitacion"])
+        if minutos and ahora - self.buscando_desde > minutos * 60:
+            self.log(f"{minutos:.0f} min sin poder abrir la sala de Indura. Termino.", "aviso")
+            raise TerminarModo()
+        if not conocida:
+            self.clic_si(ATRAS, p, o, umbral=0.75, espera=1.0)  # un menu de mas: volver hacia la Taberna
+        return None
+
+    @staticmethod
+    def _en_sala_propia(p) -> bool:
+        return (SALA_INVITAR.esta(p, 0.8) or SALA_PREPARACION.esta(p, 0.8) or INVITAR_VENTANA.esta(p, 0.85)
+                or AMIGO_LISTO.esta(p, 0.75))
+
+    def sala_propia(self, p, o):
+        """Invitar (Favoritos -> Invite All), esperar a que la otra cuenta este lista y empezar."""
+        if AUTO.esta(p, 0.8):
+            self._empezar_pelea_corta()
+            return "pelea_corta"
+        ahora = time.time()
+        if INVITAR_VENTANA.esta(p, 0.85):
+            if ahora - self.invitado_en >= CADA_INVITACION:
+                entrada.clic(PESTANA_FAVORITOS, o, espera=1.0)
+                p, o = self.capturar()
+                if self.clic_si(INVITAR_TODOS, p, o, umbral=0.9, espera=1.0):
+                    self.invitado_en = ahora
+                    self.log("Invitación enviada a Favoritos.", "ok")
+                else:
+                    self.invitado_en = ahora  # no reintentar sin parar: se prueba otra vez en CADA_INVITACION
+                    self.log("No puedo invitar (¿la cuenta principal no está en Favoritos o no está conectada?).",
+                             "aviso")
+            self.clic_si(INVITAR_VENTANA, p, o, umbral=0.85, espera=1.0)
+            return None
+        if AMIGO_LISTO.esta(p, 0.75):
+            if ahora - getattr(self, "listo_en", 0.0) >= 15.0:  # una vez: pulsarlo otra vez lo quitaria
+                self.log("La otra cuenta está lista. Empiezo.", "ok")
+                if self.clic_si(SALA_PREPARACION, p, o, umbral=0.75, espera=2.0):
+                    self.listo_en = ahora
+            return None
+        if not self._en_sala_propia(p):
+            return "abrir_sala"  # se cerro la sala o esta cargando la pelea (abrir_sala sabe esperar)
+        if ahora - self.invitado_en >= CADA_INVITACION:
+            self.clic_si(SALA_INVITAR, p, o, umbral=0.8, espera=1.5)
+        minutos = float(self.valores["minutos_sin_invitacion"])
+        if minutos and ahora - self.sala_desde_envio > minutos * 60:
+            self.log(f"{minutos:.0f} min sin que entre la otra cuenta. Termino.", "aviso")
+            raise TerminarModo()
+        return None
+
+    def _empezar_pelea_corta(self):
+        self.lanzadas, self.libres_vistas = 0, None
+        self.libres_antes, self.tocado_en, self.ultima_tocada, self.rechazadas = -1, 0.0, None, []
+        self.log("¡Empieza la pelea! Lanzo 3 cartas y me salgo.", "ok")
+
+    def pelea_corta(self, p, o):
+        """Lanzar 3 cartas (Inteligente, o la de mas rango; nunca AUTO) y rendirse."""
+        if RENDIRSE_TEXTO.esta(p, 0.8):
+            if self.clic_si(RENDIRSE_OK, p, o, umbral=0.8, espera=2.0):
+                self.victorias += 1  # cada ayuda completada cuenta como una
+                self.log(f"Me rendí tras lanzar las cartas. Ayudas: {self.victorias}.", "ok")
+                self._stats()
+                self.buscando_desde, self.reintento_en = time.time(), 0.0
+                del self.lanzadas
+                meta = int(self.valores["victorias"])
+                if meta and self.victorias >= meta:
+                    self.log(f"Llegué a {meta} ayudas.", "ok")
+                    raise TerminarModo()
+                return "abrir_sala"
+            return None
+        if not AUTO.esta(p, 0.8):
+            if DM_INDURA.esta(p, 0.75) or NIVELES_INDURA.esta(p, 0.8):
+                self.__dict__.pop("lanzadas", None)
+                return "abrir_sala"  # la pelea ya acabo
+            return None
+        if not hasattr(self, "lanzadas"):
+            self._empezar_pelea_corta()
+        libres = cartas.casillas_libres_demonio(p)
+        if self.libres_vistas is None:
+            if libres > 0:
+                self.libres_vistas = libres  # empieza nuestro turno
+        elif libres > self.libres_vistas:
+            self.libres_vistas = libres  # turno nuevo (no deberia pasar antes de las 3)
+        elif libres < self.libres_vistas:
+            self.lanzadas += self.libres_vistas - libres  # entraron en su casilla
+            self.libres_vistas = libres
+        if self.lanzadas >= CARTAS_ANTES_DE_SALIR:
+            self.clic_si(RENDIRSE, p, o, umbral=0.8, espera=1.5)
+            return None
+        if libres <= 0:
+            return None
+        ahora = time.time()
+        if libres == self.libres_antes and ahora - self.tocado_en < 2.0:
+            return None  # la carta tocada aun esta entrando
+        if libres == self.libres_antes and self.ultima_tocada is not None:
+            self.rechazadas.append(self.ultima_tocada.imagen)  # no entro: se aparta
+        mano = [c for c in cartas.leer_mano_demonio(p)
+                if c.tipo != cartas.TipoCarta.BLOQUEADA and not any(
+                    c.imagen is not None and r is not None and c.imagen.shape == r.shape
+                    and float(cv2.absdiff(c.imagen, r).mean()) < 12 for r in self.rechazadas)]
+        carta = None
+        if self.valores.get("jugar") == "Inteligente" and mano:
+            paso = self.jugador.elegir(mano, libres)
+            carta = mano[paso[1]] if paso else None
+        carta = carta or estrategias.la_de_mas_rango(mano)
+        if carta is None:
+            return None
+        entrada.clic(carta.rect, o, espera=0.3)
+        self.libres_antes, self.tocado_en, self.ultima_tocada = libres, ahora, carta
+        self.log(f"   juego {carta.nombre} ({self.lanzadas + 1} de {CARTAS_ANTES_DE_SALIR})", "debug")
         return None
 
     def preparar(self, p, o):
@@ -575,11 +746,12 @@ class DemonioTiempoReal(Modo):
                  f"{self.perdidas} invitaciones perdidas.", "ok")
 
 
-def _opciones(nivel: str, niveles: list[str], jugar: str) -> list[Opcion]:
-    return [
-        Opcion("partidas", "Partidas", "lista", BUSCAR, opciones=[BUSCAR, AMIGOS],
-               ayuda="Buscar partidas: se une a las de cualquiera, con el nivel elegido. Invitaciones de amigos: se "
-                     "queda en la Taberna y acepta las de Death Match que te manden (el nivel lo pone quien invita)."),
+def _opciones(nivel: str, niveles: list[str], jugar: str, solicitudes: bool = False) -> list[Opcion]:
+    partidas = [Opcion("partidas", "Partidas", "lista", BUSCAR, opciones=[BUSCAR, AMIGOS, ENVIAR],
+                       ayuda="Buscar partidas: se une a las de cualquiera. Aceptar solicitud: se queda en la Taberna y "
+                             "acepta las invitaciones que te manden, y juega normal. Enviar solicitud: abre la sala, "
+                             "invita a Favoritos (deja ahí solo tu cuenta principal), lanza 3 cartas y se sale.")]
+    return (partidas if solicitudes else []) + [
         Opcion("nivel", "Nivel", "lista", nivel, opciones=niveles),
         Opcion("jugar", "Cómo pelear", "lista", jugar, opciones=["Inteligente", "Mis cartas", "AUTO"],
                ayuda="Inteligente: piensa las 6 cartas del turno y las fusiones, con cualquier equipo. "
@@ -596,13 +768,13 @@ def _opciones(nivel: str, niveles: list[str], jugar: str) -> list[Opcion]:
 
 def _demonio(id_: str, nombre: str, imagen: str, *, pestana=None, punto_pestana=None, pestana_elegida_img=None,
              nivel: str = "Hell", niveles=("Hell", "Extreme", "Hard", "Normal"), jugar: str = "AUTO",
-             descripcion: str = "") -> type:
+             descripcion: str = "", solicitudes: bool = False) -> type:
     return type(f"Demonio_{id_}", (DemonioTiempoReal,), {
         "id": id_, "nombre": nombre, "titulo_juego": nombre, "imagen": imagen,
         "descripcion": descripcion or (f"Se une a las partidas de {nombre} que abren otros jugadores y pelea en AUTO "
                                        "Empieza desde la Taberna o el menú Battle."),
         "pestana": pestana, "punto_pestana": punto_pestana, "pestana_elegida_img": pestana_elegida_img,
-        "opciones": _opciones(nivel, list(niveles), jugar),
+        "opciones": _opciones(nivel, list(niveles), jugar, solicitudes),
     })
 
 
@@ -617,6 +789,7 @@ DemonioOriginal = _demonio("demonio_original", "Original Demon", "demons/og_demo
 # Indura: la 6.a pestana (por su posicion; se comprueba con una captura propia), Chaos y pensando cada turno.
 Indura = _demonio("indura", "Indura", "demons/indura_lumen.png", punto_pestana=PESTANA_INDURA,
                   pestana_elegida_img=INDURA, nivel="Chaos", niveles=("Chaos", "Hell", "Extreme"), jugar="Inteligente",
+                  solicitudes=True,
                   descripcion="Se une a las partidas de Indura que abren otros jugadores y pelea pensando cada turno. "
                               "Empieza desde la Taberna o el menú Battle.")
 
