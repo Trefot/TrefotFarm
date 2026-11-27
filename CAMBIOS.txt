@@ -29,6 +29,11 @@ Etapas previstas:
 
 CAMBIOS
 -------
+0.46.0-alpha
+  - Demonios e Indura: opcion "Partidas" -> "Invitaciones de amigos". Lumen se queda en la Taberna y, cuando un
+    amigo o alguien del gremio te invita a Death Match, pulsa "Accept Invitation" (nunca "View Later" ni la casilla
+    de rechazar un dia) y pelea como siempre. Al acabar vuelve a esperar; se para tras los minutos sin invitaciones.
+
 0.45.3-alpha (2026-11-27)
 - Ciervo F4: en el ultimo turno del semaforo (ya sin inmortalidades) la 4.a accion es una carta a full dano en vez de
   mover. Ahorra un turno.

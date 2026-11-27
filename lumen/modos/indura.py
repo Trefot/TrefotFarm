@@ -18,6 +18,10 @@ una captura propia):
    - AUTO: lo juega el juego.
 5. Demonio destruido -> OK. Se cuenta la victoria y se vuelve a buscar.
 
+Invitaciones de amigos (opcion "Partidas"): en vez de buscar, se queda donde este (la Taberna) esperando la
+ventana "X is inviting you to Death Match!" que manda un amigo o alguien del gremio. Pulsa "Accept Invitation"
+(nunca "View Later" ni la casilla de rechazar un dia) y sigue igual desde el paso 4. Al acabar vuelve a esperar.
+
 Indura tiene limite diario de peleas (el juego lo dice en la ventana de union): cuando ya no hay
 partidas, el bot se queda esperando invitaciones que no llegan; se para con un tiempo maximo de espera.
 """
@@ -41,6 +45,7 @@ INDURA = P("demons/indura_lumen.png")  # pestana de Indura seleccionada (captura
 NIVELES = {"Normal": P("demons/normal.png"), "Hard": P("demons/hard.png"), "Extreme": P("demons/extreme.png"),
            "Hell": P("demons/hell.png"), "Chaos": P("demons/chaos.png")}
 ACEPTAR = P("demons/accept.png")
+ACEPTAR_AMIGO = P("demons/aceptar_invitacion.png")  # "Accept Invitation" de un amigo (foto del usuario, 2026-11-27)
 CANCELAR_BUSQUEDA = P("demons/cancel.png")
 CARGANDO = P("demons/demons_loading_screen.png")
 PREPARACION = P("demons/preparation_incomplete.png")
@@ -49,6 +54,8 @@ ATRAS = P("back.png")  # la flecha de volver, arriba a la izquierda
 PUNTO_ATRAS = (39, 64)
 AUTO = P("demons/auto.jpg")
 DESTRUIDO = P("demons/demons_destroyed.png")
+
+BUSCAR, AMIGOS = "Buscar partidas", "Invitaciones de amigos"
 
 PESTANA_INDURA = (490, 258)  # la ultima pestana de la ventana de union (medido)
 OK_UNION = (277, 869)
@@ -144,11 +151,20 @@ class DemonioTiempoReal(Modo):
         self.t_captura_anterior, self.t_captura = self.t_captura, time.perf_counter()
         return ventana.capturar()
 
+    @property
+    def de_amigos(self) -> bool:
+        return self.valores.get("partidas") == AMIGOS
+
     def estado_inicial(self):
-        return "ir_a_indura"
+        return "buscar" if self.de_amigos else "ir_a_indura"
+
+    def _volver(self) -> str:
+        """A donde se va al acabar una pelea o deshacerse una sala: a esperar al amigo, o a buscar otra partida."""
+        return "buscar" if self.de_amigos else "ir_a_indura"
 
     def estados(self):
-        return {"ir_a_indura": self.ir_a_indura, "elegir": self.elegir, "buscar": self.buscar,
+        return {"ir_a_indura": self.ir_a_indura, "elegir": self.elegir,
+                "buscar": self.esperar_amigo if self.de_amigos else self.buscar,
                 "preparar": self.preparar, "pelea": self.pelea}
 
     def en_zona_segura(self) -> bool:
@@ -297,6 +313,30 @@ class DemonioTiempoReal(Modo):
             return "preparar"
         return None
 
+    def esperar_amigo(self, p, o):
+        """Esperar la invitacion de un amigo donde se este (la Taberna) y aceptarla."""
+        if AUTO.esta(p, 0.8):
+            self.log("Ya estaba en una pelea: sigo con ella.", "aviso")
+            return "pelea"
+        if CARGANDO.esta(p, 0.8) or PREPARACION.esta(p, 0.8):
+            self._fuera_de_sala()
+            return "preparar"
+        if self.clic_si(ACEPTAR_AMIGO, p, o, umbral=0.8, espera=2.0):
+            p, _ = self.capturar()
+            if ACEPTAR_AMIGO.esta(p, 0.8):
+                self.log("La invitación sigue ahí: el toque no entró. Lo intento otra vez.", "aviso")
+                return None
+            self.log("¡Invitación de un amigo! Aceptada.", "ok")
+            self.buscando_desde = time.time()
+            self._fuera_de_sala()
+            return "preparar"
+        self.clic_si(juego.ok, p, o)  # avisos que taparian la invitacion
+        minutos = float(self.valores["minutos_sin_invitacion"])
+        if minutos and time.time() - self.buscando_desde > minutos * 60:
+            self.log(f"{minutos:.0f} min sin invitaciones de amigos. Termino.", "aviso")
+            raise TerminarModo()
+        return None
+
     def preparar(self, p, o):
         ahora = time.time()
         self.sala_desde = self.sala_desde or ahora
@@ -326,7 +366,7 @@ class DemonioTiempoReal(Modo):
             else:
                 self.log("La partida se deshizo antes de empezar. Vuelvo a buscar.", "aviso")
             self._fuera_de_sala()
-            return "ir_a_indura"
+            return self._volver()
         return None
 
     def _fuera_de_sala(self):
@@ -339,7 +379,7 @@ class DemonioTiempoReal(Modo):
         if not en_sala and self.intentos_salida:
             self.log("Fuera de la sala. Vuelvo a buscar partidas.", "ok")
             self._fuera_de_sala()
-            return "ir_a_indura"  # la navegacion normal sabe volver desde cualquier menu
+            return self._volver()  # la navegacion normal sabe volver desde cualquier menu
         if ahora - self.salida_en < CADA_SALIDA:
             return None
         self.salida_en = ahora
@@ -524,7 +564,9 @@ class DemonioTiempoReal(Modo):
             if meta and self.victorias >= meta:
                 self.log(f"Llegué a {meta} victorias.", "ok")
                 raise TerminarModo()
-            return "ir_a_indura"
+            if self.de_amigos:
+                self.buscando_desde = time.time()  # el reloj de "sin invitaciones" empieza al acabar la pelea
+            return self._volver()
         return None
 
     def al_terminar(self):
@@ -535,6 +577,9 @@ class DemonioTiempoReal(Modo):
 
 def _opciones(nivel: str, niveles: list[str], jugar: str) -> list[Opcion]:
     return [
+        Opcion("partidas", "Partidas", "lista", BUSCAR, opciones=[BUSCAR, AMIGOS],
+               ayuda="Buscar partidas: se une a las de cualquiera, con el nivel elegido. Invitaciones de amigos: se "
+                     "queda en la Taberna y acepta las de Death Match que te manden (el nivel lo pone quien invita)."),
         Opcion("nivel", "Nivel", "lista", nivel, opciones=niveles),
         Opcion("jugar", "Cómo pelear", "lista", jugar, opciones=["Inteligente", "Mis cartas", "AUTO"],
                ayuda="Inteligente: piensa las 6 cartas del turno y las fusiones, con cualquier equipo. "
