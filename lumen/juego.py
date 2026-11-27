@@ -22,6 +22,10 @@ reiniciar_juego = P("restart.png")
 # quedo 8 min delante (2026-11-25). Recorte propio de esa captura; el OK esta en SERVIDOR_FALLO_OK.
 servidor_fallo = P("servidor_fallo.png")
 SERVIDOR_FALLO_OK = (277, 549)
+# Ruleta "SP DUNGEON AD BONUS" (actualizacion del 2026-11-27): sale sobre el RESULT de los tickets y el bot tocaba
+# el RESULT de detras sin parar. Se cierra con la X roja; nunca se toca el boton del anuncio.
+anuncio_ruleta = P("menu_2026/ad_bonus.png")
+CERRAR_ANUNCIO = (482, 96)
 cerrar = P("close.png")
 atras = P("back.png")  # la flecha amarilla de volver, arriba a la izquierda
 resultado = P("dailies/result.png")  # titulo "RESULT" (tickets de salto): se cierra tocandolo

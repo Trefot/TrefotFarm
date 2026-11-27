@@ -130,6 +130,10 @@ class Modo:
             entrada.clic(juego.SERVIDOR_FALLO_OK, origen, espera=5.0)
             self.estado = self.estado_inicial()
             return True
+        if juego.anuncio_ruleta.esta(pantalla, 0.8):
+            self.log("Cierro la ruleta de anuncios (AD BONUS).", "info")
+            entrada.clic(juego.CERRAR_ANUNCIO, origen, espera=1.0)
+            return True
         if juego.conexion_duplicada.esta(pantalla, 0.8):
             # "Duplicate connection" / "Simultaneous log ins": se entro a la cuenta desde otro sitio.
             self.log("El juego cerró la sesión (la cuenta se abrió en otro sitio). Cierro el aviso.", "aviso")

@@ -167,7 +167,7 @@ class Navegacion(ConPantallaSimulada):
         from lumen.motor import TerminarModo
 
         for n in ("reconectar", "reiniciar_juego", "conexion_duplicada", "conexion_caducada", "contrasena",
-                  "servidor_global", "sync_data", "servidor_fallo"):
+                  "servidor_global", "sync_data", "servidor_fallo", "anuncio_ruleta"):
             self._parchear(juego, n, PlantillaFalsa(n))
         enviados = []
         self._parchear(avisos, "enviar", lambda m, c=None: enviados.append(m))
@@ -194,7 +194,7 @@ class Navegacion(ConPantallaSimulada):
         p = cv2.imread(str(Path(__file__).with_name("servidor_fallo.png")))
         self.assertTrue(juego.servidor_fallo.esta(p, 0.8))
         self.assertFalse(juego.servidor_fallo.esta(cv2.imread(str(Path(__file__).with_name("sync_data.png"))), 0.8))
-        for n in ("reconectar", "reiniciar_juego", "servidor_fallo"):
+        for n in ("reconectar", "reiniciar_juego", "servidor_fallo", "anuncio_ruleta"):
             self._parchear(juego, n, PlantillaFalsa(n))
         self._parchear(avisos, "enviar", lambda m, c=None: None)
         m = self.modo(B.PerrosPisos1a3)
@@ -202,6 +202,8 @@ class Navegacion(ConPantallaSimulada):
         self.assertTrue(m.comprobaciones_globales({"servidor_fallo"}, (0, 0)))
         self.assertEqual(self.clics[-1], juego.SERVIDOR_FALLO_OK, "pulsa el OK")
         self.assertEqual(m.estado, m.estado_inicial(), "y empieza el modo desde el principio")
+        self.assertTrue(m.comprobaciones_globales({"anuncio_ruleta"}, (0, 0)))
+        self.assertEqual(self.clics[-1], juego.CERRAR_ANUNCIO, "cierra la ruleta con la X")
 
     def test_juego_cerrado_se_vuelve_a_abrir(self):
         """Si la ventana del juego desaparece, pulsa "Run Game" en el lanzador y empieza de nuevo."""

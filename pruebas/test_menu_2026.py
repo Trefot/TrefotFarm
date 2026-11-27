@@ -37,5 +37,12 @@ class MenuBattle2026(unittest.TestCase):
         self.assertFalse(juego.nido_criaturas.esta(self.p))
 
 
+    def test_ruleta_de_anuncios(self):
+        ruleta = cv2.imread(str(Path(__file__).with_name("ad_bonus.png")))
+        self.assertTrue(juego.anuncio_ruleta.esta(ruleta, 0.8))
+        self.assertFalse(juego.anuncio_ruleta.esta(self.p, 0.8))
+        self.assertFalse(juego.anuncio_ruleta.esta(cv2.imread(str(Path(__file__).with_name("resultado_tickets.png"))), 0.8))
+
+
 if __name__ == "__main__":
     unittest.main()
