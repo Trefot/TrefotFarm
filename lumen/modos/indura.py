@@ -87,7 +87,8 @@ CARTAS_ANTES_DE_SALIR = 3
 CADA_INVITACION = 60.0  # s: si la otra cuenta no entra, se vuelve a invitar
 CADA_REINTENTO = 15.0  # s entre intentos de abrir la sala mientras la otra cuenta acaba su pelea
 
-PESTANA_INDURA = (490, 258)  # la ultima pestana de la ventana de union (medido)
+PESTANA_INDURA = (490, 292)  # la ultima pestana de la ventana de union (medido en la ventana nueva, 2026-11-27;
+# en 258 tocaba fuera de la pestana, la ventana se cerraba y se quedaba en bucle)
 OK_UNION = (277, 869)
 
 # PC lentos (maquina virtual, prueba de la 0.13.1): mirar la pantalla tarda tanto que el bot veia la invitacion
@@ -161,7 +162,7 @@ class DemonioTiempoReal(Modo):
         self.desconocida_desde: float | None = None  # pantalla sin nada conocido desde...
         self.avisado_desconocida = False
         self.tocado_en = 0.0
-        self.pestana_elegida = False
+        self.pestana_elegida = self.pestana_forzada = False
         self.sala_desde: float | None = None  # en la sala de preparacion desde...
         self.salida_en = 0.0
         self.intentos_salida = 0
@@ -234,7 +235,7 @@ class DemonioTiempoReal(Modo):
             self.buscando_desde = time.time()
             return "buscar"
         if VENTANA_UNION.esta(p, 0.85):
-            self.pestana_elegida = False
+            self.pestana_elegida = self.pestana_forzada = False
             return "elegir"
         conocida = (self.clic_si(juego.ok, p, o)  # avisos que tapan el menu
                     | self.clic_si(juego.menu_batalla, p, o, umbral=0.6, espera=1.0)
@@ -255,11 +256,15 @@ class DemonioTiempoReal(Modo):
     def elegir(self, p, o):
         if not VENTANA_UNION.esta(p, 0.85):
             return "ir_a_indura"
-        if self.pestana_elegida_img is not None:
+        if self.pestana_elegida_img is not None and not getattr(self, "pestana_forzada", False):
             self.pestana_elegida = self.pestana_elegida_img.esta(p, 0.85)
         if not self.pestana_elegida:
             if self.punto_pestana:
                 self.clic_si(VENTANA_UNION, p, o, punto=self.punto_pestana, espera=1.0)
+                # La ventana nueva no muestra la pestana elegida como la imagen vieja: tras 2 toques se da por hecha.
+                self.intentos_pestana = getattr(self, "intentos_pestana", 0) + 1
+                if self.intentos_pestana >= 2:
+                    self.pestana_elegida, self.pestana_forzada, self.intentos_pestana = True, True, 0
             elif self.pestana is not None and self.clic_si(self.pestana, p, o, umbral=0.75, espera=1.0):
                 self.pestana_elegida = self.pestana_elegida_img is None  # sin imagen de "elegida": se da por hecha
             else:

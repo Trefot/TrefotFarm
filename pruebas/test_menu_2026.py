@@ -78,6 +78,25 @@ class NivelesDemonio(unittest.TestCase):
         self.assertFalse(m._nivel_por_texto(None, (0, 0), "Normal"))
         self.assertEqual(self.arrastres, [I.DESLIZAR_NIVELES[::-1]])
 
+    def test_la_pestana_de_indura_cae_dentro_de_la_ventana_nueva(self):
+        """En (490, 258) tocaba fuera de la pestana: la ventana se cerraba y Indura quedaba en bucle 45 min."""
+        x, y = I.PESTANA_INDURA
+        self.assertTrue(270 <= y <= 315 and 455 <= x <= 530)
+
+    def test_indura_sigue_al_nivel_tras_dos_toques_a_la_pestana(self):
+        from unittest import mock
+        p = cv2.imread(str(Path(__file__).with_name("niveles_demonio_2026.png")))
+        m = self._modo([("Chaos", (150, 626, 50, 13))])
+        m.nombre, m.valores, m.pestana_elegida, m.pestana_forzada = "Indura", {"nivel": "Chaos"}, False, False
+        puntos = []
+        m.clic_si = lambda plantilla, p, o, punto=None, **k: puntos.append(punto) or False
+        with mock.patch.object(I.VENTANA_UNION, "esta", lambda *a, **k: True),              mock.patch.object(type(m.pestana_elegida_img), "esta", lambda *a, **k: False):
+            self.assertIsNone(m.elegir(p, (0, 0)))
+            self.assertIsNone(m.elegir(p, (0, 0)))
+            self.assertEqual(puntos, [I.PESTANA_INDURA, I.PESTANA_INDURA])
+            self.assertEqual(m.elegir(p, (0, 0)), "buscar")
+        self.assertIn((175, 632), self.clics)
+
     def test_la_ocr_lee_la_captura_real(self):
         from lumen import ocr
         if not ocr.disponible():
